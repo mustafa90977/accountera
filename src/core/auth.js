@@ -229,18 +229,18 @@ const AuthService = {
       // شريط ملاحة المعلم
       if (desktopNav) {
         desktopNav.innerHTML = `
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('teacher-overview')">👨‍🏫 لوحة المتابعة والتقييم</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('lesson-1')">📖 معاينة الدروس</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('teacher-overview')">لوحة المتابعة والتقييم</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('lesson-1')">معاينة الدروس</a>
         `;
       }
       if (bottomNav) {
         bottomNav.innerHTML = `
           <button class="bottom-nav-item active" id="bn-teacher-overview" onclick="navigateToScreen('teacher-overview')">
-            <span class="bn-icon">👨‍🏫</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 20 }) : ''}</span>
             <span>لوحة المتابعة</span>
           </button>
           <button class="bottom-nav-item" id="bn-lesson-1" onclick="navigateToScreen('lesson-1')">
-            <span class="bn-icon">📖</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 20 }) : ''}</span>
             <span>الدروس</span>
           </button>
         `;
@@ -251,8 +251,8 @@ const AuthService = {
         desktopNav.innerHTML = `
           <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('landing')">الرئيسية</a>
           <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('student-dashboard')">لوحة الطالب</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('portfolio')">محفظة الكفاءة 📜</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('student-settings')">إعدادات الحساب ⚙️</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('portfolio')">محفظة الكفاءة</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('student-settings')">إعدادات الحساب</a>
           <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('lesson-1')">المسار التعليمي</a>
           <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('ex-1')">الأمثلة المحلولة</a>
           <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('ip-1')">التمارين المستقلة</a>
@@ -262,19 +262,19 @@ const AuthService = {
       if (bottomNav) {
         bottomNav.innerHTML = `
           <button class="bottom-nav-item active" id="bn-landing" onclick="navigateToScreen('landing')">
-            <span class="bn-icon">🏠</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('house', { size: 20 }) : ''}</span>
             <span>الرئيسية</span>
           </button>
           <button class="bottom-nav-item" id="bn-student-dashboard" onclick="navigateToScreen('student-dashboard')">
-            <span class="bn-icon">🎓</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('graduation-cap', { size: 20 }) : ''}</span>
             <span>لوحتي</span>
           </button>
           <button class="bottom-nav-item" id="bn-lesson-1" onclick="navigateToScreen('lesson-1')">
-            <span class="bn-icon">📖</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 20 }) : ''}</span>
             <span>الدروس</span>
           </button>
           <button class="bottom-nav-item" id="bn-companies-hub" onclick="navigateToScreen('companies-hub')">
-            <span class="bn-icon">🏢</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 20 }) : ''}</span>
             <span>الشركات</span>
           </button>
         `;
@@ -292,17 +292,17 @@ const AuthService = {
       authDock.innerHTML = `
         <div class="accountely-topbar-actions">
           <button onclick="navigateToScreen('student-plans')" class="accountely-promo-pill">
-            <span>🎁</span>
+            <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 14 }) : ''}</span>
             <span>Refer & earn 20%</span>
           </button>
           
           <button onclick="navigateToScreen('student-plans')" class="accountely-upgrade-btn">
-            <span>⭐</span>
+            <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('star', { size: 14 }) : ''}</span>
             <span>Upgrade • ترقية</span>
           </button>
 
           <div class="accountely-bell-btn" onclick="navigateToScreen('student-dashboard')" title="الإشعارات والتنبيهات">
-            <span style="font-size:1rem;">🔔</span>
+            <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('bell', { size: 16 }) : ''}</span>
             <span style="position:absolute; top:-3px; right:-3px; background:#ef4444; color:#fff; font-size:0.65rem; font-weight:800; width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center;">1</span>
           </div>
 
@@ -311,13 +311,15 @@ const AuthService = {
             <div style="width:28px; height:28px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.82rem;">${initial}</div>
           </div>
           
-          <button onclick="AuthService.logout()" class="sidebar-toggle-btn" style="width:32px; height:32px; border-radius:50%; margin-right:4px;" title="تسجيل الخروج">🚪</button>
+          <button onclick="AuthService.logout()" class="sidebar-toggle-btn" style="width:32px; height:32px; border-radius:50%; margin-right:4px;" title="تسجيل الخروج">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('x', { size: 16 }) : '×'}
+          </button>
         </div>
       `;
     } else {
       authDock.innerHTML = `
-        <button class="accountely-upgrade-btn" style="background:#10b981; color:#fff; border:none;" onclick="AuthService.openAuthModal('login')">
-          دخول المنصة / Login 🚀
+        <button class="accountely-upgrade-btn" style="background:#10b981; color:#fff; border:none; display:inline-flex; align-items:center; gap:6px;" onclick="AuthService.openAuthModal('login')">
+          <span>دخول المنصة / Login</span>
         </button>
       `;
     }
