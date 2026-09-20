@@ -52,16 +52,16 @@ const ExcelStudentDashboard = {
     return `
       <div class="student-dashboard-container">
         <!-- 1. Accountely Header الترحيبي -->
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 1.5rem; flex-wrap:wrap; gap:1rem;">
+        <div class="dash-header-wrap">
           <div>
-            <h1 style="font-size:1.9rem; font-weight:800; color:#0f172a; margin:0 0 4px 0; display:flex; align-items:center; gap:8px; letter-spacing:-0.02em;">
-              Welcome back, <span style="color:#10b981;">${studentName}</span>
+            <h1 class="dash-title">
+              Welcome back, <span style="color:var(--primary);">${studentName}</span>
             </h1>
-            <p style="color:#64748b; font-size:0.92rem; margin:0;">
+            <p class="dash-subtitle">
               Here's your learning progress at a glance. • ملخص مسارك التدريبي وإنجازاتك الحالية.
             </p>
           </div>
-          <button onclick="navigateToScreen('companies-hub')" style="background:#10b981; color:#ffffff; border:none; padding:10px 22px; border-radius:10px; font-weight:700; font-size:0.9rem; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow: 0 2px 8px rgba(16,185,129,0.25); transition:all 0.2s ease;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
+          <button onclick="navigateToScreen('companies-hub')" class="btn-primary-action">
             <span>Browse Challenges</span>
             <span>←</span>
           </button>
@@ -72,11 +72,11 @@ const ExcelStudentDashboard = {
           <div style="display:flex; align-items:flex-start; gap:14px;">
             <div class="streak-circle-icon"></div>
             <div>
-              <div style="font-size:1.15rem; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:6px;">
-                <span>${postedCount > 0 ? '1 day' : '0 days'}</span>
-                <span style="font-weight:700; color:#334155; font-size:0.95rem;">• ${postedCount > 0 ? 'Active streak! 🔥' : 'No streak yet'}</span>
+              <div style="font-size:1.15rem; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
+                <span class="tabular-nums">${postedCount > 0 ? '1 day' : '0 days'}</span>
+                <span style="font-weight:700; color:var(--text-secondary); font-size:0.95rem;">• ${postedCount > 0 ? 'Active streak! 🔥' : 'No streak yet'}</span>
               </div>
-              <div style="font-size:0.84rem; color:#64748b; margin-top:3px;">
+              <div style="font-size:0.84rem; color:var(--text-muted); margin-top:3px;">
                 Solve one challenge to begin. A quick quiz counts. • سجل قيداً أو حل سؤالاً اليوم لبدء التتابع.
               </div>
             </div>
@@ -84,18 +84,16 @@ const ExcelStudentDashboard = {
 
           <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
             <!-- مؤشر الـ 14 يوماً مع الحروف S M T W T F S -->
-            <div style="display:flex; flex-direction:column; gap:4px; align-items:center;">
-              <div style="display:flex; gap:5px;">
-                ${['S','M','T','W','T','F','S','S','M','T','W','T','F','S'].map((day, idx) => `
-                  <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
-                    <div style="width:14px; height:20px; border-radius:4px; background:${idx === 13 && postedCount > 0 ? '#10b981' : '#f1f5f9'}; border:1px solid ${idx === 13 && postedCount > 0 ? '#059669' : '#e2e8f0'};"></div>
-                    <span style="font-size:0.62rem; font-weight:700; color:#94a3b8;">${day}</span>
-                  </div>
-                `).join('')}
-              </div>
+            <div class="streak-days-track">
+              ${['S','M','T','W','T','F','S','S','M','T','W','T','F','S'].map((day, idx) => `
+                <div class="streak-day-col">
+                  <div class="streak-day-box ${idx === 13 && postedCount > 0 ? 'active' : ''}"></div>
+                  <span class="streak-day-label">${day}</span>
+                </div>
+              `).join('')}
             </div>
 
-            <button onclick="window.location.href='simulation/simulation/journal/index.html'" style="background:#10b981; color:#ffffff; border:none; padding:9px 18px; border-radius:8px; font-weight:700; font-size:0.85rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s ease;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
+            <button onclick="window.location.href='simulation/simulation/journal/index.html'" class="btn-primary-action" style="padding:9px 18px; font-size:0.85rem;">
               <span>Start today</span>
               <span>←</span>
             </button>
@@ -103,32 +101,32 @@ const ExcelStudentDashboard = {
         </div>
 
         <!-- 3. كروت البداية السريعة Getting Started -->
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; padding:1.5rem; margin-bottom:1.5rem; box-shadow:0 2px 10px rgba(0,0,0,0.02); position:relative;">
+        <div class="accountely-getting-started-card">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
             <div>
-              <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a; margin:0 0 4px 0;">Getting started • البداية السريعة</h3>
-              <p style="font-size:0.82rem; color:#64748b; margin:0;">
+              <h3 style="font-size:1.15rem; font-weight:800; color:var(--text-primary); margin:0 0 4px 0;">Getting started • البداية السريعة</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
                 1 of 4 done — a two-minute path to your first solve. • تم إنجاز خطوة من 4 نحو الحل الأول.
               </p>
             </div>
-            <button onclick="this.closest('div[style*=\\'position:relative\\']').style.display='none'" style="background:transparent; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer; padding:2px 6px;">✕</button>
+            <button onclick="this.closest('.accountely-getting-started-card').style.display='none'" style="background:transparent; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; padding:2px 6px;">✕</button>
           </div>
 
           <!-- شريط تقدم الخطوات الأخضر النحيف -->
-          <div style="width:100%; height:4px; background:#f1f5f9; border-radius:999px; margin-bottom:1.25rem; overflow:hidden;">
-            <div style="width:25%; height:100%; background:#10b981; border-radius:999px;"></div>
+          <div style="width:100%; height:4px; background:var(--surface-muted); border-radius:var(--radius-full); margin-bottom:1.25rem; overflow:hidden;">
+            <div style="width:25%; height:100%; background:var(--primary); border-radius:var(--radius-full);"></div>
           </div>
 
           <!-- بطاقات الخطوات الأربع المتجاورة -->
           <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
             <!-- Step 1 (Completed) -->
-            <div class="accountely-step-card" style="background:#f8fafc; border-color:#e2e8f0;">
+            <div class="accountely-step-card" style="background:var(--surface-muted); border-color:var(--border-subtle);">
               <div>
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                  <div style="width:22px; height:22px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">✓</div>
-                  <strong style="font-size:0.86rem; color:#0f172a;">Create your account</strong>
+                  <div style="width:22px; height:22px; border-radius:50%; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">✓</div>
+                  <strong style="font-size:0.86rem; color:var(--text-primary);">Create your account</strong>
                 </div>
-                <div style="font-size:0.76rem; color:#64748b; line-height:1.4;">Done — welcome aboard! • تم تفعيل الحساب</div>
+                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">Done — welcome aboard! • تم تفعيل الحساب</div>
               </div>
             </div>
 
@@ -137,12 +135,12 @@ const ExcelStudentDashboard = {
               <div>
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                   <div style="display:flex; align-items:center; gap:8px;">
-                    <div style="width:22px; height:22px; border-radius:6px; background:#f1f5f9; color:#475569; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">2</div>
-                    <strong style="font-size:0.86rem; color:#0f172a;">Submit your first challenge</strong>
+                    <div style="width:22px; height:22px; border-radius:6px; background:var(--surface-muted); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">2</div>
+                    <strong style="font-size:0.86rem; color:var(--text-primary);">Submit your first challenge</strong>
                   </div>
-                  <span style="color:#10b981; font-size:0.9rem; font-weight:800;">←</span>
+                  <span style="color:var(--primary); font-size:0.9rem; font-weight:800;">←</span>
                 </div>
-                <div style="font-size:0.76rem; color:#64748b; line-height:1.4;">Pick an Easy journal entry and give it a try — you get scored feedback instantly.</div>
+                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">Pick an Easy journal entry and give it a try — you get scored feedback instantly.</div>
               </div>
             </div>
 
@@ -151,12 +149,12 @@ const ExcelStudentDashboard = {
               <div>
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                   <div style="display:flex; align-items:center; gap:8px;">
-                    <div style="width:22px; height:22px; border-radius:6px; background:#f1f5f9; color:#475569; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">3</div>
-                    <strong style="font-size:0.86rem; color:#0f172a;">Answer a quiz question</strong>
+                    <div style="width:22px; height:22px; border-radius:6px; background:var(--surface-muted); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">3</div>
+                    <strong style="font-size:0.86rem; color:var(--text-primary);">Answer a quiz question</strong>
                   </div>
-                  <span style="color:#10b981; font-size:0.9rem; font-weight:800;">←</span>
+                  <span style="color:var(--primary); font-size:0.9rem; font-weight:800;">←</span>
                 </div>
-                <div style="font-size:0.76rem; color:#64748b; line-height:1.4;">Quick MCQs are a low-pressure way to test your theory. • أسئلة سريعة لاختبار الفهم.</div>
+                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">Quick MCQs are a low-pressure way to test your theory. • أسئلة سريعة لاختبار الفهم.</div>
               </div>
             </div>
 
@@ -165,12 +163,12 @@ const ExcelStudentDashboard = {
               <div>
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                   <div style="display:flex; align-items:center; gap:8px;">
-                    <div style="width:22px; height:22px; border-radius:6px; background:#f1f5f9; color:#475569; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">4</div>
-                    <strong style="font-size:0.86rem; color:#0f172a;">See how scoring works</strong>
+                    <div style="width:22px; height:22px; border-radius:6px; background:var(--surface-muted); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">4</div>
+                    <strong style="font-size:0.86rem; color:var(--text-primary);">See how scoring works</strong>
                   </div>
-                  <span style="color:#10b981; font-size:0.9rem; font-weight:800;">←</span>
+                  <span style="color:var(--primary); font-size:0.9rem; font-weight:800;">←</span>
                 </div>
-                <div style="font-size:0.76rem; color:#64748b; line-height:1.4;">Understand how answers are checked against EAS/IFRS-compliant keys.</div>
+                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">Understand how answers are checked against EAS/IFRS-compliant keys.</div>
               </div>
             </div>
           </div>
@@ -241,7 +239,7 @@ const ExcelStudentDashboard = {
             <div class="stat-icon-wrap stat-icon-purple">⚖️</div>
             <div class="stat-body">
               <div class="stat-label">اتزان دفتر الأستاذ</div>
-              <div class="stat-value" style="font-size:1.3rem; color:#10b981;">متزن 100% ✓</div>
+              <div class="stat-value tabular-nums" style="font-size:1.3rem; color:var(--primary-text);">متزن 100% ✓</div>
               <div class="stat-note">تطابق تام للمدين والدائن</div>
             </div>
           </div>
@@ -263,7 +261,7 @@ const ExcelStudentDashboard = {
                       <span>•</span>
                       <span>${profile.year}</span>
                       <span>•</span>
-                      <span style="font-family:monospace; font-weight:700; color:var(--primary);">${profile.code}</span>
+                      <span class="num-financial" style="font-weight:700; color:var(--primary-text);">${profile.code}</span>
                     </div>
                   </div>
                 </div>
@@ -409,7 +407,7 @@ const ExcelStudentDashboard = {
                     return `
                       <div class="entry-row-item">
                         <div style="display:flex; align-items:center; gap:10px;">
-                          <span style="font-family:'JetBrains Mono',monospace; font-weight:800; font-size:0.8rem; background:var(--bg-secondary); padding:3px 8px; border-radius:6px; border:1px solid var(--border-subtle);">
+                          <span class="num-financial" style="font-weight:800; font-size:0.8rem; background:var(--bg-secondary); padding:3px 8px; border-radius:6px; border:1px solid var(--border-subtle);">
                             ${e.id}
                           </span>
                           <div>
@@ -421,7 +419,7 @@ const ExcelStudentDashboard = {
                         </div>
 
                         <div style="display:flex; align-items:center; gap:12px;">
-                          <span style="font-family:'JetBrains Mono',monospace; font-weight:800; color:var(--text-primary);">
+                          <span class="num-financial" style="font-weight:800; color:var(--text-primary);">
                             ${totalDebit.toLocaleString()} ج.م
                           </span>
                           <span style="background:var(--primary-light); color:var(--primary); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700; border:1px solid var(--primary-border);">

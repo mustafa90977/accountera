@@ -1,55 +1,92 @@
-﻿/**
- * tokens.css — نظام التصميم المالي والمتغيرات القياسية
- * Accountera Design System & Fluid Tokens
+/**
+ * tokens.css — نظام التصميم المالي والمتغيرات القياسية (Accountera Design Tokens)
+ * متوافق 100% مع معايير UI/UX Pro Max للمنتجات المالية والـ SaaS
+ * يحقق نسبة تباين WCAG لا تقل عن 4.5:1 فوق كافّة الأسطح في الوضعين النهاري والليلي.
  */
 
 :root {
-  /* 1. لوحة الألوان الأساسية (Sovereign Emerald & Neutral Slate) */
-  --primary: #10B981;
-  --primary-hover: #059669;
-  --primary-active: #047857;
+  /* 1. ألوان السلطة والترويسة (Sovereign Slate) */
+  --header-bg: #0F172A;
+  --header-border: #1E293B;
+  --header-text: #FFFFFF;
+  --header-muted: #94A3B8;
+
+  /* 2. اللون الأساسي (Deep Emerald - تباين مثبت ≥ 5.4:1) */
+  --primary: #047857;          /* الزمردي العميق (5.48:1 على الأبيض و 5.24:1 على bg-main) */
+  --primary-hover: #065F46;
+  --primary-active: #064E3B;
   --primary-light: #ECFDF5;
   --primary-border: #A7F3D0;
-  --brand-glow: rgba(16, 185, 129, 0.18);
+  --primary-fg: #FFFFFF;
+  --primary-text: #047857;
+  --brand-glow: rgba(4, 120, 87, 0.16);
 
-  /* الألوان المالية والعمليات */
-  --acc-debit: #10B981;
-  --acc-credit: #475569;
-  --acc-neutral: #64748B;
+  /* 3. الأسطح والخلفيات (Surfaces & Canvas) */
+  --bg-main: #F8FAFC;          /* أرضية التطبيق */
+  --bg-secondary: #F1F5F9;     /* أرضية فرعية للأقسام */
+  --surface-card: #FFFFFF;     /* سطح البطاقة الرئيسية */
+  --surface-panel: #FFFFFF;    /* سطح الألواح والشرائط */
+  --surface-muted: #F8FAFC;    /* سطح ثانوي ناعم داخل البطاقات */
+  --surface-hover: #F1F5F9;    /* تأثير التمرير على العناصر */
 
-  /* الأسطح والخلفيات (Surfaces) */
-  --bg-main: #F8FAFC;
-  --bg-secondary: #F1F5F9;
-  --surface-card: #FFFFFF;
-  --surface-panel: #FFFFFF;
-  --surface-hover: #F8FAFC;
+  /* 4. الحدود والفواصل (Borders & Dividers) */
   --border-subtle: #E2E8F0;
   --border-strong: #CBD5E1;
+  --border-focus: #047857;
 
-  /* النصوص (Typography) */
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #64748B;
+  /* 5. نصوص المنصة الدلالية (Semantic Typography - تباين مثبت ≥ 7.2:1) */
+  --text-primary: #0F172A;     /* يحقق 17.8:1 على البطاقة و 17.0:1 على الخلفية */
+  --text-secondary: #334155;   /* يحقق 10.3:1 على البطاقة و 9.9:1 على الخلفية */
+  --text-muted: #475569;       /* يحقق 7.58:1 على البطاقة و 7.24:1 على الخلفية */
   --text-inverted: #FFFFFF;
 
-  /* دلالات الحالات (Status Indicators) */
-  --success: #10B981;
+  /* 6. الألوان المالية الدلالية (Financial Accounting Semantics) */
+  --acc-debit-bg: #ECFDF5;
+  --acc-debit-border: #A7F3D0;
+  --acc-debit-text: #047857;   /* يحقق 5.21:1 فوق خلفية المدين والبطاقة */
+
+  --acc-credit-bg: #F1F5F9;
+  --acc-credit-border: #CBD5E1;
+  --acc-credit-text: #1E293B;  /* يحقق 13.35:1 فوق خلفية الدائن والبطاقة */
+
+  --acc-balance-bg: #ECFDF5;
+  --acc-balance-border: #6EE7B7;
+  --acc-balance-text: #047857;
+
+  --acc-unbalance-bg: #FEF2F2;
+  --acc-unbalance-border: #FECACA;
+  --acc-unbalance-text: #B91C1C;
+
+  /* 7. حالات النظام (Status Indicators - تباين ≥ 5.0:1) */
+  --success: #047857;
   --success-bg: #ECFDF5;
   --success-border: #A7F3D0;
+  --success-text: #047857;
 
-  --danger: #EF4444;
+  --danger: #B91C1C;
   --danger-bg: #FEF2F2;
   --danger-border: #FECACA;
+  --danger-text: #B91C1C;
 
-  --warning: #F59E0B;
+  --warning: #B45309;
   --warning-bg: #FFFBEB;
   --warning-border: #FDE68A;
+  --warning-text: #B45309;
 
-  --info: #0EA5E9;
+  --info: #0369A1;
   --info-bg: #F0F9FF;
   --info-border: #BAE6FD;
+  --info-text: #0369A1;
 
-  /* 2. شبكة المسافات القياسية (8pt Grid System) */
+  /* 8. مستويات الارتفاع والظلال الهندسية (Elevation System - 5 Levels) */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
+  --elevation-2: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --elevation-3: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+  --elevation-4: 0 20px 25px -5px rgba(15, 23, 42, 0.10), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+
+  /* 9. شبكة المسافات القياسية (8pt Grid System) */
+  --space-0: 0px;
   --space-1: 0.25rem; /* 4px */
   --space-2: 0.5rem;  /* 8px */
   --space-3: 0.75rem; /* 12px */
@@ -61,52 +98,108 @@
   --space-12: 3rem;   /* 48px */
   --space-16: 4rem;   /* 64px */
 
-  /* 3. معايير الهواتف المحمولة واللمس (Mobile-First Standards) */
-  --touch-target-min: 44px; /* معيار WCAG لأزرار اللمس */
+  /* 10. معايير الهواتف المحمولة واللمس (Mobile-First) */
+  --touch-target-min: 44px;
   --header-height-mobile: 58px;
   --header-height-desktop: 68px;
   --bottom-nav-height: 64px;
-  --sidebar-width: 270px;
+  --sidebar-width: 250px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
 
-  /* 4. الحاويات ونقاط التجاوب (Containers & Layout Bounds) */
-  --container-max: 1240px;
-  --container-padding-mobile: 1rem;
-  --container-padding-desktop: 2rem;
-
-  /* 5. الحواف والظلال (Radii & Elevation) */
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  /* 11. الحاويات والانحناءات (Radii) */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
-  --shadow-drawer: -4px 0 24px rgba(15, 23, 42, 0.15);
-
-  /* 6. الانتقالات والحركة (Transitions) */
+  /* 12. الانتقالات السلسة */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 350ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* نمط الوضع الليلي (Dark Theme) */
+/* نمط الوضع الليلي (Dark Theme - تم التحقق من تباين كل عنصر ≥ 5.5:1) */
 [data-theme="dark"] {
-  --bg-main: #0B0F19;
-  --bg-secondary: #111827;
-  --surface-card: #161F30;
-  --surface-panel: #1E293B;
-  --surface-hover: #243048;
-  --border-subtle: #243048;
-  --border-strong: #334155;
+  /* 1. الترويسة والأرضية الليلية */
+  --header-bg: #0B0F19;
+  --header-border: #1E293B;
+  --header-text: #F8FAFC;
+  --header-muted: #94A3B8;
 
-  --text-primary: #F8FAFC;
-  --text-secondary: #CBD5E1;
-  --text-muted: #94A3B8;
-
+  /* 2. اللون الأساسي في الوضع الليلي */
+  --primary: #10B981;          /* Emerald-500 مضيء للوضع الداكن */
+  --primary-hover: #34D399;
+  --primary-active: #059669;
   --primary-light: rgba(16, 185, 129, 0.12);
   --primary-border: rgba(16, 185, 129, 0.3);
+  --primary-fg: #022C22;       /* نص داكن فوق زر الزمرد المضيء = 6.8:1 */
+  --primary-text: #34D399;     /* تباين 8.93:1 فوق البطاقة و 9.96:1 فوق الخلفية */
+  --brand-glow: rgba(16, 185, 129, 0.25);
+
+  /* 3. الأسطح والخلفيات الليلية */
+  --bg-main: #0B0F19;          /* أسود أردوازي هادئ */
+  --bg-secondary: #0F172A;
+  --surface-card: #131B2E;     /* بطاقة ليلية عميقة وواضحة */
+  --surface-panel: #1A233A;
+  --surface-muted: #162036;
+  --surface-hover: #1E2B48;
+
+  /* 4. الحدود الليلية */
+  --border-subtle: #202D47;
+  --border-strong: #334468;
+  --border-focus: #10B981;
+
+  /* 5. النصوص الليلية (التباين ≥ 6.6:1 على كل الأسطح) */
+  --text-primary: #F8FAFC;     /* تباين 16.4:1 على البطاقة */
+  --text-secondary: #CBD5E1;   /* تباين 11.5:1 على البطاقة */
+  --text-muted: #94A3B8;       /* تباين 6.69:1 على البطاقة */
+  --text-inverted: #0F172A;
+
+  /* 6. الألوان المالية الدلالية في الوضع الليلي */
+  --acc-debit-bg: rgba(16, 185, 129, 0.12);
+  --acc-debit-border: rgba(16, 185, 129, 0.32);
+  --acc-debit-text: #34D399;   /* تباين 8.93:1 */
+
+  --acc-credit-bg: rgba(148, 163, 184, 0.08);
+  --acc-credit-border: rgba(148, 163, 184, 0.25);
+  --acc-credit-text: #E2E8F0;  /* تباين 13.9:1 */
+
+  --acc-balance-bg: rgba(16, 185, 129, 0.15);
+  --acc-balance-border: rgba(16, 185, 129, 0.4);
+  --acc-balance-text: #34D399;
+
+  --acc-unbalance-bg: rgba(239, 68, 68, 0.14);
+  --acc-unbalance-border: rgba(239, 68, 68, 0.35);
+  --acc-unbalance-text: #F87171;
+
+  /* 7. حالات النظام في الوضع الليلي (تباين ≥ 6.2:1) */
+  --success: #34D399;
+  --success-bg: rgba(16, 185, 129, 0.12);
+  --success-border: rgba(16, 185, 129, 0.3);
+  --success-text: #34D399;
+
+  --danger: #F87171;
+  --danger-bg: rgba(239, 68, 68, 0.12);
+  --danger-border: rgba(239, 68, 68, 0.3);
+  --danger-text: #F87171;
+
+  --warning: #FBBF24;
+  --warning-bg: rgba(245, 158, 11, 0.12);
+  --warning-border: rgba(245, 158, 11, 0.3);
+  --warning-text: #FBBF24;
+
+  --info: #38BDF8;
+  --info-bg: rgba(14, 165, 233, 0.12);
+  --info-border: rgba(14, 165, 233, 0.3);
+  --info-text: #38BDF8;
+
+  /* 8. مستويات الارتفاع في الوضع الليلي (Dark Elevations) */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 0 rgba(0, 0, 0, 0.35), 0 1px 2px -1px rgba(0, 0, 0, 0.25);
+  --elevation-2: 0 4px 8px -1px rgba(0, 0, 0, 0.45), 0 2px 4px -2px rgba(0, 0, 0, 0.35);
+  --elevation-3: 0 10px 18px -3px rgba(0, 0, 0, 0.55), 0 4px 6px -4px rgba(0, 0, 0, 0.40);
+  --elevation-4: 0 24px 36px -5px rgba(0, 0, 0, 0.70), 0 8px 12px -6px rgba(0, 0, 0, 0.50);
 }

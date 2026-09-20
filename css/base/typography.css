@@ -1,4 +1,4 @@
-﻿/**
+/**
  * typography.css — مقياس الخطوط المتجاوب والسلس (Fluid Typography)
  */
 
@@ -47,13 +47,21 @@ p, .body-text {
   line-height: 1.4;
 }
 
-.font-mono {
-  font-family: 'JetBrains Mono', monospace;
+.font-mono,
+.tabular-nums,
+.num-financial {
+  font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-variant-numeric: tabular-nums lining-nums;
+  -moz-font-feature-settings: "tnum" 1;
+  -webkit-font-feature-settings: "tnum" 1;
+  font-feature-settings: "tnum" 1;
   direction: ltr;
   display: inline-block;
+  letter-spacing: -0.01em;
 }
 
-.text-primary { color: var(--primary); }
-.text-danger { color: var(--danger); }
-.text-success { color: var(--success); }
+.text-primary { color: var(--primary-text); }
+.text-danger { color: var(--danger-text); }
+.text-success { color: var(--success-text); }
 .text-muted { color: var(--text-muted); }
+

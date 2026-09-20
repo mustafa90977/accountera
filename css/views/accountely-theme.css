@@ -1,26 +1,26 @@
 /**
- * accountely-theme.css — نظام التنسيق والتصميم المستوحى من Accountely SaaS
- * تصميم نظيف، خلفيات فاتحة ناصعة، تفاصيل خضراء زمردية، وشريط جانبي أنيق
+ * accountely-theme.css — نظام التنسيق والتصميم المستوحى من أنظمة SaaS المالية
+ * يعتمد بالكامل على المتغيرات الدلالية (tokens.css) ليعمل بسلاسة في الوضعين النهاري والليلي
  */
 
 /* 1. هيكل الصفحة والشريط الجانبي */
 .app-body-container {
   display: flex;
-  min-height: calc(100vh - 64px);
-  background: #f8fafc;
+  min-height: calc(100vh - var(--header-height-desktop));
+  background: var(--bg-main);
   direction: rtl;
 }
 
 /* الشريط الجانبي (Accountely Sidebar) */
 .accountely-sidebar {
-  width: 240px;
-  background: #ffffff;
-  border-left: 1px solid #e2e8f0;
+  width: var(--sidebar-width);
+  background: var(--surface-card);
+  border-left: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
-  padding: 1.25rem 0.85rem;
+  padding: var(--space-5) var(--space-3);
   flex-shrink: 0;
-  transition: width 0.25s ease;
+  transition: width var(--transition-base);
   position: relative;
   z-index: 40;
 }
@@ -33,14 +33,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 0.5rem 1rem;
-  margin-bottom: 0.5rem;
+  padding: 0 var(--space-2) var(--space-4);
+  margin-bottom: var(--space-2);
 }
 
 .sidebar-nav-title {
   font-size: 0.72rem;
   font-weight: 800;
-  color: #94a3b8;
+  color: var(--text-muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -52,58 +52,59 @@
 .sidebar-toggle-btn {
   width: 24px;
   height: 24px;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
-  color: #64748b;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-muted);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
 .sidebar-toggle-btn:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
 }
 
 .sidebar-menu {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .sidebar-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
   background: transparent;
-  color: #475569;
+  color: var(--text-secondary);
   font-family: inherit;
   font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
   text-align: right;
   width: 100%;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
   position: relative;
 }
 
 .sidebar-item:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--surface-hover);
+  color: var(--text-primary);
 }
 
 .sidebar-item.active {
-  background: #e6f7f0;
-  color: #059669;
+  background: var(--primary-light);
+  color: var(--primary-text);
   font-weight: 800;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  border: 1px solid var(--primary-border);
 }
 
 .sidebar-icon {
@@ -123,14 +124,14 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #10b981;
+  background: var(--primary);
   margin-right: auto;
 }
 
 .sidebar-divider {
   height: 1px;
-  background: #f1f5f9;
-  margin: 12px 0;
+  background: var(--border-subtle);
+  margin: var(--space-3) 0;
 }
 
 .accountely-sidebar.landing-hidden {
@@ -144,15 +145,16 @@
   }
   .app-body-container {
     flex-direction: column;
+    min-height: calc(100vh - var(--header-height-mobile));
   }
   .accountely-streak-card {
-    padding: 1.25rem 1rem !important;
+    padding: var(--space-4) var(--space-4) !important;
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 1rem !important;
+    gap: var(--space-4) !important;
   }
   .settings-header-accountely {
-    padding: 1.25rem 1rem !important;
+    padding: var(--space-4) var(--space-4) !important;
   }
   .student-dashboard-container,
   .student-settings-container,
@@ -165,45 +167,45 @@
 .accountely-topbar-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-2);
 }
 
 .accountely-promo-pill {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  color: #c2410c;
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
   padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.78rem;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
 .accountely-promo-pill:hover {
-  background: #ffedd5;
+  filter: brightness(0.95);
 }
 
 .accountely-upgrade-btn {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #fef3c7;
-  border: 1px solid #fde68a;
-  color: #b45309;
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
   padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.8rem;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
 .accountely-upgrade-btn:hover {
-  background: #fde68a;
+  filter: brightness(0.95);
 }
 
 .accountely-bell-btn {
@@ -211,33 +213,36 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  background: #ffffff;
-  transition: all 0.2s ease;
+  background: var(--surface-card);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
 }
 
 .accountely-bell-btn:hover {
-  background: #f8fafc;
+  background: var(--surface-hover);
+  color: var(--text-primary);
 }
 
 .accountely-user-dock {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #e6f7f0;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  color: var(--primary-text);
   padding: 4px 12px 4px 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
 .accountely-user-dock:hover {
-  background: #d1fae5;
+  background: var(--primary-border);
 }
 
 @media (max-width: 640px) {
@@ -246,97 +251,130 @@
   }
 }
 
-/* 3. كارت الـ Streak والنشاط اليومي */
+/* 3. كارت الـ Streak والنشاط اليومي (مستند بالكامل للرموز الدلالية) */
 .accountely-streak-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 1.5rem 2rem;
-  margin-bottom: 2rem;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-8);
+  margin-bottom: var(--space-8);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  gap: var(--space-6);
+  box-shadow: var(--elevation-1);
 }
 
 .streak-circle-icon {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 2.5px solid #94a3b8;
+  border: 2.5px solid var(--text-muted);
   margin-top: 4px;
+}
+
+.streak-days-track {
+  display: flex;
+  gap: 5px;
+}
+
+.streak-day-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.streak-day-box {
+  width: 14px;
+  height: 20px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-muted);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--transition-fast);
+}
+
+.streak-day-box.active {
+  background: var(--primary);
+  border-color: var(--primary-border);
+}
+
+.streak-day-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
 }
 
 /* 4. كروت البداية السريعة Getting Started */
 .accountely-step-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 1.25rem;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
   min-height: 120px;
+  box-shadow: var(--elevation-1);
 }
 
 .accountely-step-card:hover {
-  border-color: #10b981;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.08);
+  border-color: var(--primary);
+  box-shadow: var(--elevation-2);
   transform: translateY(-2px);
 }
 
 /* 5. حبوب الفلترة والخيارات Filter Pills */
 .filter-pill {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 999px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
   padding: 6px 14px;
   font-size: 0.8rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
 }
 
 .filter-pill:hover {
-  background: #f8fafc;
-  color: #0f172a;
-  border-color: #cbd5e1;
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
 }
 
 .filter-pill.active {
-  background: #e6f7f0;
-  color: #059669;
-  border-color: #10b981;
+  background: var(--primary-light);
+  color: var(--primary-text);
+  border-color: var(--primary-border);
 }
 
-/* 6. تنسيقات إعدادات الطالب النظيفة (Light Settings Theme) */
+/* 6. تنسيقات إعدادات الطالب النظيفة (Settings Theme) */
 .settings-header-accountely {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 1.75rem 2rem;
-  margin-bottom: 2rem;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-8);
+  margin-bottom: var(--space-8);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1.25rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  gap: var(--space-5);
+  box-shadow: var(--elevation-1);
 }
 
 .settings-tab-accountely {
-  background: #ffffff;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
+  background: var(--surface-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
   padding: 9px 18px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-family: inherit;
   font-size: 0.88rem;
   font-weight: 700;
@@ -344,19 +382,68 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   white-space: nowrap;
 }
 
 .settings-tab-accountely:hover {
-  background: #f8fafc;
-  color: #0f172a;
-  border-color: #cbd5e1;
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
 }
 
 .settings-tab-accountely.active {
-  background: #e6f7f0;
-  color: #059669;
-  border-color: #10b981;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+  background: var(--primary-light);
+  color: var(--primary-text);
+  border-color: var(--primary-border);
+  box-shadow: var(--elevation-1);
 }
+
+/* 7. كلاسات عامة للمكونات لتطهير الأنماط السطرية */
+.dash-header-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.dash-title {
+  font-size: clamp(1.5rem, 2vw + 0.5rem, 1.9rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.02em;
+}
+
+.dash-subtitle {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+.btn-primary-action {
+  background: var(--primary);
+  color: var(--primary-fg);
+  border: none;
+  padding: 10px 22px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--elevation-1);
+  transition: all var(--transition-fast);
+}
+
+.btn-primary-action:hover {
+  background: var(--primary-hover);
+  box-shadow: var(--elevation-2);
+}
+

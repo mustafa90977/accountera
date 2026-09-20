@@ -208,11 +208,22 @@ document.addEventListener('DOMContentLoaded', () => {
     AuthService.init();
   }
 
-  // فحص حالة الدخول: إذا كان مسجلاً يدخل فوراً لمساحة عمله بدلاً من صفحة الهبوط
-  const currentUser = typeof AuthService !== 'undefined' ? AuthService.getCurrentUser() : null;
-  if (currentUser) {
-    AuthService.redirectAfterLogin(currentUser);
+  // فحص معلمات الرابط أو حالة الدخول
+  const urlParams = new URLSearchParams(window.location.search);
+  const requestedScreen = urlParams.get('screen');
+  const requestedTheme = urlParams.get('theme');
+  if (requestedTheme) {
+    document.documentElement.setAttribute('data-theme', requestedTheme);
+  }
+
+  if (requestedScreen) {
+    window.navigateToScreen(requestedScreen);
   } else {
-    window.navigateToScreen('landing');
+    const currentUser = typeof AuthService !== 'undefined' ? AuthService.getCurrentUser() : null;
+    if (currentUser) {
+      AuthService.redirectAfterLogin(currentUser);
+    } else {
+      window.navigateToScreen('landing');
+    }
   }
 });
