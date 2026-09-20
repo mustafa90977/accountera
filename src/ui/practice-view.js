@@ -152,7 +152,10 @@ const ExcelPracticeView = {
             <!-- بطاقة المعاملة -->
             <div class="transaction-card">
               <div class="transaction-badge-row">
-                <span class="hero-badge" style="margin-bottom:0; font-size:0.75rem;">👁️ مثال محلول مع الشرح</span>
+                <span class="hero-badge" style="margin-bottom:0; font-size:0.75rem; display:inline-flex; align-items:center; gap:6px;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 14 }) : ''}
+                  <span>مثال محلول مع الشرح</span>
+                </span>
                 <span class="doc-tag">DOC #EX-0${ex.number}</span>
               </div>
               <h1 class="transaction-title">${ex.title}</h1>
@@ -283,7 +286,10 @@ const ExcelPracticeView = {
             <!-- بطاقة المعاملة -->
             <div class="transaction-card">
               <div class="transaction-badge-row">
-                <span class="hero-badge" style="margin-bottom:0; font-size:0.75rem;">✍️ تدريب عملي مستقل</span>
+                <span class="hero-badge" style="margin-bottom:0; font-size:0.75rem; display:inline-flex; align-items:center; gap:6px;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 14 }) : ''}
+                  <span>تدريب عملي مستقل</span>
+                </span>
                 <span class="doc-tag">TASK #IP-0${ip.number}</span>
               </div>
               <h1 class="transaction-title">${ip.title}</h1>
@@ -491,14 +497,14 @@ const ExcelPracticeView = {
     if (!userDebit || !userCredit) {
       feedback.className = 'feedback-box error';
       feedback.style.display = 'block';
-      feedback.innerHTML = '<strong>⚠️ تنبيه:</strong> يرجى تحديد كل من الطرف المدين والطرف الدائن قبل التحقق.';
+      feedback.innerHTML = '<strong>تنبيه:</strong> يرجى تحديد كل من الطرف المدين والطرف الدائن قبل التحقق.';
       return;
     }
 
     if (userDebit === userCredit) {
       feedback.className = 'feedback-box error';
       feedback.style.display = 'block';
-      feedback.innerHTML = '<strong>❌ خطأ محاسبي:</strong> لا يمكن أن يكون نفس الحساب مديناً ودائناً في نفس العملية بنفس المبلغ.';
+      feedback.innerHTML = '<strong>خطأ محاسبي:</strong> لا يمكن أن يكون نفس الحساب مديناً ودائناً في نفس العملية بنفس المبلغ.';
       return;
     }
 
@@ -507,7 +513,7 @@ const ExcelPracticeView = {
       feedback.style.display = 'block';
       feedback.innerHTML = `
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; font-weight:800; font-size:1.05rem;">
-          <span>🎉 إجابة محاسبية نموذجية 100%!</span>
+          <span>إجابة محاسبية نموذجية 100%!</span>
         </div>
         <p style="margin:0; font-size:0.92rem;">${ip.explanation}</p>
       `;
@@ -523,7 +529,7 @@ const ExcelPracticeView = {
         diag = 'الطرف الدائن الذي اخترته غير صحيح. راجع ما هو الحساب الذي نقص أو كان مصدراً للتدفق.';
       }
       feedback.innerHTML = `
-        <div style="font-weight:800; margin-bottom:4px;">❌ القيد غير صحيح:</div>
+        <div style="font-weight:800; margin-bottom:4px;">القيد غير صحيح:</div>
         <p style="margin:0; font-size:0.92rem;">${diag}</p>
       `;
     }

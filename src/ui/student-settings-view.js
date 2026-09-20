@@ -77,8 +77,8 @@ const ExcelStudentSettingsView = {
         <div class="settings-header-accountely" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.5rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 2rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem; width: 100%;">
             <div style="display: flex; align-items: center; gap: 1.25rem;">
-              <div style="width: 58px; height: 58px; border-radius: 16px; background: #e6f7f0; border: 1.5px solid #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #059669;">
-                ⚙️
+              <div style="width: 58px; height: 58px; border-radius: 16px; background: #e6f7f0; border: 1.5px solid #10b981; display: flex; align-items: center; justify-content: center; color: #059669;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 28 }) : ''}
               </div>
               <div>
                 <div style="display: flex; align-items: center; gap: 10px;">
@@ -162,7 +162,10 @@ const ExcelStudentSettingsView = {
     return `
       <div class="settings-card" style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
         <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1.5rem;">
-          <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary);">👤 المعلومات والبيانات الشخصية</h2>
+          <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('user', { size: 20 }) : ''}
+            <span>المعلومات والبيانات الشخصية</span>
+          </h2>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">تظهر هذه البيانات في محفظتك الموثقة وشهادات الكفاءة المهنية الصادرة لك.</p>
         </div>
 
@@ -212,8 +215,9 @@ const ExcelStudentSettingsView = {
           </div>
 
           <div style="display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn-cta-primary" style="padding: 10px 24px; font-weight: 800;">
-              💾 حفظ البيانات الشخصية
+            <button type="submit" class="btn-cta-primary" style="padding: 10px 24px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('save', { size: 16 }) : ''}
+              <span>حفظ البيانات الشخصية</span>
             </button>
           </div>
         </form>
@@ -226,7 +230,10 @@ const ExcelStudentSettingsView = {
     return `
       <div class="settings-card" style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
         <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1.5rem;">
-          <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary);">🔐 أمان الحساب وتغيير كلمة المرور</h2>
+          <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lock', { size: 20 }) : ''}
+            <span>أمان الحساب وتغيير كلمة المرور</span>
+          </h2>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">قم بتحديث كلمة المرور لحماية مسيرتك التدريبية وبيانات محفظتك المهنية.</p>
         </div>
 
@@ -256,11 +263,13 @@ const ExcelStudentSettingsView = {
           </div>
 
           <div style="display: flex; gap: 10px;">
-            <button type="submit" class="btn-cta-primary" style="padding: 10px 24px; font-weight: 800;">
-              🔒 تحديث كلمة المرور الآن
+            <button type="submit" class="btn-cta-primary" style="padding: 10px 24px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lock', { size: 16 }) : ''}
+              <span>تحديث كلمة المرور الآن</span>
             </button>
-            <button type="button" onclick="AuthService.logout()" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.85rem;">
-              🚪 تسجيل الخروج
+            <button type="button" onclick="AuthService.logout()" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sign-out', { size: 16 }) : ''}
+              <span>تسجيل الخروج</span>
             </button>
           </div>
         </form>
@@ -273,7 +282,10 @@ const ExcelStudentSettingsView = {
     return `
       <div class="settings-card" style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
         <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1.5rem;">
-          <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary);">⚙️ تفضيلات بيئة العمل والمحاكاة</h2>
+          <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 20 }) : ''}
+            <span>تفضيلات بيئة العمل والمحاكاة</span>
+          </h2>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">خصص تجربة التدريب، العملات المحاسبية، وسلوك المساعد الذكي.</p>
         </div>
 
@@ -304,8 +316,8 @@ const ExcelStudentSettingsView = {
             <div>
               <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">المظهر العام (Theme):</label>
               <select id="pref_theme" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary);">
-                <option value="light" ${prefs.theme === 'light' ? 'selected' : ''}>☀️ الوضع النهاري الكلاسيكي (Light)</option>
-                <option value="dark" ${prefs.theme === 'dark' ? 'selected' : ''}>🌙 الوضع الليلي المريح للعين (Dark Mode)</option>
+                <option value="light" ${prefs.theme === 'light' ? 'selected' : ''}>الوضع النهاري الكلاسيكي (Light)</option>
+                <option value="dark" ${prefs.theme === 'dark' ? 'selected' : ''}>الوضع الليلي المريح للعين (Dark Mode)</option>
               </select>
             </div>
 
@@ -316,7 +328,10 @@ const ExcelStudentSettingsView = {
             <label style="display: flex; align-items: center; gap: 12px; background: var(--surface-ground); padding: 14px; border-radius: 10px; border: 1px solid var(--border-subtle); cursor: pointer;">
               <input type="checkbox" id="pref_audio" ${prefs.audioAlerts ? 'checked' : ''} style="width: 18px; height: 18px;">
               <div>
-                <strong style="display: block; font-size: 0.9rem;">🔔 المؤثرات الصوتية عند اتزان وترحيل القيد</strong>
+                <strong style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('bell', { size: 16 }) : ''}
+                  <span>المؤثرات الصوتية عند اتزان وترحيل القيد</span>
+                </strong>
                 <span style="font-size: 0.78rem; color: var(--text-muted);">تشغيل نغمة تأكيد لطيفة عند اتزان طرفي القيد المحاسبي باليومية.</span>
               </div>
             </label>
@@ -324,15 +339,19 @@ const ExcelStudentSettingsView = {
             <label style="display: flex; align-items: center; gap: 12px; background: var(--surface-ground); padding: 14px; border-radius: 10px; border: 1px solid var(--border-subtle); cursor: pointer;">
               <input type="checkbox" id="pref_public" ${prefs.publicProfile ? 'checked' : ''} style="width: 18px; height: 18px;">
               <div>
-                <strong style="display: block; font-size: 0.9rem;">🌐 إتاحة المحفظة المهنية للعامة وأصحاب العمل</strong>
+                <strong style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('globe', { size: 16 }) : ''}
+                  <span>إتاحة المحفظة المهنية للعامة وأصحاب العمل</span>
+                </strong>
                 <span style="font-size: 0.78rem; color: var(--text-muted);">السماح للشركات بالتحقق من شهاداتك وسجل كفاءتك عبر رابط محفظتك العام.</span>
               </div>
             </label>
           </div>
 
           <div style="display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn-cta-primary" style="padding: 10px 24px; font-weight: 800;">
-              💾 حفظ التفضيلات
+            <button type="submit" class="btn-cta-primary" style="padding: 10px 24px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('save', { size: 16 }) : ''}
+              <span>حفظ التفضيلات</span>
             </button>
           </div>
         </form>
@@ -359,7 +378,10 @@ const ExcelStudentSettingsView = {
       <div class="settings-card" style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
         <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
           <div>
-            <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary);">💳 باقة التدريب النشطة</h2>
+            <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 20 }) : ''}
+              <span>باقة التدريب النشطة</span>
+            </h2>
             <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">صلاحيات حسابك، مميزات الباقة، وحالة مشاركة الاعتماد المهني.</p>
           </div>
           <span style="padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 800; background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-border);">
@@ -379,24 +401,27 @@ const ExcelStudentSettingsView = {
           <div style="background: var(--surface-ground); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.5rem;">
             <div style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 6px;">ميزات الباقة وصلاحية لينكد إن:</div>
             <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem;">
-              <div>• النواة المحاسبية والقيد المزدوج: <strong style="color:#10b981;">🟢 مفعل</strong></div>
-              <div>• مشاركة المحفظة على LinkedIn: <strong style="color:${currentPlan.allowLinkedInShare ? '#10b981' : '#ef4444'};">${currentPlan.allowLinkedInShare ? '🟢 متاح في باقتك' : '🔒 يتطلب ترقية لـ Pro'}</strong></div>
-              <div>• اعتماد الشهادات برقم QR: <strong style="color:#10b981;">🟢 متاح</strong></div>
+              <div>• النواة المحاسبية والقيد المزدوج: <strong style="color:#10b981;">مفعل</strong></div>
+              <div>• مشاركة المحفظة على LinkedIn: <strong style="color:${currentPlan.allowLinkedInShare ? '#10b981' : '#ef4444'};">${currentPlan.allowLinkedInShare ? 'متاح في باقتك' : 'يتطلب ترقية لـ Pro'}</strong></div>
+              <div>• اعتماد الشهادات برقم QR: <strong style="color:#10b981;">متاح</strong></div>
             </div>
           </div>
         </div>
 
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           ${user.plan === 'free' ? `
-            <button onclick="navigateToScreen('student-plans')" class="btn-cta-primary" style="padding: 10px 20px; font-size: 0.88rem;">
-              🚀 ترقية الباقة إلى المحترف (Pro)
+            <button onclick="navigateToScreen('student-plans')" class="btn-cta-primary" style="padding: 10px 20px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
+              <span>ترقية الباقة إلى المحترف (Pro)</span>
             </button>
-            <button onclick="AccounteraPortfolioEngine.upgradeToProTrial()" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.88rem;">
-              ⚡ تجربة باقة Pro الفورية
+            <button onclick="AccounteraPortfolioEngine.upgradeToProTrial()" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trend-up', { size: 16 }) : ''}
+              <span>تجربة باقة Pro الفورية</span>
             </button>
           ` : `
-            <button onclick="navigateToScreen('portfolio')" class="btn-cta-primary" style="padding: 10px 20px; font-size: 0.88rem;">
-              💼 فتح المحفظة ومشاركتها على LinkedIn
+            <button onclick="navigateToScreen('portfolio')" class="btn-cta-primary" style="padding: 10px 20px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('briefcase', { size: 16 }) : ''}
+              <span>فتح المحفظة ومشاركتها على LinkedIn</span>
             </button>
           `}
         </div>
@@ -409,7 +434,10 @@ const ExcelStudentSettingsView = {
     return `
       <div class="settings-card" style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
         <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1.5rem;">
-          <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary);">🛡️ إدارة البيانات والنسخ الاحتياطي</h2>
+          <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('shield', { size: 20 }) : ''}
+            <span>إدارة البيانات والنسخ الاحتياطي</span>
+          </h2>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">تصدير سجل القيود والدورة المحاسبية أو إعادة ضبط التمارين.</p>
         </div>
 
@@ -417,21 +445,29 @@ const ExcelStudentSettingsView = {
           
           <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-ground); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 1rem;">
             <div>
-              <strong style="display: block; font-size: 0.92rem; color: var(--text-primary);">📥 تصدير السجل المحاسبي بالكامل (JSON Backup)</strong>
+              <strong style="display: flex; align-items: center; gap: 6px; font-size: 0.92rem; color: var(--text-primary);">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('download', { size: 16 }) : ''}
+                <span>تصدير السجل المحاسبي بالكامل (JSON Backup)</span>
+              </strong>
               <span style="font-size: 0.8rem; color: var(--text-muted);">تحميل ملف احتياطي بكافة قيود اليومية وبيانات المحفظة المهنية.</span>
             </div>
-            <button onclick="ExcelStudentSettingsView.exportStudentData()" class="btn-cta-secondary" style="padding: 8px 16px; font-size: 0.85rem;">
-              تصدير الملف 💾
+            <button onclick="ExcelStudentSettingsView.exportStudentData()" class="btn-cta-secondary" style="padding: 8px 16px; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('download', { size: 16 }) : ''}
+              <span>تصدير الملف</span>
             </button>
           </div>
 
           <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(239, 68, 68, 0.04); padding: 1.25rem; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2); flex-wrap: wrap; gap: 1rem;">
             <div>
-              <strong style="display: block; font-size: 0.92rem; color: #ef4444;">⚠️ تصفير محاكاة الدفاتر والبدء من جديد</strong>
+              <strong style="display: flex; align-items: center; gap: 6px; font-size: 0.92rem; color: #ef4444;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('warning', { size: 16 }) : ''}
+                <span>تصفير محاكاة الدفاتر والبدء من جديد</span>
+              </strong>
               <span style="font-size: 0.8rem; color: var(--text-muted);">مسح كافة القيود المسجلة باليومية لإعادة التدريب من البداية مع الحفاظ على الحساب.</span>
             </div>
-            <button onclick="ExcelStudentSettingsView.resetTrainingProgress()" class="btn-cta-secondary" style="background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; font-size: 0.85rem;">
-              تصفير القيود 🔄
+            <button onclick="ExcelStudentSettingsView.resetTrainingProgress()" class="btn-cta-secondary" style="background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('rotate', { size: 16 }) : ''}
+              <span>تصفير القيود</span>
             </button>
           </div>
 
@@ -585,7 +621,9 @@ const ExcelStudentSettingsView = {
       localStorage.setItem('accountera_theme', theme);
       document.documentElement.setAttribute('data-theme', theme);
       const themeBtn = document.getElementById('themeToggleBtn');
-      if (themeBtn) themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+      if (themeBtn && typeof AccounteraIcons !== 'undefined') {
+        themeBtn.innerHTML = theme === 'dark' ? AccounteraIcons.render('sun', { size: 18 }) : AccounteraIcons.render('moon', { size: 18 });
+      }
     } catch(err) {}
 
     if (typeof AccModal !== 'undefined') {

@@ -50,7 +50,7 @@ const AccounteraPortfolioEngine = {
         credentialId: `CERT-GA-${studentId.slice(-6)}`,
         status: postedCount >= 1 ? "منح بنجاح ✓" : "قيد الإنجاز",
         isUnlocked: postedCount >= 1,
-        badgeIcon: "🎓",
+        badgeIcon: "graduation-cap",
         skills: ["القيد المزدوج", "دفتر اليومية", "دفتر الأستاذ", "ميزان المراجعة"]
       },
       {
@@ -61,7 +61,7 @@ const AccounteraPortfolioEngine = {
         credentialId: `CERT-AP-${studentId.slice(-6)}`,
         status: postedCount >= 10 ? "منح بنجاح ✓" : "قيد الإنجاز",
         isUnlocked: postedCount >= 10,
-        badgeIcon: "📦",
+        badgeIcon: "buildings",
         skills: ["المطابقة الثلاثية", "فواتير الشراء الضريبية", "مخزون البضاعة"]
       },
       {
@@ -72,7 +72,7 @@ const AccounteraPortfolioEngine = {
         credentialId: `CERT-TAX-${studentId.slice(-6)}`,
         status: postedCount >= 15 ? "منح بنجاح ✓" : "قيد الإنجاز",
         isUnlocked: postedCount >= 15,
-        badgeIcon: "⚖️",
+        badgeIcon: "scales",
         skills: ["ضريبة القيمة المضافة 14%", "خصم وتحصيل أرباح تجارية", "الفاتورة الإلكترونية"]
       },
       {
@@ -83,7 +83,7 @@ const AccounteraPortfolioEngine = {
         credentialId: `CERT-BNK-${studentId.slice(-6)}`,
         status: postedCount >= 20 ? "منح بنجاح ✓" : "قيد الإنجاز",
         isUnlocked: postedCount >= 20,
-        badgeIcon: "🏦",
+        badgeIcon: "bank",
         skills: ["مطابقة كشف البنك", "شيكات بالطريق", "عمولات بنكية"]
       }
     ];
@@ -161,8 +161,8 @@ const AccounteraPortfolioEngine = {
         <div class="portfolio-hero" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #064e3b 100%); color: #fff; border-radius: 20px; padding: 2rem; box-shadow: 0 12px 30px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); margin-bottom: 2rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
             <div style="display: flex; align-items: center; gap: 1.25rem;">
-              <div style="width: 72px; height: 72px; border-radius: 20px; background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; font-size: 2.2rem;">
-                👨‍💼
+              <div style="width: 72px; height: 72px; border-radius: 20px; background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; color: #10b981;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('user', { size: 36, strokeWidth: 1.75 }) : ''}
               </div>
               <div>
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -182,11 +182,13 @@ const AccounteraPortfolioEngine = {
             <!-- أزرار المشاركة والتحقق -->
             <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
               <button onclick="AccounteraPortfolioEngine.copyPublicLink()" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
-                <span>🔗 نسخ رابط المحفظة</span>
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 16 }) : ''}
+                <span>نسخ رابط المحفظة</span>
               </button>
               <button onclick="AccounteraPortfolioEngine.shareLinkedIn()" class="btn-cta-primary" style="background: #0077b5; padding: 10px 18px; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; border: 1px solid #005e93;">
-                <span>💼 مشاركة على LinkedIn</span>
-                ${!perm.allowed ? '<span style="background: #f59e0b; color: #000; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;">PRO 🔒</span>' : '<span style="background: rgba(255,255,255,0.2); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;">مفعل ✓</span>'}
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
+                <span>مشاركة على LinkedIn</span>
+                ${!perm.allowed ? '<span style="background: #f59e0b; color: #000; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;">PRO</span>' : '<span style="background: rgba(255,255,255,0.2); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;">مفعل ✓</span>'}
               </button>
             </div>
           </div>
@@ -226,7 +228,9 @@ const AccounteraPortfolioEngine = {
               <div style="background: var(--surface-card); border: 2px solid ${cert.isUnlocked ? 'rgba(16,185,129,0.3)' : 'var(--border-subtle)'}; border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 16px rgba(0,0,0,0.03); opacity: ${cert.isUnlocked ? '1' : '0.75'};">
                 <div>
                   <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                    <span style="font-size: 2.2rem;">${cert.badgeIcon}</span>
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; border: 1px solid var(--primary-border);">
+                      ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render(cert.badgeIcon, { size: 24, strokeWidth: 1.75 }) : ''}
+                    </div>
                     <span style="padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; background: ${cert.isUnlocked ? 'var(--primary-light)' : 'var(--bg-secondary)'}; color: ${cert.isUnlocked ? 'var(--primary)' : 'var(--text-muted)'}; border: 1px solid ${cert.isUnlocked ? 'var(--primary-border)' : 'var(--border-subtle)'};">
                       ${cert.status}
                     </span>
@@ -244,15 +248,16 @@ const AccounteraPortfolioEngine = {
 
                 <div style="display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid var(--border-subtle); padding-top: 12px;">
                   ${cert.isUnlocked ? `
-                    <button onclick="AccounteraPortfolioEngine.viewCertificate('${cert.id}')" class="btn-cta-secondary" style="flex: 1; padding: 8px; font-size: 0.82rem; justify-content: center;">
-                      <span>عرض وتوثيق الشهادة 📜</span>
+                    <button onclick="AccounteraPortfolioEngine.viewCertificate('${cert.id}')" class="btn-cta-secondary" style="flex: 1; padding: 8px; font-size: 0.82rem; justify-content: center; display: inline-flex; align-items: center; gap: 6px;">
+                      ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 14 }) : ''}
+                      <span>عرض وتوثيق الشهادة</span>
                     </button>
                     <button onclick="AccounteraPortfolioEngine.shareLinkedIn('${cert.id}')" class="btn-cta-primary" style="background: #0077b5; padding: 8px 12px; font-size: 0.82rem; justify-content: center; display: flex; align-items: center; gap: 4px;" title="مشاركة الشهادة على LinkedIn">
-                      <span>💼 لينكد إن</span>
+                      <span>LinkedIn</span>
                     </button>
                   ` : `
                     <button onclick="navigateToScreen('student-dashboard')" class="btn-cta-secondary" style="flex: 1; padding: 8px; font-size: 0.82rem; justify-content: center; color: var(--text-muted);">
-                      <span>متابعة مهام المسار للاستحقاق 🔒</span>
+                      <span>متابعة مهام المسار للاستحقاق</span>
                     </button>
                   `}
                 </div>
@@ -290,9 +295,9 @@ const AccounteraPortfolioEngine = {
     const url = window.location.origin + window.location.pathname + "#portfolio";
     navigator.clipboard.writeText(url).then(() => {
       if (typeof AccModal !== 'undefined') {
-        AccModal.toast("✅ تم نسخ رابط محفظة الكفاءة المهنية الموثق بنجاح!", "success");
+        AccModal.toast("تم نسخ رابط محفظة الكفاءة المهنية الموثق بنجاح!", "success");
       } else {
-        alert("✅ تم نسخ رابط محفظة الكفاءة المهنية الموثق بنجاح!\nيمكنك إضافته في سيرتك الذاتية (CV).");
+        alert("تم نسخ رابط محفظة الكفاءة المهنية الموثق بنجاح!\nيمكنك إضافته في سيرتك الذاتية (CV).");
       }
     });
   },
@@ -317,18 +322,18 @@ const AccounteraPortfolioEngine = {
       const cert = data.certifications.find(c => c.id === certId);
       const title = cert ? cert.title : "شهادة معتمدة";
       const credId = cert ? cert.credentialId : data.studentId;
-      shareText = `🎓 فخور بحصولي على ${title} من منصة Accountera للتدريب والمحاكاة المحاسبية المتقدمة!\n\n` +
-        `💼 تم التحقق من المهارات عملياً والتوجيه الدفتري وفق معايير المحاسبة المصرية (EAS).\n` +
+      shareText = `فخور بحصولي على ${title} من منصة Accountera للتدريب والمحاكاة المحاسبية المتقدمة.\n\n` +
+        `تم التحقق من المهارات عملياً والتوجيه الدفتري وفق معايير المحاسبة المصرية (EAS).\n` +
         `رقم الاعتماد المهني: ${credId}\n\n` +
-        `🔗 رابط التحقق من المحفظة والشهادات: ${portfolioUrl}\n` +
+        `رابط التحقق من المحفظة والشهادات: ${portfolioUrl}\n` +
         `#محاسبة #Accountera #LinkedIn #Accounting #EAS #EgyptianAccountingStandards`;
     } else {
-      shareText = `🎓 فخور بمشاركة محفظتي المحاسبية المهنية المعتمدة من منصة Accountera لإتقان الدورة المحاسبية الكاملة!\n\n` +
-        `💼 تم إنجاز وتوثيق العمليات الدفترية ومطابقة القوائم بنسبة دقة 100%:\n` +
-        `✓ قيود اليومية العامة وترحيل الأستاذ وميزان المراجعة\n` +
-        `✓ المعالجة الضريبية لقانون القيمة المضافة 14% والخصم والتحصيل\n` +
-        `✓ التسويات البنكية ومطابقة الموردين الثلاثية\n\n` +
-        `🔗 رابط المحفظة وسجل الكفاءات الموثق: ${portfolioUrl}\n` +
+      shareText = `فخور بمشاركة محفظتي المحاسبية المهنية المعتمدة من منصة Accountera لإتقان الدورة المحاسبية الكاملة.\n\n` +
+        `تم إنجاز وتوثيق العمليات الدفترية ومطابقة القوائم بنسبة دقة 100%:\n` +
+        `• قيود اليومية العامة وترحيل الأستاذ وميزان المراجعة\n` +
+        `• المعالجة الضريبية لقانون القيمة المضافة 14% والخصم والتحصيل\n` +
+        `• التسويات البنكية ومطابقة الموردين الثلاثية\n\n` +
+        `رابط المحفظة وسجل الكفاءات الموثق: ${portfolioUrl}\n` +
         `#محاسبة #Accountera #LinkedIn #Accounting #EgyptianAccountingStandards`;
     }
 
@@ -362,8 +367,8 @@ const AccounteraPortfolioEngine = {
     
     overlay.innerHTML = `
       <div style="background:var(--surface-ground, #1e293b); color:var(--text-primary, #fff); border:1px solid rgba(255,255,255,0.15); border-radius:20px; max-width:480px; width:100%; padding:2rem; box-shadow:0 20px 40px rgba(0,0,0,0.5); text-align:center; animation:fadeIn 0.25s ease;">
-        <div style="width:68px; height:68px; margin:0 auto 1.25rem; border-radius:50%; background:rgba(0,119,181,0.15); border:2px solid #0077b5; display:flex; align-items:center; justify-content:center; font-size:2rem;">
-          💼
+        <div style="width:68px; height:68px; margin:0 auto 1.25rem; border-radius:50%; background:rgba(0,119,181,0.15); border:2px solid #0077b5; display:flex; align-items:center; justify-content:center; color:#38bdf8;">
+          ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 32, strokeWidth: 1.75 }) : ''}
         </div>
 
         <h3 style="font-size:1.3rem; font-weight:800; margin:0 0 8px; color:#38bdf8;">ميزة مشاركة الاعتماد على LinkedIn</h3>
@@ -372,7 +377,7 @@ const AccounteraPortfolioEngine = {
         </p>
 
         <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:1rem; margin-bottom:1.5rem; text-align:right;">
-          <div style="font-size:0.82rem; font-weight:700; color:#10b981; margin-bottom:8px;">💎 ما تمنحه لك الترقية:</div>
+          <div style="font-size:0.82rem; font-weight:700; color:#10b981; margin-bottom:8px;">ما تمنحه لك الترقية:</div>
           <ul style="margin:0; padding-right:18px; font-size:0.8rem; line-height:1.8; color:var(--text-secondary, #cbd5e1);">
             <li>مشاركة أرقام تتبع وتراخيص الاعتماد المهني على LinkedIn</li>
             <li>توثيق إتقان معايير المحاسبة المصرية (EAS) لمديري التوظيف</li>
@@ -382,13 +387,13 @@ const AccounteraPortfolioEngine = {
 
         <div style="display:flex; flex-direction:column; gap:10px;">
           <button onclick="AccounteraPortfolioEngine.upgradeToProTrial()" class="btn-cta-primary" style="background:#0077b5; padding:12px; font-size:0.92rem; justify-content:center; font-weight:800; border-radius:10px;">
-            ⚡ تفعيل تجربة Pro السريعة والمشاركة فوراً
+            تفعيل تجربة Pro السريعة والمشاركة فوراً
           </button>
           <button onclick="AccounteraPortfolioEngine.goToPlans()" class="btn-cta-secondary" style="padding:10px; font-size:0.88rem; justify-content:center; border-radius:10px;">
-            💳 تصفح باقات الاشتراك في Accountera
+            تصفح باقات الاشتراك في Accountera
           </button>
           <button onclick="document.getElementById('accLinkedInUpgradeModal').remove()" style="background:transparent; border:none; color:var(--text-muted, #94a3b8); padding:8px; font-size:0.82rem; cursor:pointer;">
-            إلغاء ✕
+            إلغاء
           </button>
         </div>
       </div>
@@ -431,9 +436,9 @@ const AccounteraPortfolioEngine = {
     if (modal) modal.remove();
 
     if (typeof AccModal !== 'undefined') {
-      AccModal.toast("🎉 تم تفعيل باقة المحاسب المحترف (Pro) بنجاح! تم فتح مشاركة LinkedIn.", "success");
+      AccModal.toast("تم تفعيل باقة المحاسب المحترف (Pro) بنجاح! تم فتح مشاركة LinkedIn.", "success");
     } else {
-      alert("🎉 تم ترقية حسابك إلى باقة المحاسب المحترف (Pro) بنجاح!");
+      alert("تم ترقية حسابك إلى باقة المحاسب المحترف (Pro) بنجاح!");
     }
 
     // إعادة عرض المحفظة بالصلاحيات المفتوحة
@@ -480,7 +485,9 @@ const AccounteraPortfolioEngine = {
             <strong style="color:#10b981; font-size:1.1rem; display:block;">منصة Accountera للتدريب المحاسبي</strong>
             <span style="font-size:0.75rem; color:#94a3b8;">Egyptian Accounting Standards Simulation Engine</span>
           </div>
-          <div style="font-size:1.8rem;">🏛️</div>
+          <div style="color:#10b981; display:flex; align-items:center;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 28, strokeWidth: 1.75 }) : ''}
+          </div>
         </div>
 
         <div style="margin-bottom:1.5rem;">
@@ -513,14 +520,16 @@ const AccounteraPortfolioEngine = {
         <!-- أزرار الإجراء -->
         <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
           <button onclick="AccounteraPortfolioEngine.shareLinkedIn('${cert.id}')" class="btn-cta-primary" style="background:#0077b5; padding:10px 18px; font-size:0.88rem; display:flex; align-items:center; gap:6px;">
-            <span>💼 مشاركة هذه الشهادة على LinkedIn</span>
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
+            <span>مشاركة هذه الشهادة على LinkedIn</span>
             ${!perm.allowed ? '<span style="background:#f59e0b; color:#000; font-size:0.65rem; padding:2px 6px; border-radius:10px; font-weight:800;">PRO</span>' : ''}
           </button>
           <button onclick="window.print()" class="btn-cta-secondary" style="padding:10px 16px; font-size:0.88rem; display:flex; align-items:center; gap:6px;">
-            <span>🖨️ طباعة الشهادة</span>
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 16 }) : ''}
+            <span>طباعة الشهادة</span>
           </button>
           <button onclick="document.getElementById('accCertPreviewModal').remove()" class="btn-workspace-action" style="padding:10px 16px; font-size:0.88rem;">
-            إغلاق ✕
+            إغلاق
           </button>
         </div>
 

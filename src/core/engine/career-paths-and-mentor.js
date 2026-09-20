@@ -10,35 +10,35 @@ const ACC_CAREER_PATHS = {
   general_accountant: {
     id: "general_accountant",
     title: "محاسب عام (General Accountant)",
-    icon: "💼",
+    icon: "briefcase",
     desc: "إتقان قيود اليومية، الأستاذ العام، ميزان المراجعة، قيود التسويات الختامية، وإعداد القوائم المالية.",
     competencies: ["GL", "Adjustments", "Closing", "Financial Statements"]
   },
   ap_accountant: {
     id: "ap_accountant",
     title: "محاسب موردين وحسابات دائنة (AP Accountant)",
-    icon: "📦",
+    icon: "package",
     desc: "دورة المشتريات والمخازن، فحص الفواتير الضريبية، المطابقة الثلاثية 3-Way Matching، ومصادقات الموردين.",
     competencies: ["Suppliers", "Purchase Cycle", "Invoice Matching", "Supplier Reconciliation"]
   },
   ar_accountant: {
     id: "ar_accountant",
     title: "محاسب عملاء وحسابات مدينة (AR Accountant)",
-    icon: "📈",
+    icon: "trend-up",
     desc: "دورة المبيعات والتحصيل، حدود الائتمان، فواتير البيع الإلكترونية، تقارير أعمار الديون Aging، ومصادقات العملاء.",
     competencies: ["Customers", "Sales Cycle", "Collections", "Aging Reports"]
   },
   treasury_accountant: {
     id: "treasury_accountant",
     title: "محاسب الخزينة والبنوك (Treasury Accountant)",
-    icon: "🏦",
+    icon: "bank",
     desc: "إدارة الخزائن النقدية، حركات الشيكات وأوراق القبض والدفع، ومذكرات التسوية البنكية الشهرية الشاملة.",
     competencies: ["Cash Flow", "Banks", "Bank Reconciliation", "Petty Cash"]
   },
   tax_accountant: {
     id: "tax_accountant",
     title: "محاسب الضرائب (Tax Accountant)",
-    icon: "⚖️",
+    icon: "scales",
     desc: "ضريبة القيمة المضافة 14%، ضريبة الخصم والتحصيل (نموذج 41)، وفحص الفروق المؤقتة والدائمة.",
     competencies: ["VAT 14%", "Withholding Tax", "Tax Invoices", "Tax Adjustments"]
   }

@@ -10,7 +10,7 @@ const DEFAULT_ADMIN_PLANS = [
     price: 0,
     period: "مجاناً مدى الحياة",
     badge: "تأسيسي",
-    icon: "🌱",
+    icon: "book-open",
     color: "#10B981",
     maxLessons: 3,
     maxCompanies: 1,
@@ -33,7 +33,7 @@ const DEFAULT_ADMIN_PLANS = [
     price: 299,
     period: "3 أشهر",
     badge: "الأكثر طلباً",
-    icon: "🚀",
+    icon: "briefcase",
     color: "#3B82F6",
     maxLessons: 999,
     maxCompanies: 5,
@@ -49,7 +49,7 @@ const DEFAULT_ADMIN_PLANS = [
       "وضع المراجع الخارجي واكتشاف الأخطاء",
       "جناح الإكسل المحاسبي المتقدم",
       "جواز الكفاءة المهنية والشهادات",
-      "مشاركة الاعتماد المهني مباشرة على LinkedIn 💼"
+      "مشاركة الاعتماد المهني مباشرة على LinkedIn"
     ]
   },
   {
@@ -58,7 +58,7 @@ const DEFAULT_ADMIN_PLANS = [
     price: 599,
     period: "سنة كاملة",
     badge: "النخبة",
-    icon: "👑",
+    icon: "sparkle",
     color: "#8B5CF6",
     maxLessons: 999,
     maxCompanies: 999,
@@ -76,7 +76,7 @@ const DEFAULT_ADMIN_PLANS = [
       "محاكي المقابلات الشخصية الفنية للتوظيف",
       "تصدير واستيراد ملفات القيود لبرامج ERP",
       "شهادة خبرة رقمية موثقة برمز QR",
-      "مشاركة الاعتماد وسجل الكفاءات على LinkedIn 💼"
+      "مشاركة الاعتماد وسجل الكفاءات على LinkedIn"
     ]
   }
 ];
@@ -88,19 +88,19 @@ const DEFAULT_ADMIN_COUPONS = [
     discountValue: 30,
     targetPlan: "pro",
     maxUses: 200,
-    usedCount: 24,
-    expiry: "2026-12-31",
-    isActive: true
+    usedCount: 14,
+    isActive: true,
+    expiry: "2026-12-31"
   },
   {
-    code: "FREEPASS",
+    code: "FREEPASS100",
     discountType: "FREE_PASS",
     discountValue: 100,
-    targetPlan: "pro",
+    targetPlan: "vip",
     maxUses: 50,
-    usedCount: 12,
-    expiry: "2026-12-31",
-    isActive: true
+    usedCount: 7,
+    isActive: true,
+    expiry: "2026-12-31"
   }
 ];
 
@@ -109,7 +109,7 @@ const DEFAULT_AUDIT_ENGAGEMENTS = [
     id: "audit-1",
     companyName: "شركة النيل للتجارة الهندسية ش.م.م",
     sector: "التجارة والتوزيع",
-    logo: "🏢",
+    logo: "buildings",
     badge: "مراجعة دورية",
     materialityThreshold: 15000,
     description: "مراجعة وتدقيق حسابات المشتريات والمصروفات الرأسمالية والتحقق من صحة التوجيه المحاسبي وقيود التسوية.",
@@ -224,42 +224,54 @@ const ExcelAdminDashboard = {
         <div class="admin-hero-card">
           <div class="admin-hero-header">
             <div>
-              <div class="admin-badge">🛡️ لوحة التحكم المركزية والإدارية</div>
+              <div class="admin-badge" style="display:inline-flex; align-items:center; gap:6px;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('shield', { size: 14 }) : ''}
+                <span>لوحة التحكم المركزية والإدارية</span>
+              </div>
               <h1 class="admin-hero-title">منظومة إدارة المحاسب المبتدئ (Admin OS)</h1>
               <p class="admin-hero-desc">إدارة شاملة للباقات، أكواد التفعيل، دليل المستخدمين، ملفات التدقيق، والنسخ الاحتياطي</p>
             </div>
             <div style="display:flex; align-items:center; gap:10px;">
-              <button class="btn-workspace-action" onclick="ExcelAdminDashboard.exportBackupJson()">
-                📥 تصدير نسخة شاملة
+              <button class="btn-workspace-action" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.exportBackupJson()">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('download', { size: 14 }) : ''}
+                <span>تصدير نسخة شاملة</span>
               </button>
-              <button class="btn-workspace-action btn-workspace-primary" onclick="ExcelAdminDashboard.switchTab('settings')">
-                ⚙️ الإعدادات العامة
+              <button class="btn-workspace-action btn-workspace-primary" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.switchTab('settings')">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 14 }) : ''}
+                <span>الإعدادات العامة</span>
               </button>
             </div>
           </div>
 
           <!-- شريط التبويبات الـ 7 المطابقة للمخطط -->
           <div class="admin-tabs-nav">
-            <button class="admin-tab-btn ${this.activeTab === 'overview' ? 'active' : ''}" onclick="ExcelAdminDashboard.switchTab('overview')">
-              📊 المؤشرات العامة
+            <button class="admin-tab-btn ${this.activeTab === 'overview' ? 'active' : ''}" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.switchTab('overview')">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 14 }) : ''}
+              <span>المؤشرات العامة</span>
             </button>
-            <button class="admin-tab-btn ${this.activeTab === 'companies' ? 'active' : ''}" onclick="ExcelAdminDashboard.switchTab('companies')">
-              🏢 محاكاة الشركات
+            <button class="admin-tab-btn ${this.activeTab === 'companies' ? 'active' : ''}" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.switchTab('companies')">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 14 }) : ''}
+              <span>محاكاة الشركات</span>
             </button>
-            <button class="admin-tab-btn ${this.activeTab === 'plans' ? 'active' : ''}" onclick="ExcelAdminDashboard.switchTab('plans')">
-              💳 الباقات والتسعير
+            <button class="admin-tab-btn ${this.activeTab === 'plans' ? 'active' : ''}" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.switchTab('plans')">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 14 }) : ''}
+              <span>الباقات والتسعير</span>
             </button>
-            <button class="admin-tab-btn ${this.activeTab === 'coupons' ? 'active' : ''}" onclick="ExcelAdminDashboard.switchTab('coupons')">
-              🎟️ أكواد الخصم والتفعيل
+            <button class="admin-tab-btn ${this.activeTab === 'coupons' ? 'active' : ''}" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.switchTab('coupons')">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('ticket', { size: 14 }) : ''}
+              <span>أكواد الخصم والتفعيل</span>
             </button>
-            <button class="admin-tab-btn ${this.activeTab === 'users' ? 'active' : ''}" onclick="ExcelAdminDashboard.switchTab('users')">
-              👥 دليل المستخدمين
+            <button class="admin-tab-btn ${this.activeTab === 'users' ? 'active' : ''}" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.switchTab('users')">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('users', { size: 14 }) : ''}
+              <span>دليل المستخدمين</span>
             </button>
-            <button class="admin-tab-btn ${this.activeTab === 'audit' ? 'active' : ''}" onclick="ExcelAdminDashboard.switchTab('audit')">
-              🔍 إدارة المراجعة والتدقيق
+            <button class="admin-tab-btn ${this.activeTab === 'audit' ? 'active' : ''}" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.switchTab('audit')">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('search', { size: 14 }) : ''}
+              <span>إدارة المراجعة والتدقيق</span>
             </button>
-            <button class="admin-tab-btn ${this.activeTab === 'settings' ? 'active' : ''}" onclick="ExcelAdminDashboard.switchTab('settings')">
-              ⚙️ مفاتيح المنظومة والنسخ
+            <button class="admin-tab-btn ${this.activeTab === 'settings' ? 'active' : ''}" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.switchTab('settings')">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 14 }) : ''}
+              <span>مفاتيح المنظومة والنسخ</span>
             </button>
           </div>
         </div>
@@ -333,7 +345,10 @@ const ExcelAdminDashboard = {
       <div class="admin-metrics-grid">
         <div class="admin-metric-card" style="border-top: 4px solid #10b981;">
           <div class="metric-number" style="color: #10b981;">${this.companies.length}</div>
-          <div class="metric-title">🏢 شركات المحاكاة النشطة</div>
+          <div class="metric-title" style="display:flex; align-items:center; justify-content:center; gap:6px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 16 }) : ''}
+            <span>شركات المحاكاة النشطة</span>
+          </div>
         </div>
 
         <div class="admin-metric-card" style="border-top: 4px solid #3b82f6;">
@@ -368,7 +383,7 @@ const ExcelAdminDashboard = {
           </p>
         </div>
         <button class="btn-workspace-action ${this.systemConfig.enforcePlanGating ? 'btn-workspace-action' : 'btn-workspace-primary'}" onclick="ExcelAdminDashboard.togglePlanGating()">
-          ${this.systemConfig.enforcePlanGating ? '🔓 تعطيل القيود (فتح المنصة للجميع)' : '🔒 تفعيل قيود الباقات والترقية'}
+          ${this.systemConfig.enforcePlanGating ? 'تعطيل القيود (فتح المنصة للجميع)' : 'تفعيل قيود الباقات والترقية'}
         </button>
       </div>
 
@@ -407,19 +422,24 @@ const ExcelAdminDashboard = {
       <!-- شريط الإجراءات العلوي لإدارة الشركات -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
         <div>
-          <h2 style="margin:0; font-size:1.3rem; font-weight:900;">🏢 إدارة محاكاة مجمع الشركات (${this.companies.length})</h2>
+          <h2 style="margin:0; font-size:1.3rem; font-weight:900; display:flex; align-items:center; gap:8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 20 }) : ''}
+            <span>إدارة محاكاة مجمع الشركات (${this.companies.length})</span>
+          </h2>
           <p style="margin:4px 0 0; color:var(--text-muted); font-size:0.88rem;">إضافة الشركات، استيراد الحزم التدريبية الشاملة (JSON)، وتعديل سندات العمليات والفواتير</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <!-- زر استيراد ملف JSON من الجهاز -->
           <input type="file" id="admin_import_company_json" accept=".json" style="display:none;" onchange="ExcelAdminDashboard.handleCompanyJsonUpload(event)">
-          <button class="btn-workspace-action btn-workspace-primary" style="background:#059669; color:#fff;" onclick="document.getElementById('admin_import_company_json').click()" title="رفع ملف حزمة تدريبية JSON لأي شركة من جهازك">
-            📥 استيراد شركة من ملف تدريبي (JSON)
+          <button class="btn-workspace-action btn-workspace-primary" style="background:#059669; color:#fff; display:inline-flex; align-items:center; gap:6px;" onclick="document.getElementById('admin_import_company_json').click()" title="رفع ملف حزمة تدريبية JSON لأي شركة من جهازك">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('download', { size: 14 }) : ''}
+            <span>استيراد شركة من ملف تدريبي (JSON)</span>
           </button>
 
           <!-- زر إضافة شركة يدوياً -->
-          <button class="btn-workspace-action" onclick="ExcelAdminDashboard.showAddCompanyModal()">
-            ➕ إضافة شركة جديدة (يدوي)
+          <button class="btn-workspace-action" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.showAddCompanyModal()">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('plus', { size: 14 }) : '+'}
+            <span>إضافة شركة جديدة (يدوي)</span>
           </button>
         </div>
       </div>
@@ -427,7 +447,7 @@ const ExcelAdminDashboard = {
       <!-- بطاقة تنبيه إرشادية للمسؤول -->
       <div style="background:rgba(37, 99, 235, 0.05); border:1px solid rgba(37, 99, 235, 0.2); border-radius:12px; padding:12px 16px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
         <div style="display:flex; align-items:center; gap:10px;">
-          <span style="font-size:1.4rem;">💡</span>
+          <span style="color:#2563eb;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lightbulb', { size: 20 }) : '★'}</span>
           <div style="font-size:0.86rem; color:var(--text-secondary); line-height:1.5;">
             <strong style="color:var(--text-primary);">طريقة إضافة شركات المحاكاة:</strong>
             اضغط على <strong>"استيراد شركة من ملف تدريبي (JSON)"</strong> لرفع أي ملف شركة مخرج من المولد (<code style="background:rgba(0,0,0,0.06); padding:2px 6px; border-radius:4px;">.json</code>) لإنشاء الشركة وقراءة كافة العمليات والسندات التابعة لها تلقائياً، أو اضغط <strong>"إضافة شركة جديدة"</strong> للإنشاء اليدوي.
@@ -438,17 +458,21 @@ const ExcelAdminDashboard = {
       <!-- قائمة الشركات أو حالة عدم وجود شركات -->
       ${this.companies.length === 0 ? `
         <div style="text-align:center; padding: 3.5rem 1.5rem; background: var(--surface-card); border-radius: 16px; border: 2px dashed var(--border-subtle); max-width: 680px; margin: 0 auto;">
-          <div style="font-size: 3.2rem; margin-bottom: 0.8rem;">🏢</div>
+          <div style="margin-bottom: 0.8rem; color: var(--text-muted); display:flex; justify-content:center;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 40 }) : ''}
+          </div>
           <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">لا توجد شركات محاكاة مضافة حالياً في المنظومة</h3>
           <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem; max-width: 520px; margin-left:auto; margin-right:auto;">
             يمكنك استيراد بيئة تدريب شركة متكاملة مع كافة عملياتها من ملف JSON مخرج من المولد المحاسبي، أو إنشاء شركة جديدة يدوياً.
           </p>
           <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-            <button class="btn-workspace-action btn-workspace-primary" style="background:#059669; color:#fff; padding:10px 22px; font-weight:700;" onclick="document.getElementById('admin_import_company_json').click()">
-              📥 استيراد شركة من ملف تدريبي (JSON)
+            <button class="btn-workspace-action btn-workspace-primary" style="background:#059669; color:#fff; padding:10px 22px; font-weight:700; display:inline-flex; align-items:center; gap:6px;" onclick="document.getElementById('admin_import_company_json').click()">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('download', { size: 14 }) : ''}
+              <span>استيراد شركة من ملف تدريبي (JSON)</span>
             </button>
-            <button class="btn-workspace-action" style="padding:10px 20px; font-weight:700;" onclick="ExcelAdminDashboard.showAddCompanyModal()">
-              ➕ إنشاء شركة جديدة (يدوي)
+            <button class="btn-workspace-action" style="padding:10px 20px; font-weight:700; display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.showAddCompanyModal()">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('plus', { size: 14 }) : '+'}
+              <span>إنشاء شركة جديدة (يدوي)</span>
             </button>
           </div>
         </div>
@@ -459,7 +483,9 @@ const ExcelAdminDashboard = {
               <!-- هيدر بطاقة الشركة -->
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
                 <div style="display:flex; align-items:center; gap:12px;">
-                  <span style="font-size:2.2rem; background:rgba(16, 185, 129, 0.1); padding:8px 12px; border-radius:12px;">${comp.icon || '🏢'}</span>
+                  <span style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; background:rgba(16, 185, 129, 0.1); color:#10b981;">
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 24 }) : ''}
+                  </span>
                   <div>
                     <h3 style="margin:0; font-size:1.2rem; font-weight:800; color:var(--text-primary);">${comp.name}</h3>
                     <div style="display:flex; gap:6px; margin-top:4px; flex-wrap:wrap;">
@@ -470,21 +496,26 @@ const ExcelAdminDashboard = {
                   </div>
                 </div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                  <button class="btn-workspace-action btn-workspace-primary" style="background:#2563eb; color:#fff;" onclick="ExcelAdminDashboard.deployCompanyToSimulator('${comp.id}')" title="فتح واختبار هذه الشركة مباشرة في بيئة المحاكي">
-                    🚀 تشغيل بالمحاكي
+                  <button class="btn-workspace-action btn-workspace-primary" style="background:#2563eb; color:#fff; display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.deployCompanyToSimulator('${comp.id}')" title="فتح واختبار هذه الشركة مباشرة في بيئة المحاكي">
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 14 }) : ''}
+                    <span>تشغيل بالمحاكي</span>
                   </button>
-                  <button class="btn-workspace-action" onclick="ExcelAdminDashboard.exportCompanyJson('${comp.id}')" title="تصدير بيانات الشركة وسنداتها كملف JSON">
-                    📤 تصدير JSON
+                  <button class="btn-workspace-action" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.exportCompanyJson('${comp.id}')" title="تصدير بيانات الشركة وسنداتها كملف JSON">
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('download', { size: 14 }) : ''}
+                    <span>تصدير JSON</span>
                   </button>
                   <input type="file" id="comp_csv_file_${comp.id}" accept=".csv" style="display:none;" onchange="ExcelAdminDashboard.importCompanyTransactionsFromCsv(event, '${comp.id}')">
-                  <button class="btn-workspace-action" onclick="document.getElementById('comp_csv_file_${comp.id}').click()" title="رفع ملف اليومية أو السندات (journal.csv)">
-                    📥 استيراد CSV
+                  <button class="btn-workspace-action" style="display:inline-flex; align-items:center; gap:6px;" onclick="document.getElementById('comp_csv_file_${comp.id}').click()" title="رفع ملف اليومية أو السندات (journal.csv)">
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('upload', { size: 14 }) : ''}
+                    <span>استيراد CSV</span>
                   </button>
-                  <button class="btn-workspace-action" onclick="ExcelAdminDashboard.saveCompanyMeta('${comp.id}')">
-                    💾 حفظ
+                  <button class="btn-workspace-action" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.saveCompanyMeta('${comp.id}')">
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('save', { size: 14 }) : ''}
+                    <span>حفظ</span>
                   </button>
-                  <button class="btn-workspace-action" style="color:#ef4444;" onclick="ExcelAdminDashboard.deleteCompany('${comp.id}')">
-                    🗑️ حذف
+                  <button class="btn-workspace-action" style="color:#ef4444; display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.deleteCompany('${comp.id}')">
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : ''}
+                    <span>حذف</span>
                   </button>
                 </div>
               </div>
@@ -517,16 +548,19 @@ const ExcelAdminDashboard = {
               <!-- شريط العمليات والسندات المالية -->
               <div style="border-top:1px dashed var(--border-subtle); padding-top:14px; margin-top:14px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-                  <h4 style="margin:0; font-size:0.98rem; font-weight:800; color:var(--text-primary);">
-                    📑 سندات وفواتير العمليات (${(comp.transactions || []).length} سند مسجل):
+                  <h4 style="margin:0; font-size:0.98rem; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 16 }) : ''}
+                    <span>سندات وفواتير العمليات (${(comp.transactions || []).length} سند مسجل):</span>
                   </h4>
                   <div style="display:flex; gap:8px;">
-                    <button class="btn-workspace-action btn-workspace-primary" style="padding:4px 12px; font-size:0.8rem;" onclick="ExcelAdminDashboard.showAddTransactionModal('${comp.id}')">
-                      ➕ إضافة سند مالي يدوي
+                    <button class="btn-workspace-action btn-workspace-primary" style="padding:4px 12px; font-size:0.8rem; display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.showAddTransactionModal('${comp.id}')">
+                      ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('plus', { size: 14 }) : '+'}
+                      <span>إضافة سند مالي يدوي</span>
                     </button>
                     ${(comp.transactions || []).length > 10 ? `
-                      <button class="btn-workspace-action" style="padding:4px 12px; font-size:0.8rem;" onclick="ExcelAdminDashboard.toggleTransactionsExpand('${comp.id}')" id="btn_expand_${comp.id}">
-                        📂 عرض كافة السندات (${(comp.transactions || []).length})
+                      <button class="btn-workspace-action" style="padding:4px 12px; font-size:0.8rem; display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.toggleTransactionsExpand('${comp.id}')" id="btn_expand_${comp.id}">
+                        ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 14 }) : ''}
+                        <span>عرض كافة السندات (${(comp.transactions || []).length})</span>
                       </button>
                     ` : ''}
                   </div>
@@ -551,8 +585,9 @@ const ExcelAdminDashboard = {
                           | المبلغ: <strong style="color:var(--text-primary);">${(t.amount || 0).toLocaleString()} ج.م</strong>
                         </div>
                       </div>
-                      <button class="btn-workspace-action" style="color:#ef4444; padding:4px 10px; font-size:0.8rem;" onclick="ExcelAdminDashboard.deleteCompanyTransaction('${comp.id}', '${t.id}')">
-                        🗑️ حذف
+                      <button class="btn-workspace-action" style="color:#ef4444; padding:4px 10px; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px;" onclick="ExcelAdminDashboard.deleteCompanyTransaction('${comp.id}', '${t.id}')">
+                        ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : ''}
+                        <span>حذف</span>
                       </button>
                     </div>
                   `).join('')}
@@ -582,12 +617,12 @@ const ExcelAdminDashboard = {
     const isExpanded = btn.getAttribute('data-expanded') === 'true';
     if (isExpanded) {
       btn.setAttribute('data-expanded', 'false');
-      btn.innerHTML = `📂 عرض كافة السندات (${comp.transactions.length})`;
+      btn.innerHTML = `${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 14 }) : ''} <span>عرض كافة السندات (${comp.transactions.length})</span>`;
       if (moreNotice) moreNotice.style.display = 'block';
       this.switchTab('companies');
     } else {
       btn.setAttribute('data-expanded', 'true');
-      btn.innerHTML = `📁 طي السندات (عرض 10 فقط)`;
+      btn.innerHTML = `${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 14 }) : ''} <span>طي السندات (عرض 10 فقط)</span>`;
       if (moreNotice) moreNotice.style.display = 'none';
       container.innerHTML = comp.transactions.map((t, tIdx) => `
         <div style="background:var(--surface-ground); border:1px solid var(--border-subtle); border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
@@ -604,8 +639,9 @@ const ExcelAdminDashboard = {
               | المبلغ: <strong style="color:var(--text-primary);">${(t.amount || 0).toLocaleString()} ج.م</strong>
             </div>
           </div>
-          <button class="btn-workspace-action" style="color:#ef4444; padding:4px 10px; font-size:0.8rem;" onclick="ExcelAdminDashboard.deleteCompanyTransaction('${comp.id}', '${t.id}')">
-            🗑️ حذف
+          <button class="btn-workspace-action" style="color:#ef4444; padding:4px 10px; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px;" onclick="ExcelAdminDashboard.deleteCompanyTransaction('${comp.id}', '${t.id}')">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : ''}
+            <span>حذف</span>
           </button>
         </div>
       `).join('');
@@ -626,8 +662,7 @@ const ExcelAdminDashboard = {
           title: 'الشركة بدون سندات مسجلة',
           message: 'هذه الشركة لا تحتوي على سندات مالية حالياً. هل ترغب في فتح المحاكي بها خالية لتسجيل قيود حرة؟',
           confirmText: 'نعم، افتح المحاكي',
-          cancelText: 'إلغاء',
-          icon: '🏢'
+          cancelText: 'إلغاء'
         });
       } else {
         conf = confirm('هذه الشركة لا تحتوي على سندات مالية حالياً. هل ترغب في فتح المحاكي بها خالية لتسجيل قيود حرة؟');
@@ -657,7 +692,7 @@ const ExcelAdminDashboard = {
         <span class="sheet-drag-handle"></span>
         <div class="modal-header">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <span class="modal-icon-badge">🏢</span>
+            <span class="modal-icon-badge">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 24 }) : ''}</span>
             <div>
               <h3 class="modal-title">إضافة شركة محاكاة جديدة</h3>
               <p style="margin: 2px 0 0; font-size: 0.8rem; color: var(--text-muted);">تخصيص بيانات بيئة العمل المحاسبية ورأس المال</p>
@@ -689,15 +724,15 @@ const ExcelAdminDashboard = {
               <input type="text" id="modal_crole" class="admin-form-input" value="محاسب مالي عام">
             </div>
             <div class="admin-form-group">
-              <label>أيقونة الشركة</label>
+              <label>نوع ونشاط الشركة</label>
               <select id="modal_cicon" class="admin-form-input">
-                <option value="🏢">🏢 مؤسسة / شركة</option>
-                <option value="💡">💡 خدمات وأجهزة</option>
-                <option value="⚡">⚡ طاقة وإلكترونيات</option>
-                <option value="📦">📦 تجارة وتوزيع</option>
-                <option value="🛠️">🛠️ مقاولات وصيانة</option>
-                <option value="🏥">🏥 رعاية صحية</option>
-                <option value="🍽️">🍽️ أغذية ومطاعم</option>
+                <option value="buildings">مؤسسة / شركة عامة</option>
+                <option value="bank">خدمات مالية وبنكية</option>
+                <option value="trend-up">طاقة وإلكترونيات</option>
+                <option value="package">تجارة وتوزيع وسلع</option>
+                <option value="briefcase">مقاولات وصيانة وخدمات</option>
+                <option value="shield">رعاية صحية وتأمين</option>
+                <option value="gift">أغذية ومطاعم وتجزئة</option>
               </select>
             </div>
           </div>
@@ -738,7 +773,7 @@ const ExcelAdminDashboard = {
     const sector = document.getElementById('modal_csector')?.value.trim() || 'نشاط تجاري';
     const capital = parseFloat(document.getElementById('modal_ccapital')?.value) || 2000000;
     const role = document.getElementById('modal_crole')?.value.trim() || 'محاسب مالي';
-    const icon = document.getElementById('modal_cicon')?.value || '🏢';
+    const icon = document.getElementById('modal_cicon')?.value || 'buildings';
     const desc = document.getElementById('modal_cdesc')?.value.trim() || `بيئة عمل محاسبية لـ ${name}.`;
 
     const newCompany = {
@@ -800,7 +835,6 @@ const ExcelAdminDashboard = {
       confirmed = await AccModal.confirm({
         title: 'حذف الشركة نهائياً',
         message: `هل أنت متأكد من رغبتك في حذف شركة (${comp.name}) وكافة سنداتها المحاسبية؟ لن تتمكن من استرجاعها بعد الحذف.`,
-        icon: '🗑️',
         confirmText: 'نعم، حذف الشركة',
         cancelText: 'تراجع',
         danger: true
@@ -955,7 +989,7 @@ const ExcelAdminDashboard = {
         name: compName,
         sector: sector,
         badge: meta.scenarioName ? 'شركة حقيقية مستقرة' : 'بيئة أعمال متكاملة',
-        icon: '💡',
+        icon: 'lightbulb',
         role: role,
         capital: capital,
         description: `بيئة محاكاة محاسبية متقدمة لـ ${compName} (${sector}) برأس مال قدره ${capital.toLocaleString()} ج.م، تتضمن دورة تدريبية واقعية بـ ${transactions.length} معاملة وسند مالي.`,
@@ -971,7 +1005,7 @@ const ExcelAdminDashboard = {
         name: json.name,
         sector: json.sector || 'قطاع عام',
         badge: json.badge || 'نشاط تجاري',
-        icon: json.icon || '🏢',
+        icon: json.icon && !/[\u{1F300}-\u{1FAFF}]/u.test(json.icon) ? json.icon : 'buildings',
         role: json.role || 'محاسب مالي',
         capital: json.capital || 1000000,
         description: json.description || `شركة ${json.name}`,
@@ -991,7 +1025,6 @@ const ExcelAdminDashboard = {
         confirmed = await AccModal.confirm({
           title: 'تحديث بيانات الشركة',
           message: `شركة (${comp.name}) موجودة بالفعل في المنظومة. هل ترغب في تحديث بياناتها واستبدال سنداتها بـ (${comp.transactions.length}) سند مالي؟`,
-          icon: '🔄',
           confirmText: 'نعم، تحديث واستبدال',
           cancelText: 'إلغاء'
         });
@@ -1045,11 +1078,10 @@ const ExcelAdminDashboard = {
 
           if (typeof AccModal !== 'undefined') {
             const openSim = await AccModal.confirm({
-              title: `🎉 تم استيراد (${targetCompany.name}) بنجاح!`,
+              title: `تم استيراد (${targetCompany.name}) بنجاح!`,
               message: `تم استيراد وتجهيز ${targetCompany.transactions?.length || 0} سند مالي وربطها بالمحاكي مباشرة. هل ترغب في فتح دفاتر المحاكي الآن لبدء تسجيل القيود؟`,
-              confirmText: '🚀 فتح المحاكي مباشرة',
-              cancelText: 'البقاء في لوحة الإدارة',
-              icon: '🏢'
+              confirmText: 'فتح المحاكي مباشرة',
+              cancelText: 'البقاء في لوحة الإدارة'
             });
             if (openSim) {
               window.location.href = 'simulation/simulation/journal/index.html';
@@ -1086,7 +1118,7 @@ const ExcelAdminDashboard = {
         <span class="sheet-drag-handle"></span>
         <div class="modal-header">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <span class="modal-icon-badge">📑</span>
+            <span class="modal-icon-badge">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 24 }) : ''}</span>
             <div>
               <h3 class="modal-title">إضافة سند مالي للشركة</h3>
               <p style="margin: 2px 0 0; font-size: 0.8rem; color: var(--text-muted);">${comp.name}</p>
@@ -1186,7 +1218,6 @@ const ExcelAdminDashboard = {
       confirmed = await AccModal.confirm({
         title: 'حذف السند المالي',
         message: 'هل أنت متأكد من رغبتك في حذف هذا السند المالي من سجل الشركة؟',
-        icon: '🗑️',
         confirmText: 'نعم، حذف',
         cancelText: 'إلغاء',
         danger: true
@@ -1311,8 +1342,8 @@ const ExcelAdminDashboard = {
 
       comp.transactions = newTxList;
       this.saveState('companies');
-      if (typeof AccModal !== 'undefined') AccModal.toast(`🎉 تم استيراد ${newTxList.length} عملية وربطها بالشركة بنجاح!`, 'success');
-      else alert(`🎉 تم بنجاح استيراد ${newTxList.length} عملية وربطها بالشركة! بمجرد دخول الطالب على الشركة سيتم تحويله للمحاكي مباشرة.`);
+      if (typeof AccModal !== 'undefined') AccModal.toast(`تم استيراد ${newTxList.length} عملية وربطها بالشركة بنجاح!`, 'success');
+      else alert(`تم بنجاح استيراد ${newTxList.length} عملية وربطها بالشركة! بمجرد دخول الطالب على الشركة سيتم تحويله للمحاكي مباشرة.`);
       this.switchTab('companies');
     };
     reader.readAsText(file, "UTF-8");
@@ -1327,11 +1358,15 @@ const ExcelAdminDashboard = {
     return `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
         <div>
-          <h2 style="margin:0; font-size:1.3rem; font-weight:900;">💳 إدارة باقات الاشتراك وتخصيص الصلاحيات</h2>
+          <h2 style="margin:0; font-size:1.3rem; font-weight:900; display:flex; align-items:center; gap:8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 22 }) : ''}
+            <span>إدارة باقات الاشتراك وتخصيص الصلاحيات</span>
+          </h2>
           <p style="margin:4px 0 0; color:var(--text-muted); font-size:0.88rem;">التحكم بأسعار ومدة الباقات والدروس المتاحة وصلاحيات الأقسام المتقدمة</p>
         </div>
-        <button class="btn-workspace-action btn-workspace-primary" onclick="ExcelAdminDashboard.addNewPlan()">
-          ➕ إضافة باقة جديدة
+        <button class="btn-workspace-action btn-workspace-primary" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.addNewPlan()">
+          ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('plus', { size: 14 }) : '+'}
+          <span>إضافة باقة جديدة</span>
         </button>
       </div>
 
@@ -1340,7 +1375,7 @@ const ExcelAdminDashboard = {
           <div class="plan-admin-card" style="border-top: 4px solid ${plan.color || '#10b981'};">
             <div>
               <div class="plan-card-header">
-                <span class="plan-icon-symbol">${plan.icon || '📦'}</span>
+                <span class="plan-icon-symbol">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('package', { size: 24 }) : '★'}</span>
                 <span class="badge" style="background:${plan.color}22; color:${plan.color}; font-weight:bold; padding:4px 10px; border-radius:9999px; font-size:0.75rem;">
                   ${plan.badge || 'باقة'}
                 </span>
@@ -1353,10 +1388,13 @@ const ExcelAdminDashboard = {
               </div>
 
               <div class="plan-rules-box" style="border-right: 3px solid ${plan.color || '#10b981'};">
-                <strong style="display:block; margin-bottom:8px; color:var(--text-primary);">📌 حدود وصلاحيات الأقسام:</strong>
+                <strong style="display:block; margin-bottom:8px; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('shield', { size: 14 }) : ''}
+                  <span>حدود وصلاحيات الأقسام:</span>
+                </strong>
                 <div class="rule-row">
                   <span>الدروس المسموحة:</span>
-                  <strong>${plan.maxLessons >= 999 ? 'جميع الدروس (♾️)' : `${plan.maxLessons} دروس`}</strong>
+                  <strong>${plan.maxLessons >= 999 ? 'جميع الدروس (غير محدود)' : `${plan.maxLessons} دروس`}</strong>
                 </div>
                 <div class="rule-row">
                   <span>محاكاة الشركات:</span>
@@ -1364,19 +1402,19 @@ const ExcelAdminDashboard = {
                 </div>
                 <div class="rule-row">
                   <span>محاكي مراجعة الشركات:</span>
-                  <strong style="color:${plan.allowAudit ? '#10b981' : '#ef4444'};">${plan.allowAudit ? '🟢 مفعل' : '🔴 مغلق'}</strong>
+                  <strong style="color:${plan.allowAudit ? '#10b981' : '#ef4444'};">${plan.allowAudit ? 'مفعل' : 'مغلق'}</strong>
                 </div>
                 <div class="rule-row">
                   <span>إكسل الدورة المحاسبية:</span>
-                  <strong style="color:${plan.allowExcelCycle ? '#10b981' : '#ef4444'};">${plan.allowExcelCycle ? '🟢 مفعل' : '🔴 مغلق'}</strong>
+                  <strong style="color:${plan.allowExcelCycle ? '#10b981' : '#ef4444'};">${plan.allowExcelCycle ? 'مفعل' : 'مغلق'}</strong>
                 </div>
                 <div class="rule-row">
                   <span>محاكي مقابلات التوظيف:</span>
-                  <strong style="color:${plan.allowInterviewSim ? '#10b981' : '#ef4444'};">${plan.allowInterviewSim ? '🟢 مفعل' : '🔴 مغلق'}</strong>
+                  <strong style="color:${plan.allowInterviewSim ? '#10b981' : '#ef4444'};">${plan.allowInterviewSim ? 'مفعل' : 'مغلق'}</strong>
                 </div>
                 <div class="rule-row">
                   <span>مشاركة المحفظة على LinkedIn:</span>
-                  <strong style="color:${plan.allowLinkedInShare ? '#10b981' : '#ef4444'};">${plan.allowLinkedInShare ? '🟢 مفعل' : '🔴 مغلق'}</strong>
+                  <strong style="color:${plan.allowLinkedInShare ? '#10b981' : '#ef4444'};">${plan.allowLinkedInShare ? 'مفعل' : 'مغلق'}</strong>
                 </div>
               </div>
 
@@ -1389,12 +1427,13 @@ const ExcelAdminDashboard = {
             </div>
 
             <div style="display:flex; gap:8px; border-top:1px solid var(--border-subtle); padding-top:14px;">
-              <button class="btn-workspace-action" style="flex:1;" onclick="ExcelAdminDashboard.openPlanEditor('${plan.id}')">
-                ⚙️ تعديل وتخصيص الباقة
+              <button class="btn-workspace-action" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="ExcelAdminDashboard.openPlanEditor('${plan.id}')">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 14 }) : ''}
+                <span>تعديل وتخصيص الباقة</span>
               </button>
               ${plan.id !== 'free' ? `
                 <button class="btn-workspace-action" style="color:#ef4444;" onclick="ExcelAdminDashboard.deletePlan('${plan.id}')" title="حذف الباقة">
-                  🗑️
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : '✕'}
                 </button>
               ` : ''}
             </div>
@@ -1411,7 +1450,9 @@ const ExcelAdminDashboard = {
       <div class="admin-editor-card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--border-subtle); padding-bottom:16px; flex-wrap:wrap; gap:12px;">
           <div style="display:flex; align-items:center; gap:12px;">
-            <span style="font-size:2.2rem; background:${plan.color}22; padding:6px 14px; border-radius:12px;">${plan.icon || '📦'}</span>
+            <span style="font-size:1.5rem; background:${plan.color}22; padding:8px 14px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; color:${plan.color};">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('package', { size: 24 }) : '★'}
+            </span>
             <div>
               <h2 style="margin:0; font-size:1.3rem;">تعديل وتخصيص باقة: <strong style="color:#10b981;">${plan.name}</strong></h2>
               <p style="margin:4px 0 0; color:var(--text-muted); font-size:0.85rem;">التحكم بأسعار ومدة وصلاحيات الأقسام لهذه الباقة</p>
@@ -1425,7 +1466,10 @@ const ExcelAdminDashboard = {
         <div class="editor-two-col">
           <!-- بيانات الباقة والتسعير -->
           <div class="editor-section-box">
-            <h4 class="editor-section-title" style="color:#10b981;">💳 ١. بيانات الباقة والتسعير</h4>
+            <h4 class="editor-section-title" style="color:#10b981; display:flex; align-items:center; gap:6px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 16 }) : ''}
+              <span>١. بيانات الباقة والتسعير</span>
+            </h4>
             
             <div class="admin-form-group">
               <label>اسم الباقة:</label>
@@ -1449,24 +1493,24 @@ const ExcelAdminDashboard = {
                 <input type="text" id="pe_badge" class="admin-form-input" value="${plan.badge || ''}">
               </div>
               <div class="admin-form-group">
-                <label>الأيقونة واللون:</label>
-                <div style="display:flex; gap:6px;">
-                  <input type="text" id="pe_icon" class="admin-form-input" style="width:60px; text-align:center;" value="${plan.icon || '📦'}">
-                  <input type="color" id="pe_color" class="admin-form-input" style="width:60px; padding:2px; height:42px;" value="${plan.color || '#10b981'}">
-                </div>
+                <label>اللون المميز:</label>
+                <input type="color" id="pe_color" class="admin-form-input" style="width:100%; padding:2px; height:42px;" value="${plan.color || '#10b981'}">
               </div>
             </div>
           </div>
 
           <!-- حدود المحتوى والصلاحيات -->
           <div class="editor-section-box">
-            <h4 class="editor-section-title" style="color:#3b82f6;">📊 ٢. حدود الدروس والمحتوى المسموح</h4>
+            <h4 class="editor-section-title" style="color:#3b82f6; display:flex; align-items:center; gap:6px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 16 }) : ''}
+              <span>٢. حدود الدروس والمحتوى المسموح</span>
+            </h4>
             
             <div class="admin-form-group">
               <label>الحد الأقصى للدروس المتاحة:</label>
               <div style="display:flex; gap:8px;">
                 <input type="number" id="pe_max_lessons" class="admin-form-input" value="${plan.maxLessons}">
-                <button type="button" class="btn-workspace-action" onclick="document.getElementById('pe_max_lessons').value = 999">فتح الكل ♾️</button>
+                <button type="button" class="btn-workspace-action" onclick="document.getElementById('pe_max_lessons').value = 999">فتح الكل</button>
               </div>
             </div>
 
@@ -1484,12 +1528,15 @@ const ExcelAdminDashboard = {
 
         <!-- مفاتيح الصلاحيات والمحاكيات -->
         <div class="editor-section-box" style="margin-bottom:20px;">
-          <h4 class="editor-section-title" style="color:#8b5cf6;">🎛️ ٣. مفاتيح تفعيل وتعطيل المحاكيات والأقسام</h4>
+          <h4 class="editor-section-title" style="color:#8b5cf6; display:flex; align-items:center; gap:6px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 16 }) : ''}
+            <span>٣. مفاتيح تفعيل وتعطيل المحاكيات والأقسام</span>
+          </h4>
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
             <label style="display:flex; align-items:center; gap:10px; background:var(--surface-card); padding:12px; border-radius:8px; border:1px solid var(--border-subtle); cursor:pointer;">
               <input type="checkbox" id="pe_allow_audit" ${plan.allowAudit ? 'checked' : ''} style="width:18px; height:18px;">
               <div>
-                <strong style="display:block; font-size:0.88rem;">🔍 محاكي مراجعة الشركات</strong>
+                <strong style="display:block; font-size:0.88rem;">محاكي مراجعة الشركات</strong>
                 <span style="font-size:0.76rem; color:var(--text-muted);">فحص المستندات وقيود التسوية AJEs</span>
               </div>
             </label>
@@ -1497,7 +1544,7 @@ const ExcelAdminDashboard = {
             <label style="display:flex; align-items:center; gap:10px; background:var(--surface-card); padding:12px; border-radius:8px; border:1px solid var(--border-subtle); cursor:pointer;">
               <input type="checkbox" id="pe_allow_excel" ${plan.allowExcelCycle ? 'checked' : ''} style="width:18px; height:18px;">
               <div>
-                <strong style="display:block; font-size:0.88rem;">📊 إكسل الدورة المحاسبية</strong>
+                <strong style="display:block; font-size:0.88rem;">إكسل الدورة المحاسبية</strong>
                 <span style="font-size:0.76rem; color:var(--text-muted);">محاكي جداول Excel Suite المالي</span>
               </div>
             </label>
@@ -1505,7 +1552,7 @@ const ExcelAdminDashboard = {
             <label style="display:flex; align-items:center; gap:10px; background:var(--surface-card); padding:12px; border-radius:8px; border:1px solid var(--border-subtle); cursor:pointer;">
               <input type="checkbox" id="pe_allow_interview" ${plan.allowInterviewSim ? 'checked' : ''} style="width:18px; height:18px;">
               <div>
-                <strong style="display:block; font-size:0.88rem;">💼 محاكي مقابلات التوظيف</strong>
+                <strong style="display:block; font-size:0.88rem;">محاكي مقابلات التوظيف</strong>
                 <span style="font-size:0.76rem; color:var(--text-muted);">بنك المقابلات والأسئلة الفنية</span>
               </div>
             </label>
@@ -1513,7 +1560,7 @@ const ExcelAdminDashboard = {
             <label style="display:flex; align-items:center; gap:10px; background:var(--surface-card); padding:12px; border-radius:8px; border:1px solid var(--border-subtle); cursor:pointer;">
               <input type="checkbox" id="pe_allow_passport" ${plan.allowSkillsPassport ? 'checked' : ''} style="width:18px; height:18px;">
               <div>
-                <strong style="display:block; font-size:0.88rem;">📜 جواز الكفاءة والشهادات</strong>
+                <strong style="display:block; font-size:0.88rem;">جواز الكفاءة والشهادات</strong>
                 <span style="font-size:0.76rem; color:var(--text-muted);">إصدار الشهادات والتوثيق برمز QR</span>
               </div>
             </label>
@@ -1521,7 +1568,7 @@ const ExcelAdminDashboard = {
             <label style="display:flex; align-items:center; gap:10px; background:var(--surface-card); padding:12px; border-radius:8px; border:1px solid var(--border-subtle); cursor:pointer;">
               <input type="checkbox" id="pe_allow_linkedin" ${plan.allowLinkedInShare ? 'checked' : ''} style="width:18px; height:18px;">
               <div>
-                <strong style="display:block; font-size:0.88rem;">💼 مشاركة الاعتماد على LinkedIn</strong>
+                <strong style="display:block; font-size:0.88rem;">مشاركة الاعتماد على LinkedIn</strong>
                 <span style="font-size:0.76rem; color:var(--text-muted);">تمكين الطالب من مشاركة محفظته الموثقة على لينكد إن</span>
               </div>
             </label>
@@ -1530,7 +1577,10 @@ const ExcelAdminDashboard = {
 
         <div style="display:flex; gap:10px; justify-content:flex-end;">
           <button class="btn-workspace-action" onclick="ExcelAdminDashboard.closePlanEditor()">إلغاء ✕</button>
-          <button class="btn-workspace-action btn-workspace-primary" onclick="ExcelAdminDashboard.savePlanEditor('${plan.id}')">💾 حفظ كافة التعديلات</button>
+          <button class="btn-workspace-action btn-workspace-primary" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.savePlanEditor('${plan.id}')">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('save', { size: 14 }) : ''}
+            <span>حفظ كافة التعديلات</span>
+          </button>
         </div>
       </div>
     `;
@@ -1593,7 +1643,7 @@ const ExcelAdminDashboard = {
       price: 199,
       period: 'شهر واحد',
       badge: 'جديد',
-      icon: '⭐',
+      icon: 'sparkle',
       color: '#10b981',
       maxLessons: 6,
       maxCompanies: 2,
@@ -1636,18 +1686,25 @@ const ExcelAdminDashboard = {
     return `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
         <div>
-          <h2 style="margin:0; font-size:1.3rem; font-weight:900;">🎟️ أكواد الخصم وبطاقات التفعيل</h2>
+          <h2 style="margin:0; font-size:1.3rem; font-weight:900; display:flex; align-items:center; gap:8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('ticket', { size: 20 }) : ''}
+            <span>أكواد الخصم وبطاقات التفعيل</span>
+          </h2>
           <p style="margin:4px 0 0; color:var(--text-muted); font-size:0.88rem;">توليد كوبونات ترويجية وبطاقات تفعيل مجانية 100% للطلاب</p>
         </div>
-        <button class="btn-workspace-action btn-workspace-primary" onclick="ExcelAdminDashboard.toggleNewCouponBox()">
-          ➕ إنشاء كود خصم جديد
+        <button class="btn-workspace-action btn-workspace-primary" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.toggleNewCouponBox()">
+          ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('plus', { size: 14 }) : '+'}
+          <span>إنشاء كود خصم جديد</span>
         </button>
       </div>
 
       <!-- نموذج إنشاء كود جديد -->
       <div id="newCouponContainer" style="display:none; margin-bottom:24px;">
         <div class="admin-editor-card" style="border-color:#10b981;">
-          <h3 style="margin-top:0; font-size:1.15rem; color:#10b981;">✨ إنشاء كود خصم / تفعيل جديد</h3>
+          <h3 style="margin-top:0; font-size:1.15rem; color:#10b981; display:flex; align-items:center; gap:6px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
+            <span>إنشاء كود خصم / تفعيل جديد</span>
+          </h3>
           <div class="editor-two-col">
             <div class="admin-form-group">
               <label>رمز الكوبون (Code):</label>
@@ -1702,7 +1759,7 @@ const ExcelAdminDashboard = {
             ${this.coupons.map(c => `
               <tr>
                 <td><code style="font-size:1rem; font-weight:800; color:#10b981;">${c.code}</code></td>
-                <td>${c.discountType === 'FREE_PASS' ? '🎁 تفعيل مجاني 100%' : (c.discountType === 'PERCENTAGE' ? 'نسبة مئوية' : 'مبلغ ثابت')}</td>
+                <td>${c.discountType === 'FREE_PASS' ? 'تفعيل مجاني 100%' : (c.discountType === 'PERCENTAGE' ? 'نسبة مئوية' : 'مبلغ ثابت')}</td>
                 <td><strong>${c.discountValue}${c.discountType === 'PERCENTAGE' ? '%' : ' ج.م'}</strong></td>
                 <td><span class="badge" style="background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:6px; font-weight:700;">${c.targetPlan.toUpperCase()}</span></td>
                 <td>${c.usedCount || 0} / ${c.maxUses || '∞'}</td>
@@ -1716,7 +1773,7 @@ const ExcelAdminDashboard = {
                     ${c.isActive ? 'تعطيل' : 'تفعيل'}
                   </button>
                   <button class="btn-workspace-action" style="padding:4px 8px; color:#ef4444;" onclick="ExcelAdminDashboard.deleteCoupon('${c.code}')">
-                    🗑️
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : '✕'}
                   </button>
                 </td>
               </tr>
@@ -1740,13 +1797,13 @@ const ExcelAdminDashboard = {
 
     if (!code) {
       if (typeof AccModal !== 'undefined') AccModal.toast('يرجى إدخال رمز الكوبون أولاً', 'error');
-      else alert('⚠️ يرجى إدخال رمز الكوبون أولاً.');
+      else alert('يرجى إدخال رمز الكوبون أولاً.');
       return;
     }
 
     if (this.coupons.some(c => c.code === code)) {
       if (typeof AccModal !== 'undefined') AccModal.toast('هذا الكود موجود بالفعل!', 'error');
-      else alert('⚠️ هذا الكود موجود بالفعل!');
+      else alert('هذا الكود موجود بالفعل!');
       return;
     }
 
@@ -1828,13 +1885,16 @@ const ExcelAdminDashboard = {
     return `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
         <div>
-          <h2 style="margin:0; font-size:1.3rem; font-weight:900;">👥 دليل المستخدمين وإدارة الصلاحيات</h2>
+          <h2 style="margin:0; font-size:1.3rem; font-weight:900; display:flex; align-items:center; gap:8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('users', { size: 20 }) : ''}
+            <span>دليل المستخدمين وإدارة الصلاحيات</span>
+          </h2>
           <p style="margin:4px 0 0; color:var(--text-muted); font-size:0.88rem;">ترقية باقات الطلاب، تغيير صلاحيات المدرسين، وإدارة الحسابات</p>
         </div>
         <input 
           type="text" 
           class="admin-form-input" 
-          placeholder="🔍 بحث باسم الطالب أو المعرف..." 
+          placeholder="بحث باسم الطالب أو المعرف..." 
           value="${this.usersSearch}"
           style="max-width:260px;"
           oninput="ExcelAdminDashboard.setUsersSearch(this.value)"
@@ -1847,13 +1907,13 @@ const ExcelAdminDashboard = {
           الكل (${users.length})
         </button>
         <button class="btn-workspace-action ${this.userRoleFilter === 'student' ? 'btn-workspace-primary' : ''}" onclick="ExcelAdminDashboard.setUserRoleFilter('student')">
-          👨‍🎓 الطلاب (${users.filter(u => u.role === 'student').length})
+          الطلاب (${users.filter(u => u.role === 'student').length})
         </button>
         <button class="btn-workspace-action ${this.userRoleFilter === 'teacher' ? 'btn-workspace-primary' : ''}" onclick="ExcelAdminDashboard.setUserRoleFilter('teacher')">
-          👨‍🏫 المدرسون (${users.filter(u => u.role === 'teacher').length})
+          المدرسون (${users.filter(u => u.role === 'teacher').length})
         </button>
         <button class="btn-workspace-action ${this.userRoleFilter === 'admin' ? 'btn-workspace-primary' : ''}" onclick="ExcelAdminDashboard.setUserRoleFilter('admin')">
-          🛡️ المسؤولون (${users.filter(u => u.role === 'admin').length})
+          المسؤولون (${users.filter(u => u.role === 'admin').length})
         </button>
       </div>
 
@@ -1884,9 +1944,9 @@ const ExcelAdminDashboard = {
                 </td>
                 <td>
                   <select class="admin-form-select" style="padding:4px 8px; font-size:0.82rem; min-width:130px;" onchange="ExcelAdminDashboard.changeUserRole('${u.id}', this.value)">
-                    <option value="student" ${u.role === 'student' ? 'selected' : ''}>👨‍🎓 طالب (Student)</option>
-                    <option value="teacher" ${u.role === 'teacher' ? 'selected' : ''}>👨‍🏫 مدرس (Teacher)</option>
-                    <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>🛡️ مسؤول (Admin)</option>
+                    <option value="student" ${u.role === 'student' ? 'selected' : ''}>طالب (Student)</option>
+                    <option value="teacher" ${u.role === 'teacher' ? 'selected' : ''}>مدرس (Teacher)</option>
+                    <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>مسؤول (Admin)</option>
                   </select>
                 </td>
                 <td>
@@ -1899,7 +1959,7 @@ const ExcelAdminDashboard = {
                 <td style="font-size:0.82rem; color:var(--text-muted);">${u.joinDate || '01 يناير 2026'}</td>
                 <td>
                   <button class="btn-workspace-action" style="padding:4px 8px; color:#ef4444;" onclick="ExcelAdminDashboard.deleteUser('${u.id}')" title="حذف الحساب">
-                    🗑️
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : '✕'}
                   </button>
                 </td>
               </tr>
@@ -1971,15 +2031,20 @@ const ExcelAdminDashboard = {
     return `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
         <div>
-          <h2 style="margin:0; font-size:1.3rem; font-weight:900;">🔍 إدارة شركات المراجعة والتدقيق المالي</h2>
+          <h2 style="margin:0; font-size:1.3rem; font-weight:900; display:flex; align-items:center; gap:8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('search', { size: 20 }) : ''}
+            <span>إدارة شركات المراجعة والتدقيق المالي</span>
+          </h2>
           <p style="margin:4px 0 0; color:var(--text-muted); font-size:0.88rem;">إعداد عينات الفحص وتحديد الأخطاء والمخالفات وتصدير نماذج Excel للتدقيق</p>
         </div>
         <div style="display:flex; gap:8px;">
-          <button class="btn-workspace-action" onclick="ExcelAdminDashboard.downloadAuditCsvTemplate()">
-            📊 نموذج Excel للمراجعة
+          <button class="btn-workspace-action" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.downloadAuditCsvTemplate()">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 14 }) : ''}
+            <span>نموذج Excel للمراجعة</span>
           </button>
-          <button class="btn-workspace-action btn-workspace-primary" onclick="ExcelAdminDashboard.showAddAuditSampleModal()">
-            ➕ إضافة عينة فحص
+          <button class="btn-workspace-action btn-workspace-primary" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.showAddAuditSampleModal()">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('plus', { size: 14 }) : '+'}
+            <span>إضافة عينة فحص</span>
           </button>
         </div>
       </div>
@@ -1988,7 +2053,9 @@ const ExcelAdminDashboard = {
       <div class="admin-editor-card" style="margin-bottom:24px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
           <div style="display:flex; align-items:center; gap:10px;">
-            <span style="font-size:2rem;">${comp.logo || '🏢'}</span>
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; background:rgba(59,130,246,0.1); color:#3b82f6;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 24 }) : ''}
+            </span>
             <div>
               <h3 style="margin:0; font-size:1.2rem;">${comp.companyName}</h3>
               <span style="font-size:0.8rem; color:var(--text-muted);">القطاع: ${comp.sector} | حد الأهمية النسبية: <strong>${(comp.materialityThreshold || 0).toLocaleString()} ج.م</strong></span>
@@ -2036,7 +2103,7 @@ const ExcelAdminDashboard = {
                   </td>
                   <td>
                     <span style="display:inline-block; padding:3px 10px; border-radius:9999px; font-size:0.75rem; font-weight:800; background:${s.isError ? '#fef2f2' : '#ecfdf5'}; color:${s.isError ? '#dc2626' : '#059669'};">
-                      ${s.isError ? '⚠️ مخالفة' : '✓ سليمة'}
+                      ${s.isError ? 'مخالفة' : 'سليمة ✓'}
                     </span>
                   </td>
                   <td>
@@ -2071,9 +2138,9 @@ const ExcelAdminDashboard = {
       isError = await AccModal.confirm({
         title: 'حالة عينة الفحص',
         message: 'هل تحتوي هذه العينة على مخالفة أو خطأ محاسبي يتوجب على الطالب اكتشافه وتصحيحه؟',
-        confirmText: 'نعم، عينة مخالفة ⚠️',
+        confirmText: 'نعم، عينة مخالفة',
         cancelText: 'لا، عملية سليمة 100% ✓',
-        icon: '🔍'
+        icon: 'search'
       });
     } else {
       isError = confirm('هل هذه العينة تحتوي على مخالفة محاسبية يتوجب تصحيحها؟ (موافق = نعم، إلغاء = سليمة)');
@@ -2121,13 +2188,19 @@ const ExcelAdminDashboard = {
   renderSettingsTab() {
     return `
       <div style="margin-bottom:20px;">
-        <h2 style="margin:0; font-size:1.3rem; font-weight:900;">⚙️ مفاتيح المنظومة والنسخ الاحتياطي</h2>
+        <h2 style="margin:0; font-size:1.3rem; font-weight:900; display:flex; align-items:center; gap:8px;">
+          ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 20 }) : ''}
+          <span>مفاتيح المنظومة والنسخ الاحتياطي</span>
+        </h2>
         <p style="margin:4px 0 0; color:var(--text-muted); font-size:0.88rem;">التحكم بالميزات المفعلة في المنصة، والنسخ الاحتياطي الشامل للبيانات</p>
       </div>
 
       <!-- مفاتيح التشغيل العامة -->
       <div class="admin-editor-card" style="margin-bottom:24px;">
-        <h3 style="margin-top:0; font-size:1.15rem; color:#10b981; margin-bottom:16px;">🛡️ مفاتيح التشغيل العامة (Feature Toggles):</h3>
+        <h3 style="margin-top:0; font-size:1.15rem; color:#10b981; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+          ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('shield', { size: 18 }) : ''}
+          <span>مفاتيح التشغيل العامة (Feature Toggles):</span>
+        </h3>
         
         <div class="settings-toggle-row">
           <div class="toggle-info">
@@ -2148,23 +2221,29 @@ const ExcelAdminDashboard = {
 
       <!-- النسخ الاحتياطي الشامل -->
       <div class="admin-editor-card">
-        <h3 style="margin-top:0; font-size:1.15rem; color:#3b82f6; margin-bottom:10px;">💾 النسخ الاحتياطي الشامل للمنصة (JSON Backup)</h3>
+        <h3 style="margin-top:0; font-size:1.15rem; color:#3b82f6; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+          ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('save', { size: 18 }) : ''}
+          <span>النسخ الاحتياطي الشامل للمنصة (JSON Backup)</span>
+        </h3>
         <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:18px; line-height:1.6;">
           تصدير كافة إعدادات المنصة والباقات والكوبونات وسجلات القيود كملف JSON مستقل، أو استرجاع نسخة سابقة في ثوانٍ.
         </p>
 
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
-          <button class="btn-workspace-action btn-workspace-primary" onclick="ExcelAdminDashboard.exportBackupJson()">
-            📥 تصدير النسخة الاحتياطية (JSON)
+          <button class="btn-workspace-action btn-workspace-primary" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.exportBackupJson()">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('download', { size: 14 }) : ''}
+            <span>تصدير النسخة الاحتياطية (JSON)</span>
           </button>
           
           <input type="file" id="importJsonInput" accept=".json" style="display:none;" onchange="ExcelAdminDashboard.handleImportJson(event)">
-          <button class="btn-workspace-action" onclick="document.getElementById('importJsonInput').click()">
-            📤 استيراد نسخة احتياطية
+          <button class="btn-workspace-action" style="display:inline-flex; align-items:center; gap:6px;" onclick="document.getElementById('importJsonInput').click()">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('upload', { size: 14 }) : ''}
+            <span>استيراد نسخة احتياطية</span>
           </button>
 
-          <button class="btn-workspace-action" style="color:#ef4444;" onclick="ExcelAdminDashboard.resetPlatformData()">
-            🔄 استعادة ضبط المصنع
+          <button class="btn-workspace-action" style="color:#ef4444; display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.resetPlatformData()">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('rotate', { size: 14 }) : ''}
+            <span>استعادة ضبط المصنع</span>
           </button>
         </div>
       </div>
@@ -2222,12 +2301,12 @@ const ExcelAdminDashboard = {
         if (data.systemConfig) this.systemConfig = data.systemConfig;
 
         this.saveState();
-        if (typeof AccModal !== 'undefined') AccModal.toast('🎉 تم استيراد وتحديث كافة بيانات المنصة بنجاح!', 'success');
-        else alert('🎉 تم استيراد وتحديث كافة بيانات المنصة بنجاح!');
+        if (typeof AccModal !== 'undefined') AccModal.toast('تم استيراد وتحديث كافة بيانات المنصة بنجاح!', 'success');
+        else alert('تم استيراد وتحديث كافة بيانات المنصة بنجاح!');
         this.switchTab('overview');
       } catch (err) {
-        if (typeof AccModal !== 'undefined') AccModal.toast('❌ فشل قراءة ملف النسخة الاحتياطية. تأكد من صحة الملف.', 'error');
-        else alert('❌ فشل قراءة ملف النسخة الاحتياطية. تأكد من صحة الملف.');
+        if (typeof AccModal !== 'undefined') AccModal.toast('فشل قراءة ملف النسخة الاحتياطية. تأكد من صحة الملف.', 'error');
+        else alert('فشل قراءة ملف النسخة الاحتياطية. تأكد من صحة الملف.');
       }
     };
     reader.readAsText(file);
@@ -2238,14 +2317,14 @@ const ExcelAdminDashboard = {
     if (typeof AccModal !== 'undefined') {
       conf = await AccModal.confirm({
         title: 'استعادة ضبط المصنع',
-        message: '⚠️ تحذير: هل أنت متأكد من رغبتك في استعادة ضبط المصنع وتصفير كافة التعديلات والبيانات؟',
+        message: 'تحذير: هل أنت متأكد من رغبتك في استعادة ضبط المصنع وتصفير كافة التعديلات والبيانات؟',
         confirmText: 'نعم، استعادة ضبط المصنع',
         cancelText: 'إلغاء',
         danger: true,
-        icon: '⚠️'
+        icon: 'warning'
       });
     } else {
-      conf = confirm('⚠️ تحذير: هل أنت متأكد من رغبتك في استعادة ضبط المصنع وتصفير كافة التعديلات؟');
+      conf = confirm('تحذير: هل أنت متأكد من رغبتك في استعادة ضبط المصنع وتصفير كافة التعديلات؟');
     }
 
     if (conf) {

@@ -229,7 +229,7 @@ const ExcelCompanyWorkspaceView = {
             <select id="tx-jump-select" class="voucher-jump-select" onchange="ExcelCompanyWorkspaceView.jumpToTransaction(this.value)">
               ${COMPANY_TRANSACTIONS.map((t, idx) => `
                 <option value="${idx}" ${this.currentTxIndex === idx ? 'selected' : ''}>
-                  ${this.companyData[t.id]?.isCompleted ? '✓ ' : '⏳ '}سند #${t.num}: ${t.title.slice(0, 24)}...
+                  ${this.companyData[t.id]?.isCompleted ? '✓ ' : ''}سند #${t.num}: ${t.title.slice(0, 24)}...
                 </option>
               `).join('')}
             </select>
@@ -237,10 +237,12 @@ const ExcelCompanyWorkspaceView = {
 
           <div class="view-mode-toggle">
             <button class="mode-btn ${this.tasksViewMode === 'card' ? 'active' : ''}" onclick="ExcelCompanyWorkspaceView.setViewMode('card')">
-              📄 سند فردي
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 14 }) : ''}
+              <span>سند فردي</span>
             </button>
             <button class="mode-btn ${this.tasksViewMode === 'registry' ? 'active' : ''}" onclick="ExcelCompanyWorkspaceView.setViewMode('registry')">
-              📋 سجل كافة السندات (100+)
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 14 }) : ''}
+              <span>سجل كافة السندات (100+)</span>
             </button>
           </div>
         </div>
@@ -258,11 +260,13 @@ const ExcelCompanyWorkspaceView = {
       <div class="single-voucher-container">
         <div class="voucher-pager-strip">
           <button class="pager-btn" ${this.currentTxIndex === 0 ? 'disabled' : ''} onclick="ExcelCompanyWorkspaceView.jumpToTransaction(${this.currentTxIndex - 1})">
-            ➡️ السند السابق
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('arrow-right', { size: 14 }) : ''}
+            <span>السند السابق</span>
           </button>
           <span class="pager-info">سند رقم ${tx.num} من ${COMPANY_TRANSACTIONS.length}</span>
           <button class="pager-btn" ${this.currentTxIndex === COMPANY_TRANSACTIONS.length - 1 ? 'disabled' : ''} onclick="ExcelCompanyWorkspaceView.jumpToTransaction(${this.currentTxIndex + 1})">
-            السند التالي ⬅️
+            <span>السند التالي</span>
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('arrow-left', { size: 14 }) : ''}
           </button>
         </div>
 
@@ -274,12 +278,12 @@ const ExcelCompanyWorkspaceView = {
               <div class="sheet-meta">التاريخ المالي: <strong>${tx.date}</strong> | المبلغ: <strong class="amount-val">${tx.amount.toLocaleString()} ج.م</strong></div>
             </div>
             <div class="sheet-status-badge ${userEntry.isCompleted ? 'status-posted' : 'status-pending'}">
-              ${userEntry.isCompleted ? '✓ تم الترحيل للدفاتر' : '⏳ بانتظار التوجيه المحاسبي'}
+              ${userEntry.isCompleted ? 'تم الترحيل للدفاتر ✓' : 'بانتظار التوجيه المحاسبي'}
             </div>
           </div>
 
           <div class="sheet-desc-box">
-            <div class="desc-icon">📌</div>
+            <div class="desc-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('info', { size: 16 }) : ''}</div>
             <div class="desc-text">${tx.desc}</div>
           </div>
 
@@ -312,14 +316,15 @@ const ExcelCompanyWorkspaceView = {
 
             <div class="voucher-action-footer">
               <button class="btn-post-voucher" onclick="ExcelCompanyWorkspaceView.submitVoucher('${tx.id}')">
-                🚀 حفظ وترحيل السند إلى الدفاتر
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('check', { size: 16 }) : ''}
+                <span>حفظ وترحيل السند إلى الدفاتر</span>
               </button>
             </div>
 
             <div id="feedback-box-${tx.id}" class="voucher-feedback-box" style="display: ${userEntry.isCompleted ? 'block' : 'none'};">
               ${userEntry.isCompleted ? `
                 <div class="feedback-success">
-                  <strong>✓ تم قيد وترحيل العملية بنجاح!</strong>
+                  <strong>تم قيد وترحيل العملية بنجاح! ✓</strong>
                   <p>${tx.explanation}</p>
                 </div>
               ` : ''}
@@ -365,7 +370,7 @@ const ExcelCompanyWorkspaceView = {
           <input 
             type="text" 
             class="registry-search-input" 
-            placeholder="🔍 بحث برقم السند أو الوصف أو المبلغ..." 
+            placeholder="بحث برقم السند أو الوصف أو المبلغ..." 
             value="${this.registrySearch}"
             oninput="ExcelCompanyWorkspaceView.setRegistrySearch(this.value)"
           />
@@ -387,7 +392,7 @@ const ExcelCompanyWorkspaceView = {
                     <h4 class="registry-item-title">${t.title}</h4>
                   </div>
                   <div class="registry-item-meta">
-                    <span>📅 ${t.date}</span>
+                    <span>${t.date}</span>
                     <span>•</span>
                     <span style="font-weight:700; color:var(--primary);">${t.amount.toLocaleString()} ج.م</span>
                   </div>
@@ -395,9 +400,9 @@ const ExcelCompanyWorkspaceView = {
 
                 <div style="display:flex; align-items:center; gap: 12px; margin-top: 6px;">
                   <span class="sheet-status-badge ${isDone ? 'status-posted' : 'status-pending'}">
-                    ${isDone ? '✓ مرحل' : '⏳ قيد الحل'}
+                    ${isDone ? 'مرحل ✓' : 'قيد الحل'}
                   </span>
-                  <button class="btn-open-tx">حل السند 👈</button>
+                  <button class="btn-open-tx">حل السند</button>
                 </div>
               </div>
             `;
@@ -428,13 +433,13 @@ const ExcelCompanyWorkspaceView = {
 
     if (!debitVal || !creditVal) {
       if (typeof AccModal !== 'undefined') AccModal.toast('يرجى اختيار كل من الحساب المدين والحساب الدائن أولاً قبل الترحيل.', 'error');
-      else alert('⚠️ يرجى اختيار كل من الحساب المدين والحساب الدائن أولاً قبل الترحيل.');
+      else alert('يرجى اختيار كل من الحساب المدين والحساب الدائن أولاً قبل الترحيل.');
       return;
     }
 
     if (debitVal === creditVal) {
       if (typeof AccModal !== 'undefined') AccModal.toast('لا يمكن أن يكون الحساب المدين هو نفسه الحساب الدائن في القيد المزدوج!', 'error');
-      else alert('⚠️ لا يمكن أن يكون الحساب المدين هو نفسه الحساب الدائن في القيد المزدوج!');
+      else alert('لا يمكن أن يكون الحساب المدين هو نفسه الحساب الدائن في القيد المزدوج!');
       return;
     }
 
@@ -453,7 +458,7 @@ const ExcelCompanyWorkspaceView = {
         fbBox.style.display = 'block';
         fbBox.innerHTML = `
           <div class="feedback-success">
-            <strong>✓ إجابة صحيحة وتم ترحيل القيد لدفتر اليومية والأستاذ!</strong>
+            <strong>تم قيد وترحيل العملية بنجاح! ✓</strong>
             <p>${tx.explanation}</p>
           </div>
         `;
@@ -467,12 +472,12 @@ const ExcelCompanyWorkspaceView = {
           if (typeof AccModal !== 'undefined') {
             AccModal.alert({
               title: 'مبارك إتمام الدورة المحاسبية!',
-              message: '🎉 مبارك! لقد أتممت توجيه جميع سندات الدورة المحاسبية بنجاح وتم ترحيل كافة العمليات لدفاتر الشركة.',
-              icon: '🏆',
+              message: 'لقد أتممت توجيه جميع سندات الدورة المحاسبية بنجاح وتم ترحيل كافة العمليات لدفاتر الشركة.',
+              icon: 'trophy',
               buttonText: 'رائع وممتاز'
             });
           } else {
-            alert('🎉 مبارك! لقد أتممت توجيه جميع سندات الدورة المحاسبية بنجاح.');
+            alert('مبارك! لقد أتممت توجيه جميع سندات الدورة المحاسبية بنجاح.');
           }
           this.refreshContent();
         }
@@ -483,7 +488,7 @@ const ExcelCompanyWorkspaceView = {
         fbBox.style.display = 'block';
         fbBox.innerHTML = `
           <div class="feedback-error">
-            <strong>❌ التوجيه المحاسبي غير سليم!</strong>
+            <strong>التوجيه المحاسبي غير سليم!</strong>
             <p>تأكد من طبيعة الحسابات المعنية (أصول، التزامات، إيرادات، مصروفات) وقاعدة الزيادة والنقصان، ثم حاول مجدداً.</p>
           </div>
         `;
@@ -501,11 +506,11 @@ const ExcelCompanyWorkspaceView = {
       AccModal.alert({
         title: 'تقرير التدقيق العام',
         message: msg,
-        icon: '📊',
+        icon: 'chart-bar',
         buttonText: 'إغلاق'
       });
     } else {
-      alert(`📊 تقرير التدقيق العام:\n${msg}`);
+      alert(`تقرير التدقيق العام:\n${msg}`);
     }
   },
 
@@ -539,7 +544,10 @@ const ExcelCompanyWorkspaceView = {
     return `
       <div class="journal-sheet-container">
         <div class="sheet-intro-card">
-          <h3>📖 دفتر اليومية العامة (General Journal)</h3>
+          <h3 style="display:flex; align-items:center; gap:8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 20 }) : ''}
+            <span>دفتر اليومية العامة (General Journal)</span>
+          </h3>
           <p>يتم ترحيل كافة السندات المقبولة آلياً إلى دفتر اليومية طبقاً للمعيار المحاسبي بقيد مزدوج متوازن.</p>
         </div>
 
@@ -609,7 +617,10 @@ const ExcelCompanyWorkspaceView = {
     return `
       <div class="ledger-sheet-container">
         <div class="sheet-intro-card">
-          <h3>⚖️ دفتر الأستاذ العام (T-Accounts Ledger)</h3>
+          <h3 style="display:flex; align-items:center; gap:8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('scales', { size: 20 }) : ''}
+            <span>دفتر الأستاذ العام (T-Accounts Ledger)</span>
+          </h3>
           <p>ترصيد حركة كل حساب على حدة لمعرفة صافي الرصيد المنقول لميزان المراجعة.</p>
         </div>
 
@@ -699,7 +710,10 @@ const ExcelCompanyWorkspaceView = {
     return `
       <div class="trial-sheet-container">
         <div class="sheet-intro-card">
-          <h3>📊 ميزان المراجعة بالأرصدة (Trial Balance)</h3>
+          <h3 style="display:flex; align-items:center; gap:8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 20 }) : ''}
+            <span>ميزان المراجعة بالأرصدة (Trial Balance)</span>
+          </h3>
           <p>التأكد من التوازن المحاسبي الكامل لجميع الحسابات قبل إعداد القوائم الختامية.</p>
         </div>
 
@@ -736,7 +750,11 @@ const ExcelCompanyWorkspaceView = {
         </div>
 
         <div class="balance-status-card ${isBalanced ? 'status-balanced' : 'status-unbalanced'}">
-          <div style="font-size: 1.6rem;">${isBalanced ? '🎉' : '⚠️'}</div>
+          <div style="color: ${isBalanced ? '#10b981' : '#ef4444'}; display:flex; align-items:center;">
+            ${isBalanced 
+              ? (typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('check-circle', { size: 28 }) : '✓') 
+              : (typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('warning', { size: 28 }) : '!')}
+          </div>
           <div>
             <strong>${isBalanced ? 'ميزان المراجعة متوازن تماماً وبحالة ممتازة!' : 'الميزان غير متوازن أو لم تكتمل كافة السندات بعد.'}</strong>
             <p>${isBalanced ? 'كافة العمليات متطابقة رياضياً ومحاسبياً ومؤهلة لإنشاء قائمة الدخل والمركز المالي.' : 'يرجى مراجعة ترحيل كافة السندات في تبويب السندات.'}</p>
@@ -767,7 +785,10 @@ const ExcelCompanyWorkspaceView = {
     return `
       <div class="statements-container">
         <div class="sheet-intro-card">
-          <h3>📑 القوائم المالية الختامية للشركة (Financial Statements)</h3>
+          <h3 style="display:flex; align-items:center; gap:8px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 20 }) : ''}
+            <span>القوائم المالية الختامية للشركة (Financial Statements)</span>
+          </h3>
           <p>تنعكس القيود المرحلة فورياً في قياس الأداء التشغيلي والأرباح المحققة.</p>
         </div>
 

@@ -13,10 +13,10 @@ const SupabaseService = {
   init() {
     if (typeof window.supabase !== 'undefined') {
       this.client = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
-      console.log('✅ [Supabase] Connected to remote instance:', SUPABASE_CONFIG.url);
+      console.log('[Supabase] Connected to remote instance:', SUPABASE_CONFIG.url);
       this.syncInitialData();
     } else {
-      console.warn('⚠️ [Supabase] SDK not loaded globally. Operating in offline/localStorage mode.');
+      console.warn('[Supabase] SDK not loaded globally. Operating in offline/localStorage mode.');
     }
   },
 
@@ -121,7 +121,7 @@ const SupabaseService = {
       const companies = await this.getCompanies();
       if (!companies || companies.length === 0) {
         if (typeof DEFAULT_ADMIN_COMPANIES !== 'undefined' && DEFAULT_ADMIN_COMPANIES.length > 0) {
-          console.log('⚡ Initializing cloud database with default companies...');
+          console.log('[Supabase] Initializing cloud database with default companies...');
           for (const comp of DEFAULT_ADMIN_COMPANIES) {
             await this.saveCompany(comp);
           }

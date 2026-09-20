@@ -13,7 +13,7 @@ const LESSONS_DATA = [
       <p>في عالم الأعمال، تحدث يومياً مئات الأحداث، لكن المحاسب لا يسجل كل شيء في الدفاتر، بل يسجل فقط <strong>المعاملات المالية (Financial Transactions)</strong>.</p>
       
       <div class="highlight-box">
-        <strong>📌 شروط اعتبار الحدث معاملة مالية:</strong>
+        <strong>شروط اعتبار الحدث معاملة مالية:</strong>
         <ul style="margin: 8px 0 0 16px; padding: 0; line-height: 1.7;">
           <li>أن تكون قابلة للقياس بوحدة النقد (ريال، جنيه، دولار...).</li>
           <li>أن تؤثر بالزيادة أو النقصان على المركز المالي للمنشأة.</li>
@@ -23,11 +23,11 @@ const LESSONS_DATA = [
 
       <div class="rule-comparison-grid">
         <div class="rule-card debit">
-          <h4><span>✅ معاملة مالية (تُسجل)</span></h4>
+          <h4><span>معاملة مالية (تُسجل)</span></h4>
           <p class="text-sm">شراء أجهزة كمبيوتر للمكتب بمبلغ 15,000 نقداً بفاتورة ضريبية، أو سداد رواتب الموظفين.</p>
         </div>
         <div class="rule-card credit">
-          <h4><span>❌ حدث إداري (لا يُسجل)</span></h4>
+          <h4><span>حدث إداري (لا يُسجل)</span></h4>
           <p class="text-sm">توقيع عقد عمل مع موظف جديد، أو تفاوض مبدئي مع مورد دون حركة أموال أو بضاعة.</p>
         </div>
       </div>
@@ -59,7 +59,7 @@ const LESSONS_DATA = [
       </div>
 
       <div class="highlight-box">
-        <strong>⚖️ كيف تحافظ أي معاملة على التوازن؟</strong>
+        <strong>كيف تحافظ أي معاملة على التوازن؟</strong>
         <p class="text-sm" style="margin-top:6px;">
           إذا زاد جانب، لابد أن يزيد الجانب الآخر بنفس القيمة، أو أن تزيد قيمة بند في جانب وينقص بند آخر في نفس الجانب ليظل الإجمالي متعادلاً 100%.
         </p>
@@ -123,7 +123,7 @@ const LESSONS_DATA = [
       <p>يقوم نظام القيد المزدوج على مبدأ حتمي: <strong>لكل عملية طرفان متساويان بالقيمة، أحدهما مدين (Debit) والآخر دائن (Credit).</strong></p>
 
       <div class="highlight-box">
-        <strong>🎯 القاعدة الذهبية للمدين والدائن:</strong>
+        <strong>القاعدة الذهبية للمدين والدائن:</strong>
         <p class="text-sm" style="margin-top:6px;">
           الحساب إذا زاد يُسجل في <strong>نفس طبيعته الأصلية</strong>، وإذا نقص يُسجل في <strong>عكس طبيعته الأصلية</strong>.
         </p>

@@ -157,14 +157,16 @@ window.navigateToScreen = function(screenId) {
       }
       appContainer.innerHTML = `
         <div style="background:#ffffff; border:1px solid #fee2e2; border-radius:18px; padding:3rem 2rem; text-align:center; max-width:540px; margin:3rem auto; box-shadow:0 4px 20px rgba(239,68,68,0.08);">
-          <div style="width:64px; height:64px; border-radius:50%; background:#fef2f2; color:#ef4444; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 1.25rem;">🔒</div>
+          <div style="width:64px; height:64px; border-radius:50%; background:#fef2f2; color:#ef4444; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lock', { size: 28 }) : ''}
+          </div>
           <h2 style="font-size:1.35rem; font-weight:800; color:#0f172a; margin-bottom:0.5rem;">منطقة إدارية مخصصة لمدير النظام فقط</h2>
           <p style="color:#64748b; font-size:0.88rem; line-height:1.6; margin-bottom:1.5rem;">
             أنت مسجل حالياً كـ <strong>${currentUser ? currentUser.name : 'طالب متدرب'}</strong>. لوحة تحكم الإدارة (Admin OS) مخصصة فقط لمسؤولي النظام لإدارة الباقات والتحكم المركزي.
           </p>
           <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-            <button class="btn-cta-primary" onclick="navigateToScreen('student-dashboard')">العودة للوحة دراستي 📊</button>
-            <button class="btn-cta-secondary" onclick="navigateToScreen('student-plans')">استعراض الباقات والاشتراكات 💳</button>
+            <button class="btn-cta-primary" onclick="navigateToScreen('student-dashboard')">العودة للوحة دراستي</button>
+            <button class="btn-cta-secondary" onclick="navigateToScreen('student-plans')">استعراض الباقات والاشتراكات</button>
           </div>
         </div>
       `;
@@ -187,7 +189,9 @@ window.navigateToScreen = function(screenId) {
     // شاشة قيد الإنشاء المؤقتة لباقي المسارات
     appContainer.innerHTML = `
       <div style="padding: 3rem 1rem; text-align: center; max-width: 500px; margin: 0 auto;">
-        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🚧</div>
+        <div style="color: var(--text-muted); margin-bottom: 1rem; display: flex; justify-content: center;">
+          ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 40 }) : ''}
+        </div>
         <h2 style="font-weight: 800; margin-bottom: 0.5rem;">شاشة (${screenId})</h2>
         <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">جاري إعادة هيكلتها وتطويرها لتكون متجاوبة 100% مع الهواتف المحمولة.</p>
         <button class="btn-cta-primary" onclick="navigateToScreen('landing')">العودة للرئيسية</button>

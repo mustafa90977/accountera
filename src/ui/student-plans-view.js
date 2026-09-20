@@ -37,8 +37,8 @@ const ExcelStudentPlansView = {
         <!-- ترويسة الصفحة بنمط Accountely النظيف -->
         <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.75rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem;">
           <div style="display: flex; align-items: center; gap: 1.25rem;">
-            <div style="width: 58px; height: 58px; border-radius: 16px; background: #e6f7f0; border: 1.5px solid #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #059669;">
-              💳
+            <div style="width: 58px; height: 58px; border-radius: 16px; background: var(--primary-light); border: 1.5px solid var(--primary-border); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 28, strokeWidth: 1.75 }) : ''}
             </div>
             <div>
               <div style="display: flex; align-items: center; gap: 10px;">
@@ -54,11 +54,13 @@ const ExcelStudentPlansView = {
           </div>
 
           <div style="display: flex; gap: 8px;">
-            <button onclick="navigateToScreen('student-dashboard')" class="btn-cta-secondary" style="padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px;">
-              <span>📊 لوحة دراستي</span>
+            <button onclick="navigateToScreen('student-dashboard')" class="btn-cta-secondary" style="padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 16 }) : ''}
+              <span>لوحة دراستي</span>
             </button>
-            <button onclick="navigateToScreen('student-settings')" class="btn-cta-secondary" style="padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px;">
-              <span>⚙️ الإعدادات</span>
+            <button onclick="navigateToScreen('student-settings')" class="btn-cta-secondary" style="padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 16 }) : ''}
+              <span>الإعدادات</span>
             </button>
           </div>
         </div>
@@ -70,7 +72,9 @@ const ExcelStudentPlansView = {
           <div style="background: #ffffff; border: 2px solid ${currentPlanId === 'free' ? '#10b981' : '#e2e8f0'}; border-radius: 18px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; position: relative;">
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <span style="font-size: 2rem;">🌱</span>
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: var(--bg-secondary); color: var(--primary); display: flex; align-items: center; justify-content: center;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 24, strokeWidth: 1.75 }) : ''}
+                </div>
                 <span style="background: #f1f5f9; color: #475569; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 800;">تأسيسي</span>
               </div>
               <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0 0 6px;">الباقة التأسيسية (Free)</h3>
@@ -125,12 +129,14 @@ const ExcelStudentPlansView = {
           <!-- الباقة الثانية: المحاسب المحترف (Pro) الأكثر طلباً -->
           <div style="background: #ffffff; border: 2px solid ${currentPlanId === 'pro' ? '#10b981' : '#3b82f6'}; border-radius: 18px; padding: 2rem; box-shadow: 0 8px 24px rgba(59,130,246,0.08); display: flex; flex-direction: column; justify-content: space-between; position: relative;">
             <div style="position: absolute; top: -13px; right: 24px; background: #3b82f6; color: #ffffff; font-size: 0.74rem; font-weight: 800; padding: 3px 12px; border-radius: 999px; box-shadow: 0 2px 6px rgba(59,130,246,0.3);">
-              الأكثر طلباً ⭐
+              الأكثر طلباً
             </div>
 
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <span style="font-size: 2rem;">🚀</span>
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(59,130,246,0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 24, strokeWidth: 1.75 }) : ''}
+                </div>
                 <span style="background: #eff6ff; color: #2563eb; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 800;">احترافي</span>
               </div>
               <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0 0 6px;">المحاسب المحترف (Pro)</h3>
@@ -155,7 +161,7 @@ const ExcelStudentPlansView = {
                   </li>
                   <li style="display: flex; align-items: center; gap: 8px;">
                     <span style="color: #10b981; font-weight: 800;">✓</span>
-                    <span><strong>مشاركة المحفظة والاعتماد على LinkedIn 💼</strong></span>
+                    <span><strong>مشاركة المحفظة والاعتماد على LinkedIn</strong></span>
                   </li>
                   <li style="display: flex; align-items: center; gap: 8px;">
                     <span style="color: #10b981; font-weight: 800;">✓</span>
@@ -176,10 +182,10 @@ const ExcelStudentPlansView = {
                 </button>
               ` : `
                 <button onclick="ExcelStudentPlansView.subscribePlan('pro', 299)" class="btn-cta-primary" style="width: 100%; background: #2563eb; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 0.9rem;">
-                  🚀 ترقية إلى باقة Pro (299 ج.م)
+                  ترقية إلى باقة Pro (299 ج.م)
                 </button>
                 <button onclick="ExcelStudentPlansView.activateTrial()" class="btn-cta-secondary" style="width: 100%; padding: 9px; border-radius: 8px; font-size: 0.82rem; font-weight: 700;">
-                  ⚡ تجربة Pro مجانية فورية
+                  تجربة Pro مجانية فورية
                 </button>
               `}
             </div>
@@ -188,12 +194,14 @@ const ExcelStudentPlansView = {
           <!-- الباقة الثالثة: خبير النمذجة (VIP Master) -->
           <div style="background: #ffffff; border: 2px solid ${currentPlanId === 'vip' ? '#10b981' : '#8b5cf6'}; border-radius: 18px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; position: relative;">
             <div style="position: absolute; top: -13px; right: 24px; background: #8b5cf6; color: #ffffff; font-size: 0.74rem; font-weight: 800; padding: 3px 12px; border-radius: 999px; box-shadow: 0 2px 6px rgba(139,92,246,0.3);">
-              النخبة 👑
+              النخبة
             </div>
 
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <span style="font-size: 2rem;">👑</span>
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(139,92,246,0.1); color: #8b5cf6; display: flex; align-items: center; justify-content: center;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('star', { size: 24, strokeWidth: 1.75 }) : ''}
+                </div>
                 <span style="background: #faf5ff; color: #7c3aed; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 800;">سنة كاملة</span>
               </div>
               <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0 0 6px;">خبير النمذجة (VIP Master)</h3>
@@ -235,7 +243,7 @@ const ExcelStudentPlansView = {
                 </button>
               ` : `
                 <button onclick="ExcelStudentPlansView.subscribePlan('vip', 599)" class="btn-cta-primary" style="width: 100%; background: #7c3aed; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 0.9rem;">
-                  👑 الترقية لباقة VIP Master (599 ج.م)
+                  الترقية لباقة VIP Master (599 ج.م)
                 </button>
               `}
             </div>
@@ -248,7 +256,9 @@ const ExcelStudentPlansView = {
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
             <div>
               <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-                <span style="font-size: 1.8rem;">🎁</span>
+                <div style="width: 42px; height: 42px; border-radius: 10px; background: #fff7ed; color: #ea580c; display: flex; align-items: center; justify-content: center; border: 1px solid #fed7aa;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 22, strokeWidth: 1.75 }) : ''}
+                </div>
                 <h2 style="font-size: 1.3rem; font-weight: 900; color: #c2410c; margin: 0;">برنامج الإحالة ومكافأة الـ 20% (Refer & Earn)</h2>
                 <span style="background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 800;">20% كاش فوري</span>
               </div>
@@ -263,8 +273,9 @@ const ExcelStudentPlansView = {
                   <span id="refCodeText" style="color: #10b981;">${referralCode}</span>
                 </div>
 
-                <button onclick="ExcelStudentPlansView.copyReferralLink('${referralLink}')" class="btn-cta-primary" style="background: #10b981; padding: 10px 20px; font-size: 0.88rem; border-radius: 10px;">
-                  📋 نسخ رابط الإحالة
+                <button onclick="ExcelStudentPlansView.copyReferralLink('${referralLink}')" class="btn-cta-primary" style="background: #10b981; padding: 10px 20px; font-size: 0.88rem; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 16 }) : ''}
+                  <span>نسخ رابط الإحالة</span>
                 </button>
               </div>
             </div>
@@ -281,7 +292,7 @@ const ExcelStudentPlansView = {
         <!-- قسم تفعيل كود الخصم أو كود الكوبون -->
         <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.75rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem;">
           <div>
-            <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0 0 4px;">هل تمتلك كود خصم أو تفعيل؟ 🎟️</h3>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0 0 4px;">هل تمتلك كود خصم أو تفعيل؟</h3>
             <p style="font-size: 0.82rem; color: #64748b; margin: 0;">أدخل كود الكوبون المعتمد لتفعيل باقتك مباشرة أو الاستفادة من خصم إضافي.</p>
           </div>
 
@@ -301,9 +312,9 @@ const ExcelStudentPlansView = {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(link).then(() => {
         if (typeof AccModal !== 'undefined' && AccModal.toast) {
-          AccModal.toast("📋 تم نسخ رابط الإحالة الخاص بك بنجاح! شاركه مع زملائك.", "success");
+          AccModal.toast("تم نسخ رابط الإحالة الخاص بك بنجاح! شاركه مع زملائك.", "success");
         } else {
-          alert("📋 تم نسخ رابط الإحالة بنجاح!");
+          alert("تم نسخ رابط الإحالة بنجاح!");
         }
       });
     } else {
@@ -320,9 +331,9 @@ const ExcelStudentPlansView = {
       this.activateTrial();
     } else {
       if (typeof AccModal !== 'undefined' && AccModal.toast) {
-        AccModal.toast("⚠️ كود الخصم غير صالح أو انتهت صلاحيته.", "error");
+        AccModal.toast("كود الخصم غير صالح أو انتهت صلاحيته.", "error");
       } else {
-        alert("⚠️ كود الخصم غير صالح أو انتهت صلاحيته.");
+        alert("كود الخصم غير صالح أو انتهت صلاحيته.");
       }
     }
   },
@@ -347,9 +358,9 @@ const ExcelStudentPlansView = {
     }
 
     if (typeof AccModal !== 'undefined' && AccModal.toast) {
-      AccModal.toast(`🎉 مبروك! تم تفعيل باقة ${planId.toUpperCase()} بنجاح. كافة الصلاحيات متاحة لك الآن.`, "success");
+      AccModal.toast(`تم تفعيل باقة ${planId.toUpperCase()} بنجاح. كافة الصلاحيات متاحة لك الآن.`, "success");
     } else {
-      alert(`🎉 تم تفعيل باقة ${planId.toUpperCase()} بنجاح!`);
+      alert(`تم تفعيل باقة ${planId.toUpperCase()} بنجاح!`);
     }
 
     const appContainer = document.getElementById('app');

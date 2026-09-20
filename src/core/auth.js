@@ -70,7 +70,7 @@ const AuthService = {
         
         <div class="modal-header">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <div class="modal-icon-badge">🔐</div>
+            <div class="modal-icon-badge">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lock', { size: 24 }) : ''}</div>
             <div>
               <h3 class="modal-title" id="authTitle">${mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}</h3>
               <p style="font-size: 0.82rem; color: var(--text-muted); margin: 2px 0 0;">منصة اكاونتيرا للمحاكاة المحاسبية</p>
@@ -192,35 +192,56 @@ const AuthService = {
       // شريط الملاحة الخاص بالمسؤول / الإدارة
       if (desktopNav) {
         desktopNav.innerHTML = `
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-overview')">📊 المؤشرات العامة</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-companies')">🏢 محاكاة الشركات</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-plans')">💳 الباقات والتسعير</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-coupons')">🎟️ أكواد الخصم</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-users')">👥 دليل المستخدمين</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-audit')">🔍 إدارة التدقيق</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-settings')">⚙️ الإعدادات العامة</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-overview')">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 16 }) : ''}
+            <span>المؤشرات العامة</span>
+          </a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-companies')">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 16 }) : ''}
+            <span>محاكاة الشركات</span>
+          </a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-plans')">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 16 }) : ''}
+            <span>الباقات والتسعير</span>
+          </a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-coupons')">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('ticket', { size: 16 }) : ''}
+            <span>أكواد الخصم</span>
+          </a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-users')">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('users', { size: 16 }) : ''}
+            <span>دليل المستخدمين</span>
+          </a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-audit')">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('search', { size: 16 }) : ''}
+            <span>إدارة التدقيق</span>
+          </a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('admin-settings')">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 16 }) : ''}
+            <span>الإعدادات العامة</span>
+          </a>
         `;
       }
       if (bottomNav) {
         bottomNav.innerHTML = `
           <button class="bottom-nav-item active" id="bn-admin-overview" onclick="navigateToScreen('admin-overview')">
-            <span class="bn-icon">📊</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 20 }) : ''}</span>
             <span>المؤشرات</span>
           </button>
           <button class="bottom-nav-item" id="bn-admin-companies" onclick="navigateToScreen('admin-companies')">
-            <span class="bn-icon">🏢</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 20 }) : ''}</span>
             <span>الشركات</span>
           </button>
           <button class="bottom-nav-item" id="bn-admin-plans" onclick="navigateToScreen('admin-plans')">
-            <span class="bn-icon">💳</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 20 }) : ''}</span>
             <span>الباقات</span>
           </button>
           <button class="bottom-nav-item" id="bn-admin-users" onclick="navigateToScreen('admin-users')">
-            <span class="bn-icon">👥</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('users', { size: 20 }) : ''}</span>
             <span>المستخدمين</span>
           </button>
           <button class="bottom-nav-item" id="bn-admin-settings" onclick="navigateToScreen('admin-settings')">
-            <span class="bn-icon">⚙️</span>
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 20 }) : ''}</span>
             <span>الإعدادات</span>
           </button>
         `;
@@ -360,7 +381,10 @@ const AccModal = {
     const confirmText = opts.confirmText || 'نعم، متابعة';
     const cancelText = opts.cancelText || 'إلغاء';
     const danger = opts.danger || false;
-    const icon = opts.icon || (danger ? '⚠️' : '❓');
+    const defaultIcon = danger 
+      ? (typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('warning', { size: 36 }) : '')
+      : (typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('question', { size: 36 }) : '');
+    const icon = opts.icon || defaultIcon;
 
     return new Promise((resolve) => {
       let overlay = document.getElementById('accConfirmModalOverlay');
