@@ -62,7 +62,9 @@ const ExcelCompanyWorkspaceView = {
         <div class="workspace-hero" style="margin-bottom: 24px;">
           <div class="workspace-hero-content">
             <div style="display:flex; align-items:center; gap: 14px;">
-              <span style="font-size: 2.6rem;">🏢</span>
+              <div style="width:52px; height:52px; border-radius:14px; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; border:1px solid var(--primary-border); flex-shrink:0;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 28, strokeWidth: 1.75 }) : ''}
+              </div>
               <div>
                 <div class="workspace-badge">بوابة بيئات المحاكاة الواقعية للشركات</div>
                 <h1 class="workspace-title">اختر الشركة وابدأ المحاكاة فوراً</h1>
@@ -76,7 +78,9 @@ const ExcelCompanyWorkspaceView = {
 
         ${companies.length === 0 ? `
           <div style="text-align:center; padding: 4rem 1.5rem; background: var(--surface-card); border-radius: 16px; border: 1px dashed var(--border-subtle); max-width: 600px; margin: 0 auto;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">🏢</div>
+            <div style="color: var(--primary); margin-bottom: 1rem; display:flex; justify-content:center;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 48, strokeWidth: 1.5 }) : ''}
+            </div>
             <h2 style="font-size: 1.3rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">لا توجد شركات مضافة حالياً</h2>
             <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
               يمكن للمسؤول إضافة شركات جديدة ورفع ملفات اليومية والسندات المالية من لوحة تحكم الإدارة (Admin Dashboard).
@@ -89,7 +93,9 @@ const ExcelCompanyWorkspaceView = {
               <div class="company-card" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="ExcelCompanyWorkspaceView.enterCompanySimulator('${comp.id}')">
                 <div>
                   <div class="company-card-header">
-                    <div class="company-icon-box">${comp.icon || '🏢'}</div>
+                    <div class="company-icon-box" style="display:flex; align-items:center; justify-content:center; color:var(--primary);">
+                      ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 24, strokeWidth: 1.75 }) : ''}
+                    </div>
                     <div>
                       <h3 class="company-name">${comp.name}</h3>
                       <span class="company-sector-badge">${comp.sector || comp.badge || 'قطاع تجاري'}</span>
@@ -102,7 +108,10 @@ const ExcelCompanyWorkspaceView = {
                   </div>
                 </div>
                 <button class="btn-workspace-action btn-workspace-primary" style="width:100%; justify-content:center; gap:8px; margin-top:12px; font-size:0.95rem; min-height:44px;">
-                  <span>🚀 دخول بيئة المحاكاة مباشرة</span>
+                  <span style="display:inline-flex; align-items:center; gap:6px;">
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
+                    دخول بيئة المحاكاة مباشرة
+                  </span>
                 </button>
               </div>
             `).join('')}

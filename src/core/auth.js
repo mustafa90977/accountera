@@ -116,24 +116,24 @@ const AuthService = {
           </div>
 
           <button type="submit" class="btn-cta-primary" style="width:100%; justify-content:center; margin-top:1rem;">
-            ${mode === 'login' ? 'دخول المنصة والانطلاق 🚀' : 'إنشاء الحساب والانطلاق 🚀'}
+            ${mode === 'login' ? 'دخول المنصة' : 'إنشاء الحساب والتفعيل'}
           </button>
         </form>
 
         <!-- أزرار الدخول السريع لاختبار الأدوار -->
         <div class="quick-roles-wrap">
-          <div class="quick-roles-title">🚀 تجربة فورية مباشرة دون تسجيل:</div>
+          <div class="quick-roles-title">تجربة فورية مباشرة دون تسجيل:</div>
           <div class="roles-grid">
             <button class="role-pill-btn" onclick="AuthService.quickLogin('student', 'طالب محاسبة')">
-              <span>🎓</span>
+              <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('graduation-cap', { size: 16 }) : ''}</span>
               <span>طالب</span>
             </button>
             <button class="role-pill-btn" onclick="AuthService.quickLogin('teacher', 'أ. د. محمد شاكر')">
-              <span>👨‍🏫</span>
+              <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 16 }) : ''}</span>
               <span>مدرس</span>
             </button>
             <button class="role-pill-btn" onclick="AuthService.quickLogin('admin', 'مدير النظام')">
-              <span>⚙️</span>
+              <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 16 }) : ''}</span>
               <span>مدير</span>
             </button>
           </div>

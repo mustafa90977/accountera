@@ -95,11 +95,13 @@ const ExcelStudentSettingsView = {
 
             <!-- أزرار الوصول السريع -->
             <div style="display: flex; gap: 8px;">
-              <button onclick="navigateToScreen('student-dashboard')" class="btn-cta-secondary" style="padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px;">
-                <span>📊 لوحة المتابعة (Overview)</span>
+              <button onclick="navigateToScreen('student-dashboard')" class="btn-cta-secondary" style="padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 16 }) : ''}
+                <span>لوحة المتابعة</span>
               </button>
-              <button onclick="navigateToScreen('portfolio')" class="btn-cta-primary" style="background: #10b981; color: #fff; border: none; padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px;">
-                <span>📈 محفظة الكفاءة (Progress)</span>
+              <button onclick="navigateToScreen('portfolio')" class="btn-cta-primary" style="background: var(--primary); color: #fff; border: none; padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trend-up', { size: 16 }) : ''}
+                <span>محفظة الكفاءة</span>
               </button>
             </div>
           </div>
@@ -107,20 +109,25 @@ const ExcelStudentSettingsView = {
 
         <!-- أشرطة التبويبات المتجاوبة بنمط حبوب Accountely -->
         <div class="settings-tabs-bar" style="display: flex; gap: 8px; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 4px;">
-          <button class="settings-tab-accountely ${this.activeTab === 'personal' ? 'active' : ''}" onclick="ExcelStudentSettingsView.switchTab('personal')">
-            <span>👤 المعلومات الشخصية</span>
+          <button class="settings-tab-accountely ${this.activeTab === 'personal' ? 'active' : ''}" onclick="ExcelStudentSettingsView.switchTab('personal')" style="display:inline-flex; align-items:center; gap:6px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('user', { size: 16 }) : ''}
+            <span>المعلومات الشخصية</span>
           </button>
-          <button class="settings-tab-accountely ${this.activeTab === 'security' ? 'active' : ''}" onclick="ExcelStudentSettingsView.switchTab('security')">
-            <span>🔐 الأمان وكلمة المرور</span>
+          <button class="settings-tab-accountely ${this.activeTab === 'security' ? 'active' : ''}" onclick="ExcelStudentSettingsView.switchTab('security')" style="display:inline-flex; align-items:center; gap:6px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('target', { size: 16 }) : ''}
+            <span>الأمان وكلمة المرور</span>
           </button>
-          <button class="settings-tab-accountely ${this.activeTab === 'preferences' ? 'active' : ''}" onclick="ExcelStudentSettingsView.switchTab('preferences')">
-            <span>⚙️ تفضيلات المحاكاة</span>
+          <button class="settings-tab-accountely ${this.activeTab === 'preferences' ? 'active' : ''}" onclick="ExcelStudentSettingsView.switchTab('preferences')" style="display:inline-flex; align-items:center; gap:6px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 16 }) : ''}
+            <span>تفضيلات المحاكاة</span>
           </button>
-          <button class="settings-tab-accountely ${this.activeTab === 'plan' ? 'active' : ''}" onclick="ExcelStudentSettingsView.switchTab('plan')">
-            <span>💳 تفاصيل الباقة</span>
+          <button class="settings-tab-accountely ${this.activeTab === 'plan' ? 'active' : ''}" onclick="ExcelStudentSettingsView.switchTab('plan')" style="display:inline-flex; align-items:center; gap:6px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 16 }) : ''}
+            <span>تفاصيل الباقة</span>
           </button>
-          <button class="settings-tab-accountely ${this.activeTab === 'privacy' ? 'active' : ''}" onclick="ExcelStudentSettingsView.switchTab('privacy')">
-            <span>🛡️ البيانات والخصوصية</span>
+          <button class="settings-tab-accountely ${this.activeTab === 'privacy' ? 'active' : ''}" onclick="ExcelStudentSettingsView.switchTab('privacy')" style="display:inline-flex; align-items:center; gap:6px;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 16 }) : ''}
+            <span>البيانات والخصوصية</span>
           </button>
         </div>
 

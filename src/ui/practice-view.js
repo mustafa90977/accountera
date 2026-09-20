@@ -1,4 +1,4 @@
-﻿/**
+/**
  * practice-view.js — بيئة عمل التمارين والأمثلة المحلولة والتطبيق التفاعلي
  * تصميم متجاوب 100% مع الهواتف المحمولة وتجربة قيود سلسة
  */
@@ -197,7 +197,10 @@ const ExcelPracticeView = {
 
               <!-- التحليل المحاسبي -->
               <div class="highlight-box" style="margin:0;">
-                <strong style="color:var(--primary); display:block; margin-bottom:4px;">💡 منطق التحليل المحاسبي:</strong>
+                <strong style="color:var(--primary); display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lightbulb', { size: 16 }) : ''}
+                  منطق التحليل المحاسبي:
+                </strong>
                 <p style="margin:0; font-size:0.92rem; line-height:1.7;">${ex.analysis}</p>
               </div>
 
@@ -205,21 +208,24 @@ const ExcelPracticeView = {
               <footer class="lesson-footer-nav" style="margin-top:1.5rem; padding-top:1.25rem;">
                 ${prevEx ? `
                   <button class="btn-cta-secondary" onclick="navigateToScreen('${prevEx.id}')">
-                    ← المثال السابق (${prevEx.number})
+                    المثال السابق (${prevEx.number})
                   </button>
                 ` : `
                   <button class="btn-cta-secondary" onclick="navigateToScreen('lesson-6')">
-                    ← العودة للدروس
+                    العودة للدروس
                   </button>
                 `}
 
                 ${nextEx ? `
                   <button class="btn-cta-primary" onclick="navigateToScreen('${nextEx.id}')">
-                    المثال التالي (${nextEx.number}) →
+                    المثال التالي (${nextEx.number})
                   </button>
                 ` : `
                   <button class="btn-cta-primary" onclick="navigateToScreen('ip-1')">
-                    الانتقال للتمارين المستقلة (حل بنفسك) ✍️
+                    <span style="display:inline-flex; align-items:center; gap:6px;">
+                      الانتقال للتمارين المستقلة (حل بنفسك)
+                      ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
+                    </span>
                   </button>
                 `}
               </footer>
@@ -352,10 +358,16 @@ const ExcelPracticeView = {
               <!-- أزرار الإجراءات -->
               <div class="practice-actions-row">
                 <button class="btn-cta-primary" onclick="ExcelPracticeView.evaluate('${ip.id}')">
-                  ✓ تحقق من صحة القيد
+                  <span style="display:inline-flex; align-items:center; gap:6px;">
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('check', { size: 16 }) : ''}
+                    تحقق من صحة القيد
+                  </span>
                 </button>
                 <button class="btn-cta-secondary" onclick="ExcelPracticeView.showHint('${ip.id}')">
-                  💡 تلميح
+                  <span style="display:inline-flex; align-items:center; gap:6px;">
+                    ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lightbulb', { size: 16 }) : ''}
+                    تلميح
+                  </span>
                 </button>
               </div>
 
@@ -366,21 +378,24 @@ const ExcelPracticeView = {
               <footer class="lesson-footer-nav" style="margin-top:1.5rem; padding-top:1.25rem;">
                 ${prevIp ? `
                   <button class="btn-cta-secondary" onclick="navigateToScreen('${prevIp.id}')">
-                    ← التمرين السابق (${prevIp.number})
+                    التمرين السابق (${prevIp.number})
                   </button>
                 ` : `
                   <button class="btn-cta-secondary" onclick="navigateToScreen('ex-1')">
-                    ← العودة للأمثلة
+                    العودة للأمثلة
                   </button>
                 `}
 
                 ${nextIp ? `
                   <button class="btn-cta-primary" onclick="navigateToScreen('${nextIp.id}')">
-                    التمرين التالي (${nextIp.number}) →
+                    التمرين التالي (${nextIp.number})
                   </button>
                 ` : `
                   <button class="btn-cta-primary" onclick="navigateToScreen('companies-hub')">
-                    الانتقال لبيئة عمل الشركات (ERP) 🏢
+                    <span style="display:inline-flex; align-items:center; gap:6px;">
+                      الانتقال لبيئة عمل الشركات (ERP)
+                      ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 16 }) : ''}
+                    </span>
                   </button>
                 `}
               </footer>
@@ -397,7 +412,10 @@ const ExcelPracticeView = {
               </ul>
             </div>
             <div class="side-rail-card" id="hintCard_${ip.id}" style="display:none; border-color:var(--warning-border); background:var(--warning-bg);">
-              <h4 style="font-weight:800; margin-bottom:0.4rem; color:var(--warning);">💡 تلميح المحاسب الذكي</h4>
+              <h4 style="font-weight:800; margin-bottom:0.4rem; color:var(--warning); display:flex; align-items:center; gap:6px;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lightbulb', { size: 16 }) : ''}
+                تلميح المحاسب الذكي
+              </h4>
               <p style="font-size:0.85rem; color:var(--text-primary); margin:0; line-height:1.6;">${ip.hint}</p>
             </div>
           </aside>

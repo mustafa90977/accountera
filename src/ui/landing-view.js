@@ -24,10 +24,16 @@ const ExcelLandingView = {
 
           <div class="hero-actions">
             <button class="btn-cta-primary" onclick="navigateToScreen('welcome')">
-              🚀 ابدأ رحلتك المحاسبية مجاناً
+              <span style="display:inline-flex; align-items:center; gap:8px;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 18 }) : ''}
+                ابدأ رحلتك المحاسبية مجاناً
+              </span>
             </button>
             <button class="btn-cta-secondary" onclick="navigateToScreen('companies-hub')">
-              🏢 استكشف بيئة الشركات
+              <span style="display:inline-flex; align-items:center; gap:8px;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 18 }) : ''}
+                استكشف بيئة الشركات
+              </span>
             </button>
           </div>
 
@@ -62,37 +68,49 @@ const ExcelLandingView = {
 
           <div class="features-grid">
             <div class="feature-card">
-              <div class="feature-icon-wrap">📖</div>
+              <div class="feature-icon-wrap">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 24, strokeWidth: 1.75 }) : ''}
+              </div>
               <h3 class="feature-title">١. الفهم النظري المبسط</h3>
               <p class="feature-desc">شرح عملي عميق لطبيعة المعاملة المالية وقواعد المدين والدائن ومعادلة الميزانية بدون تعقيد.</p>
             </div>
 
             <div class="feature-card">
-              <div class="feature-icon-wrap">🔍</div>
+              <div class="feature-icon-wrap">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('target', { size: 24, strokeWidth: 1.75 }) : ''}
+              </div>
               <h3 class="feature-title">٢. إطار التحليل ذو الـ 6 خطوات</h3>
               <p class="feature-desc">طريقة منهجية لتفكيك أي معاملة مالية وتحديد أطرافها وأثرها قبل تسجيل القيد بدقة متناهية.</p>
             </div>
 
             <div class="feature-card">
-              <div class="feature-icon-wrap">✍️</div>
+              <div class="feature-icon-wrap">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 24, strokeWidth: 1.75 }) : ''}
+              </div>
               <h3 class="feature-title">٣. التمارين العملية المتدرجة</h3>
               <p class="feature-desc">أمثلة محلولة وتدريبات موجهة ومستقلة مع تصحيح فوري للمفاهيم المحاسبية والعمليات.</p>
             </div>
 
             <div class="feature-card">
-              <div class="feature-icon-wrap">🏢</div>
+              <div class="feature-icon-wrap">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 24, strokeWidth: 1.75 }) : ''}
+              </div>
               <h3 class="feature-title">٤. محاكاة الشركات الواقعية</h3>
               <p class="feature-desc">عش دور المحاسب المالي في شركات خدمية وتجارية حقيقية وسجل فواتيرها وإشعاراتها البنكية.</p>
             </div>
 
             <div class="feature-card">
-              <div class="feature-icon-wrap">📊</div>
+              <div class="feature-icon-wrap">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 24, strokeWidth: 1.75 }) : ''}
+              </div>
               <h3 class="feature-title">٥. الدفاتر والقوائم الختامية</h3>
               <p class="feature-desc">من دفتر اليومية وحسابات الأستاذ إلى ميزان المراجعة وقائمتي الدخل والمركز المالي.</p>
             </div>
 
             <div class="feature-card">
-              <div class="feature-icon-wrap">📜</div>
+              <div class="feature-icon-wrap">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trophy', { size: 24, strokeWidth: 1.75 }) : ''}
+              </div>
               <h3 class="feature-title">٦. وثيقة الكفاءة والاعتماد</h3>
               <p class="feature-desc">احصل على جواز المهارات المحاسبية وأثبت جاهزيتك لسوق العمل أمام مدراء التوظيف.</p>
             </div>
@@ -126,7 +144,9 @@ const ExcelLandingView = {
                     </span>
                   ` : ''}
                   <div>
-                    <div style="font-size: 2.2rem; margin-bottom: 8px;">${p.icon || '📦'}</div>
+                    <div style="color: var(--primary); margin-bottom: 12px; display: flex;">
+                      ${typeof AccounteraIcons !== 'undefined' ? (p.id === 'pro' ? AccounteraIcons.render('star', { size: 36, strokeWidth: 1.75 }) : AccounteraIcons.render('buildings', { size: 36, strokeWidth: 1.75 })) : ''}
+                    </div>
                     <h3 style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px;">${p.name}</h3>
                     <div style="font-size: 1.8rem; font-weight: 900; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); margin-bottom: 16px;">
                       ${p.price === 0 ? 'مجاناً' : `${p.price} ج.م`}

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * learning-view.js — واجهات المسار التعليمي التأسيسي (الدروس 1 إلى 6)
  * تصميم متجاوب 100% مع الهواتف المحمولة وتجربة لمسية سلسة
  */
@@ -251,7 +251,9 @@ const ExcelLearningView = {
             </div>
             <h1 class="lesson-title">${currentLesson.title}</h1>
             <div class="lesson-objective">
-              <span>🎯</span>
+              <span style="display:inline-flex; align-items:center; color:var(--primary); flex-shrink:0;">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('target', { size: 18 }) : ''}
+              </span>
               <div><strong>الهدف التعليمي:</strong> ${currentLesson.objective}</div>
             </div>
           </header>
@@ -280,21 +282,24 @@ const ExcelLearningView = {
           <footer class="lesson-footer-nav">
             ${prevLesson ? `
               <button class="btn-cta-secondary" onclick="navigateToScreen('${prevLesson.id}')">
-                ← السابق: ${prevLesson.title}
+                السابق: ${prevLesson.title}
               </button>
             ` : `
               <button class="btn-cta-secondary" onclick="navigateToScreen('landing')">
-                ← العودة للرئيسية
+                العودة للرئيسية
               </button>
             `}
 
             ${nextLesson ? `
               <button class="btn-cta-primary" onclick="navigateToScreen('${nextLesson.id}')">
-                التالي: ${nextLesson.title} →
+                التالي: ${nextLesson.title}
               </button>
             ` : `
               <button class="btn-cta-primary" onclick="navigateToScreen('ex-1')">
-                الانتقال للأمثلة العملية المحلولة 🚀
+                <span style="display:inline-flex; align-items:center; gap:8px;">
+                  الانتقال للأمثلة العملية المحلولة
+                  ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
+                </span>
               </button>
             `}
           </footer>
