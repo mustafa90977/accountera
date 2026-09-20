@@ -1,0 +1,276 @@
+/**
+ * learning.css — تنسيقات مسار الدروس التأسيسية المتجاوبة للموبايل
+ */
+
+.learning-container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--container-padding-mobile) var(--space-12);
+}
+
+@media (min-width: 768px) {
+  .learning-container {
+    padding: var(--space-6) var(--container-padding-desktop) var(--space-16);
+  }
+}
+
+/* شريط تبويبات الدروس القابل للتمرير باللمس للموبايل */
+.lessons-nav-strip {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding: 4px 4px var(--space-3) 4px;
+  margin-bottom: var(--space-6);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.lessons-nav-strip::-webkit-scrollbar {
+  height: 4px;
+}
+
+.lessons-nav-strip::-webkit-scrollbar-track {
+  background: var(--surface-ground);
+  border-radius: 999px;
+}
+
+.lessons-nav-strip::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+.lesson-nav-pill {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--touch-target-min);
+  transition: var(--transition-fast);
+}
+
+.lesson-nav-pill.active {
+  background: var(--primary);
+  color: var(--text-inverted);
+  border-color: var(--primary);
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+}
+
+.lesson-nav-pill:hover:not(.active) {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+/* بطاقة المحتوى الرئيسية للدرس */
+.lesson-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-4);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .lesson-card {
+    padding: var(--space-10) var(--space-8);
+  }
+}
+
+.lesson-header {
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.lesson-step-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+}
+
+.lesson-title {
+  font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.lesson-objective {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  background: var(--bg-secondary);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+/* بطاقات وقواعد الشرح التفاعلية */
+.lesson-body {
+  line-height: 1.8;
+  color: var(--text-primary);
+  font-size: 0.98rem;
+}
+
+.lesson-body p {
+  margin-bottom: var(--space-4);
+}
+
+.highlight-box {
+  background: rgba(16, 185, 129, 0.05);
+  border-right: 4px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin: var(--space-6) 0;
+}
+
+.rule-comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin: var(--space-6) 0;
+}
+
+@media (min-width: 640px) {
+  .rule-comparison-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.rule-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.rule-card.debit {
+  border-top: 3px solid var(--acc-debit);
+}
+
+.rule-card.credit {
+  border-top: 3px solid var(--danger);
+}
+
+.rule-card h4 {
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* بطاقة اختبار الفهم السريع (Interactive Quiz) */
+.quiz-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-4);
+  margin-top: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .quiz-card {
+    padding: var(--space-6);
+  }
+}
+
+.quiz-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #D97706;
+  background: #FEF3C7;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+  margin-bottom: var(--space-2);
+}
+
+.quiz-question {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  color: var(--text-primary);
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.quiz-option-btn {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  text-align: right;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  min-height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.quiz-option-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+.quiz-option-btn.correct {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: #065F46;
+}
+
+.quiz-option-btn.wrong {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: #991B1B;
+}
+
+.quiz-feedback {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  display: none;
+}
+
+/* شريط التنقل السفلي بين الدروس */
+.lesson-footer-nav {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+}
+
+@media (min-width: 640px) {
+  .lesson-footer-nav {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

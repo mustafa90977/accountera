@@ -1,0 +1,231 @@
+{
+  "communities": {
+    "0": [
+      "simulation_simulation_js_dashboard",
+      "simulation_simulation_js_dashboard_getdocumentname",
+      "simulation_simulation_js_dashboard_updatedashboard",
+      "simulation_simulation_js_state",
+      "simulation_simulation_js_state_accounts",
+      "simulation_simulation_js_state_answerkey",
+      "simulation_simulation_js_state_applycompanyprofile",
+      "simulation_simulation_js_state_calculatebalances",
+      "simulation_simulation_js_state_coa",
+      "simulation_simulation_js_state_getdocumentname",
+      "simulation_simulation_js_state_initapp",
+      "simulation_simulation_js_state_loadstudentstate",
+      "simulation_simulation_js_state_loadtasks",
+      "simulation_simulation_js_state_savestudentstate",
+      "simulation_simulation_js_state_studentjournal",
+      "simulation_simulation_js_state_studentledger",
+      "simulation_simulation_js_state_updateallheaderbadges"
+    ],
+    "1": [
+      "simulation_simulation_js_journal",
+      "simulation_simulation_js_journal_formategp",
+      "simulation_simulation_js_journal_formlines",
+      "simulation_simulation_js_journal_getcompanyname",
+      "simulation_simulation_js_journal_initworkspace",
+      "simulation_simulation_js_journal_recalculatetotals",
+      "simulation_simulation_js_journal_renderdocument",
+      "simulation_simulation_js_journal_renderform",
+      "simulation_simulation_js_journal_renderpendinglist",
+      "simulation_simulation_js_journal_renderpostedentries",
+      "simulation_simulation_js_journal_selecttask",
+      "simulation_simulation_js_journal_tafqeetarabic"
+    ],
+    "2": [
+      "simulation_simulation_js_closing_wizard",
+      "simulation_simulation_js_closing_wizard_injectmonthclosingmodal",
+      "simulation_simulation_js_closing_wizard_isjanuaryclosed",
+      "simulation_simulation_js_closing_wizard_rendercurrentclosestep",
+      "simulation_simulation_js_closing_wizard_renderstep1",
+      "simulation_simulation_js_closing_wizard_renderstep2",
+      "simulation_simulation_js_closing_wizard_renderstep3",
+      "simulation_simulation_js_closing_wizard_renderstep4",
+      "simulation_simulation_js_closing_wizard_renderstep5",
+      "simulation_simulation_js_closing_wizard_updateheaderclosingstatus",
+      "simulation_simulation_js_closing_wizard_updatestepnavigationui"
+    ],
+    "3": [
+      "simulation_simulation_js_recon",
+      "simulation_simulation_js_recon_bankstatementitems",
+      "simulation_simulation_js_recon_bookreconitems",
+      "simulation_simulation_js_recon_calculatereconciliation",
+      "simulation_simulation_js_recon_initrecon",
+      "simulation_simulation_js_recon_loadbankreconstate",
+      "simulation_simulation_js_recon_renderrecontables",
+      "simulation_simulation_js_recon_savebankreconstate",
+      "simulation_simulation_js_recon_updaterecon"
+    ],
+    "4": [
+      "package",
+      "package_description",
+      "package_main",
+      "package_name",
+      "package_scripts",
+      "package_scripts_start",
+      "package_version"
+    ],
+    "5": [
+      "server",
+      "server_fs",
+      "server_http",
+      "server_mime_types",
+      "server_path",
+      "server_server"
+    ],
+    "6": [
+      "simulation_simulation_js_ledger",
+      "simulation_simulation_js_ledger_initledger",
+      "simulation_simulation_js_ledger_renderpostingqueue",
+      "simulation_simulation_js_ledger_rendertaccounts",
+      "simulation_simulation_js_ledger_rendertrialbalance",
+      "simulation_simulation_js_ledger_updateselectedentrybadge"
+    ],
+    "7": [
+      "src_ui_admin_dashboard_view",
+      "src_ui_admin_dashboard_view_default_admin_companies",
+      "src_ui_admin_dashboard_view_default_admin_coupons",
+      "src_ui_admin_dashboard_view_default_admin_plans",
+      "src_ui_admin_dashboard_view_default_audit_engagements",
+      "src_ui_admin_dashboard_view_exceladmindashboard"
+    ],
+    "8": [
+      "src_ui_practice_view",
+      "src_ui_practice_view_accounts_list",
+      "src_ui_practice_view_examples_data",
+      "src_ui_practice_view_excelpracticeview",
+      "src_ui_practice_view_independent_data"
+    ],
+    "9": [
+      "src_ui_company_workspace_view",
+      "src_ui_company_workspace_view_company_accounts",
+      "src_ui_company_workspace_view_company_transactions",
+      "src_ui_company_workspace_view_excelcompanyworkspaceview"
+    ],
+    "10": [
+      "simulation_simulation_js_statements",
+      "simulation_simulation_js_statements_formategp",
+      "simulation_simulation_js_statements_updatestatements"
+    ],
+    "11": [
+      "src_ui_learning_view",
+      "src_ui_learning_view_excellearningview",
+      "src_ui_learning_view_lessons_data"
+    ],
+    "12": [
+      "src_core_auth",
+      "src_core_auth_authservice"
+    ],
+    "13": [
+      "src_core_simulation_bridge",
+      "src_core_simulation_bridge_simulationbridge"
+    ],
+    "14": [
+      "src_ui_landing_view",
+      "src_ui_landing_view_excellandingview"
+    ],
+    "15": [
+      "build_view"
+    ],
+    "16": [
+      "simulation_simulation_css_theme"
+    ],
+    "17": [
+      "simulation_simulation_data"
+    ],
+    "18": [
+      "src_core_router"
+    ],
+    "19": [
+      "src_core_screen_registry"
+    ],
+    "20": [
+      "src_core_state"
+    ],
+    "21": [
+      "src_main"
+    ]
+  },
+  "cohesion": {
+    "0": 0.16911764705882354,
+    "1": 0.2878787878787879,
+    "2": 0.32727272727272727,
+    "3": 0.3055555555555556,
+    "4": 0.2857142857142857,
+    "5": 0.3333333333333333,
+    "6": 0.6,
+    "7": 0.3333333333333333,
+    "8": 0.4,
+    "9": 0.5,
+    "10": 1.0,
+    "11": 0.6666666666666666,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0
+  },
+  "gods": [
+    {
+      "id": "simulation_simulation_js_closing_wizard_rendercurrentclosestep",
+      "label": "renderCurrentCloseStep()",
+      "degree": 7
+    },
+    {
+      "id": "simulation_simulation_js_state_initapp",
+      "label": "initApp()",
+      "degree": 6
+    },
+    {
+      "id": "simulation_simulation_js_journal_renderdocument",
+      "label": "renderDocument()",
+      "degree": 5
+    },
+    {
+      "id": "simulation_simulation_js_journal_renderpendinglist",
+      "label": "renderPendingList()",
+      "degree": 4
+    },
+    {
+      "id": "simulation_simulation_js_ledger_initledger",
+      "label": "initLedger()",
+      "degree": 4
+    },
+    {
+      "id": "simulation_simulation_js_recon_initrecon",
+      "label": "initRecon()",
+      "degree": 4
+    },
+    {
+      "id": "simulation_simulation_js_state_updateallheaderbadges",
+      "label": "updateAllHeaderBadges()",
+      "degree": 4
+    },
+    {
+      "id": "simulation_simulation_js_state_loadstudentstate",
+      "label": "loadStudentState()",
+      "degree": 4
+    },
+    {
+      "id": "simulation_simulation_js_closing_wizard_isjanuaryclosed",
+      "label": "isJanuaryClosed()",
+      "degree": 3
+    },
+    {
+      "id": "simulation_simulation_js_closing_wizard_renderstep5",
+      "label": "renderStep5()",
+      "degree": 3
+    }
+  ],
+  "surprises": [],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

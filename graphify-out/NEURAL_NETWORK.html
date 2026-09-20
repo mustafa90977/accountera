@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accountera Neural Code Network | شبكة الكود العصبية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/force-graph"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #060913;
+      color: #e2e8f0;
+      font-family: 'Cairo', sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+    #graph-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .hud-panel {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(10, 15, 30, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 16px;
+      padding: 16px 20px;
+      z-index: 100;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.5), inset 0 0 15px rgba(59, 130, 246, 0.1);
+      width: 320px;
+    }
+    .hud-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #60a5fa;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+    .hud-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 18px;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      color: #38bdf8;
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .search-box {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-box:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    }
+    .info-modal {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 340px;
+      max-height: 280px;
+      overflow-y: auto;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 14px;
+      padding: 16px;
+      display: none;
+      z-index: 100;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    }
+    .info-modal h4 {
+      color: #38bdf8;
+      font-size: 14px;
+      margin-bottom: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      direction: ltr;
+      text-align: right;
+    }
+    .info-modal p {
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-bottom: 4px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: bold;
+      background: #1e293b;
+      color: #94a3b8;
+      margin-top: 6px;
+    }
+    .legend {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(10, 15, 30, 0.85);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 11px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+  </style>
+</head>
+<body>
+  <div id="graph-container"></div>
+
+  <!-- Top Right Control Panel -->
+  <div class="hud-panel">
+    <div class="hud-title">
+      <span>🧠</span>
+      <span>الشبكة العصبية لكود المشروع (Neural Graph)</span>
+    </div>
+    <div class="hud-stats">
+      <div class="stat-card">
+        <div class="stat-val" id="node-count">102</div>
+        <div class="stat-lbl">عقدة / دالة / ملف</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="edge-count">111</div>
+        <div class="stat-lbl">مسار تشابكي عصبي</div>
+      </div>
+    </div>
+    <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن دالة أو ملف (مثال: bridge, state)..." />
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><span class="dot" style="background:#38bdf8; box-shadow: 0 0 8px #38bdf8;"></span><span>نواة النظام والمحاكاة (Core & Sim)</span></div>
+    <div class="legend-item"><span class="dot" style="background:#a855f7; box-shadow: 0 0 8px #a855f7;"></span><span>واجهات المنصة (UI Views)</span></div>
+    <div class="legend-item"><span class="dot" style="background:#10b981; box-shadow: 0 0 8px #10b981;"></span><span>محرك اليومية والأستاذ (Engines)</span></div>
+    <div class="legend-item"><span class="dot" style="background:#f59e0b; box-shadow: 0 0 8px #f59e0b;"></span><span>قواعد البيانات والتحويل (Data/State)</span></div>
+  </div>
+
+  <!-- Node Inspector Box -->
+  <div id="infoBox" class="info-modal">
+    <h4 id="nodeTitle">FunctionName()</h4>
+    <p id="nodeFile" style="font-family:'JetBrains Mono'; font-size:11px; color:#94a3b8; direction:ltr; text-align:right;"></p>
+    <p id="nodeLoc" style="color:#60a5fa; font-size:11px;"></p>
+    <div id="nodeBadge" class="badge">عصب رئيسي</div>
+  </div>
+
+  <script>
+    fetch('graph.json')
+      .then(res => res.json())
+      .then(data => {
+        const nodes = data.nodes || [];
+        const links = data.links || [];
+
+        document.getElementById('node-count').innerText = nodes.length;
+        document.getElementById('edge-count').innerText = links.length;
+
+        // Categorize color like synaptic neural layers
+        function getNodeColor(node) {
+          const path = (node.source_file || '').toLowerCase();
+          if (path.includes('bridge') || path.includes('state')) return '#38bdf8'; // Blue
+          if (path.includes('ui/') || path.includes('view')) return '#c084fc'; // Purple
+          if (path.includes('journal') || path.includes('ledger') || path.includes('recon')) return '#34d399'; // Emerald
+          return '#f59e0b'; // Amber
+        }
+
+        const elem = document.getElementById('graph-container');
+        const Graph = ForceGraph()(elem)
+          .graphData({ nodes, links })
+          .nodeId('id')
+          .nodeLabel(n => `${n.label} (${n.source_file || ''})`)
+          .nodeVal(n => (n._callable ? 4 : 8))
+          .nodeColor(getNodeColor)
+          .nodeCanvasObject((node, ctx, globalScale) => {
+            const label = node.label || node.id;
+            const fontSize = Math.max(12 / globalScale, 3.5);
+            ctx.font = `${fontSize}px 'JetBrains Mono', sans-serif`;
+
+            // Draw glowing neural node
+            const r = node._callable ? 4 : 7;
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
+            ctx.fillStyle = getNodeColor(node);
+            ctx.shadowColor = getNodeColor(node);
+            ctx.shadowBlur = 10;
+            ctx.fill();
+
+            // Label
+            if (globalScale > 1.2 || !node._callable) {
+              ctx.shadowBlur = 0;
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillStyle = '#ffffff';
+              ctx.fillText(label, node.x, node.y + r + fontSize * 0.8);
+            }
+          })
+          .linkColor(() => 'rgba(96, 165, 250, 0.25)')
+          .linkWidth(1.2)
+          .linkDirectionalParticles(2)
+          .linkDirectionalParticleSpeed(0.006)
+          .linkDirectionalParticleWidth(2.5)
+          .linkDirectionalParticleColor(() => '#67e8f9')
+          .backgroundColor('#060913')
+          .onNodeClick(node => {
+            const infoBox = document.getElementById('infoBox');
+            document.getElementById('nodeTitle').innerText = node.label || node.id;
+            document.getElementById('nodeFile').innerText = node.source_file || 'Global';
+            document.getElementById('nodeLoc').innerText = 'الموقع: ' + (node.source_location || 'L1');
+            infoBox.style.display = 'block';
+
+            Graph.centerAt(node.x, node.y, 1000);
+            Graph.zoom(2.5, 1000);
+          });
+
+        // Live Search
+        document.getElementById('searchInput').addEventListener('input', e => {
+          const val = e.target.value.toLowerCase().trim();
+          if (!val) return;
+          const match = nodes.find(n => (n.label || '').toLowerCase().includes(val) || (n.source_file || '').toLowerCase().includes(val));
+          if (match) {
+            Graph.centerAt(match.x, match.y, 800);
+            Graph.zoom(2.8, 800);
+          }
+        });
+      })
+      .catch(err => {
+        console.error('Error loading graph.json:', err);
+      });
+  </script>
+</body>
+</html>

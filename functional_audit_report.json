@@ -1,0 +1,21 @@
+{
+  "journal_tests": {
+    "totalTasks": 111,
+    "journalEntries": 1,
+    "hasAutoOpening": true,
+    "openingStatus": "posted",
+    "openingLinesCount": 63,
+    "pendingCount": 110
+  },
+  "ledger_tests": {
+    "totalDebit": "1,800,000",
+    "totalCredit": "1,800,000",
+    "tAccountsCount": 63,
+    "hasNaN": false,
+    "isBalanced": true
+  },
+  "statements_tests": {
+    "hasNaN": false
+  },
+  "discovered_bugs": []
+}

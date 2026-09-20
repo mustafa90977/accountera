@@ -1,0 +1,79 @@
+{
+  "console_errors": [],
+  "page_errors": [],
+  "network_failures": [],
+  "screen_audits": [
+    {
+      "screen": "https://accountera.vercel.app",
+      "title": "منصة المحاسب المبتدئ | Accountera",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "لوحة الطالب (Student Dashboard)",
+      "title": "منصة المحاسب المبتدئ | Accountera",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "المسار التعليمي (درس 1)",
+      "title": "منصة المحاسب المبتدئ | Accountera",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "الأمثلة المحلولة (Example 1)",
+      "title": "منصة المحاسب المبتدئ | Accountera",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "دليل ومجمع الشركات",
+      "title": "منصة المحاسب المبتدئ | Accountera",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "لوحة الإدارة الشاملة (Admin)",
+      "title": "منصة المحاسب المبتدئ | Accountera",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "لوحة المعلم الأكاديمي",
+      "title": "منصة المحاسب المبتدئ | Accountera",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "https://accountera.vercel.app/simulation/simulation/journal/index.html",
+      "title": "محاكي النظام المحاسبي - NTL-2026",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "https://accountera.vercel.app/simulation/simulation/ledger/index.html",
+      "title": "محاكي النظام المحاسبي - NTL-2026",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "https://accountera.vercel.app/simulation/simulation/bank-recon/index.html",
+      "title": "محاكي النظام المحاسبي - NTL-2026",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "https://accountera.vercel.app/simulation/simulation/statements/index.html",
+      "title": "القوائم المالية - محاكي النظام المحاسبي",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "screen": "https://accountera.vercel.app/simulation/simulation/dashboard/index.html",
+      "title": "محاكي النظام المحاسبي - NTL-2026",
+      "status": "PASS",
+      "errors": []
+    }
+  ]
+}

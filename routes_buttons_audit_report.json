@@ -1,0 +1,92 @@
+{
+  "topbar_nav_tests": [
+    {
+      "label": "لوحة الطالب",
+      "status": "passed"
+    },
+    {
+      "label": "المسار التعليمي",
+      "status": "passed"
+    },
+    {
+      "label": "الأمثلة المحلولة",
+      "status": "failed"
+    },
+    {
+      "label": "التمارين المستقلة",
+      "status": "failed"
+    },
+    {
+      "label": "بيئة الشركات",
+      "status": "passed"
+    },
+    {
+      "label": "الرئيسية",
+      "status": "passed"
+    }
+  ],
+  "bottom_nav_mobile_tests": [
+    {
+      "label": "لوحتي (الطالب)",
+      "status": "error",
+      "error": "Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#bn-student-dashboard\")\n    - locator resolved to <button class=\"bottom-nav-item\" id=\"bn-student-dashboard\" onclick=\"navigateToScreen('student-dashboard')\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    26 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n"
+    },
+    {
+      "label": "الدروس",
+      "status": "error",
+      "error": "Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#bn-lesson-1\")\n    - locator resolved to <button id=\"bn-lesson-1\" class=\"bottom-nav-item\" onclick=\"navigateToScreen('lesson-1')\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    30 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n"
+    },
+    {
+      "label": "الشركات",
+      "status": "error",
+      "error": "Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#bn-companies-hub\")\n    - locator resolved to <button id=\"bn-companies-hub\" class=\"bottom-nav-item\" onclick=\"navigateToScreen('companies-hub')\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    30 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n"
+    },
+    {
+      "label": "الرئيسية",
+      "status": "error",
+      "error": "Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#bn-landing\")\n    - locator resolved to <button id=\"bn-landing\" class=\"bottom-nav-item active\" onclick=\"navigateToScreen('landing')\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    28 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n"
+    }
+  ],
+  "simulator_nav_tabs": [
+    {
+      "tab": "شجرة الحسابات",
+      "title": "شجرة الحسابات - محاكي النظام المحاسبي",
+      "status": "passed"
+    },
+    {
+      "tab": "دفتر الأستاذ",
+      "title": "محاكي النظام المحاسبي - NTL-2026",
+      "status": "passed"
+    },
+    {
+      "tab": "القوائم المالية",
+      "title": "القوائم المالية - محاكي النظام المحاسبي",
+      "status": "passed"
+    },
+    {
+      "tab": "التسوية البنكية",
+      "title": "محاكي النظام المحاسبي - NTL-2026",
+      "status": "passed"
+    },
+    {
+      "tab": "لوحة المحاكي العامة",
+      "title": "محاكي النظام المحاسبي - NTL-2026",
+      "status": "passed"
+    },
+    {
+      "tab": "دفتر اليومية",
+      "title": "محاكي النظام المحاسبي - NTL-2026",
+      "status": "passed"
+    }
+  ],
+  "dashboard_buttons": [],
+  "errors_found": [
+    "Mobile button لوحتي (الطالب) error: Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#bn-student-dashboard\")\n    - locator resolved to <button class=\"bottom-nav-item\" id=\"bn-student-dashboard\" onclick=\"navigateToScreen('student-dashboard')\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    26 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n",
+    "Mobile button الدروس error: Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#bn-lesson-1\")\n    - locator resolved to <button id=\"bn-lesson-1\" class=\"bottom-nav-item\" onclick=\"navigateToScreen('lesson-1')\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    30 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n",
+    "Mobile button الشركات error: Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#bn-companies-hub\")\n    - locator resolved to <button id=\"bn-companies-hub\" class=\"bottom-nav-item\" onclick=\"navigateToScreen('companies-hub')\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    30 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n",
+    "Mobile button الرئيسية error: Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#bn-landing\")\n    - locator resolved to <button id=\"bn-landing\" class=\"bottom-nav-item active\" onclick=\"navigateToScreen('landing')\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    28 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n",
+    "Mobile journal tab المستند error: Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#jtab-btn-doc\")\n    - locator resolved to <button type=\"button\" id=\"jtab-btn-doc\" onclick=\"switchJournalMobilePane('doc')\" class=\"flex-1 py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 bg-surface-container text-on-surface-variant hover:text-on-surface min-h-[44px]\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    27 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n",
+    "Mobile journal tab القيد error: Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#jtab-btn-form\")\n    - locator resolved to <button type=\"button\" id=\"jtab-btn-form\" onclick=\"switchJournalMobilePane('form')\" class=\"flex-1 py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 bg-surface-container text-on-surface-variant hover:text-on-surface min-h-[44px]\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    29 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n",
+    "Mobile journal tab المهام error: Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"#jtab-btn-tasks\")\n    - locator resolved to <button type=\"button\" id=\"jtab-btn-tasks\" onclick=\"switchJournalMobilePane('tasks')\" class=\"flex-1 py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 bg-slate-900 text-white shadow-sm min-h-[44px]\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    30 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n"
+  ]
+}

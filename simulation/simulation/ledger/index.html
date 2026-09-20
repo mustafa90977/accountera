@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title>محاكي النظام المحاسبي - NTL-2026</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../css/theme.js"></script>
+</head>
+<body class="bg-surface font-sans text-slate-800 flex flex-col antialiased">
+  <!-- Header -->
+  <header class="fixed top-0 w-full z-50 pt-safe bg-white/90 backdrop-blur-xl shadow-xs border-b border-slate-200">
+    <div class="h-20 px-3 sm:px-4 flex flex-col justify-center gap-1 max-w-7xl mx-auto">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-xs flex-shrink-0">
+            <span class="material-symbols-outlined text-[22px]">account_balance</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <span class="font-bold text-xs xs:text-sm text-slate-900 truncate company-title-display">شركة النيل للتجارة والتوزيع</span>
+              <span class="text-[10px] xs:text-[11px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold flex-shrink-0 hidden xs:inline-block">الترحيل</span>
+            </div>
+            <span class="text-xs text-slate-500 truncate hidden sm:block">دورة الإقفال المحاسبي 2026 • ترحيل دفتر الأستاذ العام وحسابات حرف T</span>
+            <span class="text-[11px] text-slate-500 truncate sm:hidden">ترحيل دفتر الأستاذ وحسابات T</span>
+          </div>
+        </div>
+
+        <div id="header-actions" class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          <span id="header-pending-badge" class="text-xs bg-amber-100 text-amber-800 font-bold px-2 xs:px-2.5 py-1.5 rounded-full border border-amber-300 flex items-center gap-1 flex-shrink-0">
+            <span class="material-symbols-outlined text-[15px]">hourglass_top</span>
+            <span id="pending-count-text">0 معلق</span>
+          </span>
+          <a href="../journal/index.html" class="hidden sm:flex text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 xs:px-3 py-1.5 rounded-lg border border-slate-300 items-center gap-1 transition min-h-[36px] flex-shrink-0">
+            <span class="material-symbols-outlined text-[16px]">menu_book</span> <span>دفتر اليومية</span>
+          </a>
+          <a href="/index.html" onclick="returnToPlatform(event)" class="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex-shrink-0 min-h-[36px] cursor-pointer" title="العودة لمنصة المحاسب الرئيسية"><span class="material-symbols-outlined text-[16px]">arrow_forward</span><span class="hidden xs:inline">العودة للمنصة</span></a><div id="header-closing-slot" class="flex items-center flex-shrink-0"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex flex-col relative w-full pt-24 pb-28 min-h-screen px-4 max-w-7xl mx-auto">
+    <!-- View Switcher Tabs -->
+    <div class="flex items-center justify-center gap-1 sm:gap-2 mb-6 bg-slate-200/80 p-1.5 rounded-2xl max-w-xl mx-auto w-full shadow-inner border border-slate-300">
+      <button id="tab-btn-posting" onclick="switchLedgerTab('posting')" class="flex-1 py-2 sm:py-2.5 px-1.5 sm:px-4 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1 sm:gap-2 bg-slate-900 text-white shadow-sm min-h-[44px]">
+        <span class="material-symbols-outlined text-[16px] sm:text-[18px]">drive_file_move</span>
+        <span>الترحيل اليدوي</span>
+      </button>
+      <button id="tab-btn-taccounts" onclick="switchLedgerTab('taccounts')" class="flex-1 py-2 sm:py-2.5 px-1.5 sm:px-4 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1 sm:gap-2 text-slate-600 hover:text-slate-900 hover:bg-white/60 min-h-[44px]">
+        <span class="material-symbols-outlined text-[16px] sm:text-[18px]">table_chart</span>
+        <span>حسابات T</span>
+      </button>
+      <button id="tab-btn-tb" onclick="switchLedgerTab('tb')" class="flex-1 py-2 sm:py-2.5 px-1.5 sm:px-4 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1 sm:gap-2 text-slate-600 hover:text-slate-900 hover:bg-white/60 min-h-[44px]">
+        <span class="material-symbols-outlined text-[16px] sm:text-[18px]">balance</span>
+        <span>ميزان المراجعة</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: MANUAL POSTING WORKSPACE -->
+    <div id="tab-posting" class="space-y-6">
+      <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3">
+        <span class="material-symbols-outlined text-blue-700 text-2xl mt-0.5">info</span>
+        <div class="text-xs text-blue-900 leading-relaxed">
+          <strong class="block text-sm mb-0.5">إرشادات الترحيل الدفتري السليم:</strong>
+          اختر القيد المعلق من القائمة في اليمين، ثم قم بترحيل كل طرف بيدك إلى الجانب الصحيح (مدين أو دائن) لحساب الأستاذ المختص. لن تتأثر أرصدة الحسابات وميزان المراجعة إلا بعد استكمال ترحيلك الفعلي!
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Right Column: Pending Journal Entries Queue (40%) -->
+        <div class="lg:col-span-5 bg-white rounded-2xl border-2 border-slate-200 shadow-sm overflow-hidden flex flex-col">
+          <div class="p-4 bg-slate-900 text-white font-bold flex justify-between items-center">
+            <span class="flex items-center gap-2 text-sm">
+              <span class="material-symbols-outlined text-amber-400">pending_actions</span>
+              طابور القيود بانتظار الترحيل
+            </span>
+            <span id="queue-badge" class="text-xs bg-amber-400 text-slate-900 px-2.5 py-0.5 rounded-full font-mono font-black">0</span>
+          </div>
+
+          <div id="pending-queue-list" class="divide-y divide-slate-100 p-3 space-y-3 max-h-[620px] overflow-y-auto">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Left Column: Manual Posting Form (60%) -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border-2 border-slate-200 shadow-sm p-6 flex flex-col">
+          <div class="border-b border-slate-200 pb-3 mb-5 flex justify-between items-center">
+            <div>
+              <h2 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                <span class="material-symbols-outlined text-blue-600">edit_square</span>
+                نموذج الترحيل اليدوي لحساب الأستاذ
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">حدد الحساب والجانب (منه/له) وأدخل المبلغ الدفتري</p>
+            </div>
+            <span id="selected-entry-badge" class="text-xs font-mono font-bold bg-slate-100 text-slate-700 px-3 py-1 rounded-lg border border-slate-200">
+              لم يتم اختيار قيد
+            </span>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Account Selection -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">الحساب المراد الترحيل إليه في دفتر الأستاذ:</label>
+              <select id="post-account-select" class="w-full border-2 border-slate-300 rounded-xl p-3 text-sm font-medium bg-slate-50 focus:bg-white focus:border-blue-600 focus:outline-none transition">
+                <option value="">-- اختر حساب الأستاذ --</option>
+              </select>
+            </div>
+
+            <!-- Debit / Credit Side Selection -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">الجانب الدفتري المراد الترحيل فيه:</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button type="button" id="side-debit-btn" onclick="selectPostingSide('debit')" class="py-3 px-4 rounded-xl border-2 border-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition hover:bg-slate-50">
+                  <span class="w-3 h-3 rounded-full border-2 border-slate-400" id="debit-dot"></span>
+                  جانب مدين (منه) 📥
+                </button>
+                <button type="button" id="side-credit-btn" onclick="selectPostingSide('credit')" class="py-3 px-4 rounded-xl border-2 border-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition hover:bg-slate-50">
+                  <span class="w-3 h-3 rounded-full border-2 border-slate-400" id="credit-dot"></span>
+                  جانب دائن (له) 📤
+                </button>
+              </div>
+            </div>
+
+            <!-- Amount Input -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">المبلغ المراد ترحيله (ج.م):</label>
+              <input type="number" id="post-amount-input" placeholder="0.00" step="any" class="w-full border-2 border-slate-300 rounded-xl p-3 text-base font-mono font-bold bg-slate-50 focus:bg-white focus:border-blue-600 focus:outline-none transition"/>
+            </div>
+
+            <!-- Description Input -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">البيان والشرح الدفتري للحركة:</label>
+              <input type="text" id="post-desc-input" placeholder="شرح المعاملة أو رقم المستند..." class="w-full border-2 border-slate-300 rounded-xl p-3 text-xs bg-slate-50 focus:bg-white focus:border-blue-600 focus:outline-none transition"/>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="button" onclick="submitManualPosting()" class="w-full bg-slate-900 hover:bg-blue-900 text-white font-black py-3.5 px-6 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 mt-2">
+              <span>ترحيل السطر إلى دفتر الأستاذ</span>
+              <span class="material-symbols-outlined text-[20px]">send</span>
+            </button>
+
+            <!-- Feedback Message Container -->
+            <div id="posting-feedback" class="text-xs transition-all"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: T-ACCOUNTS CARDS -->
+    <div id="tab-taccounts" class="hidden space-y-6">
+      <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div>
+          <h2 class="font-bold text-base text-slate-900">دفتر الأستاذ العام - بطاقات حسابات حرف T (T-Accounts)</h2>
+          <p class="text-xs text-slate-500">تعرض الحركات الفعلية التي رحّلها الطالب إلى الجانبين المدين والدائن لكل حساب</p>
+        </div>
+        <button onclick="renderTAccounts()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-300 flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">refresh</span> تحديث الحسابات
+        </button>
+      </div>
+
+      <div id="t-accounts-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- TAB 3: TRIAL BALANCE -->
+    <div id="tab-tb" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-4 bg-slate-900 text-white font-bold flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-emerald-400">balance</span>
+            <span class="text-base">ميزان المراجعة بالأرصدة الناتجة عن الترحيل الفعلي</span>
+          </div>
+          <span id="tb-balance-badge" class="text-xs font-bold px-3 py-1 rounded-full">--</span>
+        </div>
+
+        <div class="p-4">
+          <div id="tb-status-alert" class="mb-4"></div>
+
+          <div class="overflow-x-auto w-full">
+            <table class="w-full text-right text-xs border-collapse border border-slate-200 rounded-xl overflow-hidden min-w-[480px]">
+              <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3 text-center w-24">رقم الحساب</th>
+                  <th class="p-3">اسم الحساب</th>
+                  <th class="p-3 text-center w-36 border-x border-slate-200">أرصدة مدينة (ج.م)</th>
+                  <th class="p-3 text-center w-36 border-x border-slate-200">أرصدة دائنة (ج.م)</th>
+                </tr>
+              </thead>
+              <tbody id="ledger-tbody" class="divide-y divide-slate-100 font-mono">
+                <!-- JS -->
+              </tbody>
+              <tfoot class="bg-slate-50 font-bold border-t-2 border-slate-300 text-sm">
+                <tr>
+                  <td colspan="2" class="p-3 text-slate-800 font-sans">الإجمالي المتزن للأرصدة:</td>
+                  <td class="p-3 text-center font-mono text-emerald-700 text-base border-x border-slate-200" id="tb-total-debit">0</td>
+                  <td class="p-3 text-center font-mono text-emerald-700 text-base border-x border-slate-200" id="tb-total-credit">0</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Statement Modal (كشف الحساب التفصيلي) -->
+    <div id="account-statement-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4">
+      <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border-2 border-slate-300 w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh]">
+        <!-- Modal Header -->
+        <div class="p-3 sm:p-4 bg-slate-900 text-white flex justify-between items-center border-b-2 border-slate-700">
+          <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800 flex items-center justify-center text-blue-400 flex-shrink-0">
+              <span class="material-symbols-outlined text-xl sm:text-2xl">receipt_long</span>
+            </span>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 id="stmt-account-title" class="font-bold text-sm sm:text-base text-white truncate">كشف حساب</h3>
+                <span id="stmt-account-code" class="font-mono text-xs bg-slate-800 px-2 py-0.5 rounded text-blue-300 border border-slate-700 flex-shrink-0">--</span>
+              </div>
+              <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">دفتر الأستاذ العام • كشف حركة الحساب التفصيلي</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            <button type="button" onclick="window.print()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1 transition min-h-[36px]">
+              <span class="material-symbols-outlined text-[15px]">print</span> <span class="hidden xs:inline">طباعة</span>
+            </button>
+            <button type="button" onclick="closeAccountStatement()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-rose-900 hover:text-white flex items-center justify-center text-slate-400 transition" aria-label="إغلاق">
+              <span class="material-symbols-outlined text-[18px]">close</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Modal Summary Cards -->
+        <div class="p-2.5 sm:p-3 bg-slate-50 border-b border-slate-200 grid grid-cols-3 gap-2 sm:gap-3 text-center">
+          <div class="bg-white p-2 sm:p-2.5 rounded-xl border border-slate-200 shadow-2xs min-w-0">
+            <span class="text-[10px] sm:text-[11px] font-bold text-slate-500 block mb-0.5 truncate">مجموع المدين (منه)</span>
+            <span id="stmt-total-debit" class="font-mono font-bold text-xs sm:text-sm text-blue-900 truncate block">0.00</span>
+          </div>
+          <div class="bg-white p-2 sm:p-2.5 rounded-xl border border-slate-200 shadow-2xs min-w-0">
+            <span class="text-[10px] sm:text-[11px] font-bold text-slate-500 block mb-0.5 truncate">مجموع الدائن (له)</span>
+            <span id="stmt-total-credit" class="font-mono font-bold text-xs sm:text-sm text-amber-900 truncate block">0.00</span>
+          </div>
+          <div class="bg-white p-2 sm:p-2.5 rounded-xl border border-slate-200 shadow-2xs min-w-0">
+            <span class="text-[10px] sm:text-[11px] font-bold text-slate-500 block mb-0.5 truncate">الرصيد الدفتري</span>
+            <span id="stmt-net-balance" class="font-mono font-black text-xs sm:text-sm text-emerald-700 truncate block">0.00</span>
+          </div>
+        </div>
+
+        <!-- Modal Table Body -->
+        <div class="flex-1 overflow-y-auto p-2 sm:p-4">
+          <div class="overflow-x-auto w-full">
+            <table class="w-full text-right text-xs border-collapse min-w-[500px]">
+              <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 sticky top-0">
+                <tr>
+                  <th class="p-2.5 w-24">التاريخ</th>
+                  <th class="p-2.5 w-28">رقم القيد / المرجع</th>
+                  <th class="p-2.5">البيان والشرح الدفتري</th>
+                  <th class="p-2.5 text-center w-24">مدين (ج.م)</th>
+                  <th class="p-2.5 text-center w-24">دائن (ج.م)</th>
+                  <th class="p-2.5 text-center w-28">الرصيد التراكمي</th>
+                </tr>
+              </thead>
+              <tbody id="stmt-tbody" class="divide-y divide-slate-100 font-mono">
+                <!-- JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(11,28,48,0.06)] border-t border-surface-variant">
+  <div class="flex items-center justify-around px-1 py-1 max-w-xl mx-auto w-full">
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../dashboard/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">dashboard</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">نظرة عامة</span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../accounts/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">account_tree</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الحسابات</span><span class="hidden xs:inline">شجرة الحسابات</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../journal/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">menu_book</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">اليومية</span><span class="hidden xs:inline">قيود اليومية</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-primary font-bold" href="../ledger/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">balance</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الأستاذ</span><span class="hidden xs:inline">دفتر الأستاذ</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../statements/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">query_stats</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">القوائم</span><span class="hidden xs:inline">القوائم المالية</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../bank-recon/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">assured_workload</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">التسوية</span><span class="hidden xs:inline">التسوية البنكية</span></span>
+    </a>
+  </div>
+</nav>
+
+  <script src="../data.js"></script><script src="../js/state.js"></script><script src="../js/closing-wizard.js"></script><script src="../js/ledger.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+/**
+ * app-shell.css — توزيع الهيكل الأساسي للتطبيق
+ */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-bottom));
+}
+
+@media (min-width: 820px) {
+  .app-wrapper {
+    padding-bottom: 0;
+  }
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+}

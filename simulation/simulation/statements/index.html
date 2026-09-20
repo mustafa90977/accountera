@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title>القوائم المالية - محاكي النظام المحاسبي</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../css/theme.js"></script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col antialiased selection:bg-secondary-container">
+<header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(11,28,48,0.04)]">
+  <div class="h-20 px-space-md flex flex-col justify-center gap-space-xs max-w-7xl mx-auto">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-space-sm min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-primary-fixed shadow-[0_1px_4px_rgba(0,0,0,0.08)] flex-shrink-0">
+          <span class="material-symbols-outlined text-[22px]">domain</span>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <div class="flex items-center gap-space-xs">
+            <span class="company-title-display font-title-sm text-title-sm text-on-surface truncate max-w-[150px] xs:max-w-[200px] sm:max-w-[280px]">شركة النيل للتجارة والتوزيع</span>
+            <span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-medium flex-shrink-0 hidden xs:inline-block">بيئة نشطة</span>
+          </div>
+          <span class="font-body-sm text-body-sm text-on-surface-variant truncate">دورة القوائم المالية الختامية</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-space-xs flex-shrink-0">
+        <a href="/index.html" onclick="returnToPlatform(event)" class="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex-shrink-0 min-h-[36px] cursor-pointer" title="العودة لمنصة المحاسب الرئيسية"><span class="material-symbols-outlined text-[16px]">arrow_forward</span><span class="hidden xs:inline">العودة للمنصة</span></a><div id="header-closing-slot" class="flex items-center flex-shrink-0"></div>
+        <div class="flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container-low">
+          <span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span>
+          <span class="font-label-sm text-label-sm text-on-tertiary-container font-semibold">
+            <span class="header-progress-short xs:hidden">0%</span>
+            <span class="header-progress-full hidden xs:inline">0% إنجاز (0 قيد)</span>
+          </span>
+        </div>
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0" title="محاسب مالي">
+          <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center justify-between pt-0.5">
+      <div class="hidden xs:flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
+        <span class="material-symbols-outlined text-[14px] text-tertiary-fixed-dim">verified_user</span>
+        <span>مطابقة للمعايير المحاسبية الدولية IFRS</span>
+      </div>
+      <span class="font-headline-sm text-headline-sm text-on-surface truncate">القوائم المالية الختامية (Financial Statements)</span>
+    </div>
+  </div>
+</header>
+
+<main class="flex flex-col relative w-full pt-24 pb-28 bg-surface min-h-screen">
+  <div class="flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 gap-6">
+
+    <!-- Validation Banner -->
+    <div id="fs-validation-banner" class="p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-blue-50 border-blue-200 text-blue-950">
+      <div class="flex items-center gap-2.5">
+        <span class="material-symbols-outlined text-blue-600 text-2xl">account_balance</span>
+        <div>
+          <strong id="fs-val-title" class="text-sm block">حالة اتزان المركز المالي</strong>
+          <span id="fs-val-desc" class="text-xs text-blue-800">يتم احتساب القوائم آلياً ومباشرة من القيود المرحلة في دفتر الأستاذ.</span>
+        </div>
+      </div>
+      <span id="fs-val-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-300">
+        بانتظار الترحيل
+      </span>
+    </div>
+
+    <!-- Navigation Tabs for Mobile / Quick View -->
+    <div class="flex gap-2 overflow-x-auto pb-1 border-b border-slate-200">
+      <button onclick="switchStatementTab('is')" id="tab-btn-is" class="tab-stmt-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-900 text-white shadow-xs transition flex items-center gap-1.5 whitespace-nowrap">
+        <span class="material-symbols-outlined text-base">receipt_long</span>
+        <span>قائمة الدخل</span>
+      </button>
+      <button onclick="switchStatementTab('bs')" id="tab-btn-bs" class="tab-stmt-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition flex items-center gap-1.5 whitespace-nowrap">
+        <span class="material-symbols-outlined text-base">balance</span>
+        <span>الميزانية العمومية</span>
+      </button>
+      <button onclick="switchStatementTab('cf')" id="tab-btn-cf" class="tab-stmt-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition flex items-center gap-1.5 whitespace-nowrap">
+        <span class="material-symbols-outlined text-base">payments</span>
+        <span>التدفقات النقدية</span>
+      </button>
+    </div>
+
+    <!-- Statement View Containers -->
+    <!-- 1. Income Statement -->
+    <div id="stmt-view-is" class="stmt-section bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-surface-variant">
+      <div class="p-4 bg-slate-900 text-white flex justify-between items-center font-bold">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-emerald-400">trending_up</span>
+          <span class="text-sm sm:text-base">قائمة الدخل والأرباح والخسائر (Income Statement)</span>
+        </div>
+        <span class="text-xs bg-slate-800 text-emerald-300 px-3 py-1 rounded-full font-mono">عن الفترة المنتهية</span>
+      </div>
+      <div id="is-container" class="p-4 sm:p-6 overflow-x-auto">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- 2. Balance Sheet -->
+    <div id="stmt-view-bs" class="stmt-section hidden bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-surface-variant">
+      <div class="p-4 bg-slate-900 text-white flex justify-between items-center font-bold">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-blue-400">account_balance</span>
+          <span class="text-sm sm:text-base">الميزانية العمومية والمركز المالي (Balance Sheet)</span>
+        </div>
+        <span class="text-xs bg-slate-800 text-blue-300 px-3 py-1 rounded-full font-mono">في نهاية الفترة</span>
+      </div>
+      <div id="bs-container" class="p-4 sm:p-6 overflow-x-auto">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- 3. Cash Flow Statement -->
+    <div id="stmt-view-cf" class="stmt-section hidden bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-surface-variant">
+      <div class="p-4 bg-slate-900 text-white flex justify-between items-center font-bold">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-purple-400">payments</span>
+          <span class="text-sm sm:text-base">قائمة التدفقات النقدية (Cash Flow Statement - Cash Flow Aware)</span>
+        </div>
+        <span class="text-xs bg-slate-800 text-purple-300 px-3 py-1 rounded-full font-mono">طريقة الأنشطة</span>
+      </div>
+      <div id="cf-container" class="p-4 sm:p-6 overflow-x-auto">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(11,28,48,0.06)] border-t border-surface-variant">
+  <div class="flex items-center justify-around px-1 py-1 max-w-xl mx-auto w-full">
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../dashboard/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">dashboard</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">نظرة عامة</span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../accounts/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">account_tree</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الحسابات</span><span class="hidden xs:inline">شجرة الحسابات</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../journal/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">menu_book</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">اليومية</span><span class="hidden xs:inline">قيود اليومية</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../ledger/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">balance</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الأستاذ</span><span class="hidden xs:inline">دفتر الأستاذ</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-primary font-bold" href="../statements/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">query_stats</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">القوائم</span><span class="hidden xs:inline">القوائم المالية</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../bank-recon/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">assured_workload</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">التسوية</span><span class="hidden xs:inline">التسوية البنكية</span></span>
+    </a>
+  </div>
+</nav>
+
+<script src="../data.js"></script>
+<script src="../js/state.js"></script>
+<script src="../js/closing-wizard.js"></script>
+<script src="../js/statements.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+﻿/**
+ * tokens.css — نظام التصميم المالي والمتغيرات القياسية
+ * Accountera Design System & Fluid Tokens
+ */
+
+:root {
+  /* 1. لوحة الألوان الأساسية (Sovereign Emerald & Neutral Slate) */
+  --primary: #10B981;
+  --primary-hover: #059669;
+  --primary-active: #047857;
+  --primary-light: #ECFDF5;
+  --primary-border: #A7F3D0;
+  --brand-glow: rgba(16, 185, 129, 0.18);
+
+  /* الألوان المالية والعمليات */
+  --acc-debit: #10B981;
+  --acc-credit: #475569;
+  --acc-neutral: #64748B;
+
+  /* الأسطح والخلفيات (Surfaces) */
+  --bg-main: #F8FAFC;
+  --bg-secondary: #F1F5F9;
+  --surface-card: #FFFFFF;
+  --surface-panel: #FFFFFF;
+  --surface-hover: #F8FAFC;
+  --border-subtle: #E2E8F0;
+  --border-strong: #CBD5E1;
+
+  /* النصوص (Typography) */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-inverted: #FFFFFF;
+
+  /* دلالات الحالات (Status Indicators) */
+  --success: #10B981;
+  --success-bg: #ECFDF5;
+  --success-border: #A7F3D0;
+
+  --danger: #EF4444;
+  --danger-bg: #FEF2F2;
+  --danger-border: #FECACA;
+
+  --warning: #F59E0B;
+  --warning-bg: #FFFBEB;
+  --warning-border: #FDE68A;
+
+  --info: #0EA5E9;
+  --info-bg: #F0F9FF;
+  --info-border: #BAE6FD;
+
+  /* 2. شبكة المسافات القياسية (8pt Grid System) */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem;  /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem;    /* 16px */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem;  /* 24px */
+  --space-8: 2rem;    /* 32px */
+  --space-10: 2.5rem; /* 40px */
+  --space-12: 3rem;   /* 48px */
+  --space-16: 4rem;   /* 64px */
+
+  /* 3. معايير الهواتف المحمولة واللمس (Mobile-First Standards) */
+  --touch-target-min: 44px; /* معيار WCAG لأزرار اللمس */
+  --header-height-mobile: 58px;
+  --header-height-desktop: 68px;
+  --bottom-nav-height: 64px;
+  --sidebar-width: 270px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+
+  /* 4. الحاويات ونقاط التجاوب (Containers & Layout Bounds) */
+  --container-max: 1240px;
+  --container-padding-mobile: 1rem;
+  --container-padding-desktop: 2rem;
+
+  /* 5. الحواف والظلال (Radii & Elevation) */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+  --shadow-drawer: -4px 0 24px rgba(15, 23, 42, 0.15);
+
+  /* 6. الانتقالات والحركة (Transitions) */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* نمط الوضع الليلي (Dark Theme) */
+[data-theme="dark"] {
+  --bg-main: #0B0F19;
+  --bg-secondary: #111827;
+  --surface-card: #161F30;
+  --surface-panel: #1E293B;
+  --surface-hover: #243048;
+  --border-subtle: #243048;
+  --border-strong: #334155;
+
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+
+  --primary-light: rgba(16, 185, 129, 0.12);
+  --primary-border: rgba(16, 185, 129, 0.3);
+}

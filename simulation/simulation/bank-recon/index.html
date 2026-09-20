@@ -1,0 +1,278 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title>محاكي النظام المحاسبي - NTL-2026</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../css/theme.js"></script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 flex flex-col antialiased">
+  <!-- Header -->
+  <header class="fixed top-0 w-full z-50 pt-safe bg-white/90 backdrop-blur-xl shadow-xs border-b border-slate-200">
+    <div class="h-20 px-4 flex flex-col justify-center gap-1 max-w-7xl mx-auto">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-xs flex-shrink-0">
+            <span class="material-symbols-outlined text-[22px]">assured_workload</span>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm text-slate-900 truncate max-w-[130px] xs:max-w-[180px] sm:max-w-[240px] company-title-display">شركة النيل للتجارة والتوزيع</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex-shrink-0 hidden xs:inline-block">التسوية البنكية</span>
+            </div>
+            <span class="text-xs text-slate-500 truncate hidden sm:block">حساب جاري البنك الأهلي التجاري • مطابقة كشف الحساب الخارجي مع حركات الأستاذ (1102)</span>
+            <span class="text-xs text-slate-500 truncate sm:hidden">مطابقة حـ/ 1102 مع كشف البنك</span>
+          </div>
+        </div>
+
+        <div id="header-actions" class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          <span id="recon-header-badge" class="text-xs font-bold px-2 xs:px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1 flex-shrink-0">
+            <span class="material-symbols-outlined text-[15px]">sync_problem</span>
+            <span id="recon-diff-header" class="hidden xs:inline">فروقات معلقة</span>
+            <span class="xs:hidden">فروقات</span>
+          </span>
+          <button onclick="autoMatchRecon()" class="text-xs bg-slate-900 hover:bg-blue-900 text-white font-bold px-2 xs:px-3 py-1.5 rounded-lg flex items-center gap-1 transition shadow-xs min-h-[36px] flex-shrink-0">
+            <span class="material-symbols-outlined text-[16px]">auto_fix_high</span> <span class="hidden sm:inline">مطابقة ذكية</span>
+          </button>
+          <button onclick="resetReconToZero()" title="تصفير كافة علامات المطابقة" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2 xs:px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition shadow-xs min-h-[36px] flex-shrink-0">
+            <span class="material-symbols-outlined text-[16px]">restart_alt</span> <span class="hidden md:inline">تصفير</span>
+          </button>
+          <a href="/index.html" onclick="returnToPlatform(event)" class="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex-shrink-0 min-h-[36px] cursor-pointer" title="العودة لمنصة المحاسب الرئيسية"><span class="material-symbols-outlined text-[16px]">arrow_forward</span><span class="hidden xs:inline">العودة للمنصة</span></a><div id="header-closing-slot" class="flex items-center flex-shrink-0"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex flex-col relative w-full pt-24 pb-28 min-h-screen px-4 max-w-7xl mx-auto space-y-6">
+    <!-- Top Summary KPI Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Bank Statement Balance -->
+      <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between text-slate-500 mb-1">
+          <span class="text-xs font-bold">رصيد كشف البنك الخارجي</span>
+          <span class="material-symbols-outlined text-blue-600 text-lg">account_balance</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span id="recon-bank-balance" class="text-xl font-mono font-black text-slate-900">0</span>
+          <span class="text-xs text-slate-400">ج.م</span>
+        </div>
+        <span class="text-[10px] text-slate-400 mt-1 block">رصيد الكشف المستلم من البنك</span>
+      </div>
+
+      <!-- Company Book Balance -->
+      <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between text-slate-500 mb-1">
+          <span class="text-xs font-bold">رصيد دفاتر المنشأة (حـ/ 1102)</span>
+          <span class="material-symbols-outlined text-purple-600 text-lg">menu_book</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span id="recon-book-balance" class="text-xl font-mono font-black text-slate-900">0</span>
+          <span class="text-xs text-slate-400">ج.م</span>
+        </div>
+        <span class="text-[10px] text-slate-400 mt-1 block">رصيد أستاذ البنك الفعلي للطالب</span>
+      </div>
+
+      <!-- Adjusted Bank Balance -->
+      <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between text-slate-500 mb-1">
+          <span class="text-xs font-bold">الرصيد البنكي المعدل</span>
+          <span class="material-symbols-outlined text-emerald-600 text-lg">fact_check</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span id="recon-adj-bank" class="text-xl font-mono font-black text-emerald-700">0</span>
+          <span class="text-xs text-slate-400">ج.م</span>
+        </div>
+        <span class="text-[10px] text-slate-400 mt-1 block">كشف البنك ± بنود التسوية</span>
+      </div>
+
+      <!-- Difference -->
+      <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between text-slate-500 mb-1">
+          <span class="text-xs font-bold">فرق التسوية المعلق</span>
+          <span class="material-symbols-outlined text-rose-600 text-lg">difference</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span id="recon-diff-val" class="text-xl font-mono font-black text-rose-700">0</span>
+          <span class="text-xs text-slate-400">ج.م</span>
+        </div>
+        <span id="recon-status-text" class="text-[10px] font-bold text-slate-500 mt-1 block">بانتظار العمليات</span>
+      </div>
+    </div>
+
+    <!-- Interactive Reconciliation Split Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      <!-- Right Side: External Bank Statement -->
+      <div class="bg-white rounded-2xl border-2 border-slate-300 shadow-sm overflow-hidden flex flex-col">
+        <div class="p-4 bg-slate-900 text-white font-bold flex justify-between items-center border-b border-slate-700">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-blue-400">account_balance</span>
+            <span class="text-sm">كشف حساب البنك الأهلي التجاري (الخارجي)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="bank-matched-count" class="text-xs bg-slate-800 text-blue-300 px-2.5 py-0.5 rounded font-mono font-bold border border-slate-700">0 مطابقة</span>
+          </div>
+        </div>
+
+        <div class="p-3 bg-blue-50/60 border-b border-blue-100 text-xs text-blue-900 flex justify-between items-center">
+          <span>ضع علامة صح [✓] على العمليات المقابلة لحركات الدفاتر:</span>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="matchAllBankItems()" class="text-[11px] font-bold text-blue-800 underline hover:text-blue-950">تحديد الكل</button>
+            <span class="text-slate-300">|</span>
+            <button type="button" onclick="unmatchAllBankItems()" class="text-[11px] font-bold text-slate-600 underline hover:text-slate-900">إلغاء التحديد</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-xs border-collapse min-w-[450px]">
+            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-2.5 text-center w-10">مطابقة</th>
+                <th class="p-2.5 w-20">التاريخ</th>
+                <th class="p-2.5">بيان كشف الحساب</th>
+                <th class="p-2.5 text-center w-24">إيداع (+)</th>
+                <th class="p-2.5 text-center w-24">سحب (-)</th>
+              </tr>
+            </thead>
+            <tbody id="bank-statement-tbody" class="divide-y divide-slate-100 font-mono">
+              <!-- JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Left Side: Company Book Ledger (Account 1102) -->
+      <div class="bg-white rounded-2xl border-2 border-slate-300 shadow-sm overflow-hidden flex flex-col">
+        <div class="p-4 bg-slate-900 text-white font-bold flex justify-between items-center border-b border-slate-700">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-purple-400">menu_book</span>
+            <span class="text-sm">دفتر أستاذ البنك بالمنشأة (حـ/ 1102)</span>
+          </div>
+          <span id="book-matched-count" class="text-xs bg-slate-800 text-purple-300 px-2.5 py-0.5 rounded font-mono font-bold border border-slate-700">0 مطابقة</span>
+        </div>
+
+        <div class="p-3 bg-purple-50/60 border-b border-purple-100 text-xs text-purple-900 flex justify-between items-center">
+          <span>الحركات الفعلية المرحلة لحساب البنك بواسطة الطالب:</span>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="matchAllBookItems()" class="text-[11px] font-bold text-purple-800 underline hover:text-purple-950">تحديد الكل</button>
+            <span class="text-slate-300">|</span>
+            <button type="button" onclick="unmatchAllBookItems()" class="text-[11px] font-bold text-slate-600 underline hover:text-slate-900">إلغاء التحديد</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-xs border-collapse min-w-[450px]">
+            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-2.5 text-center w-10">مطابقة</th>
+                <th class="p-2.5 w-20">التاريخ</th>
+                <th class="p-2.5">شرح القيد بالدفاتر</th>
+                <th class="p-2.5 text-center w-24">مدين (+)</th>
+                <th class="p-2.5 text-center w-24">دائن (-)</th>
+              </tr>
+            </thead>
+            <tbody id="book-statement-tbody" class="divide-y divide-slate-100 font-mono">
+              <!-- JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Official Bank Reconciliation Statement Card -->
+    <div class="bg-white rounded-2xl border-2 border-slate-300 shadow-sm overflow-hidden">
+      <div class="p-4 bg-slate-900 text-white font-bold flex justify-between items-center border-b border-slate-700">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-emerald-400">verified</span>
+          <span class="text-base">مذكرة التسوية البنكية المعتمدة (Bank Reconciliation Statement)</span>
+        </div>
+        <span id="recon-final-badge" class="text-xs font-bold px-3 py-1 rounded-full">--</span>
+      </div>
+
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x md:divide-x-reverse divide-slate-200">
+          <!-- Bank Side Adjustments -->
+          <div class="space-y-3">
+            <h4 class="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex justify-between items-center">
+              <span>أولاً: تسوية رصيد كشف حساب البنك</span>
+              <span id="stmt-base-val" class="font-mono text-blue-900">0.00</span>
+            </h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="text-slate-600">(+) إيداعات بالطريق لم يقيدها البنك بعد:</span>
+                <span id="recon-deposits-transit" class="font-mono font-bold text-emerald-700">+0.00</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="text-slate-600">(-) شيكات صادرة معلقة لم تصرف بعد:</span>
+                <span id="recon-outstanding-checks" class="font-mono font-bold text-rose-700">-0.00</span>
+              </div>
+              <div class="flex justify-between py-2 text-sm font-black bg-slate-50 p-2 rounded-lg border border-slate-200 mt-2">
+                <span>= الرصيد البنكي المعدل النهائي:</span>
+                <span id="recon-final-bank-adj" class="font-mono text-emerald-800">0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Book Side Adjustments -->
+          <div class="space-y-3 md:pr-8">
+            <h4 class="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex justify-between items-center">
+              <span>ثانياً: تسوية رصيد دفاتر المنشأة (الأستاذ)</span>
+              <span id="book-base-val" class="font-mono text-purple-900">0.00</span>
+            </h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="text-slate-600">(+) إيداعات مباشرة ومتحصلات بنكية غير مسجلة:</span>
+                <span id="recon-unrecorded-deposits" class="font-mono font-bold text-emerald-700">+0.00</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="text-slate-600">(-) عمولات ومصروفات بنكية مخصومة:</span>
+                <span id="recon-bank-charges" class="font-mono font-bold text-rose-700">-0.00</span>
+              </div>
+              <div class="flex justify-between py-2 text-sm font-black bg-slate-50 p-2 rounded-lg border border-slate-200 mt-2">
+                <span>= الرصيد الدفتري المعدل النهائي:</span>
+                <span id="recon-final-book-adj" class="font-mono text-emerald-800">0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="recon-alert-box" class="mt-6"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(11,28,48,0.06)] border-t border-surface-variant">
+  <div class="flex items-center justify-around px-1 py-1 max-w-xl mx-auto w-full">
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../dashboard/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">dashboard</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">نظرة عامة</span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../accounts/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">account_tree</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الحسابات</span><span class="hidden xs:inline">شجرة الحسابات</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../journal/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">menu_book</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">اليومية</span><span class="hidden xs:inline">قيود اليومية</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../ledger/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">balance</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الأستاذ</span><span class="hidden xs:inline">دفتر الأستاذ</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../statements/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">query_stats</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">القوائم</span><span class="hidden xs:inline">القوائم المالية</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-primary font-bold" href="../bank-recon/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">assured_workload</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">التسوية</span><span class="hidden xs:inline">التسوية البنكية</span></span>
+    </a>
+  </div>
+</nav>
+
+  <script src="../data.js"></script><script src="../js/state.js"></script><script src="../js/closing-wizard.js"></script><script src="../js/recon.js"></script>
+</body>
+</html>

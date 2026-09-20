@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>منصة المحاسب المبتدئ | Accountera</title>
+  <meta name="description" content="منصة تفاعلية متكاملة للمحاسب المبتدئ لتعلم تسجيل قيود اليومية وتحليل المعاملات المالية.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="alternate icon" href="favicon.ico">
+  
+  <!-- الخطوط الرسمية القياسية -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- تجميع التنسيقات المتجاوبة ونظام الثيم المركزي -->
+  <link rel="stylesheet" href="css/theme/theme.css">
+  <link rel="stylesheet" href="css/base/tokens.css">
+  <link rel="stylesheet" href="css/base/reset.css">
+  <link rel="stylesheet" href="css/base/typography.css">
+  <link rel="stylesheet" href="css/layout/app-shell.css">
+  <link rel="stylesheet" href="css/layout/topbar.css">
+  <link rel="stylesheet" href="css/layout/bottom-nav.css">
+  <link rel="stylesheet" href="css/components/buttons.css">
+  <link rel="stylesheet" href="css/components/cards.css">
+  <link rel="stylesheet" href="css/components/modals.css">
+  <link rel="stylesheet" href="css/components/forms.css">
+  <link rel="stylesheet" href="css/views/landing.css">
+  <link rel="stylesheet" href="css/views/learning.css">
+  <link rel="stylesheet" href="css/views/practice.css">
+  <link rel="stylesheet" href="css/views/company-workspace.css">
+  <link rel="stylesheet" href="css/views/admin-dashboard.css">
+  <link rel="stylesheet" href="css/views/student-dashboard.css">
+  <link rel="stylesheet" href="css/views/accountely-theme.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- 1. الشريط العلوي المتجاوب (Topbar) -->
+    <header class="topbar">
+      <div class="topbar-container">
+        <div class="brand-wrapper" onclick="navigateToScreen('landing')">
+          <div class="brand-icon" style="background: #10b981; color: #fff; font-weight: 900; border-radius: 8px;">A</div>
+          <div class="brand-text">
+            <span class="brand-name" style="letter-spacing: 0.5px; font-weight: 900;">ACCOUNTERA</span>
+            <span class="brand-badge-role" style="color: #10b981; font-weight: 800;">ACCOUNTING SUITE</span>
+          </div>
+        </div>
+
+        <nav class="desktop-nav">
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('companies-hub')">التحديات (Challenges)</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('lesson-1')">الدروس (Tutorials)</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('ex-1')">الاختبارات (MCQ Quiz)</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="window.location.href='simulation/simulation/journal/index.html'">المحاكاة (Simulation)</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('landing')">عن المنصة (About)</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <!-- زر تبديل الثيم السريع (ليلي / نهاري) -->
+          <button id="themeToggleBtn" onclick="toggleTheme()" class="btn-cta-secondary" style="padding: 6px 10px; font-size: 1rem; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;" title="تبديل الوضع الليلي / النهاري">
+            🌙
+          </button>
+          
+          <!-- حوض الدخول / الملف الشخصي للمستخدم بنمط Accountely -->
+          <div id="topbarAuthDock"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. جسم التطبيق مع الشريط الجانبي Accountely-Style -->
+    <div class="app-body-container">
+      <aside class="accountely-sidebar" id="appSidebar" style="display: none;">
+        <div class="sidebar-header">
+          <span class="sidebar-nav-title">التنقل / NAVIGATION</span>
+          <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="طي/فتح القائمة">
+            <span id="sidebarToggleIcon">❮</span>
+          </button>
+        </div>
+
+        <nav class="sidebar-menu">
+          <button class="sidebar-item active" id="sb-student-dashboard" onclick="navigateToScreen('student-dashboard')">
+            <span class="sidebar-icon">📊</span>
+            <span class="sidebar-text">Overview • لوحة المتابعة</span>
+          </button>
+          <button class="sidebar-item" id="sb-portfolio" onclick="navigateToScreen('portfolio')">
+            <span class="sidebar-icon">📈</span>
+            <span class="sidebar-text">Progress • مستوى التقدم</span>
+          </button>
+          <button class="sidebar-item" id="sb-journal" onclick="window.location.href='simulation/simulation/journal/index.html'">
+            <span class="sidebar-icon">📖</span>
+            <span class="sidebar-text">Submissions • سجل القيود</span>
+          </button>
+          <button class="sidebar-item" id="sb-student-settings" onclick="navigateToScreen('student-settings')">
+            <span class="sidebar-icon">👤</span>
+            <span class="sidebar-text">Profile • الملف الشخصي</span>
+          </button>
+          <button class="sidebar-item" id="sb-student-plans" onclick="navigateToScreen('student-plans')">
+            <span class="sidebar-icon">💳</span>
+            <span class="sidebar-text">Refer & Earn • الباقات</span>
+          </button>
+
+          <div class="sidebar-divider"></div>
+
+          <button class="sidebar-item" id="sb-ip-1" onclick="navigateToScreen('ip-1')">
+            <span class="sidebar-icon">🎯</span>
+            <span class="sidebar-text">Daily Tasks • المهام اليومية</span>
+            <span class="sidebar-dot-badge"></span>
+          </button>
+          <button class="sidebar-item" id="sb-companies-hub" onclick="navigateToScreen('companies-hub')">
+            <span class="sidebar-icon">🏢</span>
+            <span class="sidebar-text">Challenges • بيئة الشركات</span>
+          </button>
+          <button class="sidebar-item" id="sb-ex-1" onclick="navigateToScreen('ex-1')">
+            <span class="sidebar-icon">❓</span>
+            <span class="sidebar-text">MCQ Quiz • الاختبارات الفنية</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- منطقة المحتوى التفاعلي المتغير -->
+      <main class="main-content" id="app">
+        <!-- يتم حقن الشاشة النشطة ديناميكياً هنا -->
+      </main>
+    </div>
+
+    <!-- 3. القائمة السفلية للموبايل (Mobile Bottom Navigation) -->
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item active" id="bn-landing" onclick="navigateToScreen('landing')">
+        <span class="bn-icon">🏠</span>
+        <span>الرئيسية</span>
+      </button>
+      <button class="bottom-nav-item" id="bn-student-dashboard" onclick="navigateToScreen('student-dashboard')">
+        <span class="bn-icon">🎓</span>
+        <span>لوحتي</span>
+      </button>
+      <button class="bottom-nav-item" id="bn-lesson-1" onclick="navigateToScreen('lesson-1')">
+        <span class="bn-icon">📖</span>
+        <span>الدروس</span>
+      </button>
+      <button class="bottom-nav-item" id="bn-companies-hub" onclick="navigateToScreen('companies-hub')">
+        <span class="bn-icon">🏢</span>
+        <span>الشركات</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Supabase CDN & Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="src/core/supabase-client.js"></script>
+  
+  <!-- ملفات النواة المحاسبية المستقلة (Accounting Core & COA) -->
+  <script src="src/core/engine/egyptian-coa.js"></script>
+  <script src="src/core/engine/accountera-accounting-core.js"></script>
+  <script src="src/core/engine/document-transaction-engine.js"></script>
+  <script src="src/core/engine/egyptian-simulation-modules.js"></script>
+  <script src="src/core/engine/career-paths-and-mentor.js"></script>
+
+  <!-- ملفات الواجهة والمصادقة والمنطق -->
+  <script src="src/core/default-company-data.js"></script>
+  <script src="src/core/auth.js"></script>
+  <script src="src/core/simulation-bridge.js"></script>
+  <script src="src/ui/landing-view.js"></script>
+  <script src="src/ui/learning-view.js"></script>
+  <script src="src/ui/practice-view.js"></script>
+  <script src="src/ui/company-workspace-view.js"></script>
+  <script src="src/ui/student-dashboard-view.js"></script>
+  <script src="src/ui/student-settings-view.js"></script>
+  <script src="src/ui/student-plans-view.js"></script>
+  <script src="src/ui/professional-portfolio-view.js"></script>
+  <script src="src/ui/teacher-dashboard-view.js"></script>
+  <script src="src/ui/admin-dashboard-view.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>

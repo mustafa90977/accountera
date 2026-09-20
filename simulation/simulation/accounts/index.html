@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title>شجرة الحسابات - محاكي النظام المحاسبي</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../css/theme.js"></script>
+</head>
+<body class="bg-surface font-sans text-on-surface flex flex-col min-h-screen">
+<header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-sm border-b px-4 py-3 flex items-center justify-between">
+  <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+    <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold flex-shrink-0">
+      <span class="material-symbols-outlined">account_tree</span>
+    </div>
+    <div class="min-w-0">
+      <h1 class="company-title-display font-bold text-base sm:text-lg text-slate-800 truncate">شجرة ودليل الحسابات (COA)</h1>
+      <p class="text-xs text-slate-500 truncate">الدليل المحاسبي الشامل - 37 حساباً معتمداً</p>
+    </div>
+  </div>
+  <div id="header-actions" class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+    <a href="/index.html" onclick="returnToPlatform(event)" class="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex-shrink-0 min-h-[36px] cursor-pointer" title="العودة لمنصة المحاسب الرئيسية"><span class="material-symbols-outlined text-[16px]">arrow_forward</span><span class="hidden xs:inline">العودة للمنصة</span></a><div id="header-closing-slot" class="flex items-center flex-shrink-0"></div>
+    <a href="../dashboard/index.html" class="px-2.5 xs:px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs sm:text-sm font-medium transition flex-shrink-0 min-h-[36px] flex items-center gap-1">
+      <span class="material-symbols-outlined text-[18px] xs:hidden">arrow_forward</span>
+      <span class="hidden xs:inline">العودة للرئيسية</span>
+    </a>
+  </div>
+</header>
+
+<main class="flex-1 pt-20 pb-24 px-4 max-w-4xl mx-auto w-full">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden my-4">
+    <div class="p-4 bg-slate-50 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div>
+        <h2 class="font-bold text-slate-800 text-base">دليل الحسابات المتوافق مع محرك التوليد</h2>
+        <p class="text-xs text-slate-500">مقسم حسب المعايير المحاسبية: أصول، التزامات، حقوق ملكية، إيرادات، ومصروفات</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <input type="text" id="coa-search" oninput="filterCOA()" placeholder="بحث برقم أو اسم الحساب..." class="text-xs border border-slate-300 rounded-lg px-3 py-1.5 focus:outline-none focus:border-slate-800 w-48"/>
+        <span id="coa-count-badge" class="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-bold whitespace-nowrap">37 حساب</span>
+      </div>
+    </div>
+    
+    <div id="coa-container" class="divide-y divide-slate-100">
+      <!-- Rendered by JS from COA -->
+    </div>
+  </div>
+</main>
+
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(11,28,48,0.06)] border-t border-surface-variant">
+  <div class="flex items-center justify-around px-1 py-1 max-w-xl mx-auto w-full">
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../dashboard/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">dashboard</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">نظرة عامة</span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-primary font-bold" href="../accounts/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">account_tree</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الحسابات</span><span class="hidden xs:inline">شجرة الحسابات</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../journal/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">menu_book</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">اليومية</span><span class="hidden xs:inline">قيود اليومية</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../ledger/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">balance</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الأستاذ</span><span class="hidden xs:inline">دفتر الأستاذ</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../statements/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">query_stats</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">القوائم</span><span class="hidden xs:inline">القوائم المالية</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../bank-recon/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">assured_workload</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">التسوية</span><span class="hidden xs:inline">التسوية البنكية</span></span>
+    </a>
+  </div>
+</nav>
+
+<script src="../data.js"></script>
+<script src="../js/state.js"></script>
+<script src="../js/closing-wizard.js"></script>
+<script>
+function renderCOATree() {
+    const container = document.getElementById('coa-container');
+    if (!container || typeof COA === 'undefined') return;
+
+    const query = (document.getElementById('coa-search')?.value || '').trim().toLowerCase();
+
+    const categories = [
+        { title: '1. الأصول (Assets)', typeMatch: ['Asset', 'Contra Asset'], bg: 'bg-blue-50/70 text-blue-900 border-blue-200' },
+        { title: '2. الالتزامات (Liabilities)', typeMatch: ['Liability'], bg: 'bg-amber-50/70 text-amber-900 border-amber-200' },
+        { title: '3. حقوق الملكية (Equity)', typeMatch: ['Equity'], bg: 'bg-emerald-50/70 text-emerald-900 border-emerald-200' },
+        { title: '4. الإيرادات (Revenues)', typeMatch: ['Revenue', 'Contra Revenue'], bg: 'bg-purple-50/70 text-purple-900 border-purple-200' },
+        { title: '5. المصروفات والتكلفة (Expenses & COGS)', typeMatch: ['Expense', 'Contra Expense'], bg: 'bg-rose-50/70 text-rose-900 border-rose-200' }
+    ];
+
+    let html = '';
+    let totalVisible = 0;
+
+    categories.forEach(cat => {
+        const catAccounts = Object.keys(COA).filter(code => {
+            const acc = COA[code];
+            const matchesCategory = cat.typeMatch.includes(acc.type);
+            if (!matchesCategory) return false;
+            if (!query) return true;
+            return code.includes(query) || acc.name.toLowerCase().includes(query) || acc.type.toLowerCase().includes(query);
+        });
+
+        if (catAccounts.length > 0) {
+            html += `
+              <div class="p-3 ${cat.bg} font-bold border-y flex justify-between items-center text-xs sm:text-sm">
+                <span>${cat.title}</span>
+                <span class="text-[11px] opacity-80">${catAccounts.length} حساب</span>
+              </div>
+            `;
+
+            catAccounts.forEach(code => {
+                totalVisible++;
+                const acc = COA[code];
+                const isContra = acc.type.includes('Contra');
+                html += `
+                  <div class="p-3 pr-4 sm:pr-8 flex items-center justify-between gap-2 text-xs sm:text-sm hover:bg-slate-50 transition ${isContra ? 'text-rose-700 bg-rose-50/20' : 'text-slate-800'}">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="font-mono font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px]">${code}</span>
+                      <span class="font-medium truncate">${acc.name}</span>
+                    </div>
+                    <span class="text-[11px] font-mono px-2 py-0.5 rounded ${isContra ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-600'} flex-shrink-0">
+                      ${acc.type}
+                    </span>
+                  </div>
+                `;
+            });
+        }
+    });
+
+    if (totalVisible === 0) {
+        html = '<div class="p-8 text-center text-slate-400 font-medium">لا توجد حسابات مطابقة لبحثك</div>';
+    }
+
+    container.innerHTML = html;
+    const badge = document.getElementById('coa-count-badge');
+    if (badge) badge.innerText = totalVisible + ' حساب';
+}
+
+function filterCOA() {
+    renderCOATree();
+}
+
+document.addEventListener('DOMContentLoaded', renderCOATree);
+if (document.readyState !== 'loading') renderCOATree();
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تقرير فحص Accountera</title>
+  <style>
+    :root{--ink:#101827;--muted:#637089;--line:#dbe4ee;--bg:#f5f8fb;--card:#fff;--green:#08b889;--green-soft:#e9fbf5;--red:#d92d42;--red-soft:#fff0f2;--amber:#b56a00;--amber-soft:#fff6df;--blue:#2563eb;--blue-soft:#edf4ff}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.75} .wrap{max-width:1100px;margin:auto;padding:28px 18px 60px}
+    .hero{background:linear-gradient(135deg,#111c31,#172b42);color:#fff;border-radius:24px;padding:34px 36px;box-shadow:0 14px 35px #10233b1c}.eyebrow{color:#63e6be;font-weight:700;letter-spacing:.02em}.hero h1{font-size:clamp(28px,5vw,50px);line-height:1.2;margin:8px 0 12px}.hero p{margin:0;color:#d7e3ef;font-size:17px}.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.pill{border:1px solid #ffffff30;border-radius:99px;padding:5px 12px;color:#d9e7f2;font-size:13px}.pill code{color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}.stat strong{display:block;font-size:30px;line-height:1.1}.stat span{color:var(--muted);font-size:13px}.stat.high strong{color:var(--red)}.stat.medium strong{color:var(--amber)}.stat.pass strong{color:var(--green)}
+    h2{font-size:25px;margin:30px 0 12px} h3{margin:0 0 8px;font-size:20px}.section-intro{color:var(--muted);margin-top:-4px}.finding{background:var(--card);border:1px solid var(--line);border-right:5px solid var(--red);border-radius:16px;padding:20px 22px;margin:14px 0}.finding.medium{border-right-color:var(--amber)}.finding.observation{border-right-color:var(--blue)}.finding-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.badge{white-space:nowrap;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700}.badge.high{background:var(--red-soft);color:var(--red)}.badge.medium{background:var(--amber-soft);color:var(--amber)}.badge.note{background:var(--blue-soft);color:var(--blue)}.finding p{margin:8px 0;color:#37465d}.finding p strong{color:var(--ink)} code{direction:ltr;unicode-bidi:embed;background:#eef2f6;border-radius:5px;padding:2px 6px;color:#26364c;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+    .action{background:var(--green-soft);border:1px solid #b6f0dc;border-radius:16px;padding:18px 22px}.action ol{margin:8px 0 0;padding-right:22px}.action li{margin:5px 0}.table-wrap{overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:16px}.checks{width:100%;border-collapse:collapse;min-width:620px}.checks th,.checks td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:right}.checks th{background:#f0f5f9;color:#43536b;font-size:13px}.checks tr:last-child td{border-bottom:0}.ok{color:#07885e;font-weight:700}.small{font-size:13px;color:var(--muted)}footer{margin-top:30px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+    @media(max-width:720px){.wrap{padding:14px 12px 40px}.hero{padding:25px 20px;border-radius:18px}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.stat{padding:14px}.stat strong{font-size:25px}.finding{padding:16px 15px}.finding-head{display:block}.badge{display:inline-block;margin-top:8px}h2{font-size:22px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div class="eyebrow">تقرير QA وتجربة مستخدم</div>
+      <h1>فحص منصة Accountera</h1>
+      <p>مراجعة عملية للمسار التعليمي ونظام محاكاة الشركات، بدون تسجيل حساب حقيقي أو تعديل بيانات الموقع.</p>
+      <div class="meta"><span class="pill">الرابط: <code>accountera.vercel.app</code></span><span class="pill">تاريخ الفحص: 19 سبتمبر 2026</span><span class="pill">سطح مكتب + موبايل</span></div>
+    </header>
+
+    <section class="grid" aria-label="ملخص النتائج">
+      <div class="stat high"><strong>2</strong><span>عيوب عالية الأولوية</span></div>
+      <div class="stat medium"><strong>1</strong><span>مشكلة تجاوب متوسطة</span></div>
+      <div class="stat pass"><strong>9+</strong><span>مسارات رئيسية اجتازت الفحص</span></div>
+      <div class="stat"><strong>3</strong><span>بيئات شركات تم اختبارها</span></div>
+    </section>
+
+    <h2>الخلاصة التنفيذية</h2>
+    <p class="section-intro">المنتج يعطي انطباعاً قوياً كمنصة تعليم محاسبي تفاعلية، والمسار التعليمي والتمارين يعملان بشكل جيد. قبل الاعتماد أو العرض العام، أصلح عيوب التنقل وعزل بيانات الشركات أولاً؛ لأنها قد تربك المستخدم وتضعف الثقة في دقة المحاكاة.</p>
+
+    <h2>العيوب المؤكدة</h2>
+    <article class="finding">
+      <div class="finding-head"><h3>1. رابط «العودة للمنصة» يفتح صفحة 404</h3><span class="badge high">عالية</span></div>
+      <p><strong>المسار:</strong> من لوحة أي شركة داخل نظام ERP، الضغط على «العودة للمنصة» يذهب إلى <code>/simulation/index.html</code>، والنتيجة صفحة Vercel بعنوان <code>404 NOT_FOUND</code>.</p>
+      <p><strong>الأثر:</strong> المستخدم يفقد طريق العودة إلى المنصة بعد دخوله النظام، وقد يظن أن التطبيق تعطل.</p>
+      <p><strong>الإصلاح المقترح:</strong> اربط الزر بالمسار الفعلي للمنصة، ثم أضف اختباراً آلياً يتأكد من أن الرابط يعيد استجابة 200 وواجهة المنصة.</p>
+    </article>
+    <article class="finding">
+      <div class="finding-head"><h3>2. بيانات الشركة المختارة لا تُعزل عن بيانات شركة النيل</h3><span class="badge high">عالية</span></div>
+      <p><strong>الدليل:</strong> عند اختيار «شركة الأمل للاستشارات والتصميم» أو «شركة الأفق للمقاولات والتوريدات»، يتغير اسم الشركة والعـدد المتوقع للعمليات، لكن لوحة التحكم تظل تعرض <code>Nile Trading &amp; Distribution Co. • NTL-2026</code>، وقطاع التجارة والتوزيع، و45 موظفاً.</p>
+      <p><strong>الأثر:</strong> خلط هوية الشركات وبياناتها قد ينتج محاكاة محاسبية غير صحيحة، ويصعب اكتشاف الخطأ على المتعلم.</p>
+      <p><strong>الإصلاح المقترح:</strong> اجعل كل بيئة تُحمّل كائن بيانات مستقل بالكامل: الاسم، الكود، القطاع، الموظفون، الحسابات، المهام، المستندات، الأرصدة، والنصوص الإرشادية. أضف اختبار تبديل بين الشركات مع تحقق من عدم تسرب أي حقل.</p>
+    </article>
+    <article class="finding medium">
+      <div class="finding-head"><h3>3. رأس نظام الشركات يتجاوز عرض شاشة الموبايل</h3><span class="badge medium">متوسطة</span></div>
+      <p><strong>الدليل:</strong> على عرض 390px، ظهر عنصر في ترويسة ERP يبدأ عند موضع أفقي يقارب <code>-33px</code>، ما يؤدي إلى قص جزء من أيقونة المستخدم على الحافة اليسرى. عرض الصفحة العام لا يكشف المشكلة لأنه يبقى 390px.</p>
+      <p><strong>الأثر:</strong> الترويسة تبدو مكسورة، وبعض عناصر التحكم قد تصبح صعبة الوصول على الهواتف الصغيرة.</p>
+      <p><strong>الإصلاح المقترح:</strong> أعد توزيع الترويسة في breakpoint صغير: أخفِ العناصر الثانوية أو حوّلها لقائمة، واسمح للعناصر الأساسية فقط بالبقاء داخل العرض مع اختبار 320 و360 و390px.</p>
+    </article>
+
+    <h2>مسارات اجتازت الفحص</h2>
+    <div class="table-wrap"><table class="checks"><thead><tr><th>المسار</th><th>النتيجة</th><th>ملاحظات</th></tr></thead><tbody>
+      <tr><td>التجربة الفورية للطالب</td><td class="ok">اجتاز</td><td>الدخول التجريبي يفتح الدرس الأول بدون تسجيل.</td></tr>
+      <tr><td>الدروس 1–6</td><td class="ok">اجتاز</td><td>التنقل المباشر، الأسئلة، الإجابة الصحيحة، والانتقال بين الدروس تعمل.</td></tr>
+      <tr><td>الأمثلة المحلولة 1–3</td><td class="ok">اجتاز</td><td>التنقل بين الأمثلة وعرض القيود المحلولة يعمل.</td></tr>
+      <tr><td>التمارين المستقلة 1–6</td><td class="ok">اجتاز</td><td>القوائم، التلميح، التحقق من الخطأ والصواب، والانتقال تعمل.</td></tr>
+      <tr><td>الوضع الداكن + التقدم</td><td class="ok">اجتاز</td><td>التبديل واضح، وصفحة التقدم تعرض حالة الطالب.</td></tr>
+      <tr><td>ERP: اليومية، الحسابات، الأستاذ، القوائم، التسوية</td><td class="ok">اجتاز جزئياً</td><td>الصفحات تفتح والنماذج تعرض التحقق، مع وجود عيوب العزل والرابط أعلاه.</td></tr>
+    </tbody></table></div>
+
+    <h2>ترتيب الإصلاح</h2>
+    <div class="action"><ol><li><strong>قبل أي عرض أو إطلاق:</strong> إصلاح رابط العودة واختبار جميع الروابط الأساسية.</li><li><strong>بعده مباشرة:</strong> فصل حالة وبيانات كل شركة، مع اختبار تبديل الشركات ذهاباً وإياباً.</li><li><strong>ثم:</strong> ضبط ترويسة ERP للموبايل واختبارها على شاشات صغيرة.</li><li><strong>تحسين اختياري:</strong> شريط الدروس على الموبايل قابل للتمرير أفقياً، لكن الدرسين 5 و6 لا يظهران افتراضياً؛ أضف مؤشراً بصرياً أو زر تمرير لتحسين الاكتشاف.</li></ol></div>
+
+    <h2>ملاحظة توفر</h2>
+    <p class="section-intro">في نهاية الفحص ظهرت مرة أخيرة رسالة <code>ERR_TUNNEL_CONNECTION_FAILED</code> بعد أن كان الموقع يعمل أثناء معظم الاختبارات. لذلك أسجلها كملاحظة توفر تحتاج إعادة تحقق من شبكة مختلفة، وليست حكماً نهائياً على استضافة الموقع.</p>
+    <footer>هذا تقرير فحص خارجي مبني على السلوك المرئي أثناء الاختبار، وليس مراجعة للكود أو للبنية الخلفية. لم يتم إنشاء حساب حقيقي أو حفظ قيد محاسبي جديد.</footer>
+  </main>
+</body>
+</html>

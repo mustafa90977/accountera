@@ -1,0 +1,2132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>accountera — Complete Call Flow &amp; Architecture Documentation</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --surface: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+  --warn: #fbbf24; --err: #f87171; --ok: #34d399;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+h1 { font-size: 2.4rem; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2 { font-size: 1.7rem; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+h3 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--accent); }
+h4 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--warn); }
+p { margin: 8px 0; color: var(--muted); }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 32px; }
+.mermaid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; position: relative; }
+.mermaid.is-enhanced { padding: 0; overflow: hidden; min-height: 260px; }
+.mermaid-viewport { padding: 54px 24px 24px; overflow: hidden; cursor: grab; touch-action: none; min-height: 260px; }
+.mermaid-viewport.is-dragging { cursor: grabbing; }
+.mermaid-viewport svg { max-width: none !important; height: auto; transform-origin: 0 0; transition: transform 120ms ease; }
+.mermaid-toolbar { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 6px; background: rgba(15,23,42,0.92); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+.mermaid-toolbar button, .mermaid-toolbar .zoom-level { height: 28px; min-width: 32px; border: 1px solid var(--border); border-radius: 6px; background: #1e293b; color: var(--text); font: 600 0.78rem system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; }
+.mermaid-toolbar button { cursor: pointer; }
+.mermaid-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+.mermaid-toolbar .zoom-level { min-width: 52px; color: var(--muted); background: transparent; }
+.call-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+.call-table th { background: #1a2744; color: var(--accent); text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.call-table td { padding: 8px 14px; border: 1px solid var(--border); vertical-align: top; }
+.call-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+.tag-async { background: #7c3aed33; color: #a78bfa; }
+.tag-class { background: #05966933; color: var(--ok); }
+.tag-func { background: #2563eb33; color: var(--accent); }
+.tag-cmd { background: #d9770633; color: var(--warn); }
+.tag-endpoint { background: #dc262633; color: var(--err); }
+.tag-hook { background: #db277733; color: #f472b6; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.arrow-chain { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); padding: 10px; background: rgba(56,189,248,0.06); border-radius: 6px; }
+code { font-family: 'Fira Code', 'Cascadia Code', monospace; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px; font-size: 0.88em; }
+ul, ol { margin: 8px 0 8px 24px; color: var(--muted); }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.nav { position: sticky; top: 0; background: var(--bg); z-index: 10; padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+.nav a { text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+@media (max-width: 768px) { .container { padding: 16px; } h1 { font-size: 1.8rem; } }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>accountera — Complete Call Flow &amp; Architecture Documentation</h1>
+<p class="subtitle">Generated from graphify knowledge graph: 102 nodes, 111 edges, 22 communities. Commit: unknown</p>
+
+<div class="nav">
+    <a href="#overview">Architecture Overview</a>
+    <a href="#build-graph">Graph Build</a>
+    <a href="#cli-skills">CLI &amp; Skill Installers</a>
+    <a href="#serve-api">Serving API</a>
+    <a href="#simulation-statejs-dashboardjs">Simulation Statejs Dashboardjs</a>
+    <a href="#simulation-journaljs-formategp">Simulation Journaljs Formategp</a>
+    <a href="#simulation-closing-wizardjs">Simulation Closing Wizardjs</a>
+    <a href="#simulation-reconjs-calculatereconciliation">Simulation Reconjs Calculatereconciliation</a>
+    <a href="#serverjs-http-mime">Serverjs Http Mime</a>
+    <a href="#simulation-ledgerjs-initledger">Simulation Ledgerjs Initledger</a>
+    <a href="#admin-dashboard-viewjs">Admin Dashboard Viewjs</a>
+    <a href="#practice-viewjs-data">Practice Viewjs Data</a>
+    <a href="#company-workspace-viewjs">Company Workspace Viewjs</a>
+    <a href="#simulation-statementsjs-formategp">Simulation Statementsjs Formategp</a>
+    <a href="#learning-viewjs-excellearningview">Learning Viewjs Excellearningview</a>
+    <a href="#other">Other</a>
+</div>
+
+<!-- ====== Architecture Overview ====== -->
+<h2 id="overview">1. Architecture Overview</h2>
+
+<div class="mermaid">
+
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>8 nodes</small>")
+    class BUILD_GRAPH_321CBB04 module;
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>1 nodes</small>")
+    class CLI_SKILLS_9964CBB8 module;
+    SERVE_API_35EC8E86("Serving API<br/><small>1 nodes</small>")
+    class SERVE_API_35EC8E86 module;
+    SIMULATION_STATEJS_DASHBOARDJS_C3B20019("Simulation Statejs Dashboardjs<br/><small>17 nodes</small>")
+    class SIMULATION_STATEJS_DASHBOARDJS_C3B20019 module;
+    SIMULATION_JOURNALJS_FORMATEGP_ABD2518F("Simulation Journaljs Formategp<br/><small>12 nodes</small>")
+    class SIMULATION_JOURNALJS_FORMATEGP_ABD2518F module;
+    SIMULATION_CLOSING_WIZARDJS_452F8D5B("Simulation Closing Wizardjs<br/><small>11 nodes</small>")
+    class SIMULATION_CLOSING_WIZARDJS_452F8D5B module;
+    SIMULATION_RECONJS_CALCULATERECONCILIATION_3CE7D78C("Simulation Reconjs Calculatereconciliation<br/><small>9 nodes</small>")
+    class SIMULATION_RECONJS_CALCULATERECONCILIATION_3CE7D78C module;
+    SERVERJS_HTTP_MIME_1D1E1437("Serverjs Http Mime<br/><small>6 nodes</small>")
+    class SERVERJS_HTTP_MIME_1D1E1437 module;
+    SIMULATION_LEDGERJS_INITLEDGER_81D71BFF("Simulation Ledgerjs Initledger<br/><small>6 nodes</small>")
+    class SIMULATION_LEDGERJS_INITLEDGER_81D71BFF module;
+    ADMIN_DASHBOARD_VIEWJS_89DDD9F5("Admin Dashboard Viewjs<br/><small>6 nodes</small>")
+    class ADMIN_DASHBOARD_VIEWJS_89DDD9F5 module;
+    PRACTICE_VIEWJS_DATA_24322330("Practice Viewjs Data<br/><small>5 nodes</small>")
+    class PRACTICE_VIEWJS_DATA_24322330 module;
+    COMPANY_WORKSPACE_VIEWJS_074300DD("Company Workspace Viewjs<br/><small>4 nodes</small>")
+    class COMPANY_WORKSPACE_VIEWJS_074300DD module;
+    SIMULATION_STATEMENTSJS_FORMATEGP_72E468D0("Simulation Statementsjs Formategp<br/><small>3 nodes</small>")
+    class SIMULATION_STATEMENTSJS_FORMATEGP_72E468D0 module;
+    LEARNING_VIEWJS_EXCELLEARNINGVIEW_F640584D("Learning Viewjs Excellearningview<br/><small>3 nodes</small>")
+    class LEARNING_VIEWJS_EXCELLEARNINGVIEW_F640584D module;
+    OTHER_D0941E68("Other<br/><small>10 nodes</small>")
+    class OTHER_D0941E68 module;
+    BUILD_GRAPH_321CBB04 -.-> CLI_SKILLS_9964CBB8
+    CLI_SKILLS_9964CBB8 -.-> SERVE_API_35EC8E86
+    SERVE_API_35EC8E86 -.-> SIMULATION_STATEJS_DASHBOARDJS_C3B20019
+    SIMULATION_STATEJS_DASHBOARDJS_C3B20019 -.-> SIMULATION_JOURNALJS_FORMATEGP_ABD2518F
+    SIMULATION_JOURNALJS_FORMATEGP_ABD2518F -.-> SIMULATION_CLOSING_WIZARDJS_452F8D5B
+    SIMULATION_CLOSING_WIZARDJS_452F8D5B -.-> SIMULATION_RECONJS_CALCULATERECONCILIATION_3CE7D78C
+    SIMULATION_RECONJS_CALCULATERECONCILIATION_3CE7D78C -.-> SERVERJS_HTTP_MIME_1D1E1437
+    SERVERJS_HTTP_MIME_1D1E1437 -.-> SIMULATION_LEDGERJS_INITLEDGER_81D71BFF
+    SIMULATION_LEDGERJS_INITLEDGER_81D71BFF -.-> ADMIN_DASHBOARD_VIEWJS_89DDD9F5
+    ADMIN_DASHBOARD_VIEWJS_89DDD9F5 -.-> PRACTICE_VIEWJS_DATA_24322330
+    PRACTICE_VIEWJS_DATA_24322330 -.-> COMPANY_WORKSPACE_VIEWJS_074300DD
+    COMPANY_WORKSPACE_VIEWJS_074300DD -.-> SIMULATION_STATEMENTSJS_FORMATEGP_72E468D0
+    SIMULATION_STATEMENTSJS_FORMATEGP_72E468D0 -.-> LEARNING_VIEWJS_EXCELLEARNINGVIEW_F640584D
+    LEARNING_VIEWJS_EXCELLEARNINGVIEW_F640584D -.-> OTHER_D0941E68
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>Architecture Layers</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
+      <tr><td>Graph Build</td><td>8</td><td><code>4, 15</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>1</td><td><code>21</code></td></tr><tr><td>Serving API</td><td>1</td><td><code>18</code></td></tr><tr><td>Simulation Statejs Dashboardjs</td><td>17</td><td><code>0</code></td></tr><tr><td>Simulation Journaljs Formategp</td><td>12</td><td><code>1</code></td></tr><tr><td>Simulation Closing Wizardjs</td><td>11</td><td><code>2</code></td></tr><tr><td>Simulation Reconjs Calculatereconciliation</td><td>9</td><td><code>3</code></td></tr><tr><td>Serverjs Http Mime</td><td>6</td><td><code>5</code></td></tr><tr><td>Simulation Ledgerjs Initledger</td><td>6</td><td><code>6</code></td></tr><tr><td>Admin Dashboard Viewjs</td><td>6</td><td><code>7</code></td></tr><tr><td>Practice Viewjs Data</td><td>5</td><td><code>8</code></td></tr><tr><td>Company Workspace Viewjs</td><td>4</td><td><code>9</code></td></tr><tr><td>Simulation Statementsjs Formategp</td><td>3</td><td><code>10</code></td></tr><tr><td>Learning Viewjs Excellearningview</td><td>3</td><td><code>11</code></td></tr><tr><td>Other</td><td>10</td><td><code>12, 13, 14, 16, 17, 19, 20</code></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Core Flow</h4>
+    <div class="arrow-chain">Graph Build -&gt; CLI &amp; Skill Installers -&gt; Serving API -&gt; Simulation Statejs Dashboardjs -&gt; Simulation Journaljs Formategp -&gt; Simulation Closing Wizardjs -&gt; Simulation Reconjs Calculatereconciliation</div>
+  </div>
+</div>
+<hr>
+<!-- ====== 2. Graph Build ====== -->
+<h2 id="build-graph">2. Graph Build</h2>
+<p>Graph Build groups implementation around packagejson, build, viewjs, description, mostly in package.json, build_view.js. This section covers 8 nodes and 6 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Graph Build (8 nodes, 6 edges)
+    subgraph build_graph_package_json_4e40bfbd["package.json"]
+        package_582681c2("package.json")
+        package_scripts_25cfc1ca("scripts<br/><small>package.json</small>")
+        package_name_b23e1232("name<br/><small>package.json</small>")
+        package_version_a7f3cb7e("version<br/><small>package.json</small>")
+        package_description_1bccacf3("description<br/><small>package.json</small>")
+        package_main_4e9b6a0e("main<br/><small>package.json</small>")
+        package_scripts_start_e2cf302c("start<br/><small>package.json</small>")
+    end
+    build_view_2b316869("build_view.js")
+    package_582681c2 -->|contains| package_name_b23e1232
+    package_582681c2 -->|contains| package_version_a7f3cb7e
+    package_582681c2 -->|contains| package_description_1bccacf3
+    package_582681c2 -->|contains| package_main_4e9b6a0e
+    package_582681c2 -->|contains| package_scripts_25cfc1ca
+    package_scripts_25cfc1ca -->|contains| package_scripts_start_e2cf302c
+    class package_582681c2 function;
+    class package_scripts_25cfc1ca function;
+    class package_name_b23e1232 function;
+    class package_version_a7f3cb7e function;
+    class package_description_1bccacf3 function;
+    class package_main_4e9b6a0e function;
+    class package_scripts_start_e2cf302c function;
+    class build_view_2b316869 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>package.json</code><br><small style="color:var(--muted)">package.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>package.json node in package.json.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>description</code><br><small style="color:var(--muted)">package.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>description node in package.json.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>main</code><br><small style="color:var(--muted)">package.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>main node in package.json.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>name</code><br><small style="color:var(--muted)">package.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>name node in package.json.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>scripts</code><br><small style="color:var(--muted)">package.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>scripts node in package.json.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>start</code><br><small style="color:var(--muted)">package.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>start node in package.json.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>version</code><br><small style="color:var(--muted)">package.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>version node in package.json.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>build_view.js</code><br><small style="color:var(--muted)">build_view.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>build_view.js node in build_view.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>package.json</code></td><td>7 nodes</td></tr>
+<tr><td><code>build_view.js</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 3. CLI & Skill Installers ====== -->
+<h2 id="cli-skills">3. CLI &amp; Skill Installers</h2>
+<p>CLI &amp; Skill Installers groups implementation around mainjs, mostly in src/main.js. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: CLI &amp; Skill Installers (1 nodes, 0 edges)
+    src_main_3231ff52("main.js")
+    class src_main_3231ff52 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>main.js</code><br><small style="color:var(--muted)">src/main.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>main.js node in src/main.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/main.js</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 4. Serving API ====== -->
+<h2 id="serve-api">4. Serving API</h2>
+<p>Serving API groups implementation around routerjs, mostly in src/core/router.js. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Serving API (1 nodes, 0 edges)
+    src_core_router_242f1bce("router.js")
+    class src_core_router_242f1bce api;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>router.js</code><br><small style="color:var(--muted)">src/core/router.js</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>router.js node in src/core/router.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/core/router.js</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 5. Simulation Statejs Dashboardjs ====== -->
+<h2 id="simulation-statejs-dashboardjs">5. Simulation Statejs Dashboardjs</h2>
+<p>Simulation Statejs Dashboardjs groups implementation around simulation, statejs, dashboardjs, getdocumentname, mostly in simulation/js/state.js, simulation/js/dashboard.js. This section covers 17 nodes and 23 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Simulation Statejs Dashboardjs (17 nodes, 23 edges)
+    subgraph simulation_statejs_dashboardjs_simulation_js_sta_bdbe9a42["simulation/js/state.js"]
+        simulation_simulation_js_state_initapp_f0c66b0a("initApp()<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_loadstudentstate_f8db6357("loadStudentState()<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_savestudentstate_8a6abed3("saveStudentState()<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_loadtasks_4d066822("loadTasks()<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_updateallheaderba_8da6b943("updateAllHeaderBadges()<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_applycompanyprofi_57035fcd("applyCompanyProfile()<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_accounts_80781410("ACCOUNTS<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_coa_8462ff23("COA<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_answerkey_dcae018f("answerKey<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_calculatebalances_e5c08efd("calculateBalances()<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_getdocumentname_d12eabb2("getDocumentName()<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_28a331d1("state.js")
+        simulation_simulation_js_state_studentjournal_d5c2dc3f("studentJournal<br/><small>simulation/js/state.js</small>")
+        simulation_simulation_js_state_studentledger_cbe9d0fa("studentLedger<br/><small>simulation/js/state.js</small>")
+    end
+    subgraph simulation_statejs_dashboardjs_simulation_js_das_488b72bd["simulation/js/dashboard.js"]
+        simulation_simulation_js_dashboard_2ad445bf("dashboard.js")
+        simulation_simulation_js_dashboard_getdocumentna_46701fae("getDocumentName()<br/><small>simulation/js/dashboard.js</small>")
+        simulation_simulation_js_dashboard_updatedashboa_31fbcad6("updateDashboard()<br/><small>simulation/js/dashboard.js</small>")
+    end
+    simulation_simulation_js_state_initapp_f0c66b0a -->|calls| simulation_simulation_js_state_loadtasks_4d066822
+    simulation_simulation_js_state_initapp_f0c66b0a -->|calls| simulation_simulation_js_state_loadstudentstate_f8db6357
+    simulation_simulation_js_state_initapp_f0c66b0a -->|calls| simulation_simulation_js_state_updateallheaderba_8da6b943
+    simulation_simulation_js_state_initapp_f0c66b0a -->|calls| simulation_simulation_js_state_applycompanyprofi_57035fcd
+    simulation_simulation_js_state_loadstudentstate_f8db6357 -->|calls| simulation_simulation_js_state_updateallheaderba_8da6b943
+    simulation_simulation_js_state_loadstudentstate_f8db6357 -->|calls| simulation_simulation_js_state_savestudentstate_8a6abed3
+    simulation_simulation_js_state_savestudentstate_8a6abed3 -->|calls| simulation_simulation_js_state_updateallheaderba_8da6b943
+    class simulation_simulation_js_state_initapp_f0c66b0a function;
+    class simulation_simulation_js_state_loadstudentstate_f8db6357 function;
+    class simulation_simulation_js_state_savestudentstate_8a6abed3 function;
+    class simulation_simulation_js_state_loadtasks_4d066822 function;
+    class simulation_simulation_js_state_updateallheaderba_8da6b943 function;
+    class simulation_simulation_js_state_applycompanyprofi_57035fcd function;
+    class simulation_simulation_js_state_accounts_80781410 klass;
+    class simulation_simulation_js_state_coa_8462ff23 klass;
+    class simulation_simulation_js_state_answerkey_dcae018f function;
+    class simulation_simulation_js_state_calculatebalances_e5c08efd function;
+    class simulation_simulation_js_state_getdocumentname_d12eabb2 function;
+    class simulation_simulation_js_state_28a331d1 module;
+    class simulation_simulation_js_state_studentjournal_d5c2dc3f function;
+    class simulation_simulation_js_state_studentledger_cbe9d0fa function;
+    class simulation_simulation_js_dashboard_2ad445bf module;
+    class simulation_simulation_js_dashboard_getdocumentna_46701fae function;
+    class simulation_simulation_js_dashboard_updatedashboa_31fbcad6 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>getDocumentName()</code><br><small style="color:var(--muted)">simulation/js/dashboard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>getDocumentName() node in simulation/js/dashboard.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>updateDashboard()</code><br><small style="color:var(--muted)">simulation/js/dashboard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>updateDashboard() node in simulation/js/dashboard.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>applyCompanyProfile()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initApp()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>applyCompanyProfile() node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>calculateBalances()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>calculateBalances() node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>getDocumentName()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>getDocumentName() node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>initApp()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>dashboard.js</code><br><small style="color:var(--muted)">simulation/js/dashboard.js</small><br><code>state.js</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><code>applyCompanyProfile()</code><br><small style="color:var(--muted)">simulation/js/state.js</small><br><code>loadStudentState()</code><br><small style="color:var(--muted)">simulation/js/state.js</small><br><code>loadTasks()</code><br><small style="color:var(--muted)">simulation/js/state.js</small><br>+1 more</td>
+  <td>initApp() node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>loadStudentState()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initApp()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><code>saveStudentState()</code><br><small style="color:var(--muted)">simulation/js/state.js</small><br><code>updateAllHeaderBadges()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td>loadStudentState() node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>loadTasks()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initApp()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>loadTasks() node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>saveStudentState()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>loadStudentState()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><code>updateAllHeaderBadges()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td>saveStudentState() node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>updateAllHeaderBadges()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initApp()</code><br><small style="color:var(--muted)">simulation/js/state.js</small><br><code>loadStudentState()</code><br><small style="color:var(--muted)">simulation/js/state.js</small><br><code>saveStudentState()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>updateAllHeaderBadges() node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>dashboard.js</code><br><small style="color:var(--muted)">simulation/js/dashboard.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>initApp()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td>dashboard.js node in simulation/js/dashboard.js.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>js/state.js</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>initApp()</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td>js/state.js node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>ACCOUNTS</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ACCOUNTS node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>answerKey</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>answerKey node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>COA</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>COA node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>studentJournal</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>studentJournal node in simulation/js/state.js.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>studentLedger</code><br><small style="color:var(--muted)">simulation/js/state.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>studentLedger node in simulation/js/state.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>simulation/js/state.js</code></td><td>14 nodes</td></tr>
+<tr><td><code>simulation/js/dashboard.js</code></td><td>3 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x14, calls x7, indirect call x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 6. Simulation Journaljs Formategp ====== -->
+<h2 id="simulation-journaljs-formategp">6. Simulation Journaljs Formategp</h2>
+<p>Simulation Journaljs Formategp groups implementation around simulation, journaljs, formategp, getcompanyname, mostly in simulation/js/journal.js. This section covers 12 nodes and 19 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Simulation Journaljs Formategp (12 nodes, 19 edges)
+    simulation_simulation_js_journal_initworkspace_4433598e("initWorkspace()<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_renderpendingli_de6fddc7("renderPendingList()<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_renderform_6c380f47("renderForm()<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_renderdocument_4532229b("renderDocument()<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_selecttask_e42973fc("selectTask()<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_renderpostedent_abc1dc08("renderPostedEntries()<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_getcompanyname_14107733("getCompanyName()<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_tafqeetarabic_9f269281("tafqeetArabic()<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_recalculatetota_d31185ed("recalculateTotals()<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_formlines_fd0adca9("formLines<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_formategp_03764526("formatEGP()<br/><small>simulation/js/journal.js</small>")
+    simulation_simulation_js_journal_0c3966b4("journal.js")
+    simulation_simulation_js_journal_initworkspace_4433598e -->|calls| simulation_simulation_js_journal_renderpendingli_de6fddc7
+    simulation_simulation_js_journal_initworkspace_4433598e -->|calls| simulation_simulation_js_journal_renderpostedent_abc1dc08
+    simulation_simulation_js_journal_renderdocument_4532229b -->|calls| simulation_simulation_js_journal_getcompanyname_14107733
+    simulation_simulation_js_journal_renderdocument_4532229b -->|calls| simulation_simulation_js_journal_tafqeetarabic_9f269281
+    simulation_simulation_js_journal_renderform_6c380f47 -->|calls| simulation_simulation_js_journal_recalculatetota_d31185ed
+    simulation_simulation_js_journal_renderpendingli_de6fddc7 -->|calls| simulation_simulation_js_journal_renderdocument_4532229b
+    simulation_simulation_js_journal_renderpendingli_de6fddc7 -->|calls| simulation_simulation_js_journal_selecttask_e42973fc
+    simulation_simulation_js_journal_selecttask_e42973fc -->|calls| simulation_simulation_js_journal_renderdocument_4532229b
+    class simulation_simulation_js_journal_initworkspace_4433598e function;
+    class simulation_simulation_js_journal_renderpendingli_de6fddc7 function;
+    class simulation_simulation_js_journal_renderform_6c380f47 function;
+    class simulation_simulation_js_journal_renderdocument_4532229b function;
+    class simulation_simulation_js_journal_selecttask_e42973fc function;
+    class simulation_simulation_js_journal_renderpostedent_abc1dc08 function;
+    class simulation_simulation_js_journal_getcompanyname_14107733 function;
+    class simulation_simulation_js_journal_tafqeetarabic_9f269281 function;
+    class simulation_simulation_js_journal_recalculatetota_d31185ed function;
+    class simulation_simulation_js_journal_formlines_fd0adca9 function;
+    class simulation_simulation_js_journal_formategp_03764526 function;
+    class simulation_simulation_js_journal_0c3966b4 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>formatEGP()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>formatEGP() node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>getCompanyName()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderDocument()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>getCompanyName() node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>initWorkspace()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>renderPendingList()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small><br><code>renderPostedEntries()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td>initWorkspace() node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>recalculateTotals()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderForm()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>recalculateTotals() node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>renderDocument()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderPendingList()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small><br><code>selectTask()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><code>getCompanyName()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small><br><code>tafqeetArabic()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td>renderDocument() node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>renderForm()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>recalculateTotals()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td>renderForm() node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>renderPendingList()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initWorkspace()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><code>renderDocument()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small><br><code>selectTask()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td>renderPendingList() node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>renderPostedEntries()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initWorkspace()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>renderPostedEntries() node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>selectTask()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderPendingList()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><code>renderDocument()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td>selectTask() node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>tafqeetArabic()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderDocument()</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>tafqeetArabic() node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>journal.js</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>journal.js node in simulation/js/journal.js.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>formLines</code><br><small style="color:var(--muted)">simulation/js/journal.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>formLines node in simulation/js/journal.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>simulation/js/journal.js</code></td><td>12 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x11, calls x8. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 7. Simulation Closing Wizardjs ====== -->
+<h2 id="simulation-closing-wizardjs">7. Simulation Closing Wizardjs</h2>
+<p>Simulation Closing Wizardjs groups implementation around simulation, closing, wizardjs, injectmonthclosingmodal, mostly in simulation/js/closing-wizard.js. This section covers 11 nodes and 18 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Simulation Closing Wizardjs (11 nodes, 18 edges)
+    simulation_simulation_js_closing_wizard_rendercu_18327e37("renderCurrentCloseStep()<br/><small>simulation/js/closing-wizard.js</small>")
+    simulation_simulation_js_closing_wizard_updatehe_f206d57b("updateHeaderClosingStatus()<br/><small>simulation/js/closing-wizard.js</small>")
+    simulation_simulation_js_closing_wizard_renderst_f916527d("renderStep5()<br/><small>simulation/js/closing-wizard.js</small>")
+    simulation_simulation_js_closing_wizard_updatest_9370de8a("updateStepNavigationUI()<br/><small>simulation/js/closing-wizard.js</small>")
+    simulation_simulation_js_closing_wizard_renderst_794b7433("renderStep1()<br/><small>simulation/js/closing-wizard.js</small>")
+    simulation_simulation_js_closing_wizard_renderst_984d1919("renderStep2()<br/><small>simulation/js/closing-wizard.js</small>")
+    simulation_simulation_js_closing_wizard_renderst_ea64409a("renderStep3()<br/><small>simulation/js/closing-wizard.js</small>")
+    simulation_simulation_js_closing_wizard_renderst_221b8e62("renderStep4()<br/><small>simulation/js/closing-wizard.js</small>")
+    simulation_simulation_js_closing_wizard_isjanuar_7aa33c25("isJanuaryClosed()<br/><small>simulation/js/closing-wizard.js</small>")
+    simulation_simulation_js_closing_wizard_b909391b("closing-wizard.js")
+    simulation_simulation_js_closing_wizard_injectmo_2697b7bb("injectMonthClosingModal()<br/><small>simulation/js/closing-wizard.js</small>")
+    simulation_simulation_js_closing_wizard_rendercu_18327e37 -->|calls| simulation_simulation_js_closing_wizard_updatest_9370de8a
+    simulation_simulation_js_closing_wizard_rendercu_18327e37 -->|calls| simulation_simulation_js_closing_wizard_renderst_794b7433
+    simulation_simulation_js_closing_wizard_rendercu_18327e37 -->|calls| simulation_simulation_js_closing_wizard_renderst_984d1919
+    simulation_simulation_js_closing_wizard_rendercu_18327e37 -->|calls| simulation_simulation_js_closing_wizard_renderst_ea64409a
+    simulation_simulation_js_closing_wizard_rendercu_18327e37 -->|calls| simulation_simulation_js_closing_wizard_renderst_221b8e62
+    simulation_simulation_js_closing_wizard_rendercu_18327e37 -->|calls| simulation_simulation_js_closing_wizard_renderst_f916527d
+    simulation_simulation_js_closing_wizard_renderst_f916527d -->|calls| simulation_simulation_js_closing_wizard_isjanuar_7aa33c25
+    simulation_simulation_js_closing_wizard_updatehe_f206d57b -->|calls| simulation_simulation_js_closing_wizard_isjanuar_7aa33c25
+    class simulation_simulation_js_closing_wizard_rendercu_18327e37 function;
+    class simulation_simulation_js_closing_wizard_updatehe_f206d57b function;
+    class simulation_simulation_js_closing_wizard_renderst_f916527d function;
+    class simulation_simulation_js_closing_wizard_updatest_9370de8a function;
+    class simulation_simulation_js_closing_wizard_renderst_794b7433 function;
+    class simulation_simulation_js_closing_wizard_renderst_984d1919 function;
+    class simulation_simulation_js_closing_wizard_renderst_ea64409a function;
+    class simulation_simulation_js_closing_wizard_renderst_221b8e62 function;
+    class simulation_simulation_js_closing_wizard_isjanuar_7aa33c25 function;
+    class simulation_simulation_js_closing_wizard_b909391b module;
+    class simulation_simulation_js_closing_wizard_injectmo_2697b7bb function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>injectMonthClosingModal()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>injectMonthClosingModal() node in simulation/js/closing-wizard.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>isJanuaryClosed()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderStep5()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small><br><code>updateHeaderClosingStatus()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>isJanuaryClosed() node in simulation/js/closing-wizard.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>renderCurrentCloseStep()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>renderStep1()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small><br><code>renderStep2()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small><br><code>renderStep3()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small><br>+3 more</td>
+  <td>renderCurrentCloseStep() node in simulation/js/closing-wizard.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>renderStep1()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderCurrentCloseStep()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>renderStep1() node in simulation/js/closing-wizard.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>renderStep2()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderCurrentCloseStep()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>renderStep2() node in simulation/js/closing-wizard.js.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>renderStep3()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderCurrentCloseStep()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>renderStep3() node in simulation/js/closing-wizard.js.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>renderStep4()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderCurrentCloseStep()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>renderStep4() node in simulation/js/closing-wizard.js.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>renderStep5()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderCurrentCloseStep()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><code>isJanuaryClosed()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td>renderStep5() node in simulation/js/closing-wizard.js.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>updateHeaderClosingStatus()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>isJanuaryClosed()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td>updateHeaderClosingStatus() node in simulation/js/closing-wizard.js.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>updateStepNavigationUI()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderCurrentCloseStep()</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>closing-wizard.js</code><br><small style="color:var(--muted)">simulation/js/closing-wizard.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>closing-wizard.js node in simulation/js/closing-wizard.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>simulation/js/closing-wizard.js</code></td><td>11 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x10, calls x8. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 8. Simulation Reconjs Calculatereconciliation ====== -->
+<h2 id="simulation-reconjs-calculatereconciliation">8. Simulation Reconjs Calculatereconciliation</h2>
+<p>Simulation Reconjs Calculatereconciliation groups implementation around simulation, reconjs, calculatereconciliation, initrecon, mostly in simulation/js/recon.js. This section covers 9 nodes and 11 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Simulation Reconjs Calculatereconciliation (9 nodes, 11 edges)
+    simulation_simulation_js_recon_initrecon_7ae85872("initRecon()<br/><small>simulation/js/recon.js</small>")
+    simulation_simulation_js_recon_loadbankreconstat_a25af9d5("loadBankReconState()<br/><small>simulation/js/recon.js</small>")
+    simulation_simulation_js_recon_renderrecontables_3f5dae80("renderReconTables()<br/><small>simulation/js/recon.js</small>")
+    simulation_simulation_js_recon_calculatereconcil_dff50daf("calculateReconciliation()<br/><small>simulation/js/recon.js</small>")
+    simulation_simulation_js_recon_bankstatementitem_76ae01c6("bankStatementItems<br/><small>simulation/js/recon.js</small>")
+    simulation_simulation_js_recon_bookreconitems_d1559038("bookReconItems<br/><small>simulation/js/recon.js</small>")
+    simulation_simulation_js_recon_3a632ea4("recon.js")
+    simulation_simulation_js_recon_savebankreconstat_afc4c50e("saveBankReconState()<br/><small>simulation/js/recon.js</small>")
+    simulation_simulation_js_recon_updaterecon_14a8b13b("updateRecon()<br/><small>simulation/js/recon.js</small>")
+    simulation_simulation_js_recon_initrecon_7ae85872 -->|calls| simulation_simulation_js_recon_loadbankreconstat_a25af9d5
+    simulation_simulation_js_recon_initrecon_7ae85872 -->|calls| simulation_simulation_js_recon_renderrecontables_3f5dae80
+    simulation_simulation_js_recon_initrecon_7ae85872 -->|calls| simulation_simulation_js_recon_calculatereconcil_dff50daf
+    class simulation_simulation_js_recon_initrecon_7ae85872 function;
+    class simulation_simulation_js_recon_loadbankreconstat_a25af9d5 function;
+    class simulation_simulation_js_recon_renderrecontables_3f5dae80 function;
+    class simulation_simulation_js_recon_calculatereconcil_dff50daf function;
+    class simulation_simulation_js_recon_bankstatementitem_76ae01c6 function;
+    class simulation_simulation_js_recon_bookreconitems_d1559038 function;
+    class simulation_simulation_js_recon_3a632ea4 module;
+    class simulation_simulation_js_recon_savebankreconstat_afc4c50e function;
+    class simulation_simulation_js_recon_updaterecon_14a8b13b function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>calculateReconciliation()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initRecon()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>calculateReconciliation() node in simulation/js/recon.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>initRecon()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>calculateReconciliation()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small><br><code>loadBankReconState()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small><br><code>renderReconTables()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td>initRecon() node in simulation/js/recon.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>loadBankReconState()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initRecon()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>loadBankReconState() node in simulation/js/recon.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>renderReconTables()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initRecon()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>renderReconTables() node in simulation/js/recon.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>saveBankReconState()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>saveBankReconState() node in simulation/js/recon.js.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>updateRecon()</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>updateRecon() node in simulation/js/recon.js.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>recon.js</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>recon.js node in simulation/js/recon.js.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>bankStatementItems</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>bankStatementItems node in simulation/js/recon.js.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>bookReconItems</code><br><small style="color:var(--muted)">simulation/js/recon.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>bookReconItems node in simulation/js/recon.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>simulation/js/recon.js</code></td><td>9 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x8, calls x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 9. Serverjs Http Mime ====== -->
+<h2 id="serverjs-http-mime">9. Serverjs Http Mime</h2>
+<p>Serverjs Http Mime groups implementation around serverjs, http, mime, types, mostly in server.js. This section covers 6 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Serverjs Http Mime (6 nodes, 5 edges)
+    server_3de4f901("server.js")
+    server_http_c6b9f4aa("http<br/><small>server.js</small>")
+    server_fs_6701467e("fs<br/><small>server.js</small>")
+    server_server_4a4c9a18("server<br/><small>server.js</small>")
+    server_path_00c88ccf("path<br/><small>server.js</small>")
+    server_mime_types_bd5b54d1("MIME_TYPES<br/><small>server.js</small>")
+    server_3de4f901 -->|contains| server_http_c6b9f4aa
+    server_3de4f901 -->|contains| server_fs_6701467e
+    server_3de4f901 -->|contains| server_server_4a4c9a18
+    server_3de4f901 -->|contains| server_path_00c88ccf
+    server_3de4f901 -->|contains| server_mime_types_bd5b54d1
+    class server_3de4f901 module;
+    class server_http_c6b9f4aa function;
+    class server_fs_6701467e function;
+    class server_server_4a4c9a18 function;
+    class server_path_00c88ccf function;
+    class server_mime_types_bd5b54d1 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>server.js</code><br><small style="color:var(--muted)">server.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>server.js node in server.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>fs</code><br><small style="color:var(--muted)">server.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>fs node in server.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>http</code><br><small style="color:var(--muted)">server.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>http node in server.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>MIME_TYPES</code><br><small style="color:var(--muted)">server.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>MIME_TYPES node in server.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>path</code><br><small style="color:var(--muted)">server.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>path node in server.js.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>server</code><br><small style="color:var(--muted)">server.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>server node in server.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>server.js</code></td><td>6 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 10. Simulation Ledgerjs Initledger ====== -->
+<h2 id="simulation-ledgerjs-initledger">10. Simulation Ledgerjs Initledger</h2>
+<p>Simulation Ledgerjs Initledger groups implementation around simulation, ledgerjs, initledger, renderpostingqueue, mostly in simulation/js/ledger.js. This section covers 6 nodes and 9 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Simulation Ledgerjs Initledger (6 nodes, 9 edges)
+    simulation_simulation_js_ledger_initledger_042bedea("initLedger()<br/><small>simulation/js/ledger.js</small>")
+    simulation_simulation_js_ledger_renderpostingque_7c79127a("renderPostingQueue()<br/><small>simulation/js/ledger.js</small>")
+    simulation_simulation_js_ledger_rendertaccounts_19073c8c("renderTAccounts()<br/><small>simulation/js/ledger.js</small>")
+    simulation_simulation_js_ledger_rendertrialbalan_6d9304dd("renderTrialBalance()<br/><small>simulation/js/ledger.js</small>")
+    simulation_simulation_js_ledger_updateselecteden_391be249("updateSelectedEntryBadge()<br/><small>simulation/js/ledger.js</small>")
+    simulation_simulation_js_ledger_f3b6ad9e("ledger.js")
+    simulation_simulation_js_ledger_initledger_042bedea -->|calls| simulation_simulation_js_ledger_renderpostingque_7c79127a
+    simulation_simulation_js_ledger_initledger_042bedea -->|calls| simulation_simulation_js_ledger_rendertaccounts_19073c8c
+    simulation_simulation_js_ledger_initledger_042bedea -->|calls| simulation_simulation_js_ledger_rendertrialbalan_6d9304dd
+    simulation_simulation_js_ledger_renderpostingque_7c79127a -->|calls| simulation_simulation_js_ledger_updateselecteden_391be249
+    class simulation_simulation_js_ledger_initledger_042bedea function;
+    class simulation_simulation_js_ledger_renderpostingque_7c79127a function;
+    class simulation_simulation_js_ledger_rendertaccounts_19073c8c function;
+    class simulation_simulation_js_ledger_rendertrialbalan_6d9304dd function;
+    class simulation_simulation_js_ledger_updateselecteden_391be249 function;
+    class simulation_simulation_js_ledger_f3b6ad9e module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>initLedger()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>renderPostingQueue()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small><br><code>renderTAccounts()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small><br><code>renderTrialBalance()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td>initLedger() node in simulation/js/ledger.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>renderPostingQueue()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initLedger()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td><code>updateSelectedEntryBadge()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td>renderPostingQueue() node in simulation/js/ledger.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>renderTAccounts()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initLedger()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>renderTAccounts() node in simulation/js/ledger.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>renderTrialBalance()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initLedger()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>renderTrialBalance() node in simulation/js/ledger.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>updateSelectedEntryBadge()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderPostingQueue()</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>updateSelectedEntryBadge() node in simulation/js/ledger.js.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>ledger.js</code><br><small style="color:var(--muted)">simulation/js/ledger.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ledger.js node in simulation/js/ledger.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>simulation/js/ledger.js</code></td><td>6 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x5, calls x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 11. Admin Dashboard Viewjs ====== -->
+<h2 id="admin-dashboard-viewjs">11. Admin Dashboard Viewjs</h2>
+<p>Admin Dashboard Viewjs groups implementation around admin, dashboard, viewjs, default, mostly in src/ui/admin-dashboard-view.js. This section covers 6 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Admin Dashboard Viewjs (6 nodes, 5 edges)
+    src_ui_admin_dashboard_view_1ae5b538("admin-dashboard-view.js")
+    src_ui_admin_dashboard_view_default_audit_engage_71b62015("DEFAULT_AUDIT_ENGAGEMENTS<br/><small>src/ui/admin-dashboard-view.js</small>")
+    src_ui_admin_dashboard_view_default_admin_compan_66fbd572("DEFAULT_ADMIN_COMPANIES<br/><small>src/ui/admin-dashboard-view.js</small>")
+    src_ui_admin_dashboard_view_exceladmindashboard_0905f607("ExcelAdminDashboard<br/><small>src/ui/admin-dashboard-view.js</small>")
+    src_ui_admin_dashboard_view_default_admin_plans_a2b7037c("DEFAULT_ADMIN_PLANS<br/><small>src/ui/admin-dashboard-view.js</small>")
+    src_ui_admin_dashboard_view_default_admin_coupon_27a5526f("DEFAULT_ADMIN_COUPONS<br/><small>src/ui/admin-dashboard-view.js</small>")
+    src_ui_admin_dashboard_view_1ae5b538 -->|contains| src_ui_admin_dashboard_view_default_audit_engage_71b62015
+    src_ui_admin_dashboard_view_1ae5b538 -->|contains| src_ui_admin_dashboard_view_default_admin_compan_66fbd572
+    src_ui_admin_dashboard_view_1ae5b538 -->|contains| src_ui_admin_dashboard_view_exceladmindashboard_0905f607
+    src_ui_admin_dashboard_view_1ae5b538 -->|contains| src_ui_admin_dashboard_view_default_admin_plans_a2b7037c
+    src_ui_admin_dashboard_view_1ae5b538 -->|contains| src_ui_admin_dashboard_view_default_admin_coupon_27a5526f
+    class src_ui_admin_dashboard_view_1ae5b538 module;
+    class src_ui_admin_dashboard_view_default_audit_engage_71b62015 klass;
+    class src_ui_admin_dashboard_view_default_admin_compan_66fbd572 klass;
+    class src_ui_admin_dashboard_view_exceladmindashboard_0905f607 klass;
+    class src_ui_admin_dashboard_view_default_admin_plans_a2b7037c klass;
+    class src_ui_admin_dashboard_view_default_admin_coupon_27a5526f klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>admin-dashboard-view.js</code><br><small style="color:var(--muted)">src/ui/admin-dashboard-view.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>admin-dashboard-view.js node in src/ui/admin-dashboard-view.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>DEFAULT_ADMIN_COMPANIES</code><br><small style="color:var(--muted)">src/ui/admin-dashboard-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DEFAULT_ADMIN_COMPANIES node in src/ui/admin-dashboard-view.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>DEFAULT_ADMIN_COUPONS</code><br><small style="color:var(--muted)">src/ui/admin-dashboard-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DEFAULT_ADMIN_COUPONS node in src/ui/admin-dashboard-view.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>DEFAULT_ADMIN_PLANS</code><br><small style="color:var(--muted)">src/ui/admin-dashboard-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DEFAULT_ADMIN_PLANS node in src/ui/admin-dashboard-view.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>DEFAULT_AUDIT_ENGAGEMENTS</code><br><small style="color:var(--muted)">src/ui/admin-dashboard-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DEFAULT_AUDIT_ENGAGEMENTS node in src/ui/admin-dashboard-view.js.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>ExcelAdminDashboard</code><br><small style="color:var(--muted)">src/ui/admin-dashboard-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ExcelAdminDashboard node in src/ui/admin-dashboard-view.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/ui/admin-dashboard-view.js</code></td><td>6 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 12. Practice Viewjs Data ====== -->
+<h2 id="practice-viewjs-data">12. Practice Viewjs Data</h2>
+<p>Practice Viewjs Data groups implementation around practice, viewjs, data, accounts, mostly in src/ui/practice-view.js. This section covers 5 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Practice Viewjs Data (5 nodes, 4 edges)
+    src_ui_practice_view_2edb562b("practice-view.js")
+    src_ui_practice_view_excelpracticeview_edf67710("ExcelPracticeView<br/><small>src/ui/practice-view.js</small>")
+    src_ui_practice_view_examples_data_8dc292a4("EXAMPLES_DATA<br/><small>src/ui/practice-view.js</small>")
+    src_ui_practice_view_independent_data_3a87ed93("INDEPENDENT_DATA<br/><small>src/ui/practice-view.js</small>")
+    src_ui_practice_view_accounts_list_397044e3("ACCOUNTS_LIST<br/><small>src/ui/practice-view.js</small>")
+    src_ui_practice_view_2edb562b -->|contains| src_ui_practice_view_excelpracticeview_edf67710
+    src_ui_practice_view_2edb562b -->|contains| src_ui_practice_view_examples_data_8dc292a4
+    src_ui_practice_view_2edb562b -->|contains| src_ui_practice_view_independent_data_3a87ed93
+    src_ui_practice_view_2edb562b -->|contains| src_ui_practice_view_accounts_list_397044e3
+    class src_ui_practice_view_2edb562b module;
+    class src_ui_practice_view_excelpracticeview_edf67710 klass;
+    class src_ui_practice_view_examples_data_8dc292a4 klass;
+    class src_ui_practice_view_independent_data_3a87ed93 klass;
+    class src_ui_practice_view_accounts_list_397044e3 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>practice-view.js</code><br><small style="color:var(--muted)">src/ui/practice-view.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>practice-view.js node in src/ui/practice-view.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>ACCOUNTS_LIST</code><br><small style="color:var(--muted)">src/ui/practice-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ACCOUNTS_LIST node in src/ui/practice-view.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>EXAMPLES_DATA</code><br><small style="color:var(--muted)">src/ui/practice-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>EXAMPLES_DATA node in src/ui/practice-view.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>ExcelPracticeView</code><br><small style="color:var(--muted)">src/ui/practice-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ExcelPracticeView node in src/ui/practice-view.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>INDEPENDENT_DATA</code><br><small style="color:var(--muted)">src/ui/practice-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>INDEPENDENT_DATA node in src/ui/practice-view.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/ui/practice-view.js</code></td><td>5 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 13. Company Workspace Viewjs ====== -->
+<h2 id="company-workspace-viewjs">13. Company Workspace Viewjs</h2>
+<p>Company Workspace Viewjs groups implementation around company, workspace, viewjs, accounts, mostly in src/ui/company-workspace-view.js. This section covers 4 nodes and 3 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Company Workspace Viewjs (4 nodes, 3 edges)
+    src_ui_company_workspace_view_5ffdca1b("company-workspace-view.js")
+    src_ui_company_workspace_view_excelcompanyworksp_04470c83("ExcelCompanyWorkspaceView<br/><small>src/ui/company-workspace-view.js</small>")
+    src_ui_company_workspace_view_company_accounts_7bd7875f("COMPANY_ACCOUNTS<br/><small>src/ui/company-workspace-view.js</small>")
+    src_ui_company_workspace_view_company_transactio_6629012f("COMPANY_TRANSACTIONS<br/><small>src/ui/company-workspace-view.js</small>")
+    src_ui_company_workspace_view_5ffdca1b -->|contains| src_ui_company_workspace_view_excelcompanyworksp_04470c83
+    src_ui_company_workspace_view_5ffdca1b -->|contains| src_ui_company_workspace_view_company_accounts_7bd7875f
+    src_ui_company_workspace_view_5ffdca1b -->|contains| src_ui_company_workspace_view_company_transactio_6629012f
+    class src_ui_company_workspace_view_5ffdca1b module;
+    class src_ui_company_workspace_view_excelcompanyworksp_04470c83 klass;
+    class src_ui_company_workspace_view_company_accounts_7bd7875f klass;
+    class src_ui_company_workspace_view_company_transactio_6629012f klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>company-workspace-view.js</code><br><small style="color:var(--muted)">src/ui/company-workspace-view.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>company-workspace-view.js node in src/ui/company-workspace-view.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>COMPANY_ACCOUNTS</code><br><small style="color:var(--muted)">src/ui/company-workspace-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>COMPANY_ACCOUNTS node in src/ui/company-workspace-view.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>COMPANY_TRANSACTIONS</code><br><small style="color:var(--muted)">src/ui/company-workspace-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>COMPANY_TRANSACTIONS node in src/ui/company-workspace-view.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>ExcelCompanyWorkspaceView</code><br><small style="color:var(--muted)">src/ui/company-workspace-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ExcelCompanyWorkspaceView node in src/ui/company-workspace-view.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/ui/company-workspace-view.js</code></td><td>4 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 14. Simulation Statementsjs Formategp ====== -->
+<h2 id="simulation-statementsjs-formategp">14. Simulation Statementsjs Formategp</h2>
+<p>Simulation Statementsjs Formategp groups implementation around simulation, statementsjs, formategp, updatestatements, mostly in simulation/js/statements.js. This section covers 3 nodes and 3 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Simulation Statementsjs Formategp (3 nodes, 3 edges)
+    simulation_simulation_js_statements_updatestatem_d2bba254("updateStatements()<br/><small>simulation/js/statements.js</small>")
+    simulation_simulation_js_statements_formategp_a4a74aa7("formatEGP()<br/><small>simulation/js/statements.js</small>")
+    simulation_simulation_js_statements_7494740d("statements.js")
+    simulation_simulation_js_statements_updatestatem_d2bba254 -->|calls| simulation_simulation_js_statements_formategp_a4a74aa7
+    class simulation_simulation_js_statements_updatestatem_d2bba254 function;
+    class simulation_simulation_js_statements_formategp_a4a74aa7 function;
+    class simulation_simulation_js_statements_7494740d module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>formatEGP()</code><br><small style="color:var(--muted)">simulation/js/statements.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>updateStatements()</code><br><small style="color:var(--muted)">simulation/js/statements.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>formatEGP() node in simulation/js/statements.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>updateStatements()</code><br><small style="color:var(--muted)">simulation/js/statements.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>formatEGP()</code><br><small style="color:var(--muted)">simulation/js/statements.js</small></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>statements.js</code><br><small style="color:var(--muted)">simulation/js/statements.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>statements.js node in simulation/js/statements.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>simulation/js/statements.js</code></td><td>3 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x2, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 15. Learning Viewjs Excellearningview ====== -->
+<h2 id="learning-viewjs-excellearningview">15. Learning Viewjs Excellearningview</h2>
+<p>Learning Viewjs Excellearningview groups implementation around learning, viewjs, excellearningview, lessons, mostly in src/ui/learning-view.js. This section covers 3 nodes and 2 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Learning Viewjs Excellearningview (3 nodes, 2 edges)
+    src_ui_learning_view_ac1edfab("learning-view.js")
+    src_ui_learning_view_excellearningview_99c91371("ExcelLearningView<br/><small>src/ui/learning-view.js</small>")
+    src_ui_learning_view_lessons_data_7209d6c6("LESSONS_DATA<br/><small>src/ui/learning-view.js</small>")
+    src_ui_learning_view_ac1edfab -->|contains| src_ui_learning_view_excellearningview_99c91371
+    src_ui_learning_view_ac1edfab -->|contains| src_ui_learning_view_lessons_data_7209d6c6
+    class src_ui_learning_view_ac1edfab module;
+    class src_ui_learning_view_excellearningview_99c91371 klass;
+    class src_ui_learning_view_lessons_data_7209d6c6 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>learning-view.js</code><br><small style="color:var(--muted)">src/ui/learning-view.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>learning-view.js node in src/ui/learning-view.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>ExcelLearningView</code><br><small style="color:var(--muted)">src/ui/learning-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ExcelLearningView node in src/ui/learning-view.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>LESSONS_DATA</code><br><small style="color:var(--muted)">src/ui/learning-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>LESSONS_DATA node in src/ui/learning-view.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/ui/learning-view.js</code></td><td>3 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 16. Other ====== -->
+<h2 id="other">16. Other</h2>
+<p>Other groups implementation around simulation, authjs, bridgejs, landing, mostly in src/core/auth.js, src/core/simulation-bridge.js, src/ui/landing-view.js. This section covers 10 nodes and 3 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Other (10 nodes, 3 edges)
+    subgraph other_src_core_auth_js_d59deec8["src/core/auth.js"]
+        src_core_auth_5c7a0a77("auth.js")
+        src_core_auth_authservice_cfddbb02("AuthService<br/><small>src/core/auth.js</small>")
+    end
+    subgraph other_src_core_simulation_bridge_js_de59b19e["src/core/simulation-bridge.js"]
+        src_core_simulation_bridge_0a64e4b0("simulation-bridge.js")
+        src_core_simulation_bridge_simulationbridge_f772488c("SimulationBridge<br/><small>src/core/simulation-bridge.js</small>")
+    end
+    subgraph other_src_ui_landing_view_js_e26606d0["src/ui/landing-view.js"]
+        src_ui_landing_view_434c2448("landing-view.js")
+        src_ui_landing_view_excellandingview_841c7068("ExcelLandingView<br/><small>src/ui/landing-view.js</small>")
+    end
+    simulation_simulation_css_theme_11d04205("theme.js")
+    simulation_simulation_data_f7818737("data.js")
+    src_core_screen_registry_21342845("screen-registry.js")
+    src_core_state_692b5d68("state.js")
+    src_core_auth_5c7a0a77 -->|contains| src_core_auth_authservice_cfddbb02
+    src_core_simulation_bridge_0a64e4b0 -->|contains| src_core_simulation_bridge_simulationbridge_f772488c
+    src_ui_landing_view_434c2448 -->|contains| src_ui_landing_view_excellandingview_841c7068
+    class src_core_auth_5c7a0a77 module;
+    class src_core_auth_authservice_cfddbb02 klass;
+    class src_core_simulation_bridge_0a64e4b0 module;
+    class src_core_simulation_bridge_simulationbridge_f772488c klass;
+    class src_ui_landing_view_434c2448 module;
+    class src_ui_landing_view_excellandingview_841c7068 klass;
+    class simulation_simulation_css_theme_11d04205 module;
+    class simulation_simulation_data_f7818737 module;
+    class src_core_screen_registry_21342845 module;
+    class src_core_state_692b5d68 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>auth.js</code><br><small style="color:var(--muted)">src/core/auth.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>auth.js node in src/core/auth.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>AuthService</code><br><small style="color:var(--muted)">src/core/auth.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>AuthService node in src/core/auth.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>simulation-bridge.js</code><br><small style="color:var(--muted)">src/core/simulation-bridge.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>simulation-bridge.js node in src/core/simulation-bridge.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>SimulationBridge</code><br><small style="color:var(--muted)">src/core/simulation-bridge.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>SimulationBridge node in src/core/simulation-bridge.js.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>landing-view.js</code><br><small style="color:var(--muted)">src/ui/landing-view.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>landing-view.js node in src/ui/landing-view.js.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>ExcelLandingView</code><br><small style="color:var(--muted)">src/ui/landing-view.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ExcelLandingView node in src/ui/landing-view.js.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>theme.js</code><br><small style="color:var(--muted)">simulation/css/theme.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>theme.js node in simulation/css/theme.js.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>data.js</code><br><small style="color:var(--muted)">simulation/simulation/data.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>data.js node in simulation/simulation/data.js.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>screen-registry.js</code><br><small style="color:var(--muted)">src/core/screen-registry.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>screen-registry.js node in src/core/screen-registry.js.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>core/state.js</code><br><small style="color:var(--muted)">src/core/state.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>core/state.js node in src/core/state.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/core/auth.js</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/core/simulation-bridge.js</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/ui/landing-view.js</code></td><td>2 nodes</td></tr>
+<tr><td><code>simulation/css/theme.js</code></td><td>1 nodes</td></tr>
+<tr><td><code>simulation/simulation/data.js</code></td><td>1 nodes</td></tr>
+<tr><td><code>src/core/screen-registry.js</code></td><td>1 nodes</td></tr>
+<tr><td><code>src/core/state.js</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<h2 id="stats">Project Statistics</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Graph</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>Nodes</td><td>102</td></tr>
+      <tr><td>Edges</td><td>111</td></tr>
+      <tr><td>Hyperedges</td><td>0</td></tr>
+      <tr><td>Communities</td><td>22</td></tr>
+      <tr><td>Documented Sections</td><td>15</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Edge Confidence</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>EXTRACTED</td><td>109</td></tr>
+      <tr><td>INFERRED</td><td>2</td></tr>
+      <tr><td>AMBIGUOUS</td><td>0</td></tr>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
+  <p>accountera — Architecture Documentation</p>
+  <p>Generated: 2026-09-14 19:54 UTC · graphify callflow-html</p>
+</div>
+
+</div><!-- .container -->
+
+<script>
+(function () {
+  const mermaidConfig = {
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { htmlLabels: true, useMaxWidth: true },
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#38bdf8',
+      secondaryColor: '#0f172a',
+      tertiaryColor: '#334155',
+      lineColor: '#64748b',
+      textColor: '#e2e8f0',
+    }
+  };
+
+  mermaid.initialize(mermaidConfig);
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function enhanceMermaidDiagrams() {
+    document.querySelectorAll('.mermaid').forEach((container) => {
+      if (container.dataset.zoomReady === 'true') return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+
+      container.dataset.zoomReady = 'true';
+      container.classList.add('is-enhanced');
+
+      const viewport = document.createElement('div');
+      viewport.className = 'mermaid-viewport';
+      svg.parentNode.insertBefore(viewport, svg);
+      viewport.appendChild(svg);
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'mermaid-toolbar';
+      toolbar.innerHTML = [
+        '<button type="button" data-action="zoom-out" title="Zoom out">-</button>',
+        '<span class="zoom-level" data-role="level">100%</span>',
+        '<button type="button" data-action="zoom-in" title="Zoom in">+</button>',
+        '<button type="button" data-action="fit" title="Fit width">Fit</button>',
+        '<button type="button" data-action="reset" title="Reset view">Reset</button>'
+      ].join('');
+      container.insertBefore(toolbar, viewport);
+
+      const state = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
+      const level = toolbar.querySelector('[data-role="level"]');
+
+      function applyTransform() {
+        svg.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+        level.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function zoomBy(delta) {
+        state.scale = clamp(state.scale + delta, 0.25, 3);
+        applyTransform();
+      }
+
+      function reset() {
+        state.scale = 1;
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      function fitWidth() {
+        const rawWidth = svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width
+          ? svg.viewBox.baseVal.width
+          : svg.getBoundingClientRect().width / state.scale;
+        if (!rawWidth) {
+          reset();
+          return;
+        }
+        state.scale = clamp((viewport.clientWidth - 48) / rawWidth, 0.25, 1.4);
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      toolbar.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const action = button.dataset.action;
+        if (action === 'zoom-in') zoomBy(0.15);
+        if (action === 'zoom-out') zoomBy(-0.15);
+        if (action === 'fit') fitWidth();
+        if (action === 'reset') reset();
+      });
+
+      viewport.addEventListener('wheel', (event) => {
+        if (!event.ctrlKey && !event.metaKey) return;
+        event.preventDefault();
+        zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+      }, { passive: false });
+
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        state.dragging = true;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.originX = state.x;
+        state.originY = state.y;
+        viewport.classList.add('is-dragging');
+        viewport.setPointerCapture(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!state.dragging) return;
+        state.x = state.originX + event.clientX - state.startX;
+        state.y = state.originY + event.clientY - state.startY;
+        applyTransform();
+      });
+
+      function endDrag(event) {
+        if (!state.dragging) return;
+        state.dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      applyTransform();
+    });
+  }
+
+  function renderMermaid() {
+    const result = mermaid.run
+      ? mermaid.run({ querySelector: '.mermaid' })
+      : Promise.resolve();
+    Promise.resolve(result)
+      .then(enhanceMermaidDiagrams)
+      .catch((error) => {
+        console.error('Mermaid render failed:', error);
+        enhanceMermaidDiagrams();
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMermaid);
+  } else {
+    renderMermaid();
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1353 @@
+/**
+ * company-workspace.css — بيئة عمل محاكاة مجمع الشركات المتجاوبة بالكامل
+ */
+
+.companies-hub-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-4) var(--container-padding-mobile) var(--space-12);
+}
+
+@media (min-width: 768px) {
+  .companies-hub-container {
+    padding: var(--space-6) var(--container-padding-desktop) var(--space-16);
+  }
+}
+
+/* شريط تصفية القطاعات والبحث للموبايل */
+.hub-search-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .hub-search-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.search-input-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 480px;
+}
+
+.hub-search-input {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  padding: 10px 16px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.hub-search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--brand-glow);
+}
+
+/* شرائح التصفية السريعة (Filter Chips) */
+.filter-chips-strip {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.filter-chips-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chip {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-fast);
+}
+
+.filter-chip.active {
+  background: var(--primary);
+  color: var(--text-inverted);
+  border-color: var(--primary);
+}
+
+/* شبكة بطاقات الشركات (Companies Grid) */
+.companies-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .companies-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .companies-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.company-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition-base);
+}
+
+.company-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary-border);
+  box-shadow: var(--shadow-md);
+}
+
+.company-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.company-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.company-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.company-sector-badge {
+  font-size: 0.72rem;
+  color: var(--primary-hover);
+  font-weight: 700;
+}
+
+.company-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+  flex: 1;
+}
+
+.company-stats-strip {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-3) 0;
+  border-top: 1px dashed var(--border-subtle);
+  border-bottom: 1px dashed var(--border-subtle);
+  margin-bottom: var(--space-4);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+ * بيئة عمل الدورة المحاسبية للشركة النشطة (Company ERP Workspace)
+ * ========================================================================== */
+.workspace-hero {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl, 20px);
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.05));
+  position: relative;
+  overflow: hidden;
+}
+
+.workspace-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2563eb, #60a5fa, #38bdf8);
+}
+
+.workspace-hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .workspace-hero-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.workspace-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #eff6ff;
+  color: #2563eb;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.workspace-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+@media (min-width: 768px) {
+  .workspace-title {
+    font-size: 1.65rem;
+  }
+}
+
+.workspace-actions-dock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-workspace-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-lg, 12px);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 40px;
+  transition: all 0.2s ease;
+}
+
+.btn-workspace-action:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.btn-workspace-primary {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.btn-workspace-primary:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+/* شريط تبويبات الدورة المحاسبية */
+.cycle-tabs-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.cycle-tabs-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.cycle-tab-btn {
+  flex: 0 0 auto;
+  padding: 10px 18px;
+  border-radius: var(--radius-lg, 12px);
+  background: var(--bg-secondary);
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  transition: all 0.2s ease;
+}
+
+.cycle-tab-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.cycle-tab-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  border-color: #2563eb;
+}
+
+.subnav-tab {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  border-radius: var(--radius-lg);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--touch-target-min);
+  transition: var(--transition-fast);
+}
+
+.subnav-tab.active {
+  background: var(--primary-light);
+  color: var(--primary-hover);
+  border-color: var(--primary-border);
+}
+
+/* بطاقات حسابات الأستاذ وحسابات T المتجاوبة */
+.ledger-t-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .ledger-t-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .ledger-t-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.t-account-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.t-account-header {
+  background: var(--bg-secondary);
+  padding: var(--space-3);
+  text-align: center;
+  font-weight: 800;
+  border-bottom: 2px solid var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.t-account-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 140px;
+}
+
+.t-side {
+  padding: var(--space-3);
+  font-size: 0.82rem;
+}
+
+.t-side.debit {
+  border-left: 1px solid var(--border-subtle);
+}
+
+.t-side-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin-bottom: var(--space-2);
+  color: var(--text-muted);
+}
+
+.t-entry-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.t-account-footer {
+  background: var(--bg-secondary);
+  padding: var(--space-3);
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* جدول ميزان المراجعة المتجاوب والقوائم */
+.table-responsive-wrapper {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: var(--shadow-sm);
+}
+
+.acc-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+  font-size: 0.92rem;
+  min-width: 540px; /* يسمح بالتمرير السلس بدلاً من تكسير الأرقام */
+}
+
+.acc-table th {
+  background: var(--bg-secondary);
+  padding: 12px 16px;
+  font-weight: 800;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.acc-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.acc-table tfoot td {
+  background: var(--bg-secondary);
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+ * أدوات عرض وإدارة السندات الكثيرة (100+ Vouchers Management System)
+ * ========================================================================== */
+
+.vouchers-control-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .vouchers-control-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.view-toggle-group {
+  display: flex;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  gap: 3px;
+}
+
+.view-toggle-btn {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-fast);
+}
+
+.view-toggle-btn.active {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.voucher-jump-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.voucher-jump-select {
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-height: 36px;
+}
+
+/* نمط عرض قائمة وسجل السندات (Data Grid / List View) */
+.vouchers-registry-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.registry-search-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .registry-search-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.registry-search-input {
+  width: 100%;
+  max-width: 320px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.registry-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--transition-fast);
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .registry-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.registry-item:hover {
+  background: var(--surface-hover);
+}
+
+.registry-item:last-child {
+  border-bottom: none;
+}
+
+.registry-item-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.registry-item-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ==========================================================================
+ * لوحة السندات والتنقل والنمط الفردي (Single Voucher View)
+ * ========================================================================== */
+.vouchers-control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl, 16px);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 768px) {
+  .vouchers-control-panel {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.vouchers-summary-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.stat-pill strong {
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.stat-pct {
+  color: #10b981;
+  font-weight: 800;
+}
+
+.vouchers-view-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.quick-jump-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quick-jump-box label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.voucher-jump-select {
+  padding: 8px 12px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-height: 40px;
+  outline: none;
+  cursor: pointer;
+  max-width: 240px;
+}
+
+.voucher-jump-select:focus {
+  border-color: #2563eb;
+}
+
+.view-mode-toggle {
+  display: flex;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg, 12px);
+  padding: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+.mode-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-md, 8px);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  transition: all 0.2s ease;
+}
+
+.mode-btn.active {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+  font-weight: 800;
+}
+
+/* بطاقة السند الفردي التفاعلية */
+.single-voucher-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.voucher-pager-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl, 16px);
+  padding: 10px 16px;
+}
+
+.pager-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 40px;
+  transition: all 0.2s ease;
+}
+
+.pager-btn:hover:not(:disabled) {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.pager-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pager-info {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.voucher-sheet-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl, 20px);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+}
+
+.sheet-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 20px;
+}
+
+@media (min-width: 640px) {
+  .sheet-header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+.sheet-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.sheet-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+.sheet-meta {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.amount-val {
+  color: #059669;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.sheet-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.status-posted {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.status-pending {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.sheet-desc-box {
+  display: flex;
+  gap: 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl, 16px);
+  padding: 16px;
+  margin-bottom: 24px;
+  line-height: 1.7;
+}
+
+.desc-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.desc-text {
+  font-size: 0.92rem;
+  color: var(--text-primary);
+}
+
+/* نموذج اختيار أطراف القيد المحاسبي */
+.voucher-inputs-section {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl, 16px);
+  padding: 20px;
+}
+
+.inputs-heading {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+}
+
+.inputs-grid-dual {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 640px) {
+  .inputs-grid-dual {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.entry-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border-radius: var(--radius-lg, 12px);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.col-debit {
+  border-top: 3px solid #2563eb;
+}
+
+.col-credit {
+  border-top: 3px solid #059669;
+}
+
+.entry-label-badge {
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.badge-debit {
+  color: #2563eb;
+}
+
+.badge-credit {
+  color: #059669;
+}
+
+.account-select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  font-weight: 600;
+  min-height: 44px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.account-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #eff6ff;
+}
+
+.amount-read-badge {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.voucher-action-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-post-voucher {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: var(--radius-xl, 16px);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border: none;
+  font-size: 0.98rem;
+  font-weight: 800;
+  cursor: pointer;
+  min-height: 50px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .btn-post-voucher {
+    width: auto;
+  }
+}
+
+.btn-post-voucher:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
+}
+
+.voucher-feedback-box {
+  margin-top: 16px;
+}
+
+.feedback-success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-lg, 12px);
+  padding: 14px 18px;
+  color: #065f46;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.feedback-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-lg, 12px);
+  padding: 14px 18px;
+  color: #991b1b;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* شرائح الفلترة والأزرار في سجل السندات */
+.registry-filters-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.reg-filter-btn {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 38px;
+  transition: all 0.2s ease;
+}
+
+.reg-filter-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.btn-open-tx {
+  padding: 6px 14px;
+  border-radius: var(--radius-md, 8px);
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 36px;
+}
+
+.badge-idx {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 0.78rem;
+  font-weight: 800;
+  border: 1px solid var(--border-subtle);
+}
+
+/* ==========================================================================
+ * جداول اليومية وميزان المراجعة والأستاذ (Financial Sheets)
+ * ========================================================================== */
+.sheet-intro-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl, 16px);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.sheet-intro-card h3 {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.sheet-intro-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.table-scroll-container {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl, 16px);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+}
+
+.excel-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+  font-size: 0.9rem;
+  min-width: 600px;
+}
+
+.excel-table th {
+  background: var(--bg-secondary);
+  padding: 12px 16px;
+  font-weight: 800;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.excel-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.cell-amount-debit {
+  color: #2563eb;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cell-amount-credit {
+  color: #059669;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cell-acc-debit {
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.cell-acc-credit {
+  font-weight: 700;
+  color: #059669;
+}
+
+.cell-memo {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.trial-total-row td {
+  background: var(--bg-secondary);
+  border-top: 2px solid var(--border-strong);
+  font-weight: 900;
+}
+
+.balance-status-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 22px;
+  border-radius: var(--radius-xl, 16px);
+  border: 1px solid;
+}
+
+.status-balanced {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.status-unbalanced {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+.balance-status-card p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+}
+
+.t-accounts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .t-accounts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .t-accounts-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.active-t-card {
+  border-color: #bfdbfe;
+}
+
+.t-card-header {
+  background: var(--bg-secondary);
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--text-primary);
+  text-align: center;
+}
+
+.t-acc-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+
+.t-acc-type {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.t-account-table-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 120px;
+}
+
+.t-side-debit {
+  border-left: 1px solid var(--border-subtle);
+}
+
+.t-side-head {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.t-side-total {
+  margin-top: 10px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-subtle);
+  font-weight: 800;
+  font-size: 0.78rem;
+}
+
+.t-balance-bar {
+  background: var(--bg-secondary);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.color-debit {
+  color: #2563eb;
+}
+
+.color-credit {
+  color: #059669;
+}
+
+/* القوائم المالية */
+.statements-container {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.statement-box {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl, 20px);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+}
+
+.statement-head {
+  text-align: center;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border-subtle);
+  margin-bottom: 18px;
+}
+
+.statement-head h4 {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.statement-head span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.statement-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stmt-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.header-row {
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.ind-row {
+  padding-right: 14px;
+}
+
+.subtotal-row {
+  font-weight: 800;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 8px;
+}
+
+.grand-total-row {
+  font-weight: 900;
+  font-size: 1.05rem;
+  border-top: 2px solid var(--text-primary);
+  border-bottom: 2px solid var(--text-primary);
+  padding: 10px 0;
+  margin-top: 10px;
+}
+
+.profit {
+  color: #059669;
+}
+
+.loss {
+  color: #dc2626;
+}
+
+.stmt-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+}
+

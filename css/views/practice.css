@@ -1,0 +1,274 @@
+﻿/**
+ * practice.css — بيئة التمارين والأمثلة المحاسبية المتجاوبة للموبايل
+ */
+
+.practice-workspace {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-4) var(--container-padding-mobile) var(--space-12);
+}
+
+@media (min-width: 768px) {
+  .practice-workspace {
+    padding: var(--space-6) var(--container-padding-desktop) var(--space-16);
+  }
+}
+
+/* شريط المسار والتقدم */
+.practice-header-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .practice-header-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.breadcrumbs .current {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* التوزيع الشبكي المرن: عمود واحد للموبايل، عمودين للشاشات الكبيرة */
+.practice-layout-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .practice-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-6);
+    align-items: start;
+  }
+}
+
+/* بطاقة المعاملة المالية (Transaction Card) */
+.transaction-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-4);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .transaction-card {
+    padding: var(--space-8);
+  }
+}
+
+.transaction-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.doc-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.transaction-title {
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.transaction-narrative {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.amount-display-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-5);
+}
+
+.amount-val {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--primary);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* سند قيد اليومية (Journal Voucher Preview) */
+.voucher-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 768px) {
+  .voucher-card {
+    padding: var(--space-8);
+  }
+}
+
+.voucher-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-3);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* منتقيات الحسابات (Account Selectors) */
+.account-pickers-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .account-pickers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.picker-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.picker-box.debit {
+  border-top: 3px solid var(--acc-debit);
+}
+
+.picker-box.credit {
+  border-top: 3px solid var(--danger);
+}
+
+.picker-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 800;
+  font-size: 0.92rem;
+  margin-bottom: var(--space-2);
+}
+
+.picker-select {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  padding: 10px 12px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* سند المعاينة الحي لقيد اليومية */
+.live-voucher-dock {
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.voucher-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-card);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+  font-size: 0.95rem;
+}
+
+.voucher-line.credit-line {
+  padding-right: var(--space-8); /* إزاحة الطرف الدائن */
+}
+
+/* أزرار العمليات والتحقق */
+.practice-actions-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .practice-actions-row {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* مربع التغذية الراجعة والتشخيص الذكي للأخطاء */
+.feedback-box {
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-top: var(--space-4);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  display: none;
+}
+
+.feedback-box.success {
+  background: var(--success-bg);
+  color: #065F46;
+  border: 1px solid var(--success-border);
+}
+
+.feedback-box.error {
+  background: var(--danger-bg);
+  color: #991B1B;
+  border: 1px solid var(--danger-border);
+}
+
+/* الشريط الجانبي التعليمي للورشة */
+.side-rail-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-4);
+}

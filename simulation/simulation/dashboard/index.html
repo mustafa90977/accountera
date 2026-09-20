@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title>محاكي النظام المحاسبي - NTL-2026</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../css/theme.js"></script>
+</head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col antialiased selection:bg-secondary-container"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(11,28,48,0.04)]"><div class="h-20 px-space-md flex flex-col justify-center gap-space-xs max-w-7xl mx-auto"><div class="flex items-center justify-between"><div class="flex items-center gap-space-sm min-w-0"><div onclick="openCompanySwitcherModal()" class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-primary-fixed shadow-[0_1px_4px_rgba(0,0,0,0.08)] flex-shrink-0 cursor-pointer hover:opacity-90" title="تبديل شركة التدريب والمحاكاة"><span class="material-symbols-outlined text-[22px]">domain</span></div><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-title-sm text-title-sm text-on-surface truncate max-w-[120px] xs:max-w-[180px] sm:max-w-[240px] company-title-display cursor-pointer hover:underline" onclick="openCompanySwitcherModal()" title="تبديل شركة التدريب والمحاكاة">شركة النيل للتجارة والتوزيع</span><button type="button" onclick="openCompanySwitcherModal()" class="font-label-sm text-[11px] px-2 py-0.5 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold flex items-center gap-0.5 transition flex-shrink-0 cursor-pointer" title="تبديل شركة التدريب والمحاكاة"><span>تبديل</span><span class="material-symbols-outlined text-[13px]">swap_horiz</span></button></div><span class="font-body-sm text-body-sm text-on-surface-variant truncate">يناير – ديسمبر 2026</span></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><a href="/index.html" onclick="returnToPlatform(event)" class="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex-shrink-0 min-h-[36px] cursor-pointer" title="العودة لمنصة المحاسب الرئيسية"><span class="material-symbols-outlined text-[16px]">arrow_forward</span><span class="hidden xs:inline">العودة للمنصة</span></a><div id="header-closing-slot" class="flex items-center flex-shrink-0"></div><div class="flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container-low"><span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span><span class="font-label-sm text-label-sm text-on-tertiary-container font-semibold"><span class="header-progress-short xs:hidden">0%</span><span class="header-progress-full hidden xs:inline">0% إنجاز (0/100)</span></span></div><button aria-label="التنبيهات" class="relative w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2 left-2 w-4 h-4 rounded-full bg-error text-on-error font-label-sm text-[10px] flex items-center justify-center font-bold">3</span></button><div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0" title="محاسب مالي"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div><div class="flex items-center justify-between pt-0.5"><div class="hidden xs:flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm"><span class="material-symbols-outlined text-[14px] text-tertiary-fixed-dim">verified_user</span><span>دورة الإقفال السنوية: نشطة ومطابقة لمعايير SOCPA</span></div><span class="font-headline-sm text-headline-sm text-on-surface truncate">نظرة عامة (Dashboard)</span></div></div></header><main class="flex flex-col relative w-full pt-20 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-space-md py-space-sm gap-space-md">
+<!-- 1. Company Header Meta Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col gap-space-sm relative overflow-hidden">
+<div class="absolute -left-10 -bottom-10 w-36 h-36 bg-surface-container-low rounded-full pointer-events-none opacity-60"></div>
+<div class="flex items-start justify-between relative z-10 gap-2">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="relative w-12 h-12 rounded-xl overflow-hidden shadow-sm flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Corporate headquarter building of a modern Nile Trading logistics enterprise with sleek glass facade under clear daylight in modern Cairo, corporate blue and minimal aesthetic, architectural photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo_j2p9sH-jQk1cY4BUvUTsc_g2iX6lOGKWG2SS15poZGkCGgD4m3YWXChzruuMKIx59B0-xhO7Q9guHmyecgJwD-eSMXafCMomoTDnStdr2qRpN597OaxHSLi8cc4u_tCnbZ_aUGKYu5tMJmiqLmVOBQF35Gh8G3XC17sAYQ20VCtVF76XqrO3n4gFrE9BKgiCtR7zgMXVsI0ztjiwDgOws8PUtdGRBOw2MgWmKasmyVAAzjJF8dQ4w"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h2 class="font-headline-sm text-headline-sm text-on-surface truncate company-title-display">شركة النيل للتجارة والتوزيع</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate company-subtitle-display">Nile Trading &amp; Distribution Co. • NTL-2026</span>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-secondary-container px-2 py-1 rounded-full text-on-secondary-fixed font-label-sm text-label-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[14px]">school</span>
+<span>متوسط</span>
+</div>
+</div>
+<!-- Badges Row -->
+<div class="flex flex-wrap items-center gap-space-xs pt-1">
+<span class="px-2 py-1 rounded bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-secondary">local_shipping</span>
+<span class="company-sector-display">قطاع التجارة والتوزيع</span>
+</span>
+<span class="px-2 py-1 rounded bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-secondary">badge</span>
+<span class="company-employees-display">45 موظف مسجل</span>
+</span>
+<span class="px-2 py-1 rounded bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-secondary">calendar_today</span>
+<span class="company-year-display">السنة المالية: 2026 (الربع الأول)</span>
+</span>
+</div>
+</div>
+<!-- 2. Financial Health Scorecard -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-on-tertiary-container animate-ping"></span>
+<span class="font-title-sm text-title-sm text-on-surface">مؤشر الصحة والصلابة المالية</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">معايير التحليل SOCPA</span>
+</div>
+<!-- Circular Score + Status -->
+<div class="flex items-center gap-space-md bg-surface-container-low p-space-md rounded-xl">
+<div class="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
+<svg class="w-24 h-24 transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-container-high" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-on-tertiary-container transition-all duration-1000" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span id="health-score-val" class="font-num-display text-num-display text-on-surface font-bold">0</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant -mt-1">من 100</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<span id="health-score-title" class="font-title-sm text-title-sm text-on-surface font-bold">بانتظار بدء التسجيل المحاسبي</span>
+<span class="material-symbols-outlined text-slate-400 text-[18px]">hourglass_empty</span>
+</div>
+<p id="health-score-desc" class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+المحاكاة جاهزة ومصفرة بالكامل (0%). ابدأ بتسجيل وترحيل القيد الافتتاحي (TRX-00001) من شاشة قيود اليومية للانطلاق في الدورة المحاسبية.
+</p>
+</div>
+</div>
+<!-- Mini-meters breakdown -->
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Liquidity -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">السيولة السريعة</span>
+<span class="font-num-table-bold text-num-table-bold text-on-surface">0%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-on-tertiary-container rounded-full" style="width: 0%"></div>
+</div>
+</div>
+<!-- Profitability -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">الربحية والتشغيل</span>
+<span class="font-num-table-bold text-num-table-bold text-on-surface">0%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 0%"></div>
+</div>
+</div>
+<!-- Debt Ratio -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">الرفع المالي (الدين)</span>
+<span class="font-num-table-bold text-num-table-bold text-on-surface">0%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary-fixed-variant rounded-full" style="width: 0%"></div>
+</div>
+</div>
+<!-- Working Capital -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">رأس المال العامل</span>
+<span class="font-num-table-bold text-num-table-bold text-on-surface">0%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-on-tertiary-container rounded-full" style="width: 0%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- 3. Financial Snapshot KPI Cards (Bento/Card Grid) -->
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Revenue -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">إجمالي الإيرادات</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">trending_up</span>
+</div>
+</div>
+<div>
+<div class="flex items-baseline gap-1">
+<span id="stat-revenue" class="font-num-display text-num-display text-on-surface">0</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ج.م</span>
+</div>
+<div class="flex items-center gap-1 text-slate-500 font-label-sm text-label-sm mt-1">
+<span class="material-symbols-outlined text-[14px]">info</span>
+<span>بانتظار تسجيل فواتير المبيعات</span>
+</div>
+</div>
+</div>
+<!-- Net Profit -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">صافي الربح التقديري</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+</div>
+</div>
+<div>
+<div class="flex items-baseline gap-1">
+<span id="stat-net-income" class="font-num-display text-num-display text-on-surface">0</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ج.م</span>
+</div>
+<div class="flex items-center gap-1 text-slate-500 font-label-sm text-label-sm mt-1">
+<span class="material-symbols-outlined text-[14px]">info</span>
+<span>بانتظار احتساب إيرادات ومصروفات الفترة</span>
+</div>
+</div>
+</div>
+<!-- Cash & Banks -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">النقدية وما في حكمها</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</div>
+</div>
+<div>
+<div class="flex items-baseline gap-1">
+<span id="stat-cash" class="font-num-display text-num-display text-on-surface">0</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ج.م</span>
+</div>
+<div class="flex items-center gap-1 text-slate-500 font-label-sm text-label-sm mt-1">
+<span class="material-symbols-outlined text-[14px]">account_balance</span>
+<span>رصيد البنك والخزينة: 0 ج.م</span>
+</div>
+</div>
+</div>
+<!-- Liabilities -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">إجمالي الالتزامات</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</div>
+</div>
+<div>
+<div class="flex items-baseline gap-1">
+<span id="stat-payables" class="font-num-display text-num-display text-on-surface">0</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ج.م</span>
+</div>
+<div class="flex items-center gap-1 text-slate-500 font-label-sm text-label-sm mt-1">
+<span class="material-symbols-outlined text-[14px]">receipt_long</span>
+<span>إجمالي ذمم الموردين: 0 ج.م</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. Interactive Accounting Workflow Map -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary-container text-[20px]">account_tree</span>
+<span class="font-title-sm text-title-sm text-on-surface font-bold">مسار الدورة المحاسبية التفاعلي</span>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface px-2.5 py-0.5 rounded-full font-bold">السنة المالية 2026</span>
+</div>
+<div class="flex flex-col gap-space-sm relative">
+<!-- Step 1: Journal Entries -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low transition-colors hover:bg-surface-container">
+<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-sm text-title-sm text-on-surface font-bold">1. قيود اليومية العامة</span>
+<span id="wf-journal-badge" class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface text-slate-600 font-semibold border border-slate-200">0 من 100 قيد</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">بانتظار تسجيل وترحيل القيد الافتتاحي (TRX-00001) في دفتر اليومية العامة.</p>
+</div>
+</div>
+<!-- Step 2: General Ledger -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low transition-colors hover:bg-surface-container">
+<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-sm text-title-sm text-on-surface font-bold">2. دفتر الأستاذ العام وحسابات T</span>
+<span id="wf-ledger-badge" class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface text-slate-500 font-semibold border border-slate-200">بانتظار الترحيل</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">لا توجد حركات مرحلة في دفاتر الأستاذ العام بعد.</p>
+</div>
+</div>
+<!-- Step 3: Trial Balance (Clean & Balanced!) -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low transition-colors hover:bg-surface-container">
+<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[18px]">balance</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-sm text-title-sm text-on-surface font-bold">3. ميزان المراجعة بالمجاميع والأرصدة</span>
+<span id="wf-tb-badge" class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface text-slate-500 font-semibold border border-slate-200">بانتظار الترحيل</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">ميزان المراجعة بانتظار ترحيل القيود لحساب المجاميع والأرصدة.</p>
+</div>
+</div>
+<!-- Step 4: Financial Statements -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low transition-colors hover:bg-surface-container">
+<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[18px]">query_stats</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-sm text-title-sm text-on-surface font-bold">4. القوائم المالية الختامية</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface text-slate-500 font-semibold border border-slate-200">بانتظار البيانات</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">القوائم المالية جاهزة للعرض التلقائي فور تسجيل وترحيل العمليات المحاسبية.</p>
+</div>
+</div>
+<!-- Parallel Track: Bank Reconciliation -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low transition-colors hover:bg-surface-container mt-1">
+<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[18px]">assured_workload</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-sm text-title-sm text-on-surface font-bold">المسار الموازي: مذكرة التسوية البنكية</span>
+<span id="wf-recon-badge" class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface text-slate-500 font-bold border border-slate-200">بانتظار العمليات</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">لا توجد حركات بنكية مسجلة بعد. الرصيد الدفتري 0 ج.م.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. Educational Assistant Prompt Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col gap-space-xs relative overflow-hidden">
+<div class="w-1.5 absolute top-0 bottom-0 right-0 bg-primary-container"></div>
+<div class="flex items-center gap-space-xs">
+<div class="w-7 h-7 rounded-full bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">lightbulb</span>
+</div>
+<span class="font-title-sm text-title-sm text-on-surface font-bold">المساعد المحاسبي والمدقق الذكي</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant pr-space-md leading-relaxed">
+💡 <strong class="text-on-surface">إشعار النظام:</strong> تم إثبات وترحيل القيد الافتتاحي آلياً لدفتر الأستاذ. انتقل إلى <a href="../journal/index.html" class="text-secondary font-bold underline hover:text-primary">دفتر اليومية العامة</a> لتسجيل وترحيل العمليات التشغيلية (الفواتير، السداد، المقبوضات).
+</p>
+</div>
+<!-- 6. Quick Action Hub / Launch Buttons -->
+<div class="flex flex-col gap-space-xs pt-space-xs">
+<button class="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-primary-container text-on-primary font-title-sm text-title-sm flex items-center justify-center gap-space-xs shadow-sm hover:opacity-95 active:scale-[0.99] transition-all" onclick="window.location.href='../journal/index.html'">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+<span><span class="xs:hidden">قيود اليومية (100 قيد)</span><span class="hidden xs:inline">استعراض وتدقيق قيود اليومية (100 قيد)</span></span>
+</button>
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="min-h-[44px] py-2 rounded-xl bg-secondary text-on-secondary font-title-sm text-title-sm flex items-center justify-center gap-1 shadow-sm hover:opacity-90 active:scale-[0.99] transition-all" onclick="window.location.href='../ledger/index.html'">
+<span class="material-symbols-outlined text-[18px]">balance</span>
+<span>تدقيق الميزان</span>
+</button>
+<button class="min-h-[44px] py-2 rounded-xl bg-surface-container text-on-surface font-title-sm text-title-sm flex items-center justify-center gap-1 shadow-sm hover:bg-surface-container-high active:scale-[0.99] transition-all" onclick="window.location.href='../bank-recon/index.html'">
+<span class="material-symbols-outlined text-[18px]">assured_workload</span>
+<span>بدء التسوية</span>
+</button>
+</div>
+</div>
+<!-- Live Simulation Feed Ticker -->
+<div class="w-full bg-surface-container-low rounded-lg p-space-sm flex items-center justify-between text-on-surface-variant">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="material-symbols-outlined text-[16px] text-on-tertiary-container animate-pulse">radio_button_checked</span>
+<span class="font-body-sm text-body-sm truncate">آخر حركة قيد آلي: تم إثبات القيد الافتتاحي رقم #TRX-00001 بنجاح • بانتظار إدخال العمليات التشغيلية الجديدة</span>
+</div>
+<span class="font-num-table text-num-table text-on-surface-variant flex-shrink-0 mr-2">قيد معتمد</span>
+</div>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(11,28,48,0.06)] border-t border-surface-variant">
+  <div class="flex items-center justify-around px-1 py-1 max-w-xl mx-auto w-full">
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-primary font-bold" href="../dashboard/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">dashboard</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">نظرة عامة</span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../accounts/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">account_tree</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الحسابات</span><span class="hidden xs:inline">شجرة الحسابات</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../journal/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">menu_book</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">اليومية</span><span class="hidden xs:inline">قيود اليومية</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../ledger/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">balance</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الأستاذ</span><span class="hidden xs:inline">دفتر الأستاذ</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../statements/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">query_stats</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">القوائم</span><span class="hidden xs:inline">القوائم المالية</span></span>
+    </a>
+    <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../bank-recon/index.html">
+      <span class="material-symbols-outlined text-[20px] xs:text-[22px]">assured_workload</span>
+      <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">التسوية</span><span class="hidden xs:inline">التسوية البنكية</span></span>
+    </a>
+  </div>
+</nav><script src="../data.js"></script><script src="../js/state.js"></script><script src="../js/closing-wizard.js"></script><script src="../js/dashboard.js"></script></body></html>
