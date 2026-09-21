@@ -68,26 +68,26 @@ const ExcelStudentSettingsView = {
     const { user, prefs } = this.getUserData();
     const userRoleText = user.role === 'admin' ? 'مدير النظام' : (user.role === 'teacher' ? 'مدرب معتمد' : 'طالب متدرب');
     const userPlanText = user.plan === 'vip' ? 'خبير النمذجة (VIP)' : (user.plan === 'pro' ? 'المحاسب المحترف (Pro)' : 'الباقة التأسيسية (Free)');
-    const userPlanColor = user.plan === 'vip' ? '#8b5cf6' : (user.plan === 'pro' ? '#3b82f6' : '#10b981');
+    const userPlanColor = user.plan === 'vip' ? 'var(--tier-vip)' : (user.plan === 'pro' ? 'var(--tier-pro)' : 'var(--tier-starter)');
 
     return `
       <div class="student-settings-container" style="max-width: 1050px; margin: 0 auto; padding: 1.5rem 1rem 4rem;">
         
         <!-- الترويسة الرئيسية للإعدادات بنمط Accountely النظيف -->
-        <div class="settings-header-accountely" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.5rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 2rem;">
+        <div class="settings-header-accountely" style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 1.5rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 2rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem; width: 100%;">
             <div style="display: flex; align-items: center; gap: 1.25rem;">
-              <div style="width: 58px; height: 58px; border-radius: 16px; background: #e6f7f0; border: 1.5px solid #10b981; display: flex; align-items: center; justify-content: center; color: #059669;">
+              <div style="width: 58px; height: 58px; border-radius: 16px; background: var(--tier-starter-bg); border: 1.5px solid var(--tier-starter-border); display: flex; align-items: center; justify-content: center; color: var(--tier-starter);">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 28 }) : ''}
               </div>
               <div>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                  <h1 style="font-size: 1.5rem; font-weight: 900; margin: 0; color: #0f172a;">إعدادات الحساب والملف الشخصي</h1>
-                  <span style="background: #e6f7f0; color: #059669; border: 1px solid #10b981; padding: 3px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 800;">
+                  <h1 style="font-size: 1.5rem; font-weight: 900; margin: 0; color: var(--text-primary);">إعدادات الحساب والملف الشخصي</h1>
+                  <span style="background: var(--tier-starter-bg); color: var(--tier-starter); border: 1px solid var(--tier-starter-border); padding: 3px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 800;">
                     ${userPlanText}
                   </span>
                 </div>
-                <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0;">
+                <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 4px 0 0;">
                   Account & Profile Settings • إدارة البيانات الشخصية، أمان كلمة المرور، وتفضيلات المحاكاة المحاسبية
                 </p>
               </div>
@@ -99,7 +99,7 @@ const ExcelStudentSettingsView = {
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 16 }) : ''}
                 <span>لوحة المتابعة</span>
               </button>
-              <button onclick="navigateToScreen('portfolio')" class="btn-cta-primary" style="background: var(--primary); color: #fff; border: none; padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+              <button onclick="navigateToScreen('portfolio')" class="btn-cta-primary" style="background: var(--primary); color: var(--text-inverse); border: none; padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trend-up', { size: 16 }) : ''}
                 <span>محفظة الكفاءة</span>
               </button>
@@ -251,7 +251,7 @@ const ExcelStudentSettingsView = {
             <!-- مؤشر قوة كلمة المرور -->
             <div style="margin-top: 8px;">
               <div style="width: 100%; height: 6px; background: var(--border-subtle); border-radius: 999px; overflow: hidden;">
-                <div id="pwd_strength_bar" style="width: 0%; height: 100%; background: #ef4444; transition: all 0.3s ease;"></div>
+                <div id="pwd_strength_bar" style="width: 0%; height: 100%; background: var(--danger); transition: all 0.3s ease;"></div>
               </div>
               <span id="pwd_strength_text" style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">قوة كلمة المرور: لم تدخل بعد</span>
             </div>
@@ -401,9 +401,9 @@ const ExcelStudentSettingsView = {
           <div style="background: var(--surface-ground); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.5rem;">
             <div style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 6px;">ميزات الباقة وصلاحية لينكد إن:</div>
             <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem;">
-              <div>• النواة المحاسبية والقيد المزدوج: <strong style="color:#10b981;">مفعل</strong></div>
-              <div>• مشاركة المحفظة على LinkedIn: <strong style="color:${currentPlan.allowLinkedInShare ? '#10b981' : '#ef4444'};">${currentPlan.allowLinkedInShare ? 'متاح في باقتك' : 'يتطلب ترقية لـ Pro'}</strong></div>
-              <div>• اعتماد الشهادات برقم QR: <strong style="color:#10b981;">متاح</strong></div>
+              <div>• النواة المحاسبية والقيد المزدوج: <strong style="color:var(--success);">مفعل</strong></div>
+              <div>• مشاركة المحفظة على LinkedIn: <strong style="color:${currentPlan.allowLinkedInShare ? 'var(--success)' : 'var(--danger)'};">${currentPlan.allowLinkedInShare ? 'متاح في باقتك' : 'يتطلب ترقية لـ Pro'}</strong></div>
+              <div>• اعتماد الشهادات برقم QR: <strong style="color:var(--success);">متاح</strong></div>
             </div>
           </div>
         </div>
@@ -459,13 +459,13 @@ const ExcelStudentSettingsView = {
 
           <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(239, 68, 68, 0.04); padding: 1.25rem; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2); flex-wrap: wrap; gap: 1rem;">
             <div>
-              <strong style="display: flex; align-items: center; gap: 6px; font-size: 0.92rem; color: #ef4444;">
+              <strong style="display: flex; align-items: center; gap: 6px; font-size: 0.92rem; color: var(--danger);">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('warning', { size: 16 }) : ''}
                 <span>تصفير محاكاة الدفاتر والبدء من جديد</span>
               </strong>
               <span style="font-size: 0.8rem; color: var(--text-muted);">مسح كافة القيود المسجلة باليومية لإعادة التدريب من البداية مع الحفاظ على الحساب.</span>
             </div>
-            <button onclick="ExcelStudentSettingsView.resetTrainingProgress()" class="btn-cta-secondary" style="background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
+            <button onclick="ExcelStudentSettingsView.resetTrainingProgress()" class="btn-cta-secondary" style="background: transparent; color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
               ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('rotate', { size: 16 }) : ''}
               <span>تصفير القيود</span>
             </button>
@@ -497,19 +497,19 @@ const ExcelStudentSettingsView = {
 
     if (score <= 2) {
       bar.style.width = '33%';
-      bar.style.background = '#ef4444';
+      bar.style.background = 'var(--danger)';
       text.textContent = 'قوة كلمة المرور: ضعيفة (يُفضل إضافة أرقام ورموز)';
-      text.style.color = '#ef4444';
+      text.style.color = 'var(--danger)';
     } else if (score <= 3) {
       bar.style.width = '66%';
-      bar.style.background = '#f59e0b';
+      bar.style.background = 'var(--warning)';
       text.textContent = 'قوة كلمة المرور: متوسطة (جيدة ومقبولة)';
-      text.style.color = '#f59e0b';
+      text.style.color = 'var(--warning)';
     } else {
       bar.style.width = '100%';
-      bar.style.background = '#10b981';
+      bar.style.background = 'var(--success)';
       text.textContent = 'قوة كلمة المرور: قوية جداً وحصينة ✓';
-      text.style.color = '#10b981';
+      text.style.color = 'var(--success)';
     }
   },
 

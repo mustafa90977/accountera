@@ -37,15 +37,15 @@ const ExcelTeacherDashboard = {
 
     return [
       '<div style="max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem;">',
-      '  <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; padding: 1.8rem; border-radius: 20px; margin-bottom: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">',
+      '  <div style="background: linear-gradient(135deg, var(--surface-sidebar) 0%, var(--surface-card) 100%); color: var(--text-primary); border: 1px solid var(--border-subtle); padding: 1.8rem; border-radius: 20px; margin-bottom: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">',
       '    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">',
       '      <div>',
-      '        <span style="background: #3b82f6; color: #fff; padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">',
+      '        <span style="background: var(--tier-pro-bg); color: var(--tier-pro); border: 1px solid var(--tier-pro-border); padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">',
       '          ' + (typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('teacher', { size: 14 }) : '') + '',
       '          <span>بوابة المعلم والمشرف الأكاديمي</span>',
       '        </span>',
-      '        <h1 style="font-size: 1.6rem; font-weight: 900; margin: 0.6rem 0 0.2rem;">مرحباً، ' + teacherName + '</h1>',
-      '        <p style="color: #94a3b8; font-size: 0.95rem; margin: 0;">متابعة فورية لأداء الطلاب في حل القيود المحاسبية وتدقيق أعمال المحاكي.</p>',
+      '        <h1 style="font-size: 1.6rem; font-weight: 900; margin: 0.6rem 0 0.2rem; color: var(--text-primary);">مرحباً، ' + teacherName + '</h1>',
+      '        <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">متابعة فورية لأداء الطلاب في حل القيود المحاسبية وتدقيق أعمال المحاكي.</p>',
       '      </div>',
       '      <button class="btn-cta-secondary" onclick="ExcelTeacherDashboard.refreshData()" style="padding: 10px 16px; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">',
       '        ' + (typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('rotate', { size: 14 }) : '') + '',
@@ -53,17 +53,17 @@ const ExcelTeacherDashboard = {
       '      </button>',
       '    </div>',
       '    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">',
-      '      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 1.2rem; border-radius: 14px; text-align: center;">',
-      '        <div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 0.3rem;">إجمالي التسليمات المحاسبية</div>',
-      '        <div style="font-size: 1.8rem; font-weight: 800; font-family: monospace; color: #38bdf8;">' + totalSubs + '</div>',
+      '      <div style="background: var(--surface-ground); border: 1px solid var(--border-subtle); padding: 1.2rem; border-radius: 14px; text-align: center;">',
+      '        <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.3rem;">إجمالي التسليمات المحاسبية</div>',
+      '        <div class="tabular-nums font-mono" style="font-size: 1.8rem; font-weight: 800; color: var(--info);">' + totalSubs + '</div>',
       '      </div>',
-      '      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 1.2rem; border-radius: 14px; text-align: center;">',
-      '        <div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 0.3rem;">متوسط درجات الطلاب</div>',
-      '        <div style="font-size: 1.8rem; font-weight: 800; font-family: monospace; color: #10b981;">' + avgScore + '%</div>',
+      '      <div style="background: var(--surface-ground); border: 1px solid var(--border-subtle); padding: 1.2rem; border-radius: 14px; text-align: center;">',
+      '        <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.3rem;">متوسط درجات الطلاب</div>',
+      '        <div class="tabular-nums font-mono" style="font-size: 1.8rem; font-weight: 800; color: var(--success);">' + avgScore + '%</div>',
       '      </div>',
-      '      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 1.2rem; border-radius: 14px; text-align: center;">',
-      '        <div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 0.3rem;">دفاتر متزنة 100%</div>',
-      '        <div style="font-size: 1.8rem; font-weight: 800; font-family: monospace; color: #f59e0b;">' + balancedCount + '</div>',
+      '      <div style="background: var(--surface-ground); border: 1px solid var(--border-subtle); padding: 1.2rem; border-radius: 14px; text-align: center;">',
+      '        <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.3rem;">دفاتر متزنة 100%</div>',
+      '        <div class="tabular-nums font-mono" style="font-size: 1.8rem; font-weight: 800; color: var(--warning);">' + balancedCount + '</div>',
       '      </div>',
       '    </div>',
       '  </div>',
@@ -100,8 +100,8 @@ const ExcelTeacherDashboard = {
       const dateStr = new Date(sub.submitted_at).toLocaleDateString('ar-EG');
       const compName = sub.companies ? sub.companies.name : (sub.company_id || 'شركة تجارية');
       const balancedTag = sub.is_balanced 
-        ? '<span style="background: rgba(16,185,129,0.1); color: #10b981; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.8rem;">✓ متزن</span>' 
-        : '<span style="background: rgba(239,68,68,0.1); color: #ef4444; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.8rem;">✕ غير متزن</span>';
+        ? '<span style="background: var(--tier-starter-bg); color: var(--success); padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.8rem;">✓ متزن</span>' 
+        : '<span style="background: rgba(239,68,68,0.1); color: var(--danger); padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.8rem;">✕ غير متزن</span>';
 
       const compIcon = (typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 14 }) + ' ' : '');
 
@@ -109,9 +109,9 @@ const ExcelTeacherDashboard = {
         '<tr style="border-bottom: 1px solid var(--border-subtle);">',
         '  <td style="padding: 12px 8px; color: var(--text-secondary); font-size: 0.85rem;">' + dateStr + '</td>',
         '  <td style="padding: 12px 8px; font-weight: 700; color: var(--text-primary);">' + compIcon + compName + '</td>',
-        '  <td style="padding: 12px 8px; font-family: monospace;">' + (sub.completed_tasks || 0) + ' / ' + (sub.total_tasks || 0) + '</td>',
+        '  <td class="tabular-nums font-mono" style="padding: 12px 8px;">' + (sub.completed_tasks || 0) + ' / ' + (sub.total_tasks || 0) + '</td>',
         '  <td style="padding: 12px 8px;">' + balancedTag + '</td>',
-        '  <td style="padding: 12px 8px; font-weight: 800; font-family: monospace; color: #3b82f6;">' + (sub.score || 0) + '%</td>',
+        '  <td class="tabular-nums font-mono" style="padding: 12px 8px; font-weight: 800; color: var(--primary);">' + (sub.score || 0) + '%</td>',
         '</tr>'
       ].join('\n');
     }).join('\n');

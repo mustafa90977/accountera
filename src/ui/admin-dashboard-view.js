@@ -343,26 +343,26 @@ const ExcelAdminDashboard = {
     return `
       <!-- 1. شبكة بطاقات الأداء المالي والمنظومة -->
       <div class="admin-metrics-grid">
-        <div class="admin-metric-card" style="border-top: 4px solid #10b981;">
-          <div class="metric-number" style="color: #10b981;">${this.companies.length}</div>
+        <div class="admin-metric-card" style="border-top: 4px solid var(--tier-starter);">
+          <div class="metric-number tabular-nums font-mono" style="color: var(--tier-starter);">${this.companies.length}</div>
           <div class="metric-title" style="display:flex; align-items:center; justify-content:center; gap:6px;">
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 16 }) : ''}
             <span>شركات المحاكاة النشطة</span>
           </div>
         </div>
 
-        <div class="admin-metric-card" style="border-top: 4px solid #3b82f6;">
-          <div class="metric-number" style="color: #3b82f6;">${users.length || 1}</div>
+        <div class="admin-metric-card" style="border-top: 4px solid var(--tier-pro);">
+          <div class="metric-number tabular-nums font-mono" style="color: var(--tier-pro);">${users.length || 1}</div>
           <div class="metric-title">إجمالي الطلاب المسجلين</div>
         </div>
 
-        <div class="admin-metric-card" style="border-top: 4px solid #f59e0b;">
-          <div class="metric-number" style="color: #f59e0b;">${estimatedRev.toLocaleString()} ج.م</div>
+        <div class="admin-metric-card" style="border-top: 4px solid var(--warning);">
+          <div class="metric-number tabular-nums font-mono" style="color: var(--warning);"><span class="tabular-nums font-mono">${estimatedRev.toLocaleString()}</span> ج.م</div>
           <div class="metric-title">الإيرادات التقديرية</div>
         </div>
 
-        <div class="admin-metric-card" style="border-top: 4px solid #8b5cf6;">
-          <div class="metric-number" style="color: #8b5cf6;">${this.coupons.filter(c => c.isActive).length}</div>
+        <div class="admin-metric-card" style="border-top: 4px solid var(--tier-vip);">
+          <div class="metric-number tabular-nums font-mono" style="color: var(--tier-vip);">${this.coupons.filter(c => c.isActive).length}</div>
           <div class="metric-title">أكواد الخصم النشطة</div>
         </div>
       </div>
@@ -390,25 +390,25 @@ const ExcelAdminDashboard = {
       <!-- 3. بوابات الوصول السريع -->
       <div class="admin-quick-portals">
         <div class="quick-portal-card" onclick="ExcelAdminDashboard.switchTab('companies')">
-          <span class="portal-tag" style="color: #10b981;">COMPANIES SIMULATION</span>
+          <span class="portal-tag" style="color: var(--tier-starter);">COMPANIES SIMULATION</span>
           <h4 class="portal-title">إدارة محاكاة الشركات</h4>
           <p class="portal-desc">إضافة شركات جديدة، تحرير بيانات النشاط، وتعديل سندات العمليات.</p>
         </div>
 
         <div class="quick-portal-card" onclick="ExcelAdminDashboard.switchTab('plans')">
-          <span class="portal-tag" style="color: #3b82f6;">PLANS & PRICING</span>
+          <span class="portal-tag" style="color: var(--tier-pro);">PLANS & PRICING</span>
           <h4 class="portal-title">إدارة الباقات والأسعار</h4>
           <p class="portal-desc">التحكم بأسعار الباقات، مدة الاشتراك، والمميزات المسموحة.</p>
         </div>
 
         <div class="quick-portal-card" onclick="ExcelAdminDashboard.switchTab('coupons')">
-          <span class="portal-tag" style="color: #f59e0b;">COUPONS & PROMOS</span>
+          <span class="portal-tag" style="color: var(--warning);">COUPONS & PROMOS</span>
           <h4 class="portal-title">أكواد الخصم والتفعيل</h4>
           <p class="portal-desc">إنشاء كوبونات ترويجية وبطاقات تفعيل مجانية 100% للطلاب.</p>
         </div>
 
         <div class="quick-portal-card" onclick="ExcelAdminDashboard.switchTab('settings')">
-          <span class="portal-tag" style="color: #8b5cf6;">SYSTEM & BACKUP</span>
+          <span class="portal-tag" style="color: var(--tier-vip);">SYSTEM & BACKUP</span>
           <h4 class="portal-title">النسخ الاحتياطي والإعدادات</h4>
           <p class="portal-desc">تصدير واستيراد بيانات المنصة بالكامل كملف JSON آمن.</p>
         </div>
@@ -431,7 +431,7 @@ const ExcelAdminDashboard = {
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <!-- زر استيراد ملف JSON من الجهاز -->
           <input type="file" id="admin_import_company_json" accept=".json" style="display:none;" onchange="ExcelAdminDashboard.handleCompanyJsonUpload(event)">
-          <button class="btn-workspace-action btn-workspace-primary" style="background:#059669; color:#fff; display:inline-flex; align-items:center; gap:6px;" onclick="document.getElementById('admin_import_company_json').click()" title="رفع ملف حزمة تدريبية JSON لأي شركة من جهازك">
+          <button class="btn-workspace-action btn-workspace-primary" style="background:var(--success); color:var(--text-inverse); display:inline-flex; align-items:center; gap:6px;" onclick="document.getElementById('admin_import_company_json').click()" title="رفع ملف حزمة تدريبية JSON لأي شركة من جهازك">
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('download', { size: 14 }) : ''}
             <span>استيراد شركة من ملف تدريبي (JSON)</span>
           </button>
@@ -447,7 +447,7 @@ const ExcelAdminDashboard = {
       <!-- بطاقة تنبيه إرشادية للمسؤول -->
       <div style="background:rgba(37, 99, 235, 0.05); border:1px solid rgba(37, 99, 235, 0.2); border-radius:12px; padding:12px 16px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
         <div style="display:flex; align-items:center; gap:10px;">
-          <span style="color:#2563eb;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lightbulb', { size: 20 }) : '★'}</span>
+          <span style="color:var(--primary);">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lightbulb', { size: 20 }) : '★'}</span>
           <div style="font-size:0.86rem; color:var(--text-secondary); line-height:1.5;">
             <strong style="color:var(--text-primary);">طريقة إضافة شركات المحاكاة:</strong>
             اضغط على <strong>"استيراد شركة من ملف تدريبي (JSON)"</strong> لرفع أي ملف شركة مخرج من المولد (<code style="background:rgba(0,0,0,0.06); padding:2px 6px; border-radius:4px;">.json</code>) لإنشاء الشركة وقراءة كافة العمليات والسندات التابعة لها تلقائياً، أو اضغط <strong>"إضافة شركة جديدة"</strong> للإنشاء اليدوي.
@@ -466,7 +466,7 @@ const ExcelAdminDashboard = {
             يمكنك استيراد بيئة تدريب شركة متكاملة مع كافة عملياتها من ملف JSON مخرج من المولد المحاسبي، أو إنشاء شركة جديدة يدوياً.
           </p>
           <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-            <button class="btn-workspace-action btn-workspace-primary" style="background:#059669; color:#fff; padding:10px 22px; font-weight:700; display:inline-flex; align-items:center; gap:6px;" onclick="document.getElementById('admin_import_company_json').click()">
+            <button class="btn-workspace-action btn-workspace-primary" style="background:var(--success); color:var(--text-inverse); padding:10px 22px; font-weight:700; display:inline-flex; align-items:center; gap:6px;" onclick="document.getElementById('admin_import_company_json').click()">
               ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('download', { size: 14 }) : ''}
               <span>استيراد شركة من ملف تدريبي (JSON)</span>
             </button>
@@ -479,24 +479,24 @@ const ExcelAdminDashboard = {
       ` : `
         <div style="display:flex; flex-direction:column; gap:24px;">
           ${this.companies.map((comp, cIdx) => `
-            <div class="admin-editor-card" style="border-right: 4px solid #10b981; margin-bottom:0;">
+            <div class="admin-editor-card" style="border-right: 4px solid var(--tier-starter); margin-bottom:0;">
               <!-- هيدر بطاقة الشركة -->
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
                 <div style="display:flex; align-items:center; gap:12px;">
-                  <span style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; background:rgba(16, 185, 129, 0.1); color:#10b981;">
+                  <span style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; background:var(--tier-starter-bg); color:var(--tier-starter);">
                     ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 24 }) : ''}
                   </span>
                   <div>
                     <h3 style="margin:0; font-size:1.2rem; font-weight:800; color:var(--text-primary);">${comp.name}</h3>
                     <div style="display:flex; gap:6px; margin-top:4px; flex-wrap:wrap;">
-                      <span style="background:rgba(59, 130, 246, 0.1); color:#3b82f6; padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">${comp.sector || 'قطاع عام'}</span>
-                      <span style="background:rgba(245, 158, 11, 0.1); color:#f59e0b; padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">${(comp.transactions || []).length} سندات مالية</span>
-                      ${comp.capital ? `<span style="background:rgba(16, 185, 129, 0.1); color:#10b981; padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">رأس المال: ${Number(comp.capital).toLocaleString()} ج.م</span>` : ''}
+                      <span style="background:var(--tier-pro-bg); color:var(--tier-pro); padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">${comp.sector || 'قطاع عام'}</span>
+                      <span style="background:rgba(245, 158, 11, 0.1); color:var(--warning); padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">${(comp.transactions || []).length} سندات مالية</span>
+                      ${comp.capital ? `<span style="background:var(--tier-starter-bg); color:var(--tier-starter); padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">رأس المال: ${Number(comp.capital).toLocaleString()} ج.م</span>` : ''}
                     </div>
                   </div>
                 </div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                  <button class="btn-workspace-action btn-workspace-primary" style="background:#2563eb; color:#fff; display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.deployCompanyToSimulator('${comp.id}')" title="فتح واختبار هذه الشركة مباشرة في بيئة المحاكي">
+                  <button class="btn-workspace-action btn-workspace-primary" style="background:var(--primary); color:var(--text-inverse); display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.deployCompanyToSimulator('${comp.id}')" title="فتح واختبار هذه الشركة مباشرة في بيئة المحاكي">
                     ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 14 }) : ''}
                     <span>تشغيل بالمحاكي</span>
                   </button>
@@ -513,7 +513,7 @@ const ExcelAdminDashboard = {
                     ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('save', { size: 14 }) : ''}
                     <span>حفظ</span>
                   </button>
-                  <button class="btn-workspace-action" style="color:#ef4444; display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.deleteCompany('${comp.id}')">
+                  <button class="btn-workspace-action" style="color:var(--danger); display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.deleteCompany('${comp.id}')">
                     ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : ''}
                     <span>حذف</span>
                   </button>
@@ -575,17 +575,17 @@ const ExcelAdminDashboard = {
                       <div style="flex:1; min-width:240px;">
                         <div style="display:flex; align-items:center; gap:8px;">
                           <strong style="font-size:0.9rem; color:var(--text-primary);">سند #${t.num || tIdx + 1} (${t.date || '2026-01-15'}): ${t.title || t.type || 'سند مالي'}</strong>
-                          ${t.difficulty ? `<span style="background:rgba(59, 130, 246, 0.1); color:#2563eb; font-size:0.7rem; font-weight:bold; padding:1px 6px; border-radius:4px;">${t.difficulty}</span>` : ''}
+                          ${t.difficulty ? `<span style="background:var(--tier-pro-bg); color:var(--tier-pro); font-size:0.7rem; font-weight:bold; padding:1px 6px; border-radius:4px;">${t.difficulty}</span>` : ''}
                         </div>
                         <p style="margin:3px 0 4px; font-size:0.82rem; color:var(--text-secondary); line-height:1.4;">${t.desc || ''}</p>
                         <div style="font-size:0.78rem; font-family:'JetBrains Mono',monospace;">
                           ${t.lines && t.lines.length > 0 
-                            ? `<span style="color:#059669; font-weight:700;">✓ قيد مزدوج متوازن (${t.lines.length} أطراف)</span>` 
-                            : `مدين: <span style="color:#2563eb; font-weight:700;">${t.dr}</span> | دائن: <span style="color:#059669; font-weight:700;">${t.cr}</span>`}
+                            ? `<span style="color:var(--success); font-weight:700;">✓ قيد مزدوج متوازن (${t.lines.length} أطراف)</span>` 
+                            : `مدين: <span style="color:var(--primary); font-weight:700;">${t.dr}</span> | دائن: <span style="color:var(--success); font-weight:700;">${t.cr}</span>`}
                           | المبلغ: <strong style="color:var(--text-primary);">${(t.amount || 0).toLocaleString()} ج.م</strong>
                         </div>
                       </div>
-                      <button class="btn-workspace-action" style="color:#ef4444; padding:4px 10px; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px;" onclick="ExcelAdminDashboard.deleteCompanyTransaction('${comp.id}', '${t.id}')">
+                      <button class="btn-workspace-action" style="color:var(--danger); padding:4px 10px; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px;" onclick="ExcelAdminDashboard.deleteCompanyTransaction('${comp.id}', '${t.id}')">
                         ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : ''}
                         <span>حذف</span>
                       </button>
@@ -629,17 +629,17 @@ const ExcelAdminDashboard = {
           <div style="flex:1; min-width:240px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <strong style="font-size:0.9rem; color:var(--text-primary);">سند #${t.num || tIdx + 1} (${t.date || '2026-01-15'}): ${t.title || t.type || 'سند مالي'}</strong>
-              ${t.difficulty ? `<span style="background:rgba(59, 130, 246, 0.1); color:#2563eb; font-size:0.7rem; font-weight:bold; padding:1px 6px; border-radius:4px;">${t.difficulty}</span>` : ''}
+              ${t.difficulty ? `<span style="background:var(--tier-pro-bg); color:var(--tier-pro); font-size:0.7rem; font-weight:bold; padding:1px 6px; border-radius:4px;">${t.difficulty}</span>` : ''}
             </div>
             <p style="margin:3px 0 4px; font-size:0.82rem; color:var(--text-secondary); line-height:1.4;">${t.desc || ''}</p>
             <div style="font-size:0.78rem; font-family:'JetBrains Mono',monospace;">
               ${t.lines && t.lines.length > 0 
-                ? `<span style="color:#059669; font-weight:700;">✓ قيد مزدوج متوازن (${t.lines.length} أطراف)</span>` 
-                : `مدين: <span style="color:#2563eb; font-weight:700;">${t.dr}</span> | دائن: <span style="color:#059669; font-weight:700;">${t.cr}</span>`}
+                ? `<span style="color:var(--success); font-weight:700;">✓ قيد مزدوج متوازن (${t.lines.length} أطراف)</span>` 
+                : `مدين: <span style="color:var(--primary); font-weight:700;">${t.dr}</span> | دائن: <span style="color:var(--success); font-weight:700;">${t.cr}</span>`}
               | المبلغ: <strong style="color:var(--text-primary);">${(t.amount || 0).toLocaleString()} ج.م</strong>
             </div>
           </div>
-          <button class="btn-workspace-action" style="color:#ef4444; padding:4px 10px; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px;" onclick="ExcelAdminDashboard.deleteCompanyTransaction('${comp.id}', '${t.id}')">
+          <button class="btn-workspace-action" style="color:var(--danger); padding:4px 10px; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px;" onclick="ExcelAdminDashboard.deleteCompanyTransaction('${comp.id}', '${t.id}')">
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : ''}
             <span>حذف</span>
           </button>
@@ -1372,7 +1372,7 @@ const ExcelAdminDashboard = {
 
       <div class="plans-grid-cards">
         ${this.plans.map(plan => `
-          <div class="plan-admin-card" style="border-top: 4px solid ${plan.color || '#10b981'};">
+          <div class="plan-admin-card" style="border-top: 4px solid ${plan.color || 'var(--tier-starter)'};">
             <div>
               <div class="plan-card-header">
                 <span class="plan-icon-symbol">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('package', { size: 24 }) : '★'}</span>
@@ -1387,7 +1387,7 @@ const ExcelAdminDashboard = {
                 <span style="font-size:0.85rem; color:var(--text-muted); font-weight:normal;"> / ${plan.period}</span>
               </div>
 
-              <div class="plan-rules-box" style="border-right: 3px solid ${plan.color || '#10b981'};">
+              <div class="plan-rules-box" style="border-right: 3px solid ${plan.color || 'var(--tier-starter)'};">
                 <strong style="display:block; margin-bottom:8px; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
                   ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('shield', { size: 14 }) : ''}
                   <span>حدود وصلاحيات الأقسام:</span>
@@ -1402,19 +1402,19 @@ const ExcelAdminDashboard = {
                 </div>
                 <div class="rule-row">
                   <span>محاكي مراجعة الشركات:</span>
-                  <strong style="color:${plan.allowAudit ? '#10b981' : '#ef4444'};">${plan.allowAudit ? 'مفعل' : 'مغلق'}</strong>
+                  <strong style="color:${plan.allowAudit ? 'var(--success)' : 'var(--danger)'};">${plan.allowAudit ? 'مفعل' : 'مغلق'}</strong>
                 </div>
                 <div class="rule-row">
                   <span>إكسل الدورة المحاسبية:</span>
-                  <strong style="color:${plan.allowExcelCycle ? '#10b981' : '#ef4444'};">${plan.allowExcelCycle ? 'مفعل' : 'مغلق'}</strong>
+                  <strong style="color:${plan.allowExcelCycle ? 'var(--success)' : 'var(--danger)'};">${plan.allowExcelCycle ? 'مفعل' : 'مغلق'}</strong>
                 </div>
                 <div class="rule-row">
                   <span>محاكي مقابلات التوظيف:</span>
-                  <strong style="color:${plan.allowInterviewSim ? '#10b981' : '#ef4444'};">${plan.allowInterviewSim ? 'مفعل' : 'مغلق'}</strong>
+                  <strong style="color:${plan.allowInterviewSim ? 'var(--success)' : 'var(--danger)'};">${plan.allowInterviewSim ? 'مفعل' : 'مغلق'}</strong>
                 </div>
                 <div class="rule-row">
                   <span>مشاركة المحفظة على LinkedIn:</span>
-                  <strong style="color:${plan.allowLinkedInShare ? '#10b981' : '#ef4444'};">${plan.allowLinkedInShare ? 'مفعل' : 'مغلق'}</strong>
+                  <strong style="color:${plan.allowLinkedInShare ? 'var(--success)' : 'var(--danger)'};">${plan.allowLinkedInShare ? 'مفعل' : 'مغلق'}</strong>
                 </div>
               </div>
 
@@ -1432,7 +1432,7 @@ const ExcelAdminDashboard = {
                 <span>تعديل وتخصيص الباقة</span>
               </button>
               ${plan.id !== 'free' ? `
-                <button class="btn-workspace-action" style="color:#ef4444;" onclick="ExcelAdminDashboard.deletePlan('${plan.id}')" title="حذف الباقة">
+                <button class="btn-workspace-action" style="color:var(--danger);" onclick="ExcelAdminDashboard.deletePlan('${plan.id}')" title="حذف الباقة">
                   ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : '✕'}
                 </button>
               ` : ''}
@@ -1454,7 +1454,7 @@ const ExcelAdminDashboard = {
               ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('package', { size: 24 }) : '★'}
             </span>
             <div>
-              <h2 style="margin:0; font-size:1.3rem;">تعديل وتخصيص باقة: <strong style="color:#10b981;">${plan.name}</strong></h2>
+              <h2 style="margin:0; font-size:1.3rem;">تعديل وتخصيص باقة: <strong style="color:var(--tier-starter);">${plan.name}</strong></h2>
               <p style="margin:4px 0 0; color:var(--text-muted); font-size:0.85rem;">التحكم بأسعار ومدة وصلاحيات الأقسام لهذه الباقة</p>
             </div>
           </div>
@@ -1466,7 +1466,7 @@ const ExcelAdminDashboard = {
         <div class="editor-two-col">
           <!-- بيانات الباقة والتسعير -->
           <div class="editor-section-box">
-            <h4 class="editor-section-title" style="color:#10b981; display:flex; align-items:center; gap:6px;">
+            <h4 class="editor-section-title" style="color:var(--tier-starter); display:flex; align-items:center; gap:6px;">
               ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 16 }) : ''}
               <span>١. بيانات الباقة والتسعير</span>
             </h4>
@@ -1494,14 +1494,14 @@ const ExcelAdminDashboard = {
               </div>
               <div class="admin-form-group">
                 <label>اللون المميز:</label>
-                <input type="color" id="pe_color" class="admin-form-input" style="width:100%; padding:2px; height:42px;" value="${plan.color || '#10b981'}">
+                <input type="color" id="pe_color" class="admin-form-input" style="width:100%; padding:2px; height:42px;" value="${plan.color || 'var(--tier-starter)'}">
               </div>
             </div>
           </div>
 
           <!-- حدود المحتوى والصلاحيات -->
           <div class="editor-section-box">
-            <h4 class="editor-section-title" style="color:#3b82f6; display:flex; align-items:center; gap:6px;">
+            <h4 class="editor-section-title" style="color:var(--tier-pro); display:flex; align-items:center; gap:6px;">
               ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 16 }) : ''}
               <span>٢. حدود الدروس والمحتوى المسموح</span>
             </h4>
@@ -1528,7 +1528,7 @@ const ExcelAdminDashboard = {
 
         <!-- مفاتيح الصلاحيات والمحاكيات -->
         <div class="editor-section-box" style="margin-bottom:20px;">
-          <h4 class="editor-section-title" style="color:#8b5cf6; display:flex; align-items:center; gap:6px;">
+          <h4 class="editor-section-title" style="color:var(--tier-vip); display:flex; align-items:center; gap:6px;">
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 16 }) : ''}
             <span>٣. مفاتيح تفعيل وتعطيل المحاكيات والأقسام</span>
           </h4>
@@ -1700,8 +1700,8 @@ const ExcelAdminDashboard = {
 
       <!-- نموذج إنشاء كود جديد -->
       <div id="newCouponContainer" style="display:none; margin-bottom:24px;">
-        <div class="admin-editor-card" style="border-color:#10b981;">
-          <h3 style="margin-top:0; font-size:1.15rem; color:#10b981; display:flex; align-items:center; gap:6px;">
+        <div class="admin-editor-card" style="border-color:var(--tier-starter-border);">
+          <h3 style="margin-top:0; font-size:1.15rem; color:var(--tier-starter); display:flex; align-items:center; gap:6px;">
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
             <span>إنشاء كود خصم / تفعيل جديد</span>
           </h3>
@@ -1758,13 +1758,13 @@ const ExcelAdminDashboard = {
           <tbody>
             ${this.coupons.map(c => `
               <tr>
-                <td><code style="font-size:1rem; font-weight:800; color:#10b981;">${c.code}</code></td>
+                <td><code style="font-size:1rem; font-weight:800; color:var(--tier-starter);">${c.code}</code></td>
                 <td>${c.discountType === 'FREE_PASS' ? 'تفعيل مجاني 100%' : (c.discountType === 'PERCENTAGE' ? 'نسبة مئوية' : 'مبلغ ثابت')}</td>
                 <td><strong>${c.discountValue}${c.discountType === 'PERCENTAGE' ? '%' : ' ج.م'}</strong></td>
-                <td><span class="badge" style="background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:6px; font-weight:700;">${c.targetPlan.toUpperCase()}</span></td>
+                <td><span class="badge" style="background:var(--tier-pro-bg); color:var(--tier-pro); padding:2px 8px; border-radius:6px; font-weight:700;">${c.targetPlan.toUpperCase()}</span></td>
                 <td>${c.usedCount || 0} / ${c.maxUses || '∞'}</td>
                 <td>
-                  <span style="color:${c.isActive ? '#10b981' : '#ef4444'}; font-weight:800;">
+                  <span style="color:${c.isActive ? 'var(--success)' : 'var(--danger)'}; font-weight:800;">
                     ${c.isActive ? '✓ نشط' : '✕ معطل'}
                   </span>
                 </td>
@@ -1772,7 +1772,7 @@ const ExcelAdminDashboard = {
                   <button class="btn-workspace-action" style="padding:4px 10px; font-size:0.78rem;" onclick="ExcelAdminDashboard.toggleCouponStatus('${c.code}')">
                     ${c.isActive ? 'تعطيل' : 'تفعيل'}
                   </button>
-                  <button class="btn-workspace-action" style="padding:4px 8px; color:#ef4444;" onclick="ExcelAdminDashboard.deleteCoupon('${c.code}')">
+                  <button class="btn-workspace-action" style="padding:4px 8px; color:var(--danger);" onclick="ExcelAdminDashboard.deleteCoupon('${c.code}')">
                     ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : '✕'}
                   </button>
                 </td>
@@ -1958,7 +1958,7 @@ const ExcelAdminDashboard = {
                 </td>
                 <td style="font-size:0.82rem; color:var(--text-muted);">${u.joinDate || '01 يناير 2026'}</td>
                 <td>
-                  <button class="btn-workspace-action" style="padding:4px 8px; color:#ef4444;" onclick="ExcelAdminDashboard.deleteUser('${u.id}')" title="حذف الحساب">
+                  <button class="btn-workspace-action" style="padding:4px 8px; color:var(--danger);" onclick="ExcelAdminDashboard.deleteUser('${u.id}')" title="حذف الحساب">
                     ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : '✕'}
                   </button>
                 </td>
@@ -2053,7 +2053,7 @@ const ExcelAdminDashboard = {
       <div class="admin-editor-card" style="margin-bottom:24px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
           <div style="display:flex; align-items:center; gap:10px;">
-            <span style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; background:rgba(59,130,246,0.1); color:#3b82f6;">
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; background:var(--tier-pro-bg); color:var(--tier-pro);">
               ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 24 }) : ''}
             </span>
             <div>
@@ -2061,7 +2061,7 @@ const ExcelAdminDashboard = {
               <span style="font-size:0.8rem; color:var(--text-muted);">القطاع: ${comp.sector} | حد الأهمية النسبية: <strong>${(comp.materialityThreshold || 0).toLocaleString()} ج.م</strong></span>
             </div>
           </div>
-          <span class="badge" style="background:#eff6ff; color:#2563eb; padding:4px 12px; border-radius:9999px; font-weight:800; font-size:0.8rem;">
+          <span class="badge" style="background:var(--tier-pro-bg); color:var(--tier-pro); padding:4px 12px; border-radius:9999px; font-weight:800; font-size:0.8rem;">
             ${(comp.samples || []).length} عينات فحص مسجلة
           </span>
         </div>
@@ -2090,24 +2090,24 @@ const ExcelAdminDashboard = {
                   <td><strong>${s.title}</strong></td>
                   <td>
                     <div style="font-size:0.8rem;">
-                      <div>من: <span style="color:#2563eb; font-weight:700;">${s.recordedEntry.dr}</span></div>
-                      <div>إلى: <span style="color:#059669; font-weight:700;">${s.recordedEntry.cr}</span></div>
+                      <div>من: <span style="color:var(--primary); font-weight:700;">${s.recordedEntry.dr}</span></div>
+                      <div>إلى: <span style="color:var(--success); font-weight:700;">${s.recordedEntry.cr}</span></div>
                       <div style="font-family:'JetBrains Mono',monospace;">المبلغ: ${s.recordedEntry.amount.toLocaleString()} ج.م</div>
                     </div>
                   </td>
                   <td>
                     <div style="font-size:0.8rem;">
                       <div>${s.document.type} (${s.document.no})</div>
-                      <div style="font-weight:700; color:#2563eb;">${s.document.amount.toLocaleString()} ج.م</div>
+                      <div style="font-weight:700; color:var(--primary);">${s.document.amount.toLocaleString()} ج.م</div>
                     </div>
                   </td>
                   <td>
-                    <span style="display:inline-block; padding:3px 10px; border-radius:9999px; font-size:0.75rem; font-weight:800; background:${s.isError ? '#fef2f2' : '#ecfdf5'}; color:${s.isError ? '#dc2626' : '#059669'};">
+                    <span style="display:inline-block; padding:3px 10px; border-radius:9999px; font-size:0.75rem; font-weight:800; background:${s.isError ? 'rgba(239, 68, 68, 0.1)' : 'var(--tier-starter-bg)'}; color:${s.isError ? 'var(--danger)' : 'var(--success)'};">
                       ${s.isError ? 'مخالفة' : 'سليمة ✓'}
                     </span>
                   </td>
                   <td>
-                    <span style="font-size:0.82rem; color:${s.isError ? '#dc2626' : '#059669'}; font-weight:700;">${s.errorCategory}</span>
+                    <span style="font-size:0.82rem; color:${s.isError ? 'var(--danger)' : 'var(--success)'}; font-weight:700;">${s.errorCategory}</span>
                     <p style="margin:2px 0 0; font-size:0.78rem; color:var(--text-muted); line-height:1.4;">${s.errorDesc}</p>
                   </td>
                 </tr>
@@ -2197,7 +2197,7 @@ const ExcelAdminDashboard = {
 
       <!-- مفاتيح التشغيل العامة -->
       <div class="admin-editor-card" style="margin-bottom:24px;">
-        <h3 style="margin-top:0; font-size:1.15rem; color:#10b981; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+        <h3 style="margin-top:0; font-size:1.15rem; color:var(--tier-starter); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
           ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('shield', { size: 18 }) : ''}
           <span>مفاتيح التشغيل العامة (Feature Toggles):</span>
         </h3>
@@ -2221,7 +2221,7 @@ const ExcelAdminDashboard = {
 
       <!-- النسخ الاحتياطي الشامل -->
       <div class="admin-editor-card">
-        <h3 style="margin-top:0; font-size:1.15rem; color:#3b82f6; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+        <h3 style="margin-top:0; font-size:1.15rem; color:var(--tier-pro); margin-bottom:10px; display:flex; align-items:center; gap:8px;">
           ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('save', { size: 18 }) : ''}
           <span>النسخ الاحتياطي الشامل للمنصة (JSON Backup)</span>
         </h3>
@@ -2241,7 +2241,7 @@ const ExcelAdminDashboard = {
             <span>استيراد نسخة احتياطية</span>
           </button>
 
-          <button class="btn-workspace-action" style="color:#ef4444; display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.resetPlatformData()">
+          <button class="btn-workspace-action" style="color:var(--danger); display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.resetPlatformData()">
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('rotate', { size: 14 }) : ''}
             <span>استعادة ضبط المصنع</span>
           </button>

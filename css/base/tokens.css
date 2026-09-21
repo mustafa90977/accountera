@@ -78,6 +78,22 @@
   --info-border: #BAE6FD;
   --info-text: #0369A1;
 
+  /* 7b. ألوان الباقات والمسارات (Subscription Tiers - WCAG AA) */
+  --tier-starter: #047857;
+  --tier-starter-bg: #ECFDF5;
+  --tier-starter-border: #A7F3D0;
+  --tier-starter-text: #047857;
+
+  --tier-pro: #0284C7;
+  --tier-pro-bg: #F0F9FF;
+  --tier-pro-border: #BAE6FD;
+  --tier-pro-text: #0284C7;
+
+  --tier-vip: #7C3AED;
+  --tier-vip-bg: #F5F3FF;
+  --tier-vip-border: #DDD6FE;
+  --tier-vip-text: #7C3AED;
+
   /* 8. مستويات الارتفاع والظلال الهندسية (Elevation System - 5 Levels) */
   --elevation-0: none;
   --elevation-1: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
@@ -195,6 +211,22 @@
   --info-bg: rgba(14, 165, 233, 0.12);
   --info-border: rgba(14, 165, 233, 0.3);
   --info-text: #38BDF8;
+
+  /* 7b. ألوان الباقات والمسارات في الوضع الليلي */
+  --tier-starter: #34D399;
+  --tier-starter-bg: rgba(16, 185, 129, 0.12);
+  --tier-starter-border: rgba(16, 185, 129, 0.32);
+  --tier-starter-text: #34D399;
+
+  --tier-pro: #38BDF8;
+  --tier-pro-bg: rgba(14, 165, 233, 0.12);
+  --tier-pro-border: rgba(14, 165, 233, 0.32);
+  --tier-pro-text: #38BDF8;
+
+  --tier-vip: #A78BFA;
+  --tier-vip-bg: rgba(139, 92, 246, 0.12);
+  --tier-vip-border: rgba(139, 92, 246, 0.32);
+  --tier-vip-text: #A78BFA;
 
   /* 8. مستويات الارتفاع في الوضع الليلي (Dark Elevations) */
   --elevation-0: none;

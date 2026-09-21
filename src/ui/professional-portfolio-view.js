@@ -158,19 +158,19 @@ const AccounteraPortfolioEngine = {
       <div class="portfolio-container" style="max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem;">
         
         <!-- 1. Hero Card بروفايل المحفظة المهنية -->
-        <div class="portfolio-hero" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #064e3b 100%); color: #fff; border-radius: 20px; padding: 2rem; box-shadow: 0 12px 30px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); margin-bottom: 2rem;">
+        <div class="portfolio-hero" style="background: linear-gradient(135deg, var(--header-bg) 0%, var(--surface-panel) 60%, var(--primary-hover) 100%); color: #fff; border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--elevation-3); border: 1px solid rgba(255,255,255,0.12); margin-bottom: 2rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
             <div style="display: flex; align-items: center; gap: 1.25rem;">
-              <div style="width: 72px; height: 72px; border-radius: 20px; background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; color: #10b981;">
+              <div style="width: 72px; height: 72px; border-radius: var(--radius-lg); background: var(--primary-light); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary);">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('user', { size: 36, strokeWidth: 1.75 }) : ''}
               </div>
               <div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                  <h1 style="font-size: 1.6rem; font-weight: 900; margin: 0;">${data.studentName}</h1>
-                  <span style="background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid #10b981; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">موثق رسمياً ✓</span>
+                  <h1 style="font-size: 1.6rem; font-weight: 900; margin: 0; color: #ffffff;">${data.studentName}</h1>
+                  <span style="background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid #10b981; padding: 2px 10px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800;">موثق رسمياً ✓</span>
                 </div>
-                <div style="color: #94a3b8; font-size: 0.88rem; margin-top: 4px;">
-                  <span>رقم الاعتماد: <strong style="color: #e2e8f0; font-family: monospace;">${data.studentId}</strong></span>
+                <div style="color: rgba(255,255,255,0.75); font-size: 0.88rem; margin-top: 4px;">
+                  <span>رقم الاعتماد: <strong class="tabular-nums font-mono" style="color: #ffffff;">${data.studentId}</strong></span>
                   <span> • </span>
                   <span>الباقة الحالية: <strong style="color: #38bdf8;">${perm.planName}</strong></span>
                   <span> • </span>
@@ -181,35 +181,35 @@ const AccounteraPortfolioEngine = {
 
             <!-- أزرار المشاركة والتحقق -->
             <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-              <button onclick="AccounteraPortfolioEngine.copyPublicLink()" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
+              <button onclick="AccounteraPortfolioEngine.copyPublicLink()" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; border-radius: var(--radius-sm);">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 16 }) : ''}
                 <span>نسخ رابط المحفظة</span>
               </button>
-              <button onclick="AccounteraPortfolioEngine.shareLinkedIn()" class="btn-cta-primary" style="background: #0077b5; padding: 10px 18px; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; border: 1px solid #005e93;">
+              <button onclick="AccounteraPortfolioEngine.shareLinkedIn()" class="btn-cta-primary" style="background: #0077b5; padding: 10px 18px; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; border-radius: var(--radius-sm); border: 1px solid #005e93;">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
                 <span>مشاركة على LinkedIn</span>
-                ${!perm.allowed ? '<span style="background: #f59e0b; color: #000; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;">PRO</span>' : '<span style="background: rgba(255,255,255,0.2); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;">مفعل ✓</span>'}
+                ${!perm.allowed ? '<span style="background: var(--warning); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: var(--radius-full);">PRO</span>' : '<span style="background: rgba(255,255,255,0.2); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: var(--radius-full);">مفعل ✓</span>'}
               </button>
             </div>
           </div>
 
           <!-- شريط موجز الإنجاز المالي والعملي -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.15);">
             <div>
-              <div style="color: #94a3b8; font-size: 0.8rem;">العمليات المسجلة باليومية</div>
-              <div style="font-size: 1.5rem; font-weight: 900; color: #10b981;">${data.postedCount} سند</div>
+              <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">العمليات المسجلة باليومية</div>
+              <div class="tabular-nums font-mono" style="font-size: 1.5rem; font-weight: 900; color: #34d399;">${data.postedCount} سند</div>
             </div>
             <div>
-              <div style="color: #94a3b8; font-size: 0.8rem;">مستوى إنجاز المحاكاة</div>
-              <div style="font-size: 1.5rem; font-weight: 900; color: #38bdf8;">${data.completionPercent}% مكتمل</div>
+              <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">مستوى إنجاز المحاكاة</div>
+              <div class="tabular-nums font-mono" style="font-size: 1.5rem; font-weight: 900; color: #38bdf8;">${data.completionPercent}% مكتمل</div>
             </div>
             <div>
-              <div style="color: #94a3b8; font-size: 0.8rem;">اتزان الدفاتر المحاسبية</div>
-              <div style="font-size: 1.5rem; font-weight: 900; color: #10b981;">متزن 100% ✓</div>
+              <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">اتزان الدفاتر المحاسبية</div>
+              <div class="tabular-nums font-mono" style="font-size: 1.5rem; font-weight: 900; color: #34d399;">متزن 100% ✓</div>
             </div>
             <div>
-              <div style="color: #94a3b8; font-size: 0.8rem;">الشهادات الممنوحة</div>
-              <div style="font-size: 1.5rem; font-weight: 900; color: #f59e0b;">${data.certifications.filter(c => c.isUnlocked).length} شهادة</div>
+              <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">الشهادات الممنوحة</div>
+              <div class="tabular-nums font-mono" style="font-size: 1.5rem; font-weight: 900; color: #fbbf24;">${data.certifications.filter(c => c.isUnlocked).length} شهادة</div>
             </div>
           </div>
         </div>
@@ -225,23 +225,23 @@ const AccounteraPortfolioEngine = {
 
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
             ${data.certifications.map(cert => `
-              <div style="background: var(--surface-card); border: 2px solid ${cert.isUnlocked ? 'rgba(16,185,129,0.3)' : 'var(--border-subtle)'}; border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 16px rgba(0,0,0,0.03); opacity: ${cert.isUnlocked ? '1' : '0.75'};">
+              <div style="background: var(--surface-card); border: 2px solid ${cert.isUnlocked ? 'var(--primary-border)' : 'var(--border-subtle)'}; border-radius: var(--radius-lg); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--elevation-1); opacity: ${cert.isUnlocked ? '1' : '0.8'};">
                 <div>
                   <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                    <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; border: 1px solid var(--primary-border);">
+                    <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; border: 1px solid var(--primary-border);">
                       ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render(cert.badgeIcon, { size: 24, strokeWidth: 1.75 }) : ''}
                     </div>
-                    <span style="padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; background: ${cert.isUnlocked ? 'var(--primary-light)' : 'var(--bg-secondary)'}; color: ${cert.isUnlocked ? 'var(--primary)' : 'var(--text-muted)'}; border: 1px solid ${cert.isUnlocked ? 'var(--primary-border)' : 'var(--border-subtle)'};">
+                    <span style="padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; background: ${cert.isUnlocked ? 'var(--primary-light)' : 'var(--bg-secondary)'}; color: ${cert.isUnlocked ? 'var(--primary)' : 'var(--text-muted)'}; border: 1px solid ${cert.isUnlocked ? 'var(--primary-border)' : 'var(--border-subtle)'};">
                       ${cert.status}
                     </span>
                   </div>
                   <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px;">${cert.title}</h3>
-                  <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">المسار: ${cert.track} • كود: <strong style="font-family: monospace;">${cert.credentialId}</strong></div>
+                  <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px;">المسار: ${cert.track} • كود: <strong class="tabular-nums font-mono" style="color: var(--text-primary);">${cert.credentialId}</strong></div>
                   
                   <!-- المهارات المعتمدة -->
                   <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem;">
                     ${cert.skills.map(s => `
-                      <span style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">✓ ${s}</span>
+                      <span style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 2px 8px; border-radius: var(--radius-xs); font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">✓ ${s}</span>
                     `).join('')}
                   </div>
                 </div>
@@ -267,7 +267,7 @@ const AccounteraPortfolioEngine = {
         </div>
 
         <!-- 3. المهارات المحاسبية الموثقة (Verified Competencies) -->
-        <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 1.75rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
+        <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: var(--elevation-1);">
           <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin: 0 0 1.25rem;">سجل الكفاءات العملية المثبتة بالدفاتر</h2>
           <div style="display: flex; flex-direction: column; gap: 1rem;">
             ${data.verifiedSkills.map(skill => `
@@ -276,11 +276,11 @@ const AccounteraPortfolioEngine = {
                   <span style="font-weight: 700; color: var(--text-primary);">${skill.name}</span>
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 0.78rem; color: var(--text-muted);">${skill.level}</span>
-                    <strong style="color: var(--primary); font-family: monospace;">${skill.score}%</strong>
+                    <strong class="tabular-nums font-mono" style="color: var(--primary);">${skill.score}%</strong>
                   </div>
                 </div>
-                <div style="width: 100%; height: 8px; background: var(--bg-secondary); border-radius: 999px; overflow: hidden;">
-                  <div style="width: ${skill.score}%; height: 100%; background: linear-gradient(90deg, #10b981 0%, #059669 100%); border-radius: 999px;"></div>
+                <div style="width: 100%; height: 8px; background: var(--bg-secondary); border-radius: var(--radius-full); overflow: hidden;">
+                  <div style="width: ${skill.score}%; height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%); border-radius: var(--radius-full);"></div>
                 </div>
               </div>
             `).join('')}
@@ -363,22 +363,22 @@ const AccounteraPortfolioEngine = {
     overlay = document.createElement('div');
     overlay.id = 'accLinkedInUpgradeModal';
     overlay.className = 'modal-overlay';
-    overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.85); z-index:99999; display:flex; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(6px);';
+    overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.75); z-index:99999; display:flex; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(6px);';
     
     overlay.innerHTML = `
-      <div style="background:var(--surface-ground, #1e293b); color:var(--text-primary, #fff); border:1px solid rgba(255,255,255,0.15); border-radius:20px; max-width:480px; width:100%; padding:2rem; box-shadow:0 20px 40px rgba(0,0,0,0.5); text-align:center; animation:fadeIn 0.25s ease;">
-        <div style="width:68px; height:68px; margin:0 auto 1.25rem; border-radius:50%; background:rgba(0,119,181,0.15); border:2px solid #0077b5; display:flex; align-items:center; justify-content:center; color:#38bdf8;">
+      <div style="background:var(--surface-card); color:var(--text-primary); border:1px solid var(--border-subtle); border-radius:var(--radius-xl); max-width:480px; width:100%; padding:2rem; box-shadow:var(--elevation-4); text-align:center; animation:fadeIn 0.25s ease;">
+        <div style="width:68px; height:68px; margin:0 auto 1.25rem; border-radius:var(--radius-full); background:var(--tier-pro-bg); border:2px solid var(--tier-pro-border); display:flex; align-items:center; justify-content:center; color:var(--tier-pro);">
           ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 32, strokeWidth: 1.75 }) : ''}
         </div>
 
-        <h3 style="font-size:1.3rem; font-weight:800; margin:0 0 8px; color:#38bdf8;">ميزة مشاركة الاعتماد على LinkedIn</h3>
-        <p style="color:var(--text-secondary, #94a3b8); font-size:0.88rem; line-height:1.6; margin:0 0 1.5rem;">
-          ميزة نشر المحفظة المهنية والشهادات المعتمدة مباشرة على شبكة <strong style="color:#0077b5;">LinkedIn</strong> متاحة حصرياً لمشتركي <strong style="color:#38bdf8;">باقة المحاسب المحترف (Pro)</strong> وباقة <strong style="color:#a855f7;">خبير النمذجة (VIP)</strong>.
+        <h3 style="font-size:1.3rem; font-weight:800; margin:0 0 8px; color:var(--text-primary);">ميزة مشاركة الاعتماد على LinkedIn</h3>
+        <p style="color:var(--text-secondary); font-size:0.88rem; line-height:1.65; margin:0 0 1.5rem;">
+          ميزة نشر المحفظة المهنية والشهادات المعتمدة مباشرة على شبكة <strong>LinkedIn</strong> متاحة حصرياً لمشتركي <strong style="color:var(--tier-pro);">باقة المحاسب المحترف (Pro)</strong> وباقة <strong style="color:var(--tier-vip);">خبير النمذجة (VIP)</strong>.
         </p>
 
-        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:1rem; margin-bottom:1.5rem; text-align:right;">
-          <div style="font-size:0.82rem; font-weight:700; color:#10b981; margin-bottom:8px;">ما تمنحه لك الترقية:</div>
-          <ul style="margin:0; padding-right:18px; font-size:0.8rem; line-height:1.8; color:var(--text-secondary, #cbd5e1);">
+        <div style="background:var(--bg-secondary); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1rem; margin-bottom:1.5rem; text-align:right;">
+          <div style="font-size:0.82rem; font-weight:700; color:var(--primary); margin-bottom:8px;">ما تمنحه لك الترقية:</div>
+          <ul style="margin:0; padding-right:18px; font-size:0.82rem; line-height:1.8; color:var(--text-secondary);">
             <li>مشاركة أرقام تتبع وتراخيص الاعتماد المهني على LinkedIn</li>
             <li>توثيق إتقان معايير المحاسبة المصرية (EAS) لمديري التوظيف</li>
             <li>جواز الكفاءة المهنية الرقمي برمز تحقق QR للشركات</li>
@@ -386,13 +386,13 @@ const AccounteraPortfolioEngine = {
         </div>
 
         <div style="display:flex; flex-direction:column; gap:10px;">
-          <button onclick="AccounteraPortfolioEngine.upgradeToProTrial()" class="btn-cta-primary" style="background:#0077b5; padding:12px; font-size:0.92rem; justify-content:center; font-weight:800; border-radius:10px;">
+          <button onclick="AccounteraPortfolioEngine.upgradeToProTrial()" class="btn-cta-primary" style="padding:12px; font-size:0.92rem; justify-content:center; font-weight:800; border-radius:var(--radius-sm);">
             تفعيل تجربة Pro السريعة والمشاركة فوراً
           </button>
-          <button onclick="AccounteraPortfolioEngine.goToPlans()" class="btn-cta-secondary" style="padding:10px; font-size:0.88rem; justify-content:center; border-radius:10px;">
+          <button onclick="AccounteraPortfolioEngine.goToPlans()" class="btn-cta-secondary" style="padding:10px; font-size:0.88rem; justify-content:center; border-radius:var(--radius-sm);">
             تصفح باقات الاشتراك في Accountera
           </button>
-          <button onclick="document.getElementById('accLinkedInUpgradeModal').remove()" style="background:transparent; border:none; color:var(--text-muted, #94a3b8); padding:8px; font-size:0.82rem; cursor:pointer;">
+          <button onclick="document.getElementById('accLinkedInUpgradeModal').remove()" style="background:transparent; border:none; color:var(--text-muted); padding:8px; font-size:0.82rem; cursor:pointer;">
             إلغاء
           </button>
         </div>
@@ -478,57 +478,57 @@ const AccounteraPortfolioEngine = {
     overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.85); z-index:99999; display:flex; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(6px);';
 
     overlay.innerHTML = `
-      <div style="background:var(--surface-ground, #1e293b); color:var(--text-primary, #fff); border:2px solid #10b981; border-radius:20px; max-width:620px; width:100%; padding:2.25rem 2rem; box-shadow:0 25px 50px rgba(0,0,0,0.6); position:relative; text-align:center;">
+      <div style="background:var(--surface-card); color:var(--text-primary); border:2px solid var(--primary-border); border-radius:var(--radius-xl); max-width:620px; width:100%; padding:2.25rem 2rem; box-shadow:var(--elevation-4); position:relative; text-align:center;">
         
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-subtle); padding-bottom:12px; margin-bottom:1.5rem;">
           <div style="text-align:right;">
-            <strong style="color:#10b981; font-size:1.1rem; display:block;">منصة Accountera للتدريب المحاسبي</strong>
-            <span style="font-size:0.75rem; color:#94a3b8;">Egyptian Accounting Standards Simulation Engine</span>
+            <strong style="color:var(--primary); font-size:1.1rem; display:block;">منصة Accountera للتدريب المحاسبي</strong>
+            <span style="font-size:0.75rem; color:var(--text-muted);">Egyptian Accounting Standards Simulation Engine</span>
           </div>
-          <div style="color:#10b981; display:flex; align-items:center;">
+          <div style="color:var(--primary); display:flex; align-items:center;">
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 28, strokeWidth: 1.75 }) : ''}
           </div>
         </div>
 
         <div style="margin-bottom:1.5rem;">
-          <span style="font-size:0.85rem; color:#38bdf8; font-weight:700; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:6px;">شهادة كفاءة مهنية معتمدة</span>
-          <h2 style="font-size:1.4rem; font-weight:900; margin:0 0 10px; color:#fff;">${cert.title}</h2>
-          <p style="color:#94a3b8; font-size:0.9rem; margin:0;">
-            تشهد المنصة بأن المحاسب: <strong style="color:#10b981; font-size:1.15rem;">${data.studentName}</strong>
+          <span style="font-size:0.85rem; color:var(--primary); font-weight:700; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:6px;">شهادة كفاءة مهنية معتمدة</span>
+          <h2 style="font-size:1.4rem; font-weight:900; margin:0 0 10px; color:var(--text-primary);">${cert.title}</h2>
+          <p style="color:var(--text-secondary); font-size:0.9rem; margin:0;">
+            تشهد المنصة بأن المحاسب: <strong style="color:var(--primary); font-size:1.15rem;">${data.studentName}</strong>
           </p>
-          <p style="color:#cbd5e1; font-size:0.82rem; margin:6px 0 0;">
-            قد أتم بنجاح متطلبات المسار العملي (<strong style="color:#fff;">${cert.track}</strong>) وأثبت الكفاءة في تسجيل وتوجيه العمليات وفق معايير المحاسبة المصرية والقوانين الضريبية.
+          <p style="color:var(--text-secondary); font-size:0.84rem; margin:6px 0 0; line-height:1.65;">
+            قد أتم بنجاح متطلبات المسار العملي (<strong style="color:var(--text-primary);">${cert.track}</strong>) وأثبت الكفاءة في تسجيل وتوجيه العمليات وفق معايير المحاسبة المصرية والقوانين الضريبية.
           </p>
         </div>
 
         <!-- بيانات التوثيق -->
-        <div style="background:rgba(255,255,255,0.03); border:1px dashed rgba(255,255,255,0.15); border-radius:12px; padding:12px; margin-bottom:1.5rem; display:flex; justify-content:space-around; font-size:0.8rem;">
+        <div style="background:var(--bg-secondary); border:1px dashed var(--border-strong); border-radius:var(--radius-md); padding:12px; margin-bottom:1.5rem; display:flex; justify-content:space-around; font-size:0.82rem;">
           <div>
-            <span style="color:#94a3b8; display:block;">كود الاعتماد:</span>
-            <strong style="font-family:monospace; color:#38bdf8;">${cert.credentialId}</strong>
+            <span style="color:var(--text-muted); display:block;">كود الاعتماد:</span>
+            <strong class="tabular-nums font-mono" style="color:var(--primary);">${cert.credentialId}</strong>
           </div>
           <div>
-            <span style="color:#94a3b8; display:block;">تاريخ الإصدار:</span>
-            <strong style="color:#fff;">${cert.issueDate}</strong>
+            <span style="color:var(--text-muted); display:block;">تاريخ الإصدار:</span>
+            <strong class="tabular-nums font-mono" style="color:var(--text-primary);">${cert.issueDate}</strong>
           </div>
           <div>
-            <span style="color:#94a3b8; display:block;">التحقق:</span>
-            <strong style="color:#10b981;">موثق 100% ✓</strong>
+            <span style="color:var(--text-muted); display:block;">التحقق:</span>
+            <strong style="color:var(--success);">موثق 100% ✓</strong>
           </div>
         </div>
 
         <!-- أزرار الإجراء -->
         <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-          <button onclick="AccounteraPortfolioEngine.shareLinkedIn('${cert.id}')" class="btn-cta-primary" style="background:#0077b5; padding:10px 18px; font-size:0.88rem; display:flex; align-items:center; gap:6px;">
+          <button onclick="AccounteraPortfolioEngine.shareLinkedIn('${cert.id}')" class="btn-cta-primary" style="background:#0077b5; padding:10px 18px; font-size:0.88rem; display:flex; align-items:center; gap:6px; border-radius:var(--radius-sm);">
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
             <span>مشاركة هذه الشهادة على LinkedIn</span>
-            ${!perm.allowed ? '<span style="background:#f59e0b; color:#000; font-size:0.65rem; padding:2px 6px; border-radius:10px; font-weight:800;">PRO</span>' : ''}
+            ${!perm.allowed ? '<span style="background:var(--warning); color:#fff; font-size:0.65rem; padding:2px 6px; border-radius:var(--radius-full); font-weight:800;">PRO</span>' : ''}
           </button>
-          <button onclick="window.print()" class="btn-cta-secondary" style="padding:10px 16px; font-size:0.88rem; display:flex; align-items:center; gap:6px;">
+          <button onclick="window.print()" class="btn-cta-secondary" style="padding:10px 16px; font-size:0.88rem; display:flex; align-items:center; gap:6px; border-radius:var(--radius-sm);">
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 16 }) : ''}
             <span>طباعة الشهادة</span>
           </button>
-          <button onclick="document.getElementById('accCertPreviewModal').remove()" class="btn-workspace-action" style="padding:10px 16px; font-size:0.88rem;">
+          <button onclick="document.getElementById('accCertPreviewModal').remove()" class="btn-workspace-action" style="padding:10px 16px; font-size:0.88rem; border-radius:var(--radius-sm);">
             إغلاق
           </button>
         </div>
