@@ -158,10 +158,10 @@ const AccounteraPortfolioEngine = {
       <div class="portfolio-container" style="max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem;">
         
         <!-- 1. Hero Card بروفايل المحفظة المهنية -->
-        <div class="portfolio-hero" style="background: linear-gradient(135deg, var(--header-bg) 0%, var(--surface-panel) 60%, var(--primary-hover) 100%); color: #fff; border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--elevation-3); border: 1px solid rgba(255,255,255,0.12); margin-bottom: 2rem;">
+        <div class="portfolio-hero" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #064e3b 100%); color: #ffffff; border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--elevation-3); border: 1px solid rgba(255,255,255,0.12); margin-bottom: 2rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
             <div style="display: flex; align-items: center; gap: 1.25rem;">
-              <div style="width: 72px; height: 72px; border-radius: var(--radius-lg); background: var(--primary-light); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+              <div style="width: 72px; height: 72px; border-radius: var(--radius-lg); background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; color: #10b981;">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('user', { size: 36, strokeWidth: 1.75 }) : ''}
               </div>
               <div>
@@ -169,7 +169,7 @@ const AccounteraPortfolioEngine = {
                   <h1 style="font-size: 1.6rem; font-weight: 900; margin: 0; color: #ffffff;">${data.studentName}</h1>
                   <span style="background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid #10b981; padding: 2px 10px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800;">موثق رسمياً ✓</span>
                 </div>
-                <div style="color: rgba(255,255,255,0.75); font-size: 0.88rem; margin-top: 4px;">
+                <div style="color: #94a3b8; font-size: 0.88rem; margin-top: 4px;">
                   <span>رقم الاعتماد: <strong class="tabular-nums font-mono" style="color: #ffffff;">${data.studentId}</strong></span>
                   <span> • </span>
                   <span>الباقة الحالية: <strong style="color: #38bdf8;">${perm.planName}</strong></span>
@@ -181,14 +181,14 @@ const AccounteraPortfolioEngine = {
 
             <!-- أزرار المشاركة والتحقق -->
             <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-              <button onclick="AccounteraPortfolioEngine.copyPublicLink()" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; border-radius: var(--radius-sm);">
+              <button onclick="AccounteraPortfolioEngine.copyPublicLink()" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.08); color: #ffffff; border: 1px solid rgba(255,255,255,0.2);">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 16 }) : ''}
                 <span>نسخ رابط المحفظة</span>
               </button>
-              <button onclick="AccounteraPortfolioEngine.shareLinkedIn()" class="btn-cta-primary" style="background: #0077b5; padding: 10px 18px; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; border-radius: var(--radius-sm); border: 1px solid #005e93;">
+              <button onclick="AccounteraPortfolioEngine.shareLinkedIn()" class="btn-cta-primary" style="background: #0077b5; color: #ffffff; padding: 10px 18px; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; border-radius: var(--radius-sm); border: 1px solid #005e93;">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
                 <span>مشاركة على LinkedIn</span>
-                ${!perm.allowed ? '<span style="background: var(--warning); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: var(--radius-full);">PRO</span>' : '<span style="background: rgba(255,255,255,0.2); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: var(--radius-full);">مفعل ✓</span>'}
+                ${!perm.allowed ? '<span style="background: var(--warning); color: #ffffff; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: var(--radius-full);">PRO</span>' : '<span style="background: rgba(255,255,255,0.2); color: #ffffff; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: var(--radius-full);">مفعل ✓</span>'}
               </button>
             </div>
           </div>
@@ -196,19 +196,19 @@ const AccounteraPortfolioEngine = {
           <!-- شريط موجز الإنجاز المالي والعملي -->
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.15);">
             <div>
-              <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">العمليات المسجلة باليومية</div>
+              <div style="color: #94a3b8; font-size: 0.8rem;">العمليات المسجلة باليومية</div>
               <div class="tabular-nums font-mono" style="font-size: 1.5rem; font-weight: 900; color: #34d399;">${data.postedCount} سند</div>
             </div>
             <div>
-              <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">مستوى إنجاز المحاكاة</div>
+              <div style="color: #94a3b8; font-size: 0.8rem;">مستوى إنجاز المحاكاة</div>
               <div class="tabular-nums font-mono" style="font-size: 1.5rem; font-weight: 900; color: #38bdf8;">${data.completionPercent}% مكتمل</div>
             </div>
             <div>
-              <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">اتزان الدفاتر المحاسبية</div>
+              <div style="color: #94a3b8; font-size: 0.8rem;">اتزان الدفاتر المحاسبية</div>
               <div class="tabular-nums font-mono" style="font-size: 1.5rem; font-weight: 900; color: #34d399;">متزن 100% ✓</div>
             </div>
             <div>
-              <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem;">الشهادات الممنوحة</div>
+              <div style="color: #94a3b8; font-size: 0.8rem;">الشهادات الممنوحة</div>
               <div class="tabular-nums font-mono" style="font-size: 1.5rem; font-weight: 900; color: #fbbf24;">${data.certifications.filter(c => c.isUnlocked).length} شهادة</div>
             </div>
           </div>
