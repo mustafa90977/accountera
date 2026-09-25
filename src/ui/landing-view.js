@@ -5,7 +5,22 @@
  */
 
 const ExcelLandingView = {
+  isSidebarCollapsed() {
+    try {
+      return (typeof localStorage !== 'undefined') && localStorage.getItem('acc_landing_sb_collapsed') === '1';
+    } catch (e) {
+      return false;
+    }
+  },
+
   render() {
+    const isCollapsed = this.isSidebarCollapsed();
+    const collapsedClass = isCollapsed ? ' collapsed' : '';
+    const wrapperCollapsedClass = isCollapsed ? ' sidebar-collapsed' : '';
+    const chevronIcon = isCollapsed
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
+      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+
     return `
       <div class="landing-shell grid-pattern-bg">
         <!-- هالة ضوئية خلفية جمالية -->
@@ -14,10 +29,10 @@ const ExcelLandingView = {
         <!-- =========================================================
              1. الشريط الجانبي الأيمن الثابت (Right Sidebar Navigation)
              ========================================================= -->
-        <aside class="landing-sidebar">
-          <!-- الهوية والشعار -->
-          <div class="landing-sidebar-header">
-            <a class="landing-brand-link" href="javascript:void(0)" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <aside class="landing-sidebar\${collapsedClass}" id="landingSidebar">
+          <!-- الهوية والشعار وزر الطي -->
+          <div class="landing-sidebar-header" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+            <a class="landing-brand-link" href="javascript:void(0)" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="ACCOUNTERA">
               <div class="landing-brand-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/>
@@ -27,7 +42,7 @@ const ExcelLandingView = {
                   <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
                 </svg>
               </div>
-              <div style="display:flex; flex-direction:column;">
+              <div class="landing-brand-text-wrap" style="display:flex; flex-direction:column;">
                 <div style="display:flex; align-items:center;">
                   <span class="landing-brand-title font-num">ACCOUNTERA</span>
                   <span class="landing-brand-badge">PRO</span>
@@ -35,6 +50,9 @@ const ExcelLandingView = {
                 <span class="landing-brand-sub">مِنَصّة المُحَاسِب المُبتَدئ التَّفَاعُلِيّة</span>
               </div>
             </a>
+            <button class="landing-sidebar-collapse-btn" onclick="toggleLandingSidebar()" title="طي / توسيع القائمة الجانبية">
+              <span id="landingSidebarToggleIcon">\${chevronIcon}</span>
+            </button>
           </div>
 
           <!-- قائمة الروابط والشاشات -->
@@ -42,7 +60,7 @@ const ExcelLandingView = {
             <div class="landing-sidebar-group-title">لوحة التحكم والتنقل</div>
             <nav style="display:flex; flex-direction:column;">
               <!-- الرئيسية -->
-              <a class="landing-nav-item active" href="javascript:void(0)" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+              <a class="landing-nav-item active" href="javascript:void(0)" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="الرئيسية">
                 <div style="display:flex; align-items:center; gap:0.65rem;">
                   <span class="landing-nav-icon">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -53,7 +71,7 @@ const ExcelLandingView = {
               </a>
 
               <!-- لوحة التدريب -->
-              <a class="landing-nav-item" href="javascript:void(0)" onclick="navigateToScreen('student-dashboard')">
+              <a class="landing-nav-item" href="javascript:void(0)" onclick="navigateToScreen('student-dashboard')" title="لوحة التدريب والمتابعة">
                 <div style="display:flex; align-items:center; gap:0.65rem;">
                   <span class="landing-nav-icon">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4"/><path d="M12 16v-8"/><path d="M17 16v-6"/></svg>
@@ -64,7 +82,7 @@ const ExcelLandingView = {
               </a>
 
               <!-- محاكاة الشركات -->
-              <a class="landing-nav-item" href="javascript:void(0)" onclick="navigateToScreen('companies-hub')">
+              <a class="landing-nav-item" href="javascript:void(0)" onclick="navigateToScreen('companies-hub')" title="محاكاة الشركات وبيئة العمل">
                 <div style="display:flex; align-items:center; gap:0.65rem;">
                   <span class="landing-nav-icon">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/></svg>
@@ -75,7 +93,7 @@ const ExcelLandingView = {
               </a>
 
               <!-- مسار الإتقان -->
-              <a class="landing-nav-item" href="javascript:void(0)" onclick="navigateToScreen('lesson-1')">
+              <a class="landing-nav-item" href="javascript:void(0)" onclick="navigateToScreen('lesson-1')" title="مسار الإتقان والدروس التأسيسية">
                 <div style="display:flex; align-items:center; gap:0.65rem;">
                   <span class="landing-nav-icon">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 3 3 5 6 5s6-2 6-5v-5"/></svg>
@@ -86,7 +104,7 @@ const ExcelLandingView = {
               </a>
 
               <!-- أسعار التدريب -->
-              <a class="landing-nav-item" href="javascript:void(0)" onclick="document.getElementById('pricingSection')?.scrollIntoView({behavior:'smooth'})">
+              <a class="landing-nav-item" href="javascript:void(0)" onclick="document.getElementById('pricingSection')?.scrollIntoView({behavior:'smooth'})" title="باقات وأسعار التدريب">
                 <div style="display:flex; align-items:center; gap:0.65rem;">
                   <span class="landing-nav-icon">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
@@ -97,7 +115,7 @@ const ExcelLandingView = {
               </a>
 
               <!-- بنك التدريبات -->
-              <a class="landing-nav-item" href="javascript:void(0)" onclick="navigateToScreen('ex-1')">
+              <a class="landing-nav-item" href="javascript:void(0)" onclick="navigateToScreen('ex-1')" title="بنك التدريبات والاختبارات الفنية">
                 <div style="display:flex; align-items:center; gap:0.65rem;">
                   <span class="landing-nav-icon">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
@@ -108,7 +126,7 @@ const ExcelLandingView = {
               </a>
 
               <!-- الأسئلة الشائعة -->
-              <a class="landing-nav-item" href="javascript:void(0)" onclick="document.getElementById('faqSection')?.scrollIntoView({behavior:'smooth'})">
+              <a class="landing-nav-item" href="javascript:void(0)" onclick="document.getElementById('faqSection')?.scrollIntoView({behavior:'smooth'})" title="الأسئلة المتكررة">
                 <div style="display:flex; align-items:center; gap:0.65rem;">
                   <span class="landing-nav-icon">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -118,7 +136,7 @@ const ExcelLandingView = {
               </a>
 
               <!-- الدعم الفني -->
-              <a class="landing-nav-item" href="https://wa.me/201000000000" target="_blank" rel="noopener">
+              <a class="landing-nav-item" href="https://wa.me/201000000000" target="_blank" rel="noopener" title="الدعم الفني المباشر عبر واتساب">
                 <div style="display:flex; align-items:center; gap:0.65rem;">
                   <span class="landing-nav-icon">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -163,7 +181,7 @@ const ExcelLandingView = {
         <!-- =========================================================
              2. الحاوية الرئيسية للمحتوى (Main Content Wrapper)
              ========================================================= -->
-        <div class="landing-main-wrapper">
+        <div class="landing-main-wrapper${wrapperCollapsedClass}">
           <!-- شريط الإعلان العلوي -->
           <div class="landing-announcement-bar">
             <div class="announcement-inner">
@@ -842,4 +860,24 @@ const ExcelLandingView = {
 
 if (typeof window !== 'undefined') {
   window.ExcelLandingView = ExcelLandingView;
+
+  window.toggleLandingSidebar = function() {
+    const sb = document.getElementById('landingSidebar');
+    const wrapper = document.querySelector('.landing-main-wrapper');
+    if (!sb) return;
+
+    const isCollapsed = sb.classList.toggle('collapsed');
+    if (wrapper) wrapper.classList.toggle('sidebar-collapsed', isCollapsed);
+
+    try {
+      localStorage.setItem('acc_landing_sb_collapsed', isCollapsed ? '1' : '0');
+    } catch(e) {}
+
+    const icon = document.getElementById('landingSidebarToggleIcon');
+    if (icon) {
+      icon.innerHTML = isCollapsed
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+    }
+  };
 }

@@ -78,7 +78,7 @@ body.landing-mode .main-content {
   flex-direction: column;
   justify-content: space-between;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  transition: transform 0.3s ease;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
   overflow: hidden;
 }
 
@@ -86,6 +86,84 @@ body.landing-mode .main-content {
   background: var(--surface-card, #152033);
   border-color: var(--border-subtle, rgba(255, 255, 255, 0.08));
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* حالة القائمة المطوية (Collapsed Desktop State) */
+.landing-sidebar.collapsed {
+  width: 68px;
+}
+
+.landing-sidebar.collapsed .landing-brand-text-wrap,
+.landing-sidebar.collapsed .landing-sidebar-group-title,
+.landing-sidebar.collapsed .landing-nav-item span:not(.landing-nav-icon),
+.landing-sidebar.collapsed .landing-nav-badge,
+.landing-sidebar.collapsed .sidebar-promo-card,
+.landing-sidebar.collapsed .btn-sidebar-cta span,
+.landing-sidebar.collapsed .sidebar-user-login div:last-child,
+.landing-sidebar.collapsed .sidebar-user-strip a:last-child {
+  display: none !important;
+}
+
+.landing-sidebar.collapsed .landing-sidebar-header {
+  padding: 1.25rem 0.5rem;
+  justify-content: center;
+}
+
+.landing-sidebar.collapsed .landing-brand-link {
+  display: none;
+}
+
+.landing-sidebar.collapsed .landing-sidebar-collapse-btn {
+  margin: 0 auto;
+}
+
+.landing-sidebar.collapsed .landing-nav-item {
+  justify-content: center !important;
+  padding: 0.65rem 0 !important;
+}
+
+.landing-sidebar.collapsed .landing-nav-icon {
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 0.85rem;
+}
+
+.landing-sidebar.collapsed .btn-sidebar-cta {
+  padding: 0.65rem 0 !important;
+  justify-content: center !important;
+}
+
+.landing-sidebar.collapsed .sidebar-user-strip {
+  justify-content: center !important;
+  padding-top: 0.4rem;
+}
+
+/* زر طي وتوسيع القائمة الجانبية */
+.landing-sidebar-collapse-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  background: var(--surface-muted, #f8fafc);
+  color: var(--text-secondary, #64748b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .landing-sidebar-collapse-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+
+.landing-sidebar-collapse-btn:hover {
+  background: var(--primary, #10b981);
+  color: #ffffff;
+  border-color: var(--primary, #10b981);
 }
 
 /* إخفاء الشريط الجانبي في الشاشات الأقل من 1024px والاعتماد على التنقل المحمول */
@@ -98,9 +176,16 @@ body.landing-mode .main-content {
   }
 }
 
+.landing-main-wrapper {
+  transition: margin-right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 @media (min-width: 1024px) {
   .landing-main-wrapper {
     margin-right: 300px;
+  }
+  .landing-main-wrapper.sidebar-collapsed {
+    margin-right: 88px;
   }
 }
 
