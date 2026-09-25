@@ -178,30 +178,38 @@
 
   <!-- Bottom Navigation -->
   <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(11,28,48,0.06)] border-t border-surface-variant">
-    <div class="flex items-center justify-around px-1 py-1 max-w-xl mx-auto w-full">
-      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../dashboard/index.html">
-        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">dashboard</span>
-        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">نظرة عامة</span>
+    <div class="flex items-center justify-around px-0.5 py-1 max-w-3xl mx-auto w-full">
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[46px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../dashboard/index.html">
+        <span class="material-symbols-outlined text-[19px]">dashboard</span>
+        <span class="text-[9px] xs:text-[10px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">نظرة عامة</span>
       </a>
-      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../journal/index.html">
-        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">menu_book</span>
-        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">اليومية</span><span class="hidden xs:inline">قيود اليومية</span></span>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[46px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../journal/index.html">
+        <span class="material-symbols-outlined text-[19px]">menu_book</span>
+        <span class="text-[9px] xs:text-[10px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">اليومية</span>
       </a>
-      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../bank-recon/index.html">
-        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">assured_workload</span>
-        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">التسوية</span><span class="hidden xs:inline">التسوية البنكية</span></span>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[46px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../ledger/index.html">
+        <span class="material-symbols-outlined text-[19px]">balance</span>
+        <span class="text-[9px] xs:text-[10px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">الأستاذ</span>
       </a>
-      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../cash-count/index.html">
-        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">payments</span>
-        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الخزينة</span><span class="hidden xs:inline">جرد الخزينة</span></span>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[46px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../statements/index.html">
+        <span class="material-symbols-outlined text-[19px]">query_stats</span>
+        <span class="text-[9px] xs:text-[10px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">القوائم</span>
       </a>
-      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-primary font-bold" href="../inventory-count/index.html">
-        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">inventory_2</span>
-        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">المخزون</span><span class="hidden xs:inline">جرد المخزون</span></span>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[46px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../bank-recon/index.html">
+        <span class="material-symbols-outlined text-[19px]">assured_workload</span>
+        <span class="text-[9px] xs:text-[10px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">التسوية</span>
       </a>
-      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../tax-returns/index.html">
-        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">account_balance</span>
-        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الضرائب</span><span class="hidden xs:inline">الإقرارات</span></span>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[46px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../cash-count/index.html">
+        <span class="material-symbols-outlined text-[19px]">payments</span>
+        <span class="text-[9px] xs:text-[10px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">الخزينة</span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[46px] py-1 px-0.5 transition-all text-primary font-bold" href="../inventory-count/index.html">
+        <span class="material-symbols-outlined text-[19px]">inventory_2</span>
+        <span class="text-[9px] xs:text-[10px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">المخزون</span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[46px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../tax-returns/index.html">
+        <span class="material-symbols-outlined text-[19px]">account_balance</span>
+        <span class="text-[9px] xs:text-[10px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">الضرائب</span>
       </a>
     </div>
   </nav>
