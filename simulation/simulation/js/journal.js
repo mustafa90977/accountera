@@ -66,17 +66,28 @@ function checkAndLoadActiveDraft() {
 function showDraftBanner(draft) {
     const slot = document.getElementById('draft-banner-slot');
     if (!slot) return;
+
+    let bannerTitle = 'مسودة قيد تسوية بنكية (بانتظار مراجعتك واعتمادك)';
+    let sourceText = 'فروقات كشف حساب البنك';
+    if (draft.sourceModule === 'CASH_COUNT') {
+        bannerTitle = 'مسودة قيد تسوية جرد الخزينة (بانتظار مراجعتك واعتمادك)';
+        sourceText = 'محضر جرد الخزينة الفعلي';
+    } else if (draft.sourceModule === 'INVENTORY_COUNT') {
+        bannerTitle = 'مسودة قيد تسوية جرد المخزون (بانتظار مراجعتك واعتمادك)';
+        sourceText = 'محضر جرد المخزن الفعلي';
+    }
+
     slot.innerHTML = `
       <div id="draft-review-banner" class="mb-4 p-3.5 bg-blue-50/95 border-2 border-blue-400 rounded-xl text-blue-950 text-xs shadow-xs text-right space-y-2 animate-in fade-in duration-200">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-base">📝</span>
-            <strong class="text-sm font-extrabold text-blue-950">مسودة قيد تسوية بنكية (بانتظار مراجعتك واعتمادك)</strong>
+            <strong class="text-sm font-extrabold text-blue-950">${bannerTitle}</strong>
           </div>
           <button type="button" onclick="discardDraftEntry()" class="text-slate-400 hover:text-rose-700 text-xs font-bold px-2 py-0.5 rounded transition cursor-pointer" title="إلغاء مسودة القيد">✕ إلغاء المسودة</button>
         </div>
         <p class="text-slate-700 leading-relaxed font-medium">
-          تم تحضير المسودة بناءً على فروقات كشف حساب البنك: <strong>${draft.desc}</strong> بمبلغ <strong>${(draft.amount || 0).toLocaleString()} ج.م</strong>.
+          تم تحضير المسودة بناءً على ${sourceText}: <strong>${draft.desc}</strong> بمبلغ <strong>${(draft.amount || 0).toLocaleString()} ج.م</strong>.
           راجع أطراف القيد وتوجيه الحسابات والمبالغ بدقة، ثم اضغط <strong>«حفظ وتسجيل في دفتر اليومية»</strong> للاعتماد.
         </p>
       </div>
@@ -89,12 +100,22 @@ function renderDraftDocument(draft) {
     const compName = getCompanyName();
     const words = tafqeetArabic(draft.amount || 0);
 
+    let docSub = 'إشعار قيد تسوية بنكية (Bank Reconciliation Notice)';
+    let footerNote = 'مرفق كشف حساب البنك الدوري لمطابقة أرصدة الدفاتر (حـ/ 1102)';
+    if (draft.sourceModule === 'CASH_COUNT') {
+        docSub = 'إشعار تسوية عجز / زيادة الخزينة (Cash Count Discrepancy)';
+        footerNote = 'مرفق محضر جرد الخزينة المعتمد لمطابقة رصيد النقدية بالدفاتر (حـ/ 1101)';
+    } else if (draft.sourceModule === 'INVENTORY_COUNT') {
+        docSub = 'إشعار تسوية فروقات الجرد المخزني (Inventory Variance Notice)';
+        footerNote = 'مرفق محضر جرد المخزن المعتمد لمطابقة رصيد المخزون السلعي بالدفاتر (حـ/ 1104)';
+    }
+
     docViewer.innerHTML = `
       <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative animate-in fade-in duration-200">
         <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
           <div>
             <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-            <p class="text-[10px] text-slate-500">إشعار قيد تسوية بنكية (Bank Reconciliation Notice)</p>
+            <p class="text-[10px] text-slate-500">${docSub}</p>
           </div>
           <div class="text-left">
             <span class="text-[10px] bg-blue-100 text-blue-900 font-bold px-2 py-0.5 rounded font-mono">${draft.ref || 'RECON-ADJ'}</span>
@@ -105,10 +126,10 @@ function renderDraftDocument(draft) {
         <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
           <div class="flex justify-between py-1 border-b border-slate-200">
             <span class="text-slate-500">طبيعة العملية:</span>
-            <span class="font-bold text-slate-800">${draft.title || 'قيد تسوية فروقات البنك'}</span>
+            <span class="font-bold text-slate-800">${draft.title || 'قيد تسوية بالدفاتر'}</span>
           </div>
           <div class="flex justify-between py-1 border-b border-slate-200">
-            <span class="text-slate-500">بيان المعاملة بالكشف:</span>
+            <span class="text-slate-500">بيان المعاملة / المحضر:</span>
             <span class="font-medium text-slate-700">${draft.desc || ''}</span>
           </div>
           <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
@@ -119,7 +140,7 @@ function renderDraftDocument(draft) {
             فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
           </div>
         </div>
-        <p class="text-[10px] text-slate-400 text-center">مرفق كشف حساب البنك الدوري لمطابقة أرصدة الدفاتر (حـ/ 1102)</p>
+        <p class="text-[10px] text-slate-400 text-center">${footerNote}</p>
       </div>
     `;
 }
@@ -1223,24 +1244,38 @@ window.postEntry = function() {
             localStorage.removeItem('acc_draft_journal_entry');
             document.getElementById('draft-review-banner')?.remove();
 
+            let successTitle = 'تم اعتماد وتسجيل قيد التسوية البنكية بنجاح! 💾';
+            let returnLink = '../bank-recon/index.html';
+            let returnText = 'العودة للتسوية البنكية لمشاهدة المطابقة';
+
+            if (draft.sourceModule === 'CASH_COUNT') {
+                successTitle = 'تم اعتماد وتسجيل قيد تسوية عجز/زيادة الخزينة بنجاح! 💾';
+                returnLink = '../cash-count/index.html';
+                returnText = 'العودة لمحاكي جرد الخزينة';
+            } else if (draft.sourceModule === 'INVENTORY_COUNT') {
+                successTitle = 'تم اعتماد وتسجيل قيد تسوية جرد المخزون بنجاح! 💾';
+                returnLink = '../inventory-count/index.html';
+                returnText = 'العودة لمحاكي جرد المخزون';
+            }
+
             feedback.innerHTML = `
               <div class="text-emerald-900 p-4 bg-emerald-50 rounded-xl border-2 border-emerald-300 font-bold space-y-2 text-right">
                 <div class="flex items-center gap-2 text-sm text-emerald-800">
                   <span class="material-symbols-outlined">verified</span>
-                  <span>تم اعتماد وتسجيل قيد التسوية البنكية بنجاح! 💾 (رقم: ${entryId})</span>
+                  <span>${successTitle} (رقم: ${entryId})</span>
                 </div>
                 <p class="text-xs font-normal text-slate-700 leading-relaxed">
-                  تم تسجيل القيد بنجاح كـ "معلق بانتظار الترحيل". يمكنك ترحيل أطرافه للأستاذ أو العودة لشاشة التسوية البنكية لمشاهدة اكتمال المطابقة وتصفير الفروقات.
+                  تم تسجيل القيد بنجاح كـ "معلق بانتظار الترحيل". يمكنك ترحيل أطرافه للأستاذ أو العودة للمحاكي لمشاهدة اكتمال التسوية وتصفير الفروقات الدفترية.
                 </p>
                 <div class="pt-2 flex flex-wrap gap-2">
-                  <a href="../bank-recon/index.html" class="inline-flex items-center gap-1 bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-1.5 rounded-lg transition font-bold shadow-xs">
-                    <span>العودة للتسوية البنكية لمشاهدة المطابقة</span>
+                  <a href="${returnLink}" class="inline-flex items-center gap-1 bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-1.5 rounded-lg transition font-bold shadow-xs">
+                    <span>${returnText}</span>
                     <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
                   </a>
                   <a href="../ledger/index.html?trx=${entryId}" class="inline-flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-1.5 rounded-lg transition font-bold">
                     <span>ترحيل للأستاذ الآن</span>
                   </a>
-                  <button type="button" onclick="resetForm()" class="bg-white hover:bg-slate-100 text-slate-700 text-xs px-3 py-1.5 rounded-lg border border-slate-300 font-bold">
+                  <button type="button" onclick="resetForm()" class="bg-white hover:bg-slate-100 text-slate-700 text-xs px-3 py-1.5 rounded-lg border border-slate-300 font-bold cursor-pointer">
                     <span>تسجيل قيد آخر</span>
                   </button>
                 </div>

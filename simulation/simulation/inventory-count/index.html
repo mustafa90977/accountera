@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title>محاكي جرد المخزون الفعلي - NTL-2026</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../css/theme.js"></script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 flex flex-col antialiased">
+  <!-- Header -->
+  <header class="fixed top-0 w-full z-50 pt-safe bg-white/90 backdrop-blur-xl shadow-xs border-b border-slate-200">
+    <div class="h-20 px-4 flex flex-col justify-center gap-1 max-w-7xl mx-auto">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-xs flex-shrink-0">
+            <span class="material-symbols-outlined text-[22px]">inventory_2</span>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm text-slate-900 truncate max-w-[130px] xs:max-w-[180px] sm:max-w-[240px] company-title-display">شركة النيل للتجارة والتوزيع</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold flex-shrink-0 hidden xs:inline-block">جرد المخزون</span>
+            </div>
+            <span class="text-xs text-slate-500 truncate hidden sm:block">حصر كميات البضاعة الفعلية ومطابقتها مع بطاقات الأصناف وحساب المخزون (1104)</span>
+            <span class="text-xs text-slate-500 truncate sm:hidden">جرد المخزون حـ/ 1104</span>
+          </div>
+        </div>
+
+        <div id="header-actions" class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          <span id="inv-status-badge" class="text-xs font-bold px-2 xs:px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 border border-slate-300 flex items-center gap-1 flex-shrink-0">
+            بانتظار الحصر
+          </span>
+          <button onclick="openPrintInventoryProtocol()" class="text-xs bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2 xs:px-3 py-1.5 rounded-lg flex items-center gap-1 transition shadow-xs min-h-[36px] flex-shrink-0 cursor-pointer" title="طباعة محضر الجرد المخزني المعتمد">
+            <span class="material-symbols-outlined text-[16px]">print</span> <span class="hidden md:inline">طباعة المحضر</span>
+          </button>
+          <button onclick="resetInventoryCountsToZero()" title="تصفير الكميات المحصورة" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2 xs:px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition shadow-xs min-h-[36px] flex-shrink-0 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">restart_alt</span> <span class="hidden md:inline">تصفير</span>
+          </button>
+          <a href="/index.html" onclick="returnToPlatform(event)" class="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex-shrink-0 min-h-[36px] cursor-pointer" title="العودة لمنصة المحاسب الرئيسية">
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span><span class="hidden xs:inline">العودة للمنصة</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex flex-col relative w-full pt-24 pb-28 min-h-screen px-4 max-w-7xl mx-auto space-y-6">
+    <!-- Top Summary KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <!-- Book Inventory Value -->
+      <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between text-slate-500 mb-1">
+          <span class="text-xs font-bold">الرصيد الدفتري (حـ/ 1104)</span>
+          <span class="material-symbols-outlined text-purple-600 text-lg">menu_book</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span id="inv-book-val" class="text-xl font-mono font-black text-slate-900">0.00</span>
+          <span class="text-xs text-slate-400">ج.م</span>
+        </div>
+        <span class="text-[10px] text-slate-400 mt-1 block">قيمة بضاعة المخزون بالدفاتر</span>
+      </div>
+
+      <!-- Physical Inventory Counted -->
+      <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between text-slate-500 mb-1">
+          <span class="text-xs font-bold">قيمة المخزون الفعلي</span>
+          <span class="material-symbols-outlined text-blue-600 text-lg">fact_check</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span id="inv-physical-val" class="text-xl font-mono font-black text-blue-900">0.00</span>
+          <span class="text-xs text-slate-400">ج.م</span>
+        </div>
+        <span class="text-[10px] text-slate-400 mt-1 block">إجمالي حصر الأصناف بالمستودع</span>
+      </div>
+
+      <!-- Inventory Variance -->
+      <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between text-slate-500 mb-1">
+          <span class="text-xs font-bold">فروقات الجرد (عجز / زيادة)</span>
+          <span class="material-symbols-outlined text-amber-600 text-lg">difference</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span id="inv-diff-val" class="text-xl font-mono font-black text-slate-700">0.00</span>
+          <span class="text-xs text-slate-400">ج.م</span>
+        </div>
+        <span class="text-[10px] text-slate-400 mt-1 block">الفارق المالي بين الفعلي والدفتري</span>
+      </div>
+
+      <!-- Simulation Quick Generator -->
+      <div class="bg-slate-900 text-white p-4 rounded-2xl border border-slate-800 shadow-xs flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-bold text-slate-300 block">سيناريوهات جرد تفاعلية:</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">توليد حالة جرد وتفرقة التكلفة</span>
+        </div>
+        <div class="flex gap-2 mt-2">
+          <button onclick="loadRealisticInventoryScenario('SHORTAGE')" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold py-1.5 px-2 rounded-lg transition cursor-pointer" title="محاكاة اكتشاف عجز مخزني">
+            عجز مخزني
+          </button>
+          <button onclick="loadRealisticInventoryScenario('SURPLUS')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1.5 px-2 rounded-lg transition cursor-pointer" title="محاكاة زيادة مخزنية">
+            زيادة مخزنية
+          </button>
+          <button onclick="loadRealisticInventoryScenario('MATCHED')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold py-1.5 px-2 rounded-lg transition cursor-pointer" title="محاكاة مطابقة تامة">
+            مطابقة
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory Stocktaking Table -->
+    <div class="bg-white rounded-2xl border-2 border-slate-200 shadow-xs overflow-hidden">
+      <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-blue-400">table_rows</span>
+          <h2 class="text-sm sm:text-base font-bold">كشف جرد الأصناف وبطاقات المستودع الرئيسي</h2>
+        </div>
+        <span class="text-xs text-slate-300 bg-slate-800 px-3 py-1 rounded-full font-mono">نظام الجرد الدوري / المستمر</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-right text-xs">
+          <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
+            <tr>
+              <th class="p-3">بيانات الصنف والـ SKU</th>
+              <th class="p-3 text-center w-28">تكلفة الوحدة</th>
+              <th class="p-3 text-center w-36 bg-slate-100/70">الرصيد الدفتري (البطاقة)</th>
+              <th class="p-3 text-center w-64">الكمية الفعلية المحصورة</th>
+              <th class="p-3 text-center w-36">فرق الجرد المالي</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-tbody" class="divide-y divide-slate-100">
+            <!-- JS dynamic content -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Accounting Discrepancy & Resolution Card -->
+    <div id="inv-resolution-box">
+      <!-- Injected via JS -->
+    </div>
+  </main>
+
+  <!-- Printable Inventory Protocol Modal -->
+  <div id="inv-print-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div class="p-4 bg-slate-900 text-white flex justify-between items-center print:hidden">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-emerald-400">verified</span>
+          <span class="font-bold text-sm">معاينة محضر جرد المخزن المعتمد للطباعة</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">print</span>
+            <span>طباعة المحضر (A4)</span>
+          </button>
+          <button onclick="closePrintInventoryProtocol()" class="text-slate-400 hover:text-white px-2 py-1 text-sm font-bold cursor-pointer">✕</button>
+        </div>
+      </div>
+
+      <div id="inv-printable-content" class="p-8 sm:p-10 overflow-y-auto flex-1 font-sans text-slate-900 text-right space-y-6">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #inv-printable-content, #inv-printable-content * { visibility: visible; }
+      #inv-printable-content {
+        position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 20px; background: white !important;
+      }
+      #inv-print-modal { position: static; background: transparent; padding: 0; }
+    }
+  </style>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(11,28,48,0.06)] border-t border-surface-variant">
+    <div class="flex items-center justify-around px-1 py-1 max-w-xl mx-auto w-full">
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../dashboard/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">dashboard</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">نظرة عامة</span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../journal/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">menu_book</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">اليومية</span><span class="hidden xs:inline">قيود اليومية</span></span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../ledger/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">balance</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الأستاذ</span><span class="hidden xs:inline">دفتر الأستاذ</span></span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../bank-recon/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">assured_workload</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">التسوية</span><span class="hidden xs:inline">التسوية البنكية</span></span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../cash-count/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">payments</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الخزينة</span><span class="hidden xs:inline">جرد الخزينة</span></span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-primary font-bold" href="../inventory-count/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">inventory_2</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">المخزون</span><span class="hidden xs:inline">جرد المخزون</span></span>
+      </a>
+    </div>
+  </nav>
+
+  <script src="../data.js"></script>
+  <script src="../js/state.js"></script>
+  <script src="../js/inventory-count.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initInventoryCount();
+    });
+  </script>
+</body>
+</html>
