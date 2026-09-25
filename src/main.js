@@ -246,9 +246,20 @@ window.navigateToScreen = function(screenId) {
     `;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  // تشغيل مؤثرات الحركة التفاعلية من GSAP عند التنقل بين الشاشات
+  if (typeof AccounteraAnimations !== 'undefined') {
+    AccounteraAnimations.animateScreenTransition('#app');
+    AccounteraAnimations.refreshAnimations(screenId);
+  }
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // تهيئة محرك الأنيميشن GSAP
+  if (typeof AccounteraAnimations !== 'undefined') {
+    AccounteraAnimations.init();
+  }
+
   // تهيئة عميل Supabase السحابي
   if (typeof SupabaseService !== 'undefined') {
     SupabaseService.init();
