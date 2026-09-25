@@ -9,6 +9,7 @@ const DEFAULT_ADMIN_PLANS = [
     name: "الباقة التأسيسية (Free)",
     price: 0,
     period: "مجاناً مدى الحياة",
+    durationDays: 0, // 0 = مدى الحياة
     badge: "تأسيسي",
     icon: "book-open",
     color: "#10B981",
@@ -31,7 +32,8 @@ const DEFAULT_ADMIN_PLANS = [
     id: "pro",
     name: "المحاسب المحترف (Pro)",
     price: 299,
-    period: "3 أشهر",
+    period: "شهر واحد",
+    durationDays: 30, // 30 يوماً
     badge: "الأكثر طلباً",
     icon: "briefcase",
     color: "#3B82F6",
@@ -57,6 +59,7 @@ const DEFAULT_ADMIN_PLANS = [
     name: "خبير النمذجة (VIP Master)",
     price: 599,
     period: "سنة كاملة",
+    durationDays: 365, // 365 يوماً
     badge: "النخبة",
     icon: "sparkle",
     color: "#8B5CF6",
@@ -158,7 +161,10 @@ const ExcelAdminDashboard = {
     enforcePlanGating: false,
     maintenanceMode: false,
     certificateWatermark: "منصة المحاسب المعتمدة 2026",
-    defaultCurrency: "ج.م"
+    defaultCurrency: "ج.م",
+    trialEnabled: true,
+    trialDays: 3,
+    trialPlan: "pro"
   },
 
   init() {
@@ -169,6 +175,9 @@ const ExcelAdminDashboard = {
         this.plans.forEach(p => {
           if (p.allowLinkedInShare === undefined) {
             p.allowLinkedInShare = (p.id !== 'free');
+          }
+          if (p.durationDays === undefined) {
+            p.durationDays = (p.id === 'free' ? 0 : (p.id === 'vip' ? 365 : 30));
           }
         });
       }
@@ -1364,12 +1373,47 @@ const ExcelAdminDashboard = {
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 22 }) : ''}
             <span>إدارة باقات الاشتراك وتخصيص الصلاحيات</span>
           </h2>
-          <p style="margin:4px 0 0; color:var(--text-muted); font-size:0.88rem;">التحكم بأسعار ومدة الباقات والدروس المتاحة وصلاحيات الأقسام المتقدمة</p>
+          <p style="margin:4px 0 0; color:var(--text-muted); font-size:0.88rem;">التحكم بأسعار ومدة الباقات والدروس المتاحة وصلاحيات الأقسام والمؤقت الزمني</p>
         </div>
         <button class="btn-workspace-action btn-workspace-primary" style="display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.addNewPlan()">
           ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('plus', { size: 14 }) : '+'}
           <span>إضافة باقة جديدة</span>
         </button>
+      </div>
+
+      <!-- لوحة التحكم بالفترة التجريبية للطلاب (Free Trial Configuration) -->
+      <div style="background:var(--surface-ground); border:1px solid var(--border-subtle); border-radius:14px; padding:18px 20px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div style="width:44px; height:44px; border-radius:10px; background:rgba(16,185,129,0.12); color:#10b981; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 22 }) : '★'}
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <h3 style="margin:0; font-size:1.05rem; font-weight:800; color:var(--text-primary);">التحكم بالفترة التجريبية المجانية (Free Trial)</h3>
+              <span class="badge" style="background:${this.systemConfig.trialEnabled ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color:${this.systemConfig.trialEnabled ? '#10b981' : '#ef4444'}; font-size:0.75rem; font-weight:bold; padding:2px 8px; border-radius:999px;">
+                ${this.systemConfig.trialEnabled ? 'مفعلة للطلاب' : 'معطلة'}
+              </span>
+            </div>
+            <p style="margin:4px 0 0; font-size:0.84rem; color:var(--text-secondary);">
+              المدة الحالية للتجربة: <strong>${this.systemConfig.trialDays || 3} أيام</strong> على باقة <strong>${(this.systemConfig.trialPlan || 'pro').toUpperCase()}</strong> • ينتهي وصول الطالب تلقائياً ويعود للباقة المجانية بعد انقضاء هذه المدة.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:6px; background:var(--surface-card); border:1px solid var(--border-subtle); padding:6px 12px; border-radius:8px;">
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);">مدة التجربة (بالأيام):</label>
+            <input type="number" id="cfg_trial_days" value="${this.systemConfig.trialDays || 3}" min="1" max="60" style="width:60px; padding:4px 8px; font-weight:800; text-align:center; border:1px solid var(--border-subtle); border-radius:6px; background:var(--bg-main); color:var(--text-primary);">
+          </div>
+
+          <button class="btn-workspace-action" style="padding:8px 14px; font-size:0.84rem;" onclick="ExcelAdminDashboard.updateTrialDays(document.getElementById('cfg_trial_days')?.value)">
+            حفظ المدة
+          </button>
+
+          <button class="btn-workspace-action ${this.systemConfig.trialEnabled ? '' : 'btn-workspace-primary'}" style="padding:8px 14px; font-size:0.84rem;" onclick="ExcelAdminDashboard.toggleTrialEnabled()">
+            ${this.systemConfig.trialEnabled ? 'تعطيل التجربة' : 'تفعيل التجربة'}
+          </button>
+        </div>
       </div>
 
       <div class="plans-grid-cards">
@@ -1387,6 +1431,10 @@ const ExcelAdminDashboard = {
               <div class="plan-price-tag">
                 ${plan.price === 0 ? 'مجاناً' : `${plan.price} ج.م`}
                 <span style="font-size:0.85rem; color:var(--text-muted); font-weight:normal;"> / ${plan.period}</span>
+              </div>
+
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+                مدة المؤقت: <strong style="color:var(--primary);">${plan.durationDays > 0 ? `${plan.durationDays} يوماً` : 'دائم (مدى الحياة)'}</strong>
               </div>
 
               <div class="plan-rules-box" style="border-right: 3px solid ${plan.color || 'var(--tier-starter)'};">
@@ -1484,20 +1532,25 @@ const ExcelAdminDashboard = {
                 <input type="number" id="pe_price" class="admin-form-input" value="${plan.price}">
               </div>
               <div class="admin-form-group">
-                <label>مدة الاشتراك:</label>
-                <input type="text" id="pe_period" class="admin-form-input" value="${plan.period}">
+                <label>مدة الصلاحية بالأيام (المؤقت الزمني):</label>
+                <input type="number" id="pe_duration_days" class="admin-form-input" value="${plan.durationDays !== undefined ? plan.durationDays : 30}" min="0" placeholder="0 = دائم | 30 = شهر">
               </div>
             </div>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
               <div class="admin-form-group">
+                <label>نص العرض للمدة (للطالب):</label>
+                <input type="text" id="pe_period" class="admin-form-input" value="${plan.period}">
+              </div>
+              <div class="admin-form-group">
                 <label>الوسام الترويجي:</label>
                 <input type="text" id="pe_badge" class="admin-form-input" value="${plan.badge || ''}">
               </div>
-              <div class="admin-form-group">
-                <label>اللون المميز:</label>
-                <input type="color" id="pe_color" class="admin-form-input" style="width:100%; padding:2px; height:42px;" value="${plan.color || 'var(--tier-starter)'}">
-              </div>
+            </div>
+
+            <div class="admin-form-group">
+              <label>اللون المميز:</label>
+              <input type="color" id="pe_color" class="admin-form-input" style="width:100%; padding:2px; height:42px;" value="${plan.color || 'var(--tier-starter)'}">
             </div>
           </div>
 
@@ -1611,6 +1664,8 @@ const ExcelAdminDashboard = {
 
     plan.name = document.getElementById('pe_name')?.value.trim() || plan.name;
     plan.price = parseFloat(document.getElementById('pe_price')?.value) || 0;
+    const daysVal = parseInt(document.getElementById('pe_duration_days')?.value, 10);
+    plan.durationDays = isNaN(daysVal) ? 30 : daysVal;
     plan.period = document.getElementById('pe_period')?.value.trim() || plan.period;
     plan.badge = document.getElementById('pe_badge')?.value.trim() || '';
     plan.icon = document.getElementById('pe_icon')?.value.trim() || plan.icon;
@@ -1939,14 +1994,15 @@ const ExcelAdminDashboard = {
               <th>المستخدم والمعرّف</th>
               <th>الدور والصلاحية</th>
               <th>باقة الاشتراك</th>
+              <th>صلاحية الاشتراك والمؤقت</th>
               <th>تاريخ التسجيل</th>
-              <th>إجراءات</th>
+              <th>إجراءات وتمديد</th>
             </tr>
           </thead>
           <tbody>
             ${filtered.length === 0 ? `
               <tr>
-                <td colspan="5" style="text-align:center; padding:32px; color:var(--text-muted);">
+                <td colspan="6" style="text-align:center; padding:32px; color:var(--text-muted);">
                   لا توجد حسابات مطابقة لمعايير البحث الحالية.
                 </td>
               </tr>
@@ -1970,8 +2026,37 @@ const ExcelAdminDashboard = {
                     <option value="vip" ${u.plan === 'vip' ? 'selected' : ''}>خبير (VIP Master)</option>
                   </select>
                 </td>
-                <td style="font-size:0.82rem; color:var(--text-muted);">${u.joinDate || '01 يناير 2026'}</td>
                 <td>
+                  ${(() => {
+                    if (u.plan === 'free' || !u.plan) {
+                      return '<span style="color:var(--text-muted); font-size:0.8rem;">مجانية دائمة</span>';
+                    }
+                    if (!u.expiresAt) {
+                      return '<span class="badge" style="background:rgba(16,185,129,0.15); color:#10b981; font-size:0.75rem; font-weight:800;">دائم (غير محدد)</span>';
+                    }
+                    const daysLeft = Math.ceil((new Date(u.expiresAt) - new Date()) / (1000 * 60 * 60 * 24));
+                    if (daysLeft > 0) {
+                      return `
+                        <div>
+                          <span class="badge" style="background:rgba(16,185,129,0.15); color:#10b981; font-weight:800; font-size:0.75rem;">نشط • متبقي ${daysLeft} يوم</span>
+                          <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">ينتهي: ${new Date(u.expiresAt).toLocaleDateString('ar-EG')}</div>
+                        </div>
+                      `;
+                    } else {
+                      return `
+                        <div>
+                          <span class="badge" style="background:rgba(239,68,68,0.15); color:#ef4444; font-weight:800; font-size:0.75rem;">منتهي الصلاحية</span>
+                          <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">انتهى: ${new Date(u.expiresAt).toLocaleDateString('ar-EG')}</div>
+                        </div>
+                      `;
+                    }
+                  })()}
+                </td>
+                <td style="font-size:0.82rem; color:var(--text-muted);">${u.joinDate || '01 يناير 2026'}</td>
+                <td style="display:flex; gap:6px; align-items:center;">
+                  ${u.plan !== 'free' ? `
+                    <button class="btn-workspace-action" style="padding:4px 8px; font-size:0.75rem; color:var(--primary); font-weight:800;" onclick="ExcelAdminDashboard.extendUserSubscription('${u.id}', 30)" title="تمديد الاشتراك 30 يوماً">+30 يوم</button>
+                  ` : ''}
                   <button class="btn-workspace-action" style="padding:4px 8px; color:var(--danger);" onclick="ExcelAdminDashboard.deleteUser('${u.id}')" title="حذف الحساب">
                     ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trash', { size: 14 }) : '✕'}
                   </button>
@@ -2010,10 +2095,83 @@ const ExcelAdminDashboard = {
     const user = users.find(u => u.id === userId);
     if (user) {
       user.plan = newPlan;
+      if (newPlan === 'free') {
+        delete user.expiresAt;
+        user.planExpired = false;
+      } else {
+        const plan = this.plans.find(p => p.id === newPlan);
+        const days = plan?.durationDays !== undefined ? plan.durationDays : (newPlan === 'vip' ? 365 : 30);
+        user.subscribedAt = new Date().toISOString();
+        if (days > 0) {
+          user.expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+        } else {
+          delete user.expiresAt;
+        }
+        user.planExpired = false;
+      }
       localStorage.setItem('jr_users', JSON.stringify(users));
-      if (typeof AccModal !== 'undefined') AccModal.toast(`✓ تم ترقية باقة (${user.name}) إلى [${newPlan.toUpperCase()}] بنجاح!`, 'success');
-      else alert(`✓ تم ترقية باقة (${user.name}) إلى [${newPlan.toUpperCase()}] بنجاح!`);
+
+      // إذا كان المستخدم الحالي هو نفس الحساب، تحديثه فوراً
+      const cur = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
+      if (cur && (cur.id === userId || cur.email === user.email)) {
+        cur.plan = user.plan;
+        cur.subscribedAt = user.subscribedAt;
+        cur.expiresAt = user.expiresAt;
+        cur.planExpired = user.planExpired;
+        localStorage.setItem('accountera_user', JSON.stringify(cur));
+        AuthService.currentUser = cur;
+        AuthService.updateTopBarUI();
+      }
+
+      if (typeof AccModal !== 'undefined') AccModal.toast(`✓ تم تحديث باقة (${user.name}) إلى [${newPlan.toUpperCase()}] بنجاح!`, 'success');
+      this.switchTab('users');
     }
+  },
+
+  extendUserSubscription(userId, days = 30) {
+    let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+
+    const baseTime = (user.expiresAt && new Date(user.expiresAt) > new Date()) 
+      ? new Date(user.expiresAt).getTime() 
+      : Date.now();
+    const newExp = new Date(baseTime + days * 24 * 60 * 60 * 1000);
+    user.expiresAt = newExp.toISOString();
+    user.planExpired = false;
+    localStorage.setItem('jr_users', JSON.stringify(users));
+
+    const cur = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
+    if (cur && (cur.id === userId || cur.email === user.email)) {
+      cur.expiresAt = user.expiresAt;
+      cur.planExpired = false;
+      localStorage.setItem('accountera_user', JSON.stringify(cur));
+      AuthService.currentUser = cur;
+      AuthService.updateTopBarUI();
+    }
+
+    if (typeof AccModal !== 'undefined') AccModal.toast(`✓ تم تمديد اشتراك (${user.name}) لمدة ${days} يوماً حتى ${newExp.toLocaleDateString('ar-EG')}!`, 'success');
+    this.switchTab('users');
+  },
+
+  updateTrialDays(days) {
+    const d = parseInt(days, 10);
+    if (!d || d < 1) {
+      if (typeof AccModal !== 'undefined') AccModal.toast('يرجى إدخال عدد أيام صحيح (يوم أو أكثر)', 'error');
+      return;
+    }
+    this.systemConfig.trialDays = d;
+    this.saveState('config');
+    if (typeof AccModal !== 'undefined') AccModal.toast(`✓ تم حفظ مدة التجربة المجانية (${d} أيام) بنجاح!`, 'success');
+    this.switchTab('plans', false);
+  },
+
+  toggleTrialEnabled() {
+    this.systemConfig.trialEnabled = !this.systemConfig.trialEnabled;
+    this.saveState('config');
+    const msg = this.systemConfig.trialEnabled ? '✓ تم تفعيل الفترة التجريبية للطلاب.' : '✓ تم إيقاف الفترة التجريبية.';
+    if (typeof AccModal !== 'undefined') AccModal.toast(msg, 'info');
+    this.switchTab('plans', false);
   },
 
   async deleteUser(userId) {

@@ -14,6 +14,9 @@ const ExcelStudentPlansView = {
         const raw = localStorage.getItem('accountera_user');
         if (raw) user = JSON.parse(raw);
       }
+      if (user && typeof AuthService !== 'undefined' && AuthService.verifySubscriptionExpiry) {
+        user = AuthService.verifySubscriptionExpiry(user);
+      }
     } catch(e) {}
 
     return user || {
@@ -30,6 +33,80 @@ const ExcelStudentPlansView = {
     const currentPlanId = user.plan || 'free';
     const referralCode = `ACC-REF-${(user.id || '2026').replace(/[^a-zA-Z0-9]/g, '').slice(-6)}`;
     const referralLink = `https://accountera.vercel.app?ref=${referralCode}`;
+
+    let plans = (typeof DEFAULT_ADMIN_PLANS !== 'undefined') ? DEFAULT_ADMIN_PLANS : [
+      { id: 'free', name: 'الباقة التأسيسية (Free)', price: 0, period: 'مدى الحياة', durationDays: 0 },
+      { id: 'pro', name: 'المحاسب المحترف (Pro)', price: 299, period: '30 يوم', durationDays: 30 },
+      { id: 'vip', name: 'خبير النمذجة (VIP Master)', price: 599, period: 'سنة كاملة', durationDays: 365 }
+    ];
+    try {
+      const savedPlans = localStorage.getItem('acc_admin_plans');
+      if (savedPlans) plans = JSON.parse(savedPlans);
+    } catch(e) {}
+
+    let systemConfig = { trialEnabled: true, trialDays: 3, trialPlan: 'pro' };
+    try {
+      const savedCfg = localStorage.getItem('acc_system_config');
+      if (savedCfg) systemConfig = { ...systemConfig, ...JSON.parse(savedCfg) };
+    } catch(e) {}
+
+    const freePlan = plans.find(p => p.id === 'free') || { id: 'free', name: 'الباقة التأسيسية (Free)', price: 0, period: 'مدى الحياة', durationDays: 0 };
+    const proPlan = plans.find(p => p.id === 'pro') || { id: 'pro', name: 'المحاسب المحترف (Pro)', price: 299, period: '30 يوم', durationDays: 30 };
+    const vipPlan = plans.find(p => p.id === 'vip') || { id: 'vip', name: 'خبير النمذجة (VIP Master)', price: 599, period: 'سنة كاملة', durationDays: 365 };
+
+    let timerHtml = '';
+    if (user.plan !== 'free' || user.isTrial) {
+      let remainingDaysText = 'غير محدد';
+      let remainingDays = 0;
+      const startDateText = user.subscribedAt ? new Date(user.subscribedAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'اليوم';
+      let endDateText = 'مدى الحياة';
+
+      if (user.expiresAt) {
+        const expDate = new Date(user.expiresAt);
+        endDateText = expDate.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+        const diffMs = expDate.getTime() - Date.now();
+        remainingDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        if (remainingDays <= 0) {
+          remainingDaysText = 'انتهت الصلاحية';
+        } else {
+          remainingDaysText = `${remainingDays} يوم متبقي`;
+        }
+      }
+
+      const activePlanObj = plans.find(p => p.id === user.plan) || proPlan;
+      const trialBadge = user.isTrial 
+        ? `<span style="background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3); padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 800;">فترة تجريبية مجانية (${systemConfig.trialDays || 3} أيام)</span>` 
+        : `<span style="background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 800;">اشتراك مدفوع نشط ✓</span>`;
+
+      timerHtml = `
+        <div style="background: linear-gradient(135deg, rgba(20, 184, 166, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%); border: 1.5px solid var(--primary-border); border-radius: var(--radius-lg); padding: 1.5rem 2rem; margin-bottom: 2rem; box-shadow: var(--elevation-1);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 52px; height: 52px; border-radius: 12px; background: var(--surface-card); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 26 }) : '⏱️'}
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                  <strong style="font-size: 1.15rem; color: var(--text-primary); font-weight: 900;">${activePlanObj.name}</strong>
+                  ${trialBadge}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary); display: flex; gap: 14px; flex-wrap: wrap;">
+                  <span>تاريخ البدء: <strong class="tabular-nums font-mono" style="color: var(--text-primary);">${startDateText}</strong></span>
+                  <span>تاريخ الانتهاء: <strong class="tabular-nums font-mono" style="color: var(--text-primary);">${endDateText}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 10px 20px; text-align: center; min-width: 170px;">
+              <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">المؤقت والصلاحية:</div>
+              <div class="tabular-nums font-mono" style="font-size: 1.35rem; font-weight: 900; color: ${remainingDays > 5 ? 'var(--primary)' : 'var(--danger)'};">
+                ${remainingDaysText}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
     return `
       <div class="student-plans-container" style="max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem;">
@@ -65,6 +142,9 @@ const ExcelStudentPlansView = {
           </div>
         </div>
 
+        <!-- بطاقة مؤقت وصلاحية الاشتراك النشط -->
+        ${timerHtml}
+
         <!-- شبكة كروت الباقات الـ 3 -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
           
@@ -77,10 +157,10 @@ const ExcelStudentPlansView = {
                 </div>
                 <span style="background: var(--bg-secondary); color: var(--text-secondary); padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; border: 1px solid var(--border-subtle);">تأسيسي</span>
               </div>
-              <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px;">الباقة التأسيسية (Free)</h3>
+              <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px;">${freePlan.name}</h3>
               <div style="margin-bottom: 1.25rem; display: flex; align-items: baseline; gap: 6px;">
                 <span style="font-size: 2rem; font-weight: 900; color: var(--text-primary);">مجاناً</span>
-                <span style="color: var(--text-muted); font-size: 0.85rem;"> / مدى الحياة</span>
+                <span style="color: var(--text-muted); font-size: 0.85rem;"> / ${freePlan.period || 'مدى الحياة'}</span>
               </div>
               <p style="font-size: 0.86rem; color: var(--text-secondary); line-height: 1.65; margin-bottom: 1.25rem;">
                 بداية مثالية لطلاب الفرقة الأولى والثانية والمبتدئين في فهم طبيعة الحسابات والقيد المزدوج.
@@ -139,11 +219,11 @@ const ExcelStudentPlansView = {
                 </div>
                 <span style="background: var(--tier-pro-bg); color: var(--tier-pro-text); padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; border: 1px solid var(--tier-pro-border);">احترافي</span>
               </div>
-              <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px;">المحاسب المحترف (Pro)</h3>
+              <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px;">${proPlan.name}</h3>
               <div style="margin-bottom: 1.25rem; display: flex; align-items: baseline; gap: 6px;">
-                <span class="tabular-nums font-mono" style="font-size: 2rem; font-weight: 900; color: var(--text-primary);">299</span>
+                <span class="tabular-nums font-mono" style="font-size: 2rem; font-weight: 900; color: var(--text-primary);">${proPlan.price}</span>
                 <span style="font-size: 1.05rem; font-weight: 800; color: var(--tier-pro);">ج.م</span>
-                <span style="color: var(--text-muted); font-size: 0.85rem;"> / 3 أشهر</span>
+                <span style="color: var(--text-muted); font-size: 0.85rem;"> / ${proPlan.period || (proPlan.durationDays ? proPlan.durationDays + ' يوم' : '30 يوم')}</span>
               </div>
               <p style="font-size: 0.86rem; color: var(--text-secondary); line-height: 1.65; margin-bottom: 1.25rem;">
                 الحزمة الشاملة للتأهيل لسوق العمل، ومراجعة الشركات وإثبات الكفاءة أمام مسؤولي التوظيف.
@@ -177,17 +257,25 @@ const ExcelStudentPlansView = {
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
-              ${currentPlanId === 'pro' ? `
+              ${currentPlanId === 'pro' && !user.isTrial ? `
                 <button disabled style="width: 100%; background: var(--tier-starter-bg); color: var(--tier-starter-text); border: 1px solid var(--tier-starter-border); padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem; cursor: default;">
                   ✓ باقتك الحالية النشطة
                 </button>
               ` : `
-                <button onclick="ExcelStudentPlansView.subscribePlan('pro', 299)" class="btn-cta-primary" style="width: 100%; padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem;">
-                  ترقية إلى باقة Pro (299 ج.م)
+                <button onclick="ExcelStudentPlansView.subscribePlan('pro', ${proPlan.price})" class="btn-cta-primary" style="width: 100%; padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem;">
+                  ترقية إلى باقة Pro (${proPlan.price} ج.م)
                 </button>
-                <button onclick="ExcelStudentPlansView.activateTrial()" class="btn-cta-secondary" style="width: 100%; padding: 9px; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 700;">
-                  تجربة Pro مجانية فورية
-                </button>
+                ${systemConfig.trialEnabled ? (
+                  user.hasUsedTrial ? `
+                    <button disabled class="btn-cta-secondary" style="width: 100%; padding: 9px; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 700; opacity: 0.6; cursor: not-allowed;" title="تم استهلاك التجربة المجانية سابقاً">
+                      تم استهلاك التجربة المجانية مسبقاً
+                    </button>
+                  ` : `
+                    <button onclick="ExcelStudentPlansView.activateTrial()" class="btn-cta-secondary" style="width: 100%; padding: 9px; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 700; border: 1px dashed var(--primary); color: var(--primary);">
+                      تجربة مجانية فورية (${systemConfig.trialDays || 3} أيام)
+                    </button>
+                  `
+                ) : ''}
               `}
             </div>
           </div>
@@ -203,13 +291,13 @@ const ExcelStudentPlansView = {
                 <div style="width: 44px; height: 44px; border-radius: var(--radius-sm); background: var(--tier-vip-bg); color: var(--tier-vip-text); display: flex; align-items: center; justify-content: center; border: 1px solid var(--tier-vip-border);">
                   ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('star', { size: 24, strokeWidth: 1.75 }) : ''}
                 </div>
-                <span style="background: var(--tier-vip-bg); color: var(--tier-vip-text); padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; border: 1px solid var(--tier-vip-border);">سنة كاملة</span>
+                <span style="background: var(--tier-vip-bg); color: var(--tier-vip-text); padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; border: 1px solid var(--tier-vip-border);">${vipPlan.period || 'سنة كاملة'}</span>
               </div>
-              <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px;">خبير النمذجة (VIP Master)</h3>
+              <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px;">${vipPlan.name}</h3>
               <div style="margin-bottom: 1.25rem; display: flex; align-items: baseline; gap: 6px;">
-                <span class="tabular-nums font-mono" style="font-size: 2rem; font-weight: 900; color: var(--text-primary);">599</span>
+                <span class="tabular-nums font-mono" style="font-size: 2rem; font-weight: 900; color: var(--text-primary);">${vipPlan.price}</span>
                 <span style="font-size: 1.05rem; font-weight: 800; color: var(--tier-vip);">ج.م</span>
-                <span style="color: var(--text-muted); font-size: 0.85rem;"> / سنة كاملة</span>
+                <span style="color: var(--text-muted); font-size: 0.85rem;"> / ${vipPlan.period || 'سنة كاملة'}</span>
               </div>
               <p style="font-size: 0.86rem; color: var(--text-secondary); line-height: 1.65; margin-bottom: 1.25rem;">
                 المستوى الأقصى من الاحتراف مع محاكي المقابلات الشخصية، وكافة قطاعات الشركات، ومتابعة مدرب معتمد.
@@ -244,8 +332,8 @@ const ExcelStudentPlansView = {
                   ✓ باقتك الحالية النشطة
                 </button>
               ` : `
-                <button onclick="ExcelStudentPlansView.subscribePlan('vip', 599)" class="btn-cta-primary" style="width: 100%; background: var(--tier-vip); padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem;">
-                  الترقية لباقة VIP Master (599 ج.م)
+                <button onclick="ExcelStudentPlansView.subscribePlan('vip', ${vipPlan.price})" class="btn-cta-primary" style="width: 100%; background: var(--tier-vip); padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem;">
+                  الترقية لباقة VIP Master (${vipPlan.price} ج.م)
                 </button>
               `}
             </div>
@@ -342,7 +430,30 @@ const ExcelStudentPlansView = {
 
   subscribePlan(planId, price) {
     const user = this.getUser();
+    let plans = (typeof DEFAULT_ADMIN_PLANS !== 'undefined') ? DEFAULT_ADMIN_PLANS : [];
+    try {
+      const saved = localStorage.getItem('acc_admin_plans');
+      if (saved) plans = JSON.parse(saved);
+    } catch(e) {}
+
+    const selectedPlan = plans.find(p => p.id === planId) || {
+      id: planId,
+      durationDays: planId === 'pro' ? 30 : (planId === 'vip' ? 365 : 0)
+    };
+
+    const now = new Date();
     user.plan = planId;
+    user.isTrial = false;
+    user.subscribedAt = now.toISOString();
+
+    const durationDays = selectedPlan.durationDays || (planId === 'pro' ? 30 : (planId === 'vip' ? 365 : 0));
+    if (durationDays > 0) {
+      const expDate = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000);
+      user.expiresAt = expDate.toISOString();
+    } else {
+      user.expiresAt = null;
+    }
+
     localStorage.setItem('accountera_user', JSON.stringify(user));
 
     try {
@@ -350,6 +461,9 @@ const ExcelStudentPlansView = {
       const idx = users.findIndex(u => u.id === user.id || u.email === user.email);
       if (idx >= 0) {
         users[idx].plan = planId;
+        users[idx].isTrial = false;
+        users[idx].subscribedAt = user.subscribedAt;
+        users[idx].expiresAt = user.expiresAt;
         localStorage.setItem('jr_users', JSON.stringify(users));
       }
     } catch(e) {}
@@ -360,7 +474,7 @@ const ExcelStudentPlansView = {
     }
 
     if (typeof AccModal !== 'undefined' && AccModal.toast) {
-      AccModal.toast(`تم تفعيل باقة ${planId.toUpperCase()} بنجاح. كافة الصلاحيات متاحة لك الآن.`, "success");
+      AccModal.toast(`تم تفعيل باقة ${planId.toUpperCase()} بنجاح لمدة ${durationDays > 0 ? durationDays + ' يوم' : 'مدى الحياة'}.`, "success");
     } else {
       alert(`تم تفعيل باقة ${planId.toUpperCase()} بنجاح!`);
     }
@@ -372,11 +486,105 @@ const ExcelStudentPlansView = {
   },
 
   activateTrial() {
-    this.subscribePlan('pro', 0);
+    let systemConfig = { trialEnabled: true, trialDays: 3, trialPlan: 'pro' };
+    try {
+      const savedCfg = localStorage.getItem('acc_system_config');
+      if (savedCfg) systemConfig = { ...systemConfig, ...JSON.parse(savedCfg) };
+    } catch(e) {}
+
+    if (!systemConfig.trialEnabled) {
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast("الفترة التجريبية المجانية غير متاحة حالياً بأمر الإدارة.", "warning");
+      } else {
+        alert("الفترة التجريبية المجانية غير متاحة حالياً.");
+      }
+      return;
+    }
+
+    const user = this.getUser();
+    if (user.hasUsedTrial) {
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast("عفواً، لقد استهلكت الفترة التجريبية المجانية الخاصة بحسابك مسبقاً.", "warning");
+      } else {
+        alert("عفواً، لقد استهلكت الفترة التجريبية المجانية مسبقاً.");
+      }
+      return;
+    }
+
+    const trialDays = systemConfig.trialDays || 3;
+    const targetPlan = systemConfig.trialPlan || 'pro';
+    const now = new Date();
+    const expDate = new Date(now.getTime() + trialDays * 24 * 60 * 60 * 1000);
+
+    user.plan = targetPlan;
+    user.isTrial = true;
+    user.hasUsedTrial = true;
+    user.subscribedAt = now.toISOString();
+    user.expiresAt = expDate.toISOString();
+
+    localStorage.setItem('accountera_user', JSON.stringify(user));
+
+    try {
+      let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
+      const idx = users.findIndex(u => u.id === user.id || u.email === user.email);
+      if (idx >= 0) {
+        users[idx].plan = targetPlan;
+        users[idx].isTrial = true;
+        users[idx].hasUsedTrial = true;
+        users[idx].subscribedAt = user.subscribedAt;
+        users[idx].expiresAt = user.expiresAt;
+        localStorage.setItem('jr_users', JSON.stringify(users));
+      }
+    } catch(e) {}
+
+    if (typeof AuthService !== 'undefined') {
+      AuthService.currentUser = user;
+      AuthService.updateTopBarUI();
+    }
+
+    if (typeof AccModal !== 'undefined' && AccModal.toast) {
+      AccModal.toast(`تم تفعيل الفترة التجريبية لباقة ${targetPlan.toUpperCase()} مجاناً لمدة ${trialDays} أيام!`, "success");
+    } else {
+      alert(`تم تفعيل الفترة التجريبية المجانية بنجاح لمدة ${trialDays} أيام!`);
+    }
+
+    const appContainer = document.getElementById('app');
+    if (appContainer) {
+      appContainer.innerHTML = this.render();
+    }
   },
 
   downgradeToFree() {
-    this.subscribePlan('free', 0);
+    const user = this.getUser();
+    user.plan = 'free';
+    user.isTrial = false;
+    user.expiresAt = null;
+    localStorage.setItem('accountera_user', JSON.stringify(user));
+
+    try {
+      let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
+      const idx = users.findIndex(u => u.id === user.id || u.email === user.email);
+      if (idx >= 0) {
+        users[idx].plan = 'free';
+        users[idx].isTrial = false;
+        users[idx].expiresAt = null;
+        localStorage.setItem('jr_users', JSON.stringify(users));
+      }
+    } catch(e) {}
+
+    if (typeof AuthService !== 'undefined') {
+      AuthService.currentUser = user;
+      AuthService.updateTopBarUI();
+    }
+
+    if (typeof AccModal !== 'undefined' && AccModal.toast) {
+      AccModal.toast("تم الرجوع إلى الباقة التأسيسية المجانية.", "info");
+    }
+
+    const appContainer = document.getElementById('app');
+    if (appContainer) {
+      appContainer.innerHTML = this.render();
+    }
   }
 };
 

@@ -374,27 +374,57 @@ const ExcelStudentSettingsView = {
       allowLinkedInShare: false
     };
 
+    let remainingDays = 0;
+    let remainingDaysText = 'مدى الحياة';
+    const startDateText = user.subscribedAt ? new Date(user.subscribedAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير محدد';
+    let endDateText = 'مدى الحياة';
+
+    if (user.expiresAt) {
+      const expDate = new Date(user.expiresAt);
+      endDateText = expDate.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+      const diffMs = expDate.getTime() - Date.now();
+      remainingDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      if (remainingDays <= 0) {
+        remainingDaysText = 'انتهت الصلاحية';
+      } else {
+        remainingDaysText = `${remainingDays} يوم متبقي`;
+      }
+    }
+
+    const isTrial = !!user.isTrial;
+    const statusBadge = isTrial
+      ? `<span style="padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 800; background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3);">فترة تجريبية مجانية ⏱️</span>`
+      : `<span style="padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 800; background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-border);">حالة الاشتراك: سارٍ ونشط ✓</span>`;
+
     return `
       <div class="settings-card" style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
         <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
           <div>
             <h2 style="font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
               ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 20 }) : ''}
-              <span>باقة التدريب النشطة</span>
+              <span>باقة التدريب ومؤقت الصلاحية</span>
             </h2>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">صلاحيات حسابك، مميزات الباقة، وحالة مشاركة الاعتماد المهني.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">تفاصيل الصلاحية، تاريخ انتهاء الاشتراك، ومميزات الباقة الحالية.</p>
           </div>
-          <span style="padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 800; background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-border);">
-            حالة الاشتراك: سارٍ ونشط ✓
-          </span>
+          ${statusBadge}
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
           <div style="background: var(--surface-ground); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.5rem;">
             <div style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 4px;">اسم الباقة الحالية:</div>
             <div style="font-size: 1.4rem; font-weight: 900; color: var(--primary); margin-bottom: 10px;">${currentPlan.name}</div>
-            <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
-              المدة: <strong>${currentPlan.period || 'مدى الحياة'}</strong> • القيمة: <strong>${currentPlan.price === 0 ? 'مجاناً' : `${currentPlan.price} ج.م`}</strong>
+            <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7;">
+              <div>المدة الرسمية: <strong>${currentPlan.period || 'مدى الحياة'}</strong></div>
+              <div>القيمة: <strong>${currentPlan.price === 0 ? 'مجاناً' : `${currentPlan.price} ج.م`}</strong></div>
+            </div>
+          </div>
+
+          <div style="background: var(--surface-ground); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.5rem;">
+            <div style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 6px;">مؤقت وتواريخ الاشتراك:</div>
+            <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.88rem;">
+              <div>• تاريخ البدء والتفعيل: <strong class="tabular-nums font-mono">${startDateText}</strong></div>
+              <div>• تاريخ انتهاء الصلاحية: <strong class="tabular-nums font-mono" style="color: ${user.expiresAt ? 'var(--primary)' : 'inherit'};">${endDateText}</strong></div>
+              <div>• الوقت المتبقي: <strong class="tabular-nums font-mono" style="color: ${remainingDays > 5 || !user.expiresAt ? 'var(--success)' : 'var(--danger)'};">${remainingDaysText}</strong></div>
             </div>
           </div>
 
@@ -412,13 +442,13 @@ const ExcelStudentSettingsView = {
           ${user.plan === 'free' ? `
             <button onclick="navigateToScreen('student-plans')" class="btn-cta-primary" style="padding: 10px 20px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px;">
               ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 16 }) : ''}
-              <span>ترقية الباقة إلى المحترف (Pro)</span>
-            </button>
-            <button onclick="AccounteraPortfolioEngine.upgradeToProTrial()" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px;">
-              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('trend-up', { size: 16 }) : ''}
-              <span>تجربة باقة Pro الفورية</span>
+              <span>ترقية الباقة الآن</span>
             </button>
           ` : `
+            <button onclick="navigateToScreen('student-plans')" class="btn-cta-secondary" style="padding: 10px 16px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px;">
+              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('credit-card', { size: 16 }) : ''}
+              <span>تجديد أو ترقية الباقة</span>
+            </button>
             <button onclick="navigateToScreen('portfolio')" class="btn-cta-primary" style="padding: 10px 20px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px;">
               ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('briefcase', { size: 16 }) : ''}
               <span>فتح المحفظة ومشاركتها على LinkedIn</span>

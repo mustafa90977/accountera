@@ -141,7 +141,48 @@ const AuthService = {
     this.setCurrentUser(userData, redirect);
   },
 
+  // فحص صلاحية باقة المستخدم والتحقق من انتهاء المؤقت الزمني
+  verifySubscriptionExpiry(user) {
+    if (!user || !user.plan || user.plan === 'free') return user;
+
+    if (user.expiresAt) {
+      const now = new Date().getTime();
+      const expiresTime = new Date(user.expiresAt).getTime();
+
+      if (now >= expiresTime) {
+        console.warn(`[SubscriptionEngine] Subscription for user ${user.id} expired at ${user.expiresAt}`);
+        const oldPlan = user.plan;
+        user.plan = 'free';
+        user.planExpired = true;
+        user.expiredPlan = oldPlan;
+        user.expiredAt = user.expiresAt;
+        delete user.expiresAt;
+
+        try {
+          localStorage.setItem('accountera_user', JSON.stringify(user));
+          let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
+          const idx = users.findIndex(u => u.id === user.id || u.email === user.email);
+          if (idx >= 0) {
+            users[idx].plan = 'free';
+            users[idx].planExpired = true;
+            localStorage.setItem('jr_users', JSON.stringify(users));
+          }
+        } catch (e) {}
+
+        if (typeof AccModal !== 'undefined' && AccModal.toast) {
+          setTimeout(() => {
+            AccModal.toast(`انتهت فترة اشتراكك في باقة (${oldPlan.toUpperCase()}). تم تحويل حسابك للباقة الأساسية. يرجى التجديد للاستمرار.`, 'warning', 6000);
+          }, 350);
+        }
+      }
+    }
+    return user;
+  },
+
   getCurrentUser() {
+    if (this.currentUser) {
+      this.currentUser = this.verifySubscriptionExpiry(this.currentUser);
+    }
     return this.currentUser;
   },
 
