@@ -68,16 +68,21 @@ window.navigateToScreen = function(screenId) {
 
   // إدارة ظهور ونشاط الشريط الجانبي ونمط صفحة الهبوط
   const isLandingScreen = (screenId === 'landing' || screenId === 'welcome');
+  const isAdminScreen = screenId.startsWith('admin-');
+  const isAdminUser = currentUser && currentUser.role === 'admin';
+  const shouldHideSidebar = isLandingScreen || isAdminScreen || isAdminUser;
+
   document.body.classList.toggle('landing-mode', isLandingScreen);
 
   const sidebar = document.getElementById('appSidebar');
   if (sidebar) {
-    if (isLandingScreen) {
+    if (shouldHideSidebar) {
       sidebar.classList.add('landing-hidden');
+      sidebar.style.display = 'none';
     } else {
       sidebar.classList.remove('landing-hidden');
+      sidebar.style.display = '';
     }
-    sidebar.style.display = ''; // السماح لـ CSS و @media بالتحكم في العرض على الموبايل
     document.querySelectorAll('.sidebar-item').forEach(btn => btn.classList.remove('active'));
     const activeSidebarBtn = document.getElementById(`sb-${screenId}`) || document.getElementById(`sb-${screenId.split('-')[0]}`);
     if (activeSidebarBtn) activeSidebarBtn.classList.add('active');

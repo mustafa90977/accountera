@@ -769,24 +769,41 @@ const AuthService = {
 
     if (this.currentUser) {
       const initial = this.currentUser.name ? this.currentUser.name.trim().charAt(0).toUpperCase() : 'M';
+      const isStudent = (this.currentUser.role || 'student') === 'student';
+      const isAdmin = this.currentUser.role === 'admin';
+
+      // إخفاء القائمة الجانبية المخصصة للطلاب عند الدخول كمدير نظام
+      const sidebar = document.getElementById('appSidebar');
+      if (sidebar && isAdmin) {
+        sidebar.classList.add('landing-hidden');
+        sidebar.style.display = 'none';
+      }
+
       authDock.innerHTML = `
         <div class="accountely-topbar-actions">
-          <button onclick="navigateToScreen('student-plans')" class="accountely-promo-pill">
-            <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 14 }) : ''}</span>
-            <span>Refer & earn 20%</span>
-          </button>
-          
-          <button onclick="navigateToScreen('student-plans')" class="accountely-upgrade-btn">
-            <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('star', { size: 14 }) : ''}</span>
-            <span>Upgrade • ترقية</span>
-          </button>
+          ${isStudent ? `
+            <button onclick="navigateToScreen('student-plans')" class="accountely-promo-pill">
+              <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 14 }) : ''}</span>
+              <span>Refer & earn 20%</span>
+            </button>
+            
+            <button onclick="navigateToScreen('student-plans')" class="accountely-upgrade-btn">
+              <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('star', { size: 14 }) : ''}</span>
+              <span>Upgrade • ترقية</span>
+            </button>
+          ` : (isAdmin ? `
+            <button onclick="navigateToScreen('admin-overview')" class="accountely-promo-pill" style="background:var(--primary-light); border-color:var(--primary-border); color:var(--primary); font-weight:800;">
+              <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 14 }) : ''}</span>
+              <span>Admin OS • مدير النظام</span>
+            </button>
+          ` : '')}
 
-          <div class="accountely-bell-btn" onclick="navigateToScreen('student-dashboard')" title="الإشعارات والتنبيهات">
+          <div class="accountely-bell-btn" onclick="navigateToScreen(isAdmin ? 'admin-overview' : 'student-dashboard')" title="الإشعارات والتنبيهات">
             <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('bell', { size: 16 }) : ''}</span>
             <span style="position:absolute; top:-3px; right:-3px; background:#ef4444; color:#fff; font-size:0.65rem; font-weight:800; width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center;">1</span>
           </div>
 
-          <div class="accountely-user-dock" onclick="navigateToScreen('student-settings')" title="إعدادات الحساب والملف الشخصي">
+          <div class="accountely-user-dock" onclick="navigateToScreen(isAdmin ? 'admin-settings' : 'student-settings')" title="إعدادات الحساب والملف الشخصي">
             <span style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-left:4px;">${this.currentUser.name || 'مستخدم'}</span>
             <div style="width:28px; height:28px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.82rem;">${initial}</div>
           </div>
