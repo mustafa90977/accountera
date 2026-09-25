@@ -393,6 +393,14 @@ window.requestAccountingHint = function() {
     if (!selectedTrxId) return;
     taskHintRequested[selectedTrxId] = true;
 
+    try {
+        if (typeof getCareerProfile === 'function') {
+            const prof = getCareerProfile();
+            prof.hintsUsedCount = (prof.hintsUsedCount || 0) + 1;
+            saveCareerProfile(prof);
+        }
+    } catch(e) {}
+
     const currentTrx = window.selectedTaskObject();
     if (currentTrx) {
         renderDocument(currentTrx);
@@ -1390,9 +1398,20 @@ window.postEntry = function() {
         return;
     }
 
+    const hadPriorError = !!taskErrorStates[currentTrx.id];
     delete taskErrorStates[currentTrx.id];
     delete taskHintRequested[currentTrx.id];
     document.getElementById('form-hint-btn')?.classList.add('hidden');
+
+    try {
+        if (typeof getCareerProfile === 'function') {
+            const prof = getCareerProfile();
+            if (!hadPriorError) {
+                prof.firstAttemptCount = (prof.firstAttemptCount || 0) + 1;
+            }
+            saveCareerProfile(prof);
+        }
+    } catch(e) {}
 
     // Save as Pending Posting in Journal!
     const newJournalEntry = {

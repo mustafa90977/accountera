@@ -65,6 +65,10 @@ function updateDashboard() {
             wfTbBadge.innerText = 'متزن ✓';
         }
     }
+
+    if (typeof renderCareerDashboardWidget === 'function') {
+        renderCareerDashboardWidget();
+    }
 }
 
 function getDocumentName(type) {
