@@ -45,12 +45,13 @@ window.navigateToScreen = function(screenId) {
 
   // حارس المسارات الصارم (Strict Route Guard): حظر الوصول لكافة أقسام المنصة بدون تسجيل دخول موثق
   const publicScreens = ['landing', 'welcome'];
-  const isProtected = !publicScreens.includes(screenId);
+  const isAuthScreen = (screenId === 'login' || screenId === 'register');
+  const isProtected = !publicScreens.includes(screenId) && !isAuthScreen;
   const currentUser = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
 
   if (isProtected && !currentUser) {
     console.warn(`[RouteGuard] Screen "${screenId}" requires authentication.`);
-    screenId = 'landing';
+    screenId = 'login';
     if (typeof AccModal !== 'undefined' && typeof AccModal.toast === 'function') {
       AccModal.toast('يرجى تسجيل الدخول أو إنشاء حساب للوصول إلى المنصة', 'info', 3000);
     }
@@ -60,7 +61,7 @@ window.navigateToScreen = function(screenId) {
   }
 
   // حفظ الشاشة الحالية لتجنب فقدانها عند عمل ريفريش
-  if (screenId && screenId !== 'landing' && screenId !== 'welcome') {
+  if (screenId && screenId !== 'landing' && screenId !== 'welcome' && !isAuthScreen) {
     try {
       sessionStorage.setItem('accountera_current_screen', screenId);
     } catch(e) {}
@@ -70,7 +71,7 @@ window.navigateToScreen = function(screenId) {
   const isLandingScreen = (screenId === 'landing' || screenId === 'welcome');
   const isAdminScreen = screenId.startsWith('admin-');
   const isAdminUser = currentUser && currentUser.role === 'admin';
-  const shouldHideSidebar = isLandingScreen || isAdminScreen || isAdminUser;
+  const shouldHideSidebar = isLandingScreen || isAuthScreen || isAdminScreen || isAdminUser;
 
   document.body.classList.toggle('landing-mode', isLandingScreen);
 
@@ -106,6 +107,11 @@ window.navigateToScreen = function(screenId) {
     if (activeBtn) activeBtn.classList.add('active');
     if (typeof ExcelLandingView !== 'undefined') {
       appContainer.innerHTML = ExcelLandingView.render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  } else if (screenId === 'login' || screenId === 'register') {
+    if (typeof ExcelAuthView !== 'undefined') {
+      appContainer.innerHTML = ExcelAuthView.render(screenId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   } else if (screenId.startsWith('lesson-')) {
