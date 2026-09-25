@@ -89,7 +89,7 @@
       <div class="p-3.5 sm:p-4 bg-primary text-on-primary font-bold flex justify-between items-center">
         <div class="flex items-center gap-2">
           <span>تسجيل القيد المحاسبي</span>
-          <button type="button" onclick="toggleAccountingHint(true)" class="text-xs bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-xs transition cursor-pointer" title="عرض تلميح محاسبي للمساعدة في تسجيل هذا القيد">
+          <button id="form-hint-btn" type="button" onclick="requestAccountingHint()" class="hidden text-xs bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-xs transition cursor-pointer" title="طلب تلميح محاسبي للمساعدة">
             <span>💡 تلميح</span>
           </button>
         </div>

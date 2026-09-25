@@ -132,9 +132,23 @@ window.showChronologicalLockNotice = function(lockedTrx, currentTrx) {
     }
 }
 
+const taskErrorStates = {};
+const taskHintRequested = {};
+
 function selectTask(trx) {
     if(!trx) return;
     selectedTrxId = trx.id;
+    
+    // إخفاء أو إظهار زر التلميح في رأس النموذج بحسب حالة هذا السند
+    const formHintBtn = document.getElementById('form-hint-btn');
+    if (formHintBtn) {
+        if (taskErrorStates[trx.id]) {
+            formHintBtn.classList.remove('hidden');
+        } else {
+            formHintBtn.classList.add('hidden');
+        }
+    }
+
     renderDocument(trx);
     resetForm();
     if (window.innerWidth < 1024 && typeof switchJournalMobilePane === 'function') {
@@ -167,6 +181,15 @@ function tafqeetArabic(n) {
 
 function buildHintHtml(trx) {
     if (!trx) return '';
+
+    // يظهر التلميح فقط إذا أخطأ الطالب في المحاولة وطلب التلميح
+    const hasError = !!taskErrorStates[trx.id];
+    const hasRequested = !!taskHintRequested[trx.id];
+
+    if (!hasError || !hasRequested) {
+        return `<div id="doc-hint-wrapper" class="hidden"></div>`;
+    }
+
     const debits = (trx.lines || []).filter(l => Number(l.debit) > 0);
     const credits = (trx.lines || []).filter(l => Number(l.credit) > 0);
     const isCompound = (debits.length + credits.length) > 2;
@@ -217,22 +240,18 @@ function buildHintHtml(trx) {
     `;
 
     return `
-        <div class="mt-3.5 border-t border-slate-200 pt-3 text-right" id="doc-hint-wrapper">
-            <button type="button" onclick="toggleAccountingHint()" class="w-full py-2.5 px-3.5 bg-amber-50 hover:bg-amber-100/90 text-amber-900 border border-amber-300 rounded-xl font-bold text-xs flex items-center justify-between transition cursor-pointer shadow-2xs">
-                <span class="flex items-center gap-1.5">
-                    <span class="text-base">💡</span>
-                    <span>تلميح محاسبي وإرشادات التسجيل</span>
-                    <span class="text-[10px] bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded font-bold">${isCompound ? 'قيد مركب' : 'قيد بسيط'}</span>
-                </span>
-                <span id="hint-chevron-icon" class="material-symbols-outlined text-[18px] transition-transform duration-200">expand_more</span>
-            </button>
-            <div id="doc-hint-container" class="hidden mt-2 p-3.5 bg-amber-50/80 border border-amber-200 rounded-xl text-xs space-y-2.5 text-right animate-in fade-in duration-150 shadow-inner">
-                <div class="flex items-center justify-between pb-1.5 border-b border-amber-200/80">
-                    <span class="font-bold text-amber-950 text-xs flex items-center gap-1">
-                        <span>🎯 هيكل القيد:</span>
+        <div class="mt-3.5 border-t-2 border-amber-300 pt-3 text-right animate-in fade-in duration-200" id="doc-hint-wrapper">
+            <div class="p-3.5 bg-amber-50/90 border border-amber-300 rounded-xl text-xs space-y-2.5 shadow-sm">
+                <div class="flex items-center justify-between pb-1.5 border-b border-amber-200">
+                    <span class="font-bold text-amber-950 text-xs flex items-center gap-1.5">
+                        <span class="text-base">💡</span>
+                        <span>تلميح وإرشادات القيد المحاسبي:</span>
                         <span class="text-blue-900 font-extrabold">${entryTypeTitle}</span>
                     </span>
-                    <span class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-bold">${debits.length} مدين / ${credits.length} دائن</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-bold">${debits.length} مدين / ${credits.length} دائن</span>
+                        <button type="button" onclick="taskHintRequested['${trx.id}'] = false; renderDocument(selectedTaskObject());" class="text-slate-400 hover:text-slate-700 font-bold text-xs px-1" title="إخفاء التلميح">✕</button>
+                    </div>
                 </div>
                 ${stepsHtml}
                 ${ruleHtml}
@@ -242,23 +261,36 @@ function buildHintHtml(trx) {
     `;
 }
 
-window.toggleAccountingHint = function(forceOpen = false) {
-    const hintBox = document.getElementById('doc-hint-container');
-    const chevron = document.getElementById('hint-chevron-icon');
-    if (!hintBox) return;
-
-    const isHidden = hintBox.classList.contains('hidden');
-    if (forceOpen || isHidden) {
-        hintBox.classList.remove('hidden');
-        if (chevron) chevron.style.transform = 'rotate(180deg)';
-        if (window.innerWidth < 1024 && typeof switchJournalMobilePane === 'function') {
-            switchJournalMobilePane('doc');
-        }
-    } else {
-        hintBox.classList.add('hidden');
-        if (chevron) chevron.style.transform = 'rotate(0deg)';
-    }
+window.selectedTaskObject = function() {
+    const pending = answerKey.filter(t => !studentJournal.find(j => j.id === t.id));
+    return pending.find(t => t.id === selectedTrxId) || pending[0];
 };
+
+window.requestAccountingHint = function() {
+    if (!selectedTrxId) return;
+    taskHintRequested[selectedTrxId] = true;
+
+    const currentTrx = window.selectedTaskObject();
+    if (currentTrx) {
+        renderDocument(currentTrx);
+    }
+
+    // إظهار زر التلميح في رأس النموذج
+    document.getElementById('form-hint-btn')?.classList.remove('hidden');
+
+    if (window.innerWidth < 1024 && typeof switchJournalMobilePane === 'function') {
+        switchJournalMobilePane('doc');
+    }
+
+    setTimeout(() => {
+        const wrapper = document.getElementById('doc-hint-wrapper');
+        if (wrapper && !wrapper.classList.contains('hidden')) {
+            wrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, 100);
+};
+
+window.toggleAccountingHint = window.requestAccountingHint;
 
 function renderDocument(trx) {
     const viewer = document.getElementById('document-viewer');
@@ -1126,6 +1158,9 @@ window.postEntry = function() {
     }
 
     if (!isCorrect) {
+        taskErrorStates[currentTrx.id] = true;
+        document.getElementById('form-hint-btn')?.classList.remove('hidden');
+
         feedback.innerHTML = `
             <div class="text-rose-900 p-3.5 bg-rose-50 rounded-xl border border-rose-200 text-xs font-bold space-y-2">
                 <div class="flex items-center gap-1.5 text-rose-700">
@@ -1134,8 +1169,8 @@ window.postEntry = function() {
                 </div>
                 <p class="font-medium text-slate-700 leading-relaxed">${errorDesc}</p>
                 <div class="pt-1 flex items-center gap-2">
-                    <button type="button" onclick="toggleAccountingHint(true)" class="inline-flex items-center gap-1.5 text-xs bg-amber-100 hover:bg-amber-200 text-amber-900 px-3 py-1.5 rounded-lg border border-amber-300 font-bold transition cursor-pointer shadow-2xs">
-                        <span>💡 فتح التلميح المحاسبي للمساعدة</span>
+                    <button type="button" onclick="requestAccountingHint()" class="inline-flex items-center gap-1.5 text-xs bg-amber-100 hover:bg-amber-200 text-amber-900 px-3 py-1.5 rounded-lg border border-amber-300 font-bold transition cursor-pointer shadow-2xs">
+                        <span>💡 طلب تلميح محاسبي للمساعدة في الحل</span>
                         <span class="material-symbols-outlined text-[15px]">help_outline</span>
                     </button>
                 </div>
@@ -1143,6 +1178,10 @@ window.postEntry = function() {
         `;
         return;
     }
+
+    delete taskErrorStates[currentTrx.id];
+    delete taskHintRequested[currentTrx.id];
+    document.getElementById('form-hint-btn')?.classList.add('hidden');
 
     // Save as Pending Posting in Journal!
     const newJournalEntry = {
