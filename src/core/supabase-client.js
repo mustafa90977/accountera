@@ -96,10 +96,23 @@ const SupabaseService = {
     if (!this.client) return;
 
     try {
-      const user = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
+      let authUserId = null;
+      if (this.client.auth) {
+        const { data: { session } } = await this.client.auth.getSession();
+        if (session && session.user) {
+          authUserId = session.user.id;
+        }
+      }
+
+      if (!authUserId) {
+        console.warn('[Supabase] Submission not synced to cloud: User is not authenticated.');
+        return;
+      }
+
       const { error } = await this.client
         .from('student_submissions')
         .insert({
+          user_id: authUserId,
           company_id: companyId,
           student_journal: studentJournal,
           score: score,

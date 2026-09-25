@@ -4,17 +4,134 @@
 
 const AuthService = {
   currentUser: null,
+  isInitializing: false,
 
-  init() {
-    try {
-      const saved = localStorage.getItem('accountera_user');
-      if (saved) {
-        this.currentUser = JSON.parse(saved);
+  async init() {
+    return await this.initSupabaseAuth();
+  },
+
+  async initSupabaseAuth() {
+    if (this.isInitializing) return;
+    this.isInitializing = true;
+
+    const isDev = (typeof window !== 'undefined') && 
+      (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:');
+
+    const client = (typeof window !== 'undefined' && window.SupabaseService) ? window.SupabaseService.client : null;
+    if (!client || !client.auth) {
+      if (isDev) {
+        try {
+          const saved = localStorage.getItem('accountera_user');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed.isDevTest) this.currentUser = parsed;
+          }
+        } catch (e) {
+          this.currentUser = null;
+        }
+      } else {
+        this.currentUser = null;
+        localStorage.removeItem('accountera_user');
       }
-    } catch (e) {
-      this.currentUser = null;
+      this.updateTopBarUI();
+      this.isInitializing = false;
+      return;
     }
-    this.updateTopBarUI();
+
+    try {
+      // الاستماع لتغيرات الجلسة (Login, Logout, Token Refresh)
+      client.auth.onAuthStateChange(async (event, session) => {
+        console.log('[AuthService] Supabase Auth Event:', event);
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          if (session && session.user) {
+            await this.syncUserSession(session.user, false);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          this.currentUser = null;
+          localStorage.removeItem('accountera_user');
+          this.updateTopBarUI();
+          if (typeof window.navigateToScreen === 'function') {
+            window.navigateToScreen('landing');
+          }
+        }
+      });
+
+      // التحقق من الجلسة الحالية
+      const { data: { session }, error } = await client.auth.getSession();
+      if (!error && session && session.user) {
+        await this.syncUserSession(session.user, false);
+      } else {
+        // إذا لم توجد جلسة حقيقية، نتحقق فقط من وضع الاختبار المحلي في بيئة التطوير
+        let isLocalDevUser = false;
+        if (isDev) {
+          try {
+            const saved = localStorage.getItem('accountera_user');
+            if (saved) {
+              const parsed = JSON.parse(saved);
+              if (parsed.isDevTest) {
+                this.currentUser = parsed;
+                isLocalDevUser = true;
+                this.updateTopBarUI();
+              }
+            }
+          } catch (e) {}
+        }
+
+        if (!isLocalDevUser) {
+          this.currentUser = null;
+          localStorage.removeItem('accountera_user');
+          this.updateTopBarUI();
+          if (typeof window.navigateToScreen === 'function') {
+            const urlParams = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : null;
+            const requestedScreen = urlParams ? urlParams.get('screen') : null;
+            const protectedScreens = ['student-dashboard', 'portfolio', 'student-settings', 'teacher-overview', 'admin-overview'];
+            if (!requestedScreen || protectedScreens.includes(requestedScreen) || requestedScreen.startsWith('admin-') || requestedScreen.startsWith('teacher-')) {
+              window.navigateToScreen('landing');
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[AuthService] Error checking Supabase session:', err);
+      this.currentUser = null;
+      localStorage.removeItem('accountera_user');
+      this.updateTopBarUI();
+    } finally {
+      this.isInitializing = false;
+    }
+  },
+
+  // مزامنة بيانات المستخدم الحقيقي من جدول profiles
+  async syncUserSession(authUser, redirect = false) {
+    let role = 'student';
+    let fullName = authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'طالب';
+
+    const client = window.SupabaseService?.client;
+    if (client) {
+      try {
+        const { data: profile, error } = await client
+          .from('profiles')
+          .select('role, full_name')
+          .eq('id', authUser.id)
+          .maybeSingle();
+
+        if (!error && profile) {
+          role = profile.role || 'student';
+          fullName = profile.full_name || fullName;
+        }
+      } catch (e) {
+        console.warn('[AuthService] Profile fetch error, using default role:', e);
+      }
+    }
+
+    const userData = {
+      id: authUser.id,
+      email: authUser.email,
+      name: fullName,
+      role: role
+    };
+
+    this.setCurrentUser(userData, redirect);
   },
 
   getCurrentUser() {
@@ -26,11 +143,23 @@ const AuthService = {
     if (user) {
       localStorage.setItem('accountera_user', JSON.stringify(user));
       this.updateTopBarUI();
+      // تشغيل ترحيل البيانات المحلية وجلب التقدم السحابي للمستخدم المسجل
+      if (typeof window !== 'undefined') {
+        if (window.ProgressService && typeof window.ProgressService.fetchUserProgress === 'function') {
+          window.ProgressService.fetchUserProgress().catch(e => console.warn('[AuthService] Progress fetch error:', e));
+        }
+        if (window.MigrationService && typeof window.MigrationService.migrateLegacyLocalStorage === 'function') {
+          window.MigrationService.migrateLegacyLocalStorage().catch(e => console.warn('[AuthService] Migration error:', e));
+        }
+      }
       if (redirect) {
         this.redirectAfterLogin(user);
       }
     } else {
       localStorage.removeItem('accountera_user');
+      if (typeof window !== 'undefined' && window.ProgressService) {
+        window.ProgressService.completedLessons = new Set();
+      }
       this.updateTopBarUI();
       if (redirect && typeof window.navigateToScreen === 'function') {
         window.navigateToScreen('landing');
@@ -64,8 +193,12 @@ const AuthService = {
       document.body.appendChild(overlay);
     }
 
+    // فحص ما إذا كانت البيئة محلية للمطورين (Development Environment)
+    const isDev = (typeof window !== 'undefined') && 
+      (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:');
+
     overlay.innerHTML = `
-      <div class="modal-sheet">
+      <div class="modal-sheet" style="max-width: 440px;">
         <span class="sheet-drag-handle"></span>
         
         <div class="modal-header">
@@ -88,56 +221,76 @@ const AuthService = {
           </button>
         </div>
 
-        <!-- نموذج تسجيل الدخول -->
+        <!-- صندوق تنبيه الأخطاء -->
+        <div id="authErrorAlert" style="display:none; background:var(--danger-bg); border:1px solid var(--danger-border); color:var(--danger); padding:10px 14px; border-radius:10px; font-size:0.86rem; margin-bottom:14px; line-height:1.5;"></div>
+
+        <!-- نموذج تسجيل الدخول / إنشاء الحساب -->
         <form id="authForm" onsubmit="AuthService.handleAuthSubmit(event, '${mode}')">
           <div id="registerFields" style="display: ${mode === 'register' ? 'block' : 'none'};">
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 14px;">
               <label class="form-label">الاسم الكامل:</label>
-              <input type="text" id="authName" class="form-input" placeholder="مثال: سارة المحاسبة">
-            </div>
-            <div class="form-group">
-              <label class="form-label">نوع الحساب / الدور:</label>
-              <select id="authRole" class="form-input">
-                <option value="student">طالب / محاسب مبتدئ</option>
-                <option value="teacher">مدرب / مدرس محاسبة</option>
-                <option value="admin">مدير النظام</option>
-              </select>
+              <input type="text" id="authName" class="form-input" placeholder="مثال: سارة أحمد">
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="margin-bottom: 14px;">
             <label class="form-label">البريد الإلكتروني:</label>
-            <input type="email" id="authEmail" class="form-input" placeholder="name@domain.com" required>
+            <input type="email" id="authEmail" class="form-input" placeholder="name@domain.com" required autocomplete="email">
           </div>
 
-          <div class="form-group">
-            <label class="form-label">كلمة المرور:</label>
-            <input type="password" id="authPassword" class="form-input" placeholder="••••••••" required>
+          <div class="form-group" style="margin-bottom: 18px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="form-label">كلمة المرور:</label>
+              ${mode === 'register' ? '<span style="font-size:0.75rem; color:var(--text-muted);">6 أحرف على الأقل</span>' : ''}
+            </div>
+            <input type="password" id="authPassword" class="form-input" placeholder="••••••••" required autocomplete="${mode === 'login' ? 'current-password' : 'new-password'}">
           </div>
 
-          <button type="submit" class="btn-cta-primary" style="width:100%; justify-content:center; margin-top:1rem;">
-            ${mode === 'login' ? 'دخول المنصة' : 'إنشاء الحساب والتفعيل'}
+          <button type="submit" id="authSubmitBtn" class="btn-cta-primary" style="width:100%; justify-content:center; padding:12px; font-weight:800;">
+            <span>${mode === 'login' ? 'دخول المنصة' : 'إنشاء الحساب والتفعيل'}</span>
           </button>
         </form>
 
-        <!-- أزرار الدخول السريع لاختبار الأدوار -->
-        <div class="quick-roles-wrap">
-          <div class="quick-roles-title">تجربة فورية مباشرة دون تسجيل:</div>
-          <div class="roles-grid">
-            <button class="role-pill-btn" onclick="AuthService.quickLogin('student', 'طالب محاسبة')">
-              <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('graduation-cap', { size: 16 }) : ''}</span>
-              <span>طالب</span>
-            </button>
-            <button class="role-pill-btn" onclick="AuthService.quickLogin('teacher', 'أ. د. محمد شاكر')">
-              <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 16 }) : ''}</span>
-              <span>مدرس</span>
-            </button>
-            <button class="role-pill-btn" onclick="AuthService.quickLogin('admin', 'مدير النظام')">
-              <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 16 }) : ''}</span>
-              <span>مدير</span>
-            </button>
-          </div>
+        <!-- خيار الدخول عبر Google -->
+        <div style="display:flex; align-items:center; margin:14px 0 10px; gap:10px;">
+          <div style="flex:1; height:1px; background:var(--border-subtle);"></div>
+          <span style="font-size:0.78rem; color:var(--text-muted);">أو من خلال</span>
+          <div style="flex:1; height:1px; background:var(--border-subtle);"></div>
         </div>
+
+        <button type="button" id="googleAuthBtn" onclick="AuthService.signInWithGoogle()" class="btn-cta-secondary" style="width:100%; justify-content:center; padding:10px 14px; font-weight:700; display:flex; align-items:center; gap:10px; border-radius:10px; font-size:0.88rem;">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>المتابعة باستخدام Google</span>
+        </button>
+
+        ${isDev ? `
+          <!-- أزرار المعاينة المحلية المخصصة لبيئة التطوير فقط (معزولة تماماً عن الإنتاج) -->
+          <div class="quick-roles-wrap" style="margin-top: 20px; border-top: 1px dashed var(--border-subtle); padding-top: 14px;">
+            <div class="quick-roles-title" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>معاينة محلية (بيئة تطوير Localhost فقط):</span>
+              <span style="font-size:0.7rem; background:var(--bg-secondary); padding:2px 6px; border-radius:4px; color:var(--text-muted);">Dev Only</span>
+            </div>
+            <div class="roles-grid" style="margin-top: 8px;">
+              <button class="role-pill-btn" onclick="AuthService.quickLogin('student', 'طالب محاسبة (تجريبي)')">
+                <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('graduation-cap', { size: 16 }) : ''}</span>
+                <span>طالب</span>
+              </button>
+              <button class="role-pill-btn" onclick="AuthService.quickLogin('teacher', 'أ. د. محمد شاكر (تجريبي)')">
+                <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 16 }) : ''}</span>
+                <span>مدرس</span>
+              </button>
+              <button class="role-pill-btn" onclick="AuthService.quickLogin('admin', 'مدير النظام (تجريبي)')">
+                <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 16 }) : ''}</span>
+                <span>مدير</span>
+              </button>
+            </div>
+          </div>
+        ` : ''}
       </div>
     `;
 
@@ -156,37 +309,234 @@ const AuthService = {
     }
   },
 
-  handleAuthSubmit(e, mode) {
+  showAuthError(message) {
+    const box = document.getElementById('authErrorAlert');
+    if (box) {
+      box.textContent = message;
+      box.style.display = 'block';
+    } else {
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast(message, 'error');
+      } else {
+        alert(message);
+      }
+    }
+  },
+
+  translateAuthError(err) {
+    if (!err) return 'حدث خطأ غير متوقع أثناء المصادقة.';
+    const msg = (err.message || String(err)).toLowerCase();
+    if (msg.includes('invalid login credentials') || msg.includes('invalid_grant')) {
+      return 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+    }
+    if (msg.includes('user already registered') || msg.includes('already exists')) {
+      return 'هذا البريد الإلكتروني مسجل بالفعل، يرجى تسجيل الدخول.';
+    }
+    if (msg.includes('password should be at least 6')) {
+      return 'كلمة المرور يجب أن تتكون من 6 أحرف أو أرقام على الأقل.';
+    }
+    if (msg.includes('email not confirmed')) {
+      return 'يرجى مراجعة بريدك الإلكتروني وتأكيد الحساب قبل تسجيل الدخول.';
+    }
+    if (msg.includes('rate limit') || msg.includes('too many requests')) {
+      return 'تم تجاوز الحد المسموح من المحاولات، يرجى الانتظار دقيقة والمحاولة مرة أخرى.';
+    }
+    return err.message || 'فشلت عملية المصادقة، يرجى المحاولة لاحقاً.';
+  },
+
+  async handleAuthSubmit(e, mode) {
     e.preventDefault();
-    const email = document.getElementById('authEmail')?.value;
-    const name = document.getElementById('authName')?.value || email.split('@')[0];
-    const role = document.getElementById('authRole')?.value || 'student';
+    const email = document.getElementById('authEmail')?.value.trim();
+    const password = document.getElementById('authPassword')?.value;
+    const name = document.getElementById('authName')?.value.trim() || email.split('@')[0];
+    const submitBtn = document.getElementById('authSubmitBtn');
+
+    if (!email || !password) {
+      this.showAuthError('يرجى ملء جميع الحقول المطلوبة.');
+      return;
+    }
+
+    const client = window.SupabaseService?.client;
+    if (!client || !client.auth) {
+      this.showAuthError('خدمة المصادقة السحابية غير متصلة حالياً، يرجى التحقق من اتصالك بالإنترنت.');
+      return;
+    }
+
+    // إظهار مؤشر التحميل
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>جاري معالجة الطلب...</span>`;
+    }
+
+    try {
+      if (mode === 'register') {
+        if (password.length < 6) {
+          this.showAuthError('كلمة المرور يجب أن لا تقل عن 6 أحرف.');
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<span>إنشاء الحساب والتفعيل</span>`;
+          }
+          return;
+        }
+
+        // التسجيل ينشئ دائماً حساب طالب، لا يرسل أي رتبة أخرى
+        const { data, error } = await client.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: {
+              full_name: name
+            }
+          }
+        });
+
+        if (error) throw error;
+
+        if (data.session && data.user) {
+          await this.syncUserSession(data.user, true);
+          this.closeAuthModal();
+          if (typeof AccModal !== 'undefined' && AccModal.toast) {
+            AccModal.toast('تم إنشاء الحساب وتسجيل الدخول بنجاح!', 'success');
+          }
+        } else if (data.user) {
+          this.closeAuthModal();
+          if (typeof AccModal !== 'undefined' && AccModal.alert) {
+            AccModal.alert({
+              title: 'تم إنشاء الحساب بنجاح',
+              message: `تم إرسال رابط تأكيد الحساب إلى (${email}). يرجى فتح البريد وتأكيد الحساب ثم تسجيل الدخول.`,
+              icon: '✉️'
+            });
+          }
+        }
+      } else {
+        // تسجيل الدخول
+        const { data, error } = await client.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) throw error;
+
+        if (data.user) {
+          await this.syncUserSession(data.user, true);
+          this.closeAuthModal();
+          if (typeof AccModal !== 'undefined' && AccModal.toast) {
+            AccModal.toast('أهلاً بك مجدداً! تم تسجيل الدخول بنجاح.', 'success');
+          }
+        }
+      }
+    } catch (err) {
+      console.error('[AuthService] Authentication error:', err);
+      this.showAuthError(this.translateAuthError(err));
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>${mode === 'login' ? 'دخول المنصة' : 'إنشاء الحساب والتفعيل'}</span>`;
+      }
+    }
+  },
+
+  async signInWithGoogle() {
+    const client = window.SupabaseService?.client;
+    if (!client || !client.auth) {
+      this.showAuthError('خدمة المصادقة السحابية غير متصلة حالياً.');
+      return;
+    }
+    const btn = document.getElementById('googleAuthBtn');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<span>جاري التحويل إلى Google...</span>`;
+    }
+    try {
+      const redirectUrl = window.location.origin;
+      const { data, error } = await client.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl
+        }
+      });
+      if (error) throw error;
+    } catch (err) {
+      console.error('[AuthService] Google OAuth Error:', err);
+      this.showAuthError(this.translateAuthError(err));
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `<span>المتابعة باستخدام Google</span>`;
+      }
+    }
+  },
+
+  async quickLogin(role, name) {
+    // مخصص للمعاينة المحلية فقط مع وسم واضح
+    const isDev = (typeof window !== 'undefined') && 
+      (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:');
+
+    if (!isDev) {
+      this.showAuthError('الدخول السريع غير متاح في بيئة الإنتاج. يرجى استخدام بريدك الإلكتروني وكلمة المرور.');
+      return;
+    }
 
     this.closeAuthModal();
     this.setCurrentUser({
+      id: `dev-${role}-${Date.now()}`,
       name: name,
-      email: email,
-      role: role
+      email: `${role}@accountera.local`,
+      role: role,
+      isDevTest: true
     }, true);
+
+    if (typeof AccModal !== 'undefined' && AccModal.toast) {
+      AccModal.toast(`تم الدخول في وضع المعاينة المحلية (${role}). هذا الوضع لا يملك صلاحيات على السحابة.`, 'info');
+    }
   },
 
-  quickLogin(role, name) {
-    this.closeAuthModal();
-    this.setCurrentUser({
-      name: name,
-      email: `${role}@accountera.com`,
-      role: role
-    }, true);
-  },
-
-  logout() {
+  async logout() {
+    const client = window.SupabaseService?.client;
+    if (client && client.auth) {
+      try {
+        await client.auth.signOut();
+      } catch (e) {
+        console.warn('[AuthService] Supabase signout error:', e);
+      }
+    }
     this.setCurrentUser(null, true);
   },
 
   updateNavigationForRole() {
     const desktopNav = document.querySelector('.desktop-nav');
     const bottomNav = document.querySelector('.bottom-nav');
-    const currentRole = this.currentUser ? this.currentUser.role : 'student';
+
+    // 1. شريط ملاحة الزائر غير المسجل (Guest Navigation)
+    if (!this.currentUser) {
+      if (desktopNav) {
+        desktopNav.innerHTML = `
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('landing')">الرئيسية (Home)</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('companies-hub')">التحديات (Challenges)</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('lesson-1')">الدروس (Tutorials)</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('ex-1')">الاختبارات (MCQ Quiz)</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="window.location.href='simulation/simulation/journal/index.html'">المحاكاة (Simulation)</a>
+        `;
+      }
+      if (bottomNav) {
+        bottomNav.innerHTML = `
+          <button class="bottom-nav-item active" id="bn-landing" onclick="navigateToScreen('landing')">
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('house', { size: 20 }) : ''}</span>
+            <span>الرئيسية</span>
+          </button>
+          <button class="bottom-nav-item" id="bn-lesson-1" onclick="navigateToScreen('lesson-1')">
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 20 }) : ''}</span>
+            <span>الدروس</span>
+          </button>
+          <button class="bottom-nav-item" id="bn-companies-hub" onclick="navigateToScreen('companies-hub')">
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 20 }) : ''}</span>
+            <span>الشركات</span>
+          </button>
+        `;
+      }
+      return;
+    }
+
+    const currentRole = this.currentUser.role || 'student';
 
     if (currentRole === 'admin') {
       // شريط الملاحة الخاص بالمسؤول / الإدارة
@@ -267,7 +617,7 @@ const AuthService = {
         `;
       }
     } else {
-      // شريط ملاحة الطالب الافتراضي
+      // شريط ملاحة الطالب المسجل
       if (desktopNav) {
         desktopNav.innerHTML = `
           <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('landing')">الرئيسية</a>

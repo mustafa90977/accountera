@@ -38,11 +38,23 @@ window.toggleSidebar = function() {
   document.documentElement.setAttribute('data-theme', savedTheme);
 })();
 
-// 2. محرك التنقل بين الشاشات
 window.navigateToScreen = function(screenId) {
   console.log(`Navigating to screen: ${screenId}`);
   const appContainer = document.getElementById('app');
   if (!appContainer) return;
+
+  // حارس المسارات (Route Guard): حظر الوصول للشاشات المحمية بدون تسجيل دخول
+  const protectedScreens = ['student-dashboard', 'portfolio', 'student-settings', 'teacher-overview', 'admin-overview'];
+  const isProtected = protectedScreens.includes(screenId) || screenId.startsWith('admin-') || screenId.startsWith('teacher-');
+  const currentUser = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
+
+  if (isProtected && !currentUser) {
+    console.warn(`[RouteGuard] Screen "${screenId}" requires authentication.`);
+    screenId = 'landing';
+    if (typeof AuthService !== 'undefined' && typeof AuthService.openAuthModal === 'function') {
+      setTimeout(() => AuthService.openAuthModal('login'), 150);
+    }
+  }
 
   // إدارة ظهور ونشاط الشريط الجانبي Accountely Sidebar
   const sidebar = document.getElementById('appSidebar');
@@ -201,7 +213,7 @@ window.navigateToScreen = function(screenId) {
   }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // تهيئة عميل Supabase السحابي
   if (typeof SupabaseService !== 'undefined') {
     SupabaseService.init();
@@ -215,12 +227,16 @@ document.addEventListener('DOMContentLoaded', () => {
     themeBtn.innerHTML = savedTheme === 'dark' ? sunSvg : moonSvg;
   }
 
-  // تهيئة نظام المصادقة وتحديث القوائم العلوية
+  // تهيئة نظام المصادقة والتحقق الفعلي من الجلسة السحابية قبل التوجيه
   if (typeof AuthService !== 'undefined') {
-    AuthService.init();
+    try {
+      await AuthService.init();
+    } catch (e) {
+      console.warn('[main.js] AuthService init error:', e);
+    }
   }
 
-  // فحص معلمات الرابط أو حالة الدخول
+  // فحص معلمات الرابط أو حالة الدخول بعد اكتمال التحقق
   const urlParams = new URLSearchParams(window.location.search);
   const requestedScreen = urlParams.get('screen');
   const requestedTheme = urlParams.get('theme');

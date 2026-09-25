@@ -1,4 +1,4 @@
-﻿/**
+/**
  * landing.css — تنسيقات صفحة الهبوط المتجاوبة بالكامل (Mobile-First)
  */
 
@@ -234,4 +234,157 @@
   font-size: 0.92rem;
   color: var(--text-secondary);
   line-height: 1.6;
+}
+
+/* ==========================================================================
+   Design 1: Interactive Product Centerpiece Showcase
+   ========================================================================== */
+.hero-showcase-container {
+  max-width: 1040px;
+  margin: var(--space-8) auto 0;
+  position: relative;
+}
+
+.hero-dashboard-mockup {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.3), 0 0 35px rgba(16, 185, 129, 0.12);
+  overflow: hidden;
+  text-align: right;
+  direction: rtl;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hero-dashboard-mockup:hover {
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.35), 0 0 50px rgba(16, 185, 129, 0.18);
+}
+
+.mockup-header {
+  background: var(--surface-muted);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mockup-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.mockup-dot.red { background: #EF4444; }
+.mockup-dot.yellow { background: #F59E0B; }
+.mockup-dot.green { background: #10B981; }
+
+.mockup-content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+@media (min-width: 860px) {
+  .mockup-content-grid {
+    grid-template-columns: 1.8fr 1fr;
+    padding: 24px;
+  }
+}
+
+.mockup-panel {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+}
+
+.invoice-preview-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(145deg, var(--surface-card) 0%, var(--surface-muted) 100%);
+}
+
+.mockup-table-wrap {
+  overflow-x: auto;
+}
+
+.mockup-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  text-align: right;
+}
+
+.mockup-table th {
+  color: var(--text-muted);
+  font-weight: 700;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.mockup-table td {
+  padding: 10px;
+  color: var(--text-secondary);
+}
+
+.mockup-table .num-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  direction: ltr;
+  text-align: left;
+}
+
+.mockup-table .num-val.positive {
+  color: var(--text-primary);
+}
+
+.showcase-floating-badge {
+  position: absolute;
+  z-index: 20;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  backdrop-filter: blur(8px);
+}
+
+.badge-top-right {
+  top: -16px;
+  right: 24px;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.badge-top-left {
+  top: -16px;
+  left: 24px;
+  border-color: rgba(6, 182, 212, 0.4);
+}
+
+.badge-dot-green {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+}
+
+@media (max-width: 768px) {
+  .showcase-floating-badge {
+    position: static;
+    margin-bottom: 10px;
+    display: inline-flex;
+  }
 }

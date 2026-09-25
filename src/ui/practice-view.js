@@ -508,7 +508,20 @@ const ExcelPracticeView = {
       return;
     }
 
-    if (userDebit === ip.correctDebit && userCredit === ip.correctCredit) {
+    const isSuccess = (userDebit === ip.correctDebit && userCredit === ip.correctCredit);
+
+    // تسجيل المحاولة في الباك إند السحابي والكاش
+    if (typeof PracticeService !== 'undefined') {
+      PracticeService.recordAttempt({
+        exerciseId: ipId,
+        exerciseType: 'independent_practice',
+        score: isSuccess ? 100 : 0,
+        isCorrect: isSuccess,
+        answerData: { userDebit, userCredit, correctDebit: ip.correctDebit, correctCredit: ip.correctCredit }
+      });
+    }
+
+    if (isSuccess) {
       feedback.className = 'feedback-box success';
       feedback.style.display = 'block';
       feedback.innerHTML = `

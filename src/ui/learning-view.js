@@ -236,18 +236,24 @@ const ExcelLearningView = {
       <div class="learning-container">
         <!-- شريط التبويبات المتجاوب -->
         <div class="lessons-nav-strip">
-          ${LESSONS_DATA.map(l => `
-            <button class="lesson-nav-pill ${l.id === currentLesson.id ? 'active' : ''}" onclick="navigateToScreen('${l.id}')">
-              <span>الدرس ${l.num}</span>
-            </button>
-          `).join('')}
+          ${LESSONS_DATA.map(l => {
+            const isDone = (typeof ProgressService !== 'undefined') && ProgressService.isLessonCompleted(l.id);
+            return `
+              <button class="lesson-nav-pill ${l.id === currentLesson.id ? 'active' : ''}" onclick="navigateToScreen('${l.id}')">
+                <span>الدرس ${l.num} ${isDone ? '✓' : ''}</span>
+              </button>
+            `;
+          }).join('')}
         </div>
 
         <!-- بطاقة الدرس الرئيسية -->
         <article class="lesson-card">
           <header class="lesson-header">
-            <div class="lesson-step-badge">
+            <div class="lesson-step-badge" style="display:flex; align-items:center; gap:8px;">
               <span>الدرس ${currentLesson.num} من ${LESSONS_DATA.length}</span>
+              ${(typeof ProgressService !== 'undefined' && ProgressService.isLessonCompleted(currentLesson.id)) ? `
+                <span style="background:var(--success-bg); color:var(--success); border:1px solid var(--success-border); padding:2px 8px; border-radius:999px; font-size:0.75rem; font-weight:800;">مكتمل بنجاح ✓</span>
+              ` : ''}
             </div>
             <h1 class="lesson-title">${currentLesson.title}</h1>
             <div class="lesson-objective">
@@ -335,6 +341,20 @@ const ExcelLearningView = {
         feedbackBox.style.color = '#065F46';
         feedbackBox.style.border = '1px solid var(--success-border)';
         feedbackBox.innerHTML = `<strong>إجابة صحيحة:</strong> ${selected.reason}`;
+
+        // حفظ إتمام الدرس والمحاولة في قاعدة البيانات السحابية
+        if (typeof ProgressService !== 'undefined') {
+          ProgressService.completeLesson(lessonId);
+        }
+        if (typeof PracticeService !== 'undefined') {
+          PracticeService.recordAttempt({
+            exerciseId: lessonId,
+            exerciseType: 'lesson_quiz',
+            score: 100,
+            isCorrect: true,
+            answerData: { optionIndex, text: selected.text }
+          });
+        }
       } else {
         chosenBtn.classList.add('wrong');
         if (chosenIcon) chosenIcon.textContent = '✕';
@@ -343,6 +363,16 @@ const ExcelLearningView = {
         feedbackBox.style.color = '#991B1B';
         feedbackBox.style.border = '1px solid var(--danger-border)';
         feedbackBox.innerHTML = `<strong>حاول مرة أخرى:</strong> ${selected.reason}`;
+
+        if (typeof PracticeService !== 'undefined') {
+          PracticeService.recordAttempt({
+            exerciseId: lessonId,
+            exerciseType: 'lesson_quiz',
+            score: 0,
+            isCorrect: false,
+            answerData: { optionIndex, text: selected.text }
+          });
+        }
       }
     }
   }

@@ -14,6 +14,9 @@ const ExcelStudentDashboard = {
       const journal = JSON.parse(localStorage.getItem('student_journal') || '[]');
       const postedJournal = journal.filter(j => j.status === 'posted');
 
+      const completedLessonsCount = (typeof ProgressService !== 'undefined') ? ProgressService.getCompletedCount() : 0;
+      const practiceStats = (typeof PracticeService !== 'undefined') ? PracticeService.getStats() : { total: 0, passed: 0, accuracyRate: 0 };
+
       return {
         simInfo,
         profile: {
@@ -25,7 +28,9 @@ const ExcelStudentDashboard = {
         journal,
         postedCount: postedJournal.length,
         totalTasks: simInfo.totalTasks || (window.ANSWER_KEY ? window.ANSWER_KEY.length : 0) || 100,
-        percent: simInfo.percent || 0
+        percent: simInfo.percent || 0,
+        completedLessonsCount,
+        practiceStats
       };
     } catch(e) {
       return {
@@ -34,7 +39,9 @@ const ExcelStudentDashboard = {
         journal: [],
         postedCount: 0,
         totalTasks: 100,
-        percent: 0
+        percent: 0,
+        completedLessonsCount: 0,
+        practiceStats: { total: 0, passed: 0, accuracyRate: 0 }
       };
     }
   },
@@ -44,7 +51,7 @@ const ExcelStudentDashboard = {
     const studentName = user && user.name ? user.name : 'محاسب مالي متدرب';
     const email = user && user.email ? user.email : 'student@accountera.edu';
     
-    const { simInfo, profile, journal, postedCount, totalTasks, percent } = this.getSimData();
+    const { simInfo, profile, journal, postedCount, totalTasks, percent, completedLessonsCount, practiceStats } = this.getSimData();
 
     // آخر 4 عمليات مسجلة في دفتر اليومية
     const recentEntries = [...journal].reverse().slice(0, 4);
@@ -239,8 +246,8 @@ const ExcelStudentDashboard = {
             </div>
             <div class="stat-body">
               <div class="stat-label">المسار الأكاديمي التأسيسي</div>
-              <div class="stat-value tabular-nums">6 دروس</div>
-              <div class="stat-note">من الأساسيات إلى القوائم الختامية</div>
+              <div class="stat-value tabular-nums">${completedLessonsCount} / 6 دروس</div>
+              <div class="stat-note">${completedLessonsCount === 6 ? 'اكتمل المسار بالكامل ✓' : (completedLessonsCount > 0 ? `تم إنجاز ${completedLessonsCount} دروس بنجاح` : 'من الأساسيات إلى القوائم الختامية')}</div>
             </div>
           </div>
 
@@ -327,71 +334,35 @@ const ExcelStudentDashboard = {
               </div>
 
               <div class="lessons-list">
-                <div class="lesson-item-row" onclick="navigateToScreen('lesson-1')" style="cursor:pointer;">
-                  <div class="lesson-item-left">
-                    <div class="lesson-num-pill">1</div>
-                    <div>
-                      <div class="lesson-title-text">ما هي المعاملة المالية؟</div>
-                      <div class="lesson-desc-text">التمييز بين الأحداث المالية القابلة للقياس النقدي والأحداث الإدارية.</div>
+                ${[
+                  { id: 'lesson-1', num: 1, title: 'ما هي المعاملة المالية؟', desc: 'التمييز بين الأحداث المالية القابلة للقياس النقدي والأحداث الإدارية.' },
+                  { id: 'lesson-2', num: 2, title: 'معادلة الميزانية وأثر العمليات', desc: 'الأصول = الالتزامات + حقوق الملكية وتطبيق أثر التغيرات التلقائية.' },
+                  { id: 'lesson-3', num: 3, title: 'نظرية القيد المزدوج (المدين والدائن)', desc: 'قواعد تحديد الحساب المدين والدائن استناداً لطبيعة الحسابات الخمسة.' },
+                  { id: 'lesson-4', num: 4, title: 'دورة المبيعات والعملاء وفواتير الآجل', desc: 'إثبات فواتير البيع، ضريبة القيمة المضافة، وحسابات العملاء والتحصيل.' },
+                  { id: 'lesson-5', num: 5, title: 'دورة المشتريات والموردين وضريبة المدخلات', desc: 'توريد المخزون، استحقاق فواتير الموردين، وإشعارات السداد والخصم.' },
+                  { id: 'lesson-6', num: 6, title: 'التسويات الجردية والرواتب ومجمع الإهلاك', desc: 'مسير أجور الموظفين، إهلاك الأصول الثابتة، والمصروفات المقدمة والمستحقة.' }
+                ].map(l => {
+                  const done = (typeof ProgressService !== 'undefined') ? ProgressService.isLessonCompleted(l.id) : false;
+                  return `
+                    <div class="lesson-item-row" onclick="navigateToScreen('${l.id}')" style="cursor:pointer;">
+                      <div class="lesson-item-left">
+                        <div class="lesson-num-pill" style="${done ? 'background:rgba(16,185,129,0.15); color:#10B981;' : ''}">
+                          ${done ? '✓' : l.num}
+                        </div>
+                        <div>
+                          <div class="lesson-title-text" style="display:flex; align-items:center; gap:8px;">
+                            <span>${l.title}</span>
+                            ${done ? '<span style="font-size:0.75rem; color:#10B981; font-weight:700;">(مكتمل ✓)</span>' : ''}
+                          </div>
+                          <div class="lesson-desc-text">${l.desc}</div>
+                        </div>
+                      </div>
+                      <button class="btn-cta-secondary" style="padding:4px 10px; font-size:0.75rem; ${done ? 'border-color:#10B981; color:#10B981;' : ''}">
+                        ${done ? 'مراجعة' : 'دراسة'}
+                      </button>
                     </div>
-                  </div>
-                  <button class="btn-cta-secondary" style="padding:4px 10px; font-size:0.75rem;">دراسة</button>
-                </div>
-
-                <div class="lesson-item-row" onclick="navigateToScreen('lesson-2')" style="cursor:pointer;">
-                  <div class="lesson-item-left">
-                    <div class="lesson-num-pill">2</div>
-                    <div>
-                      <div class="lesson-title-text">معادلة الميزانية وأثر العمليات</div>
-                      <div class="lesson-desc-text">الأصول = الالتزامات + حقوق الملكية وتطبيق أثر التغيرات التلقائية.</div>
-                    </div>
-                  </div>
-                  <button class="btn-cta-secondary" style="padding:4px 10px; font-size:0.75rem;">دراسة</button>
-                </div>
-
-                <div class="lesson-item-row" onclick="navigateToScreen('lesson-3')" style="cursor:pointer;">
-                  <div class="lesson-item-left">
-                    <div class="lesson-num-pill">3</div>
-                    <div>
-                      <div class="lesson-title-text">نظرية القيد المزدوج (المدين والدائن)</div>
-                      <div class="lesson-desc-text">قواعد تحديد الحساب المدين والدائن استناداً لطبيعة الحسابات الخمسة.</div>
-                    </div>
-                  </div>
-                  <button class="btn-cta-secondary" style="padding:4px 10px; font-size:0.75rem;">دراسة</button>
-                </div>
-
-                <div class="lesson-item-row" onclick="navigateToScreen('lesson-4')" style="cursor:pointer;">
-                  <div class="lesson-item-left">
-                    <div class="lesson-num-pill">4</div>
-                    <div>
-                      <div class="lesson-title-text">دورة المبيعات والعملاء وفواتير الآجل</div>
-                      <div class="lesson-desc-text">إثبات فواتير البيع، ضريبة القيمة المضافة، وحسابات العملاء والتحصيل.</div>
-                    </div>
-                  </div>
-                  <button class="btn-cta-secondary" style="padding:4px 10px; font-size:0.75rem;">دراسة</button>
-                </div>
-
-                <div class="lesson-item-row" onclick="navigateToScreen('lesson-5')" style="cursor:pointer;">
-                  <div class="lesson-item-left">
-                    <div class="lesson-num-pill">5</div>
-                    <div>
-                      <div class="lesson-title-text">دورة المشتريات والموردين وضريبة المدخلات</div>
-                      <div class="lesson-desc-text">توريد المخزون، استحقاق فواتير الموردين، وإشعارات السداد والخصم.</div>
-                    </div>
-                  </div>
-                  <button class="btn-cta-secondary" style="padding:4px 10px; font-size:0.75rem;">دراسة</button>
-                </div>
-
-                <div class="lesson-item-row" onclick="navigateToScreen('lesson-6')" style="cursor:pointer;">
-                  <div class="lesson-item-left">
-                    <div class="lesson-num-pill">6</div>
-                    <div>
-                      <div class="lesson-title-text">التسويات الجردية والرواتب ومجمع الإهلاك</div>
-                      <div class="lesson-desc-text">مسير أجور الموظفين، إهلاك الأصول الثابتة، والمصروفات المقدمة والمستحقة.</div>
-                    </div>
-                  </div>
-                  <button class="btn-cta-secondary" style="padding:4px 10px; font-size:0.75rem;">دراسة</button>
-                </div>
+                  `;
+                }).join('')}
               </div>
             </div>
 

@@ -213,10 +213,28 @@ const SimulationBridge = {
     const simTasks = this.transformTransactionsToSim(company.transactions || []);
     localStorage.setItem('sim_admin_tasks', JSON.stringify(simTasks));
 
-    // 3. مسح إجابات الطالب للشركة السابقة لتبدأ نظيفة
-    ['student_journal', 'student_ledger', 'bank_statement_items'].forEach(k => {
-      localStorage.removeItem(k);
-    });
+    // 3. محاولة استرجاع التقدم المحفوظ من السحابة إذا وُجد
+    if (typeof window !== 'undefined' && window.SimulationService && typeof window.SimulationService.loadProgress === 'function') {
+      window.SimulationService.loadProgress(company.id).catch(e => console.warn('[SimulationBridge] Load state error:', e));
+    } else {
+      ['student_journal', 'student_ledger', 'bank_statement_items'].forEach(k => {
+        localStorage.removeItem(k);
+      });
+    }
+  },
+
+  // حفظ تقدم المحاكاة الحالي إلى السحابة
+  async saveCurrentSimulation(score = 0, status = 'in_progress') {
+    if (typeof window !== 'undefined' && window.SimulationService) {
+      try {
+        const profile = JSON.parse(localStorage.getItem('sim_company_profile') || '{}');
+        const journal = JSON.parse(localStorage.getItem('student_journal') || '[]');
+        const ledger = JSON.parse(localStorage.getItem('student_ledger') || '{}');
+        await window.SimulationService.saveProgress(profile.id || 'company-nile', { journal, ledger, profile, score, status });
+      } catch (e) {
+        console.warn('[SimulationBridge] saveCurrentSimulation error:', e);
+      }
+    }
   },
 
   // إرسال وتفعيل شركة معينة داخل بيئة المحاكي فوراً
