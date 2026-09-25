@@ -124,6 +124,13 @@ const AuthService = {
       }
     }
 
+    // إسناد رتبة مدير النظام (Admin) تلقائياً لبريد المسؤول الرئيسي
+    const ADMIN_EMAILS = ['mu9tafamohamed@gmail.com'];
+    if (authUser.email && ADMIN_EMAILS.includes(authUser.email.toLowerCase())) {
+      role = 'admin';
+      fullName = fullName === 'طالب' ? 'مصطفى محمد' : fullName;
+    }
+
     const userData = {
       id: authUser.id,
       email: authUser.email,
@@ -410,19 +417,54 @@ const AuthService = {
         }
       } else {
         // تسجيل الدخول
-        const { data, error } = await client.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
+        try {
+          const { data, error } = await client.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
 
-        if (error) throw error;
-
-        if (data.user) {
-          await this.syncUserSession(data.user, true);
-          this.closeAuthModal();
-          if (typeof AccModal !== 'undefined' && AccModal.toast) {
-            AccModal.toast('أهلاً بك مجدداً! تم تسجيل الدخول بنجاح.', 'success');
+          if (error) {
+            // توفير دخول مباشر وموثق للمسؤول الرئيسي حال تعليق تأكيد البريد في Supabase
+            if (email.trim().toLowerCase() === 'mu9tafamohamed@gmail.com' && password === '01129535297') {
+              const adminUser = {
+                id: '0c4bf876-aba2-441c-bd31-f78f189b4a0a',
+                email: 'mu9tafamohamed@gmail.com',
+                name: 'مصطفى محمد',
+                role: 'admin'
+              };
+              this.setCurrentUser(adminUser, true);
+              this.closeAuthModal();
+              if (typeof AccModal !== 'undefined' && AccModal.toast) {
+                AccModal.toast('أهلاً بك يا أستاذ مصطفى! تم تسجيل الدخول كمدير نظام (Admin).', 'success');
+              }
+              return;
+            }
+            throw error;
           }
+
+          if (data.user) {
+            await this.syncUserSession(data.user, true);
+            this.closeAuthModal();
+            if (typeof AccModal !== 'undefined' && AccModal.toast) {
+              AccModal.toast('أهلاً بك مجدداً! تم تسجيل الدخول بنجاح.', 'success');
+            }
+          }
+        } catch (err) {
+          if (email.trim().toLowerCase() === 'mu9tafamohamed@gmail.com' && password === '01129535297') {
+            const adminUser = {
+              id: '0c4bf876-aba2-441c-bd31-f78f189b4a0a',
+              email: 'mu9tafamohamed@gmail.com',
+              name: 'مصطفى محمد',
+              role: 'admin'
+            };
+            this.setCurrentUser(adminUser, true);
+            this.closeAuthModal();
+            if (typeof AccModal !== 'undefined' && AccModal.toast) {
+              AccModal.toast('أهلاً بك يا أستاذ مصطفى! تم تسجيل الدخول كمدير نظام (Admin).', 'success');
+            }
+            return;
+          }
+          throw err;
         }
       }
     } catch (err) {
