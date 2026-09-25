@@ -29,7 +29,7 @@ const ExcelLandingView = {
         <!-- =========================================================
              1. الشريط الجانبي الأيمن الثابت (Right Sidebar Navigation)
              ========================================================= -->
-        <aside class="landing-sidebar\${collapsedClass}" id="landingSidebar">
+        <aside class="landing-sidebar${collapsedClass}" id="landingSidebar">
           <!-- الهوية والشعار وزر الطي -->
           <div class="landing-sidebar-header" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
             <a class="landing-brand-link" href="javascript:void(0)" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="ACCOUNTERA">
@@ -51,7 +51,7 @@ const ExcelLandingView = {
               </div>
             </a>
             <button class="landing-sidebar-collapse-btn" onclick="toggleLandingSidebar()" title="طي / توسيع القائمة الجانبية">
-              <span id="landingSidebarToggleIcon">\${chevronIcon}</span>
+              <span id="landingSidebarToggleIcon">${chevronIcon}</span>
             </button>
           </div>
 
