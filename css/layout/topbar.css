@@ -78,33 +78,9 @@
   letter-spacing: 0.5px;
 }
 
-/* روابط الديسكتوب */
+/* روابط الديسكتوب العلوية: تم نقل التنقل بالكامل للقائمة الجانبية (Sidebar) */
 .desktop-nav {
-  display: none;
-}
-
-@media (min-width: 820px) {
-  .desktop-nav {
-    display: flex;
-    align-items: center;
-    gap: var(--space-6);
-  }
-
-  .nav-link {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    transition: var(--transition-fast);
-  }
-
-  .nav-link:hover {
-    color: var(--primary);
-  }
-
-  .nav-link.active {
-    color: var(--primary);
-    font-weight: 800;
-  }
+  display: none !important;
 }
 
 .topbar-actions {

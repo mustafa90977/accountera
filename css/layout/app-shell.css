@@ -19,3 +19,20 @@
   flex: 1;
   width: 100%;
 }
+
+/* وضع شاشة المصادقة المستقلة: إلغاء ظهور أي شريط علوي أو جانبي أو سفلي تماماً */
+body.auth-page-mode .topbar,
+body.auth-page-mode .bottom-nav,
+body.auth-page-mode .accountely-sidebar,
+body.auth-page-mode .landing-sidebar {
+  display: none !important;
+}
+
+body.auth-page-mode .app-wrapper {
+  padding-bottom: 0 !important;
+}
+
+body.auth-page-mode .main-content {
+  width: 100%;
+  min-height: 100vh;
+}

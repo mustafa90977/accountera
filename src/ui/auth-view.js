@@ -14,18 +14,41 @@ const ExcelAuthView = {
       (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:');
 
     return `
-      <div class="auth-page-wrapper" style="min-height: calc(100vh - 120px); display: flex; align-items: center; justify-content: center; padding: 2.5rem 1rem; background: var(--bg-main);">
+      <div class="auth-page-wrapper" style="min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; background: var(--bg-main); position: relative;">
+        <!-- زر تبديل الثيم المستقل العائم في الركن -->
+        <button type="button" onclick="toggleTheme()" class="btn-cta-secondary" style="position: absolute; top: 1.25rem; left: 1.25rem; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--surface-card); border: 1px solid var(--border-subtle); box-shadow: var(--elevation-1); cursor: pointer;" title="تبديل الوضع الليلي / النهاري">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
         <div class="auth-card" style="width: 100%; max-width: 460px; background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl, 20px); box-shadow: var(--elevation-3, 0 12px 32px rgba(0,0,0,0.06)); padding: 2.5rem 2.25rem; position: relative;">
           
-          <!-- الشعار والترويسة -->
+          <!-- الشعار والترويسة الرسمية لـ Accountera -->
           <div style="text-align: center; margin-bottom: 2rem;">
-            <div style="display: inline-flex; align-items: center; justify-content: center; width: 62px; height: 62px; border-radius: 18px; background: var(--primary-light, rgba(16, 185, 129, 0.1)); border: 1.5px solid var(--primary-border, rgba(16, 185, 129, 0.25)); color: var(--primary, #10b981); margin-bottom: 1rem;">
-              ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lock', { size: 30, strokeWidth: 1.75 }) : '🔐'}
+            <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; cursor: pointer;" onclick="navigateToScreen('landing')">
+              <svg width="48" height="48" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="accountera-brandmark">
+                <defs>
+                  <linearGradient id="accAuthGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#047857" />
+                    <stop offset="50%" stop-color="#10B981" />
+                    <stop offset="100%" stop-color="#06B6D4" />
+                  </linearGradient>
+                </defs>
+                <rect width="40" height="40" rx="11" fill="url(#accAuthGrad)"/>
+                <path d="M12 28V15C12 13.8954 12.8954 13 14 13C15.1046 13 16 13.8954 16 15V28" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+                <path d="M24 28V15C24 13.8954 24.8954 13 26 13C27.1046 13 28 13.8954 28 15V28" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+                <path d="M14 20H26" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="20" cy="11" r="2.5" fill="#FFFFFF"/>
+                <path d="M17 28H23" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+              </svg>
             </div>
-            <h1 style="font-size: 1.55rem; font-weight: 900; color: var(--text-primary); margin: 0 0 6px;">
-              ${isLogin ? 'تسجيل الدخول إلى Accountera' : 'إنشاء حساب جديد في Accountera'}
+            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px;">
+              <span style="font-weight: 900; font-size: 1.15rem; letter-spacing: 0.5px; color: var(--text-primary);">ACCOUNTERA</span>
+              <span style="font-size: 0.65rem; font-weight: 800; color: var(--primary); background: var(--primary-light, rgba(16, 185, 129, 0.1)); padding: 2px 7px; border-radius: 6px; border: 1px solid var(--primary-border, rgba(16, 185, 129, 0.25));">SUITE</span>
+            </div>
+            <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px;">
+              ${isLogin ? 'تسجيل الدخول إلى حسابك' : 'إنشاء حساب جديد'}
             </h1>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">
+            <p style="font-size: 0.86rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">
               المنصة التطبيقية الأولى لإعداد المحاسبين الماليين لسوق العمل
             </p>
           </div>

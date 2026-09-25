@@ -62,14 +62,6 @@
           </div>
         </div>
 
-        <nav class="desktop-nav">
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('companies-hub')">التحديات (Challenges)</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('lesson-1')">الدروس (Tutorials)</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('ex-1')">الاختبارات (MCQ Quiz)</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="if(typeof AuthService !== 'undefined' && AuthService.getCurrentUser()){ window.location.href='simulation/simulation/journal/index.html'; } else { if(typeof AccModal !== 'undefined') AccModal.toast('يرجى تسجيل الدخول أولاً', 'info'); AuthService.openAuthModal('login'); }">المحاكاة (Simulation)</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('landing')">عن المنصة (About)</a>
-        </nav>
-
         <div class="topbar-actions">
           <!-- زر تبديل الثيم السريع (ليلي / نهاري) -->
           <button id="themeToggleBtn" onclick="toggleTheme()" class="btn-cta-secondary" style="padding: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%;" title="تبديل الوضع الليلي / النهاري">

@@ -45,11 +45,9 @@ window.navigateToScreen = function(screenId) {
 
   // حارس المسارات الصارم (Strict Route Guard): حظر الوصول لكافة أقسام المنصة بدون تسجيل دخول موثق
   const publicScreens = ['landing', 'welcome'];
-  const isAuthScreen = (screenId === 'login' || screenId === 'register');
-  const isProtected = !publicScreens.includes(screenId) && !isAuthScreen;
   const currentUser = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
 
-  if (isProtected && !currentUser) {
+  if (!publicScreens.includes(screenId) && screenId !== 'login' && screenId !== 'register' && !currentUser) {
     console.warn(`[RouteGuard] Screen "${screenId}" requires authentication.`);
     screenId = 'login';
     if (typeof AccModal !== 'undefined' && typeof AccModal.toast === 'function') {
@@ -59,6 +57,8 @@ window.navigateToScreen = function(screenId) {
       setTimeout(() => AuthService.openAuthModal('login'), 150);
     }
   }
+
+  const isAuthScreen = (screenId === 'login' || screenId === 'register');
 
   // حفظ الشاشة الحالية لتجنب فقدانها عند عمل ريفريش
   if (screenId && screenId !== 'landing' && screenId !== 'welcome' && !isAuthScreen) {
@@ -73,7 +73,18 @@ window.navigateToScreen = function(screenId) {
   const isAdminUser = currentUser && currentUser.role === 'admin';
   const shouldHideSidebar = isLandingScreen || isAuthScreen || isAdminScreen || isAdminUser;
 
+  // إدارة وضع صفحة المصادقة المستقلة (إخفاء التوب بار وشريط التنقل والقوائم بالكامل)
+  document.body.classList.toggle('auth-page-mode', isAuthScreen);
   document.body.classList.toggle('landing-mode', isLandingScreen);
+
+  const topbar = document.querySelector('.topbar');
+  const bottomNav = document.querySelector('.bottom-nav');
+  if (topbar) {
+    topbar.style.display = isAuthScreen ? 'none' : '';
+  }
+  if (bottomNav) {
+    bottomNav.style.display = isAuthScreen ? 'none' : '';
+  }
 
   const sidebar = document.getElementById('appSidebar');
   if (sidebar) {
@@ -92,7 +103,7 @@ window.navigateToScreen = function(screenId) {
   // تحديث شريط التنقل السفلي للموبايل
   document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
 
-  // تحديث شريط التنقل العلوي للديسكتوب
+  // تحديث شريط التنقل العلوي للديسكتوب إن وجد
   document.querySelectorAll('.desktop-nav .nav-link').forEach(link => {
     const onclickAttr = link.getAttribute('onclick') || '';
     if (onclickAttr.includes(`'${screenId}'`) || onclickAttr.includes(`"${screenId}"`)) {
