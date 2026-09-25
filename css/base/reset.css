@@ -1,4 +1,4 @@
-﻿/**
+/**
  * reset.css — إعادة الضبط القياسي لبيئة الويب والموبايل
  * Modern CSS Reset & Touch Optimizations
  */
@@ -13,6 +13,8 @@ html {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   scroll-behavior: smooth;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 body {
@@ -24,6 +26,21 @@ body {
   line-height: 1.5;
   text-rendering: optimizeLegibility;
   overflow-x: hidden; /* يمنع التمرير الأفقي غير المرغوب فيه إطلاقاً */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* إخفاء شريط التمرير الافتراضي لنظام التشغيل (العمود الرمادي) تماماً مع بقاء التمرير بالعجلة واللمس فعالاً */
+html, body, * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
 
 img, picture, video, canvas, svg {

@@ -29,6 +29,14 @@ body.landing-mode .main-content {
   position: relative;
   overflow-x: hidden;
   font-family: 'Cairo', 'IBM Plex Sans Arabic', sans-serif;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.landing-shell::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* خلفية الشبكة الهندسية التفاعلية */
@@ -250,15 +258,14 @@ body.landing-mode .main-content {
   padding: 0.75rem 0.5rem;
   overflow-y: auto;
   max-height: calc(100vh - 310px);
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 .landing-sidebar-menu::-webkit-scrollbar {
-  width: 4px;
-}
-
-.landing-sidebar-menu::-webkit-scrollbar-thumb {
-  background: rgba(16, 185, 129, 0.2);
-  border-radius: 4px;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .landing-sidebar-group-title {
