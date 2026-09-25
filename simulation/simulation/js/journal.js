@@ -40,9 +40,105 @@ window.switchJournalMobilePane = function(pane) {
     });
 };
 
+function checkAndLoadActiveDraft() {
+    let rawDraft = localStorage.getItem('acc_draft_journal_entry');
+    if (!rawDraft) return;
+    try {
+        const draft = JSON.parse(rawDraft);
+        if (draft && Array.isArray(draft.lines) && draft.lines.length >= 2) {
+            formLines = draft.lines.map(l => ({
+                account: l.account || '',
+                debit: Number(l.debit) || 0,
+                credit: Number(l.credit) || 0
+            }));
+            renderForm();
+            showDraftBanner(draft);
+            renderDraftDocument(draft);
+            if (window.innerWidth < 1024 && typeof switchJournalMobilePane === 'function') {
+                switchJournalMobilePane('form');
+            }
+        }
+    } catch(e) {
+        console.error('Error loading draft entry:', e);
+    }
+}
+
+function showDraftBanner(draft) {
+    const slot = document.getElementById('draft-banner-slot');
+    if (!slot) return;
+    slot.innerHTML = `
+      <div id="draft-review-banner" class="mb-4 p-3.5 bg-blue-50/95 border-2 border-blue-400 rounded-xl text-blue-950 text-xs shadow-xs text-right space-y-2 animate-in fade-in duration-200">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-base">📝</span>
+            <strong class="text-sm font-extrabold text-blue-950">مسودة قيد تسوية بنكية (بانتظار مراجعتك واعتمادك)</strong>
+          </div>
+          <button type="button" onclick="discardDraftEntry()" class="text-slate-400 hover:text-rose-700 text-xs font-bold px-2 py-0.5 rounded transition cursor-pointer" title="إلغاء مسودة القيد">✕ إلغاء المسودة</button>
+        </div>
+        <p class="text-slate-700 leading-relaxed font-medium">
+          تم تحضير المسودة بناءً على فروقات كشف حساب البنك: <strong>${draft.desc}</strong> بمبلغ <strong>${(draft.amount || 0).toLocaleString()} ج.م</strong>.
+          راجع أطراف القيد وتوجيه الحسابات والمبالغ بدقة، ثم اضغط <strong>«حفظ وتسجيل في دفتر اليومية»</strong> للاعتماد.
+        </p>
+      </div>
+    `;
+}
+
+function renderDraftDocument(draft) {
+    const docViewer = document.getElementById('document-viewer');
+    if (!docViewer) return;
+    const compName = getCompanyName();
+    const words = tafqeetArabic(draft.amount || 0);
+
+    docViewer.innerHTML = `
+      <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative animate-in fade-in duration-200">
+        <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
+          <div>
+            <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
+            <p class="text-[10px] text-slate-500">إشعار قيد تسوية بنكية (Bank Reconciliation Notice)</p>
+          </div>
+          <div class="text-left">
+            <span class="text-[10px] bg-blue-100 text-blue-900 font-bold px-2 py-0.5 rounded font-mono">${draft.ref || 'RECON-ADJ'}</span>
+            <p class="text-[10px] text-slate-400 mt-1">${draft.date || ''}</p>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
+          <div class="flex justify-between py-1 border-b border-slate-200">
+            <span class="text-slate-500">طبيعة العملية:</span>
+            <span class="font-bold text-slate-800">${draft.title || 'قيد تسوية فروقات البنك'}</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-slate-200">
+            <span class="text-slate-500">بيان المعاملة بالكشف:</span>
+            <span class="font-medium text-slate-700">${draft.desc || ''}</span>
+          </div>
+          <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
+            <span>مبلغ التسوية المطلوب:</span>
+            <span class="font-mono text-blue-900 text-base">${(draft.amount || 0).toLocaleString()} ج.م</span>
+          </div>
+          <div class="text-[11px] text-slate-500 text-center font-serif">
+            فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
+          </div>
+        </div>
+        <p class="text-[10px] text-slate-400 text-center">مرفق كشف حساب البنك الدوري لمطابقة أرصدة الدفاتر (حـ/ 1102)</p>
+      </div>
+    `;
+}
+
+window.discardDraftEntry = function() {
+    localStorage.removeItem('acc_draft_journal_entry');
+    const banner = document.getElementById('draft-review-banner');
+    if (banner) banner.remove();
+    resetForm();
+    const pending = answerKey.filter(t => !studentJournal.find(j => j.id === t.id));
+    if (pending.length > 0) {
+        selectTask(pending[0]);
+    }
+};
+
 function initWorkspace() {
     renderPendingList();
     renderPostedEntries();
+    checkAndLoadActiveDraft();
 }
 
 function renderPendingList() {
@@ -1083,6 +1179,76 @@ window.postEntry = function() {
     if(usedAccounts.some(l => !l.account)) {
          feedback.innerHTML = '<div class="text-rose-700 bg-rose-50 border border-rose-200 p-3 rounded-xl font-bold">الرجاء اختيار الحساب لكل سطر تم إدخال مبلغ فيه.</div>';
          return;
+    }
+
+    // المعالجة المخصصة لمسودة قيد التسوية البنكية بعد مراجعة واعتماد الطالب
+    const rawDraft = localStorage.getItem('acc_draft_journal_entry');
+    if (rawDraft) {
+        let draft = null;
+        try { draft = JSON.parse(rawDraft); } catch(e) {}
+        if (draft) {
+            const entryId = 'TRX-' + String(studentJournal.length + 1).padStart(5, '0');
+            const newJournalEntry = {
+                id: entryId,
+                date: draft.date || new Date().toISOString().split('T')[0],
+                type: draft.title || 'تسوية بنكية',
+                ref: draft.ref || 'RECON-ADJ',
+                status: 'pending_posting',
+                lines: usedAccounts.map((l, idx) => ({
+                    lineId: entryId + '_' + idx,
+                    accountCode: l.account,
+                    accountName: ACCOUNTS[l.account] || 'حساب',
+                    debit: Number(l.debit) || 0,
+                    credit: Number(l.credit) || 0,
+                    description: draft.desc || 'قيد تسوية بنكية',
+                    posted: false
+                }))
+            };
+            studentJournal.push(newJournalEntry);
+            saveStudentState();
+
+            // تحديث حالة العملية في كشف حساب البنك كـ متطابقة بعد التسجيل بالدفاتر
+            if (draft.sourceId) {
+                try {
+                    const rawItems = localStorage.getItem('bank_statement_items');
+                    if (rawItems) {
+                        const items = JSON.parse(rawItems);
+                        const it = items.find(i => i.id === draft.sourceId);
+                        if (it) it.matched = true;
+                        localStorage.setItem('bank_statement_items', JSON.stringify(items));
+                    }
+                } catch(e) {}
+            }
+
+            localStorage.removeItem('acc_draft_journal_entry');
+            document.getElementById('draft-review-banner')?.remove();
+
+            feedback.innerHTML = `
+              <div class="text-emerald-900 p-4 bg-emerald-50 rounded-xl border-2 border-emerald-300 font-bold space-y-2 text-right">
+                <div class="flex items-center gap-2 text-sm text-emerald-800">
+                  <span class="material-symbols-outlined">verified</span>
+                  <span>تم اعتماد وتسجيل قيد التسوية البنكية بنجاح! 💾 (رقم: ${entryId})</span>
+                </div>
+                <p class="text-xs font-normal text-slate-700 leading-relaxed">
+                  تم تسجيل القيد بنجاح كـ "معلق بانتظار الترحيل". يمكنك ترحيل أطرافه للأستاذ أو العودة لشاشة التسوية البنكية لمشاهدة اكتمال المطابقة وتصفير الفروقات.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-2">
+                  <a href="../bank-recon/index.html" class="inline-flex items-center gap-1 bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-1.5 rounded-lg transition font-bold shadow-xs">
+                    <span>العودة للتسوية البنكية لمشاهدة المطابقة</span>
+                    <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+                  </a>
+                  <a href="../ledger/index.html?trx=${entryId}" class="inline-flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-1.5 rounded-lg transition font-bold">
+                    <span>ترحيل للأستاذ الآن</span>
+                  </a>
+                  <button type="button" onclick="resetForm()" class="bg-white hover:bg-slate-100 text-slate-700 text-xs px-3 py-1.5 rounded-lg border border-slate-300 font-bold">
+                    <span>تسجيل قيد آخر</span>
+                  </button>
+                </div>
+              </div>
+            `;
+            renderPostedEntries();
+            return;
+        }
     }
 
     const pending = answerKey.filter(t => !studentJournal.find(j => j.id === t.id));

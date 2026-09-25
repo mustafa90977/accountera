@@ -477,33 +477,333 @@ function calculateReconciliation() {
     }
 
     if(alertBox) {
+        const unrecordedBankItems = bankStatementItems.filter(item => !item.matched && !item.isOpening);
+        
+        let unrecordedHtml = '';
+        if (unrecordedBankItems.length > 0) {
+            unrecordedHtml = `
+              <div class="mt-4 p-4 bg-amber-50/90 border-2 border-amber-300 rounded-xl space-y-3 text-right">
+                <div class="flex items-center justify-between border-b border-amber-200 pb-2">
+                  <span class="font-bold text-amber-950 text-xs flex items-center gap-1.5">
+                    <span class="text-base">📝</span>
+                    <span>فروقات كشف الحساب التي تتطلب قيود تسوية بالدفاتر (${unrecordedBankItems.length}):</span>
+                  </span>
+                  <span class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-bold">بانتظار قيد دفتري</span>
+                </div>
+                <div class="space-y-2">
+                  ${unrecordedBankItems.map(item => {
+                      const isWithdrawal = item.withdrawal > 0;
+                      const amt = isWithdrawal ? item.withdrawal : item.deposit;
+                      const typeLabel = isWithdrawal ? 'مصروفات/عمولات بنكية مخصومة' : 'فوائد/متحصلات بنكية مضافة';
+                      const colorClass = isWithdrawal ? 'text-rose-700' : 'text-emerald-700';
+                      return `
+                        <div class="flex items-center justify-between flex-wrap gap-2 bg-white p-3 rounded-lg border border-amber-200 text-xs">
+                          <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined ${colorClass} text-base">${isWithdrawal ? 'remove_circle' : 'add_circle'}</span>
+                            <div>
+                              <strong class="text-slate-800">${item.desc}</strong>
+                              <span class="text-[10px] text-slate-500 block">${item.date} • ${typeLabel}</span>
+                            </div>
+                          </div>
+                          <div class="flex items-center gap-3">
+                            <span class="font-mono font-bold ${colorClass} text-sm">${amt.toLocaleString()} ج.م</span>
+                            <button type="button" onclick="prepareBankAdjustingEntryDraft('${item.id}')" class="bg-slate-900 hover:bg-blue-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition shadow-xs cursor-pointer">
+                              <span>إعداد مسودة قيد التسوية بالدفاتر</span>
+                              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                            </button>
+                          </div>
+                        </div>
+                      `;
+                  }).join('')}
+                </div>
+                <p class="text-[11px] text-slate-600 font-normal">
+                  💡 <strong>ملاحظة للمحاسب:</strong> هذه العمليات خصمها أو أضافها البنك ولم تُسجل بدفاتر المنشأة بعد. اضغط على زر "إعداد مسودة قيد التسوية" للانتقال لدفتر اليومية ومراجعة واعتماد القيد ليتم ترحيله للأستاذ العام تلقائياً.
+                </p>
+              </div>
+            `;
+        }
+
         if(isReconciled) {
             alertBox.innerHTML = `
-              <div class="bg-emerald-50 border-2 border-emerald-400 text-emerald-950 p-4 rounded-xl text-xs font-bold flex items-center gap-3">
-                <span class="material-symbols-outlined text-2xl text-emerald-700">task_alt</span>
-                <div>
-                  <strong class="block text-sm">تهانينا! تم إنجاز التسوية البنكية بنجاح تام:</strong>
-                  تطابق الرصيد البنكي المعدل (${adjustedBank.toLocaleString()} ج.م) مع الرصيد الدفتري المعدل بدقة 100%. تم تفسير كافة الفروقات الزمنية والعمليات المعلقة.
+              <div class="bg-emerald-50 border-2 border-emerald-400 text-emerald-950 p-4 rounded-xl text-xs font-bold space-y-3 text-right">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-2xl text-emerald-700">task_alt</span>
+                    <div>
+                      <strong class="block text-sm">تهانينا! تم إنجاز التسوية البنكية بنجاح تام (فرق تسوية 0.00 ج.م):</strong>
+                      تطابق الرصيد البنكي المعدل (${adjustedBank.toLocaleString()} ج.م) مع الرصيد الدفتري المعدل بدقة 100%. تم تفسير كافة الفروقات الزمنية والعمليات المعلقة.
+                    </div>
+                  </div>
+                  <button type="button" onclick="openPrintReconciliationStatement()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-xs cursor-pointer flex-shrink-0">
+                    <span class="material-symbols-outlined text-[16px]">print</span>
+                    <span>طباعة مذكرة التسوية المعتمدة</span>
+                  </button>
                 </div>
               </div>
+              ${unrecordedHtml}
             `;
         } else {
             alertBox.innerHTML = `
-              <div class="bg-amber-50 border-2 border-amber-300 text-amber-950 p-4 rounded-xl text-xs font-bold space-y-2">
+              <div class="bg-amber-50 border-2 border-amber-300 text-amber-950 p-4 rounded-xl text-xs font-bold space-y-2 text-right">
                 <div class="flex items-center gap-2 text-sm text-amber-900">
                   <span class="material-symbols-outlined">info</span>
-                  <span>توجيه محاسبي: كيفية تصفير فرق التسوية:</span>
+                  <span>توجيه محاسبي: كيفية تصفير فرق التسوية (${diff.toLocaleString()} ج.م):</span>
                 </div>
                 <p class="font-normal text-slate-700 leading-relaxed">
-                  راجع العمليات غير المؤشر عليها. العمليات المؤشر عليها تعتبر متطابقة، بينما العمليات غير المؤشر عليها تُعامل كبنود تسوية (شيكات معلقة أو إيداعات غير مقيدة). اضغط <strong>«مطابقة ذكية»</strong> بالأعلى لمطابقة العمليات المتبادلة فورياً!
+                  راجع العمليات غير المؤشر عليها. العمليات المؤشر عليها تعتبر متطابقة، بينما العمليات غير المؤشر عليها تُعامل كبنود تسوية (شيكات معلقة لم تصرف أو إيداعات بالطريق لم يثبتها البنك). اضغط <strong>«مطابقة ذكية»</strong> بالأعلى لمطابقة العمليات المتبادلة فورياً!
                 </p>
               </div>
+              ${unrecordedHtml}
             `;
         }
     }
 }
 
+window.prepareBankAdjustingEntryDraft = function(itemId) {
+    const item = bankStatementItems.find(i => i.id === itemId);
+    if (!item) return;
 
+    const isWithdrawal = item.withdrawal > 0;
+    const amt = isWithdrawal ? item.withdrawal : item.deposit;
+    const today = item.date || new Date().toISOString().split('T')[0];
+
+    const draft = {
+        sourceModule: 'BANK_RECON',
+        sourceId: item.id,
+        ref: item.ref || ('RECON-' + Math.floor(1000 + Math.random() * 9000)),
+        date: today,
+        title: isWithdrawal ? 'قيد تسوية - إثبات مصاريف وعمولات بنكية' : 'قيد تسوية - إثبات فوائد وعوائد بنكية دائنة',
+        desc: item.desc || (isWithdrawal ? 'تسوية وإثبات عمولة ومصروفات كشف الحساب البنكي' : 'تسوية وإثبات فوائد الحساب الجاري الدائنة'),
+        amount: amt,
+        lines: isWithdrawal ? [
+            { account: '5207', debit: amt, credit: 0 },
+            { account: '1102', debit: 0, credit: amt }
+        ] : [
+            { account: '1102', debit: amt, credit: 0 },
+            { account: '4201', debit: 0, credit: amt }
+        ]
+    };
+
+    localStorage.setItem('acc_draft_journal_entry', JSON.stringify(draft));
+    window.location.href = '../journal/index.html?mode=draft_recon&diffId=' + encodeURIComponent(item.id);
+};
+
+window.openPrintReconciliationStatement = function() {
+    const modal = document.getElementById('recon-print-modal');
+    const container = document.getElementById('recon-printable-content');
+    if (!modal || !container) return;
+
+    let compProfile = {};
+    try {
+        compProfile = JSON.parse(localStorage.getItem('sim_company_profile') || '{}');
+    } catch(e) {}
+
+    let savedCase = {};
+    try {
+        savedCase = JSON.parse(localStorage.getItem('sim_bank_recon_case') || '{}');
+    } catch(e) {}
+
+    const bankAcc = savedCase.bankAccount || compProfile.bankAccount || {
+        bankNameAr: 'البنك المصري للتجارة والشركات',
+        branchName: 'فرع المعادي',
+        accountNumberMasked: '867***76001',
+        currency: 'EGP'
+    };
+
+    // Calculate current values
+    let bankBase = 0;
+    bankStatementItems.forEach(item => {
+        bankBase += (item.deposit - item.withdrawal);
+    });
+
+    const balances = calculateBalances();
+    let bookBase = balances['1102'] || 0;
+    if (bookBase === 0 && bookReconItems.length > 0) {
+        bookBase = bookReconItems.reduce((s, item) => s + (item.debit - item.credit), 0);
+    }
+
+    let depositsInTransit = 0, outstandingChecks = 0;
+    const depItems = [], checkItems = [];
+    bookReconItems.forEach(item => {
+        if (!item.matched) {
+            if (item.debit > 0) {
+                depositsInTransit += item.debit;
+                depItems.push(item);
+            }
+            if (item.credit > 0) {
+                outstandingChecks += item.credit;
+                checkItems.push(item);
+            }
+        }
+    });
+
+    let unrecordedDeposits = 0, bankCharges = 0;
+    const unrecDepItems = [], chargeItems = [];
+    bankStatementItems.forEach(item => {
+        if (!item.matched) {
+            if (item.deposit > 0) {
+                unrecordedDeposits += item.deposit;
+                unrecDepItems.push(item);
+            }
+            if (item.withdrawal > 0) {
+                bankCharges += item.withdrawal;
+                chargeItems.push(item);
+            }
+        }
+    });
+
+    const adjustedBank = bankBase + depositsInTransit - outstandingChecks;
+    const adjustedBook = bookBase + unrecordedDeposits - bankCharges;
+    const diff = Math.abs(adjustedBank - adjustedBook);
+    const isMatched = diff < 1.0;
+    const dateToday = new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    container.innerHTML = `
+      <div class="border-b-2 border-slate-900 pb-4 mb-6 flex justify-between items-start">
+        <div>
+          <h1 class="text-xl font-black text-slate-900">${compProfile.name || 'شركة المحاكاة للتجارة والتوزيع'}</h1>
+          <p class="text-xs text-slate-600 mt-1">${compProfile.sector || 'قطاع التجارة العامة'} • رأس المال: ${(compProfile.capital || 2000000).toLocaleString()} ج.م</p>
+          <p class="text-xs font-bold text-slate-800 mt-1">الإدارة المالية - قسم الحسابات العامة والتسويات</p>
+        </div>
+        <div class="text-left">
+          <span class="inline-block text-xs bg-slate-900 text-white font-bold px-3 py-1 rounded-md font-mono">REC-${savedCase.caseId || 'STMT-2026'}</span>
+          <p class="text-xs text-slate-500 mt-1">تاريخ الإصدار: ${dateToday}</p>
+        </div>
+      </div>
+
+      <div class="text-center my-4">
+        <h2 class="text-lg font-black text-slate-900 border-b-2 border-double border-slate-400 inline-block pb-1">مذكرة التسوية البنكية المعتمدة (Bank Reconciliation Statement)</h2>
+        <p class="text-xs text-slate-600 mt-1.5 font-medium">عن الفترة المالية المنتهية في ${savedCase.period?.endDate || '2026-12-31'}</p>
+      </div>
+
+      <!-- Bank & Account Information Box -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs mb-6">
+        <div>
+          <span class="text-slate-500 block text-[10px]">المصرف / البنك:</span>
+          <strong class="text-slate-900">${bankAcc.bankNameAr || bankAcc.bankName || 'البنك التجاري'}</strong>
+        </div>
+        <div>
+          <span class="text-slate-500 block text-[10px]">الفرع:</span>
+          <strong class="text-slate-900">${bankAcc.branchName || bankAcc.branch || 'الفرع الرئيسي'}</strong>
+        </div>
+        <div>
+          <span class="text-slate-500 block text-[10px]">رقم الحساب الجاري:</span>
+          <strong class="font-mono text-slate-900">${bankAcc.accountNumberMasked || bankAcc.accountNumberFull || '1102'}</strong>
+        </div>
+        <div>
+          <span class="text-slate-500 block text-[10px]">حساب الأستاذ العام:</span>
+          <strong class="font-mono text-blue-900">1102 - البنك الجاري</strong>
+        </div>
+      </div>
+
+      <!-- Two-Column Official Reconciliation Table -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Bank Side -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white space-y-3">
+          <div class="flex justify-between items-center border-b-2 border-slate-800 pb-2">
+            <h3 class="font-black text-xs text-slate-900">أولاً: تسوية رصيد كشف حساب البنك</h3>
+            <span class="font-mono font-bold text-xs text-blue-900">${bankBase.toLocaleString(undefined, {minimumFractionDigits: 2})} ج.م</span>
+          </div>
+
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between font-bold text-slate-700 pt-1">
+              <span>(+) يضاف: إيداعات بالطريق لم يثبتها البنك:</span>
+              <span class="font-mono text-emerald-700">+${depositsInTransit.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+            </div>
+            ${depItems.length > 0 ? `
+              <ul class="text-[11px] text-slate-500 pr-3 space-y-1 list-disc">
+                ${depItems.map(d => `<li>${d.desc} (${d.date}): <strong class="font-mono">${d.debit.toLocaleString()} ج.م</strong></li>`).join('')}
+              </ul>
+            ` : '<p class="text-[10px] text-slate-400 pr-3">لا توجد إيداعات معلقة</p>'}
+
+            <div class="flex justify-between font-bold text-slate-700 pt-2 border-t border-slate-100">
+              <span>(-) يطرح: شيكات صادرة لم تصرف بعد:</span>
+              <span class="font-mono text-rose-700">-${outstandingChecks.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+            </div>
+            ${checkItems.length > 0 ? `
+              <ul class="text-[11px] text-slate-500 pr-3 space-y-1 list-disc">
+                ${checkItems.map(c => `<li>${c.desc} (${c.ref || c.date}): <strong class="font-mono">${c.credit.toLocaleString()} ج.م</strong></li>`).join('')}
+              </ul>
+            ` : '<p class="text-[10px] text-slate-400 pr-3">لا توجد شيكات معلقة</p>'}
+          </div>
+
+          <div class="border-t-2 border-slate-900 pt-2 flex justify-between items-center bg-slate-50 p-2.5 rounded-lg mt-3">
+            <span class="font-black text-xs text-slate-900">= الرصيد البنكي المعدل النهائي:</span>
+            <span class="font-mono font-black text-sm text-emerald-800">${adjustedBank.toLocaleString(undefined, {minimumFractionDigits: 2})} ج.م</span>
+          </div>
+        </div>
+
+        <!-- Book Side -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white space-y-3">
+          <div class="flex justify-between items-center border-b-2 border-slate-800 pb-2">
+            <h3 class="font-black text-xs text-slate-900">ثانياً: تسوية رصيد دفاتر المنشأة (الأستاذ)</h3>
+            <span class="font-mono font-bold text-xs text-purple-900">${bookBase.toLocaleString(undefined, {minimumFractionDigits: 2})} ج.م</span>
+          </div>
+
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between font-bold text-slate-700 pt-1">
+              <span>(+) يضاف: إيداعات وفوائد بنكية غير مسجلة:</span>
+              <span class="font-mono text-emerald-700">+${unrecordedDeposits.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+            </div>
+            ${unrecDepItems.length > 0 ? `
+              <ul class="text-[11px] text-slate-500 pr-3 space-y-1 list-disc">
+                ${unrecDepItems.map(u => `<li>${u.desc}: <strong class="font-mono">${u.deposit.toLocaleString()} ج.م</strong></li>`).join('')}
+              </ul>
+            ` : '<p class="text-[10px] text-slate-400 pr-3">لا توجد متحصلات معلقة</p>'}
+
+            <div class="flex justify-between font-bold text-slate-700 pt-2 border-t border-slate-100">
+              <span>(-) يطرح: عمولات ومصروفات بنكية غير مسجلة:</span>
+              <span class="font-mono text-rose-700">-${bankCharges.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+            </div>
+            ${chargeItems.length > 0 ? `
+              <ul class="text-[11px] text-slate-500 pr-3 space-y-1 list-disc">
+                ${chargeItems.map(c => `<li>${c.desc}: <strong class="font-mono">${c.withdrawal.toLocaleString()} ج.م</strong></li>`).join('')}
+              </ul>
+            ` : '<p class="text-[10px] text-slate-400 pr-3">لا توجد مصاريف معلقة</p>'}
+          </div>
+
+          <div class="border-t-2 border-slate-900 pt-2 flex justify-between items-center bg-slate-50 p-2.5 rounded-lg mt-3">
+            <span class="font-black text-xs text-slate-900">= الرصيد الدفتري المعدل النهائي:</span>
+            <span class="font-mono font-black text-sm text-emerald-800">${adjustedBook.toLocaleString(undefined, {minimumFractionDigits: 2})} ج.م</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conclusion & Equilibrium Banner -->
+      <div class="p-4 rounded-xl border ${isMatched ? 'bg-emerald-50 border-emerald-300 text-emerald-950' : 'bg-rose-50 border-rose-300 text-rose-950'} flex justify-between items-center mt-6">
+        <div>
+          <span class="font-black text-sm block">${isMatched ? '✓ حالة المذكرة: معتمدة ومتطابقة 100%' : '⚠️ حالة المذكرة: يوجد فرق غير مسوى (' + diff.toLocaleString() + ' ج.م)'}</span>
+          <p class="text-xs mt-0.5">${isMatched ? 'تطابق الرصيدان المعدلان بالكامل، وتعتبر المذكرة وثيقة إثبات دورية مطابقة لمعايير المحاسبة المصرية (EAS 1).' : 'يجب إجراء قيود التسوية اللازمة واستكمال المطابقة للوصول للاتزان التام.'}</p>
+        </div>
+        <div class="text-left font-mono font-black text-base">
+          ${isMatched ? 'فارق التسوية = 0.00 ج.م' : 'الفارق = ' + diff.toLocaleString() + ' ج.م'}
+        </div>
+      </div>
+
+      <!-- Authorization Signatures & Stamp -->
+      <div class="grid grid-cols-3 gap-6 pt-8 mt-6 border-t border-slate-200 text-center text-xs">
+        <div>
+          <span class="text-slate-500 block mb-8">إعداد (المحاسب المالي):</span>
+          <strong class="border-t border-slate-400 pt-1 block text-slate-800">توقيع المحاسب المسئول</strong>
+        </div>
+        <div>
+          <span class="text-slate-500 block mb-8">مراجعة (رئيس الحسابات):</span>
+          <strong class="border-t border-slate-400 pt-1 block text-slate-800">توقيع رئيس الحسابات</strong>
+        </div>
+        <div>
+          <span class="text-slate-500 block mb-8">اعتماد (المدير المالي):</span>
+          <strong class="border-t border-slate-400 pt-1 block text-slate-800">ختم وتوقيع الإدارة المالية</strong>
+        </div>
+      </div>
+    `;
+
+    modal.classList.remove('hidden');
+};
+
+window.closePrintReconciliationStatement = function() {
+    const modal = document.getElementById('recon-print-modal');
+    if (modal) modal.classList.add('hidden');
+};
 
 window.initRecon = initRecon;
 window.updateRecon = updateRecon;
@@ -513,3 +813,4 @@ window.renderReconTables = renderReconTables;
 window.calculateReconciliation = calculateReconciliation;
 window.getBankStatementItems = () => bankStatementItems;
 window.getBookReconItems = () => bookReconItems;
+

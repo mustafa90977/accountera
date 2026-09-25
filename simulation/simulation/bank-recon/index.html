@@ -36,6 +36,9 @@
           <button onclick="autoMatchRecon()" class="text-xs bg-slate-900 hover:bg-blue-900 text-white font-bold px-2 xs:px-3 py-1.5 rounded-lg flex items-center gap-1 transition shadow-xs min-h-[36px] flex-shrink-0">
             <span class="material-symbols-outlined text-[16px]">auto_fix_high</span> <span class="hidden sm:inline">مطابقة ذكية</span>
           </button>
+          <button onclick="openPrintReconciliationStatement()" class="text-xs bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2 xs:px-3 py-1.5 rounded-lg flex items-center gap-1 transition shadow-xs min-h-[36px] flex-shrink-0" title="طباعة مذكرة التسوية المعتمدة وتصديرها">
+            <span class="material-symbols-outlined text-[16px]">print</span> <span class="hidden md:inline">طباعة المذكرة</span>
+          </button>
           <button onclick="resetReconToZero()" title="تصفير كافة علامات المطابقة" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2 xs:px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition shadow-xs min-h-[36px] flex-shrink-0">
             <span class="material-symbols-outlined text-[16px]">restart_alt</span> <span class="hidden md:inline">تصفير</span>
           </button>
@@ -272,6 +275,56 @@
     </a>
   </div>
 </nav>
+
+  <!-- Official Bank Reconciliation Printable Modal -->
+  <div id="recon-print-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <!-- Header bar (No Print) -->
+      <div class="p-4 bg-slate-900 text-white flex justify-between items-center print:hidden">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-emerald-400">verified</span>
+          <span class="font-bold text-sm">معاينة مذكرة التسوية البنكية المعتمدة للطباعة</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">print</span>
+            <span>طباعة المذكرة (A4)</span>
+          </button>
+          <button onclick="closePrintReconciliationStatement()" class="text-slate-400 hover:text-white px-2 py-1 text-sm font-bold">✕</button>
+        </div>
+      </div>
+
+      <!-- Printable Document Content -->
+      <div id="recon-printable-content" class="p-8 sm:p-10 overflow-y-auto flex-1 font-sans text-slate-900 text-right space-y-6">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #recon-printable-content, #recon-printable-content * {
+        visibility: visible;
+      }
+      #recon-printable-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        background: white !important;
+      }
+      #recon-print-modal {
+        position: static;
+        background: transparent;
+        padding: 0;
+      }
+    }
+  </style>
 
   <script src="../data.js"></script><script src="../js/state.js"></script><script src="../js/closing-wizard.js"></script><script src="../js/recon.js"></script>
 </body>
