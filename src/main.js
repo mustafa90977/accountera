@@ -59,6 +59,13 @@ window.navigateToScreen = function(screenId) {
     }
   }
 
+  // حفظ الشاشة الحالية لتجنب فقدانها عند عمل ريفريش
+  if (screenId && screenId !== 'landing' && screenId !== 'welcome') {
+    try {
+      sessionStorage.setItem('accountera_current_screen', screenId);
+    } catch(e) {}
+  }
+
   // إدارة ظهور ونشاط الشريط الجانبي ونمط صفحة الهبوط
   const isLandingScreen = (screenId === 'landing' || screenId === 'welcome');
   document.body.classList.toggle('landing-mode', isLandingScreen);
@@ -244,16 +251,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // فحص معلمات الرابط أو حالة الدخول بعد اكتمال التحقق
   const urlParams = new URLSearchParams(window.location.search);
-  const requestedScreen = urlParams.get('screen');
+  let savedScreen = null;
+  try {
+    savedScreen = sessionStorage.getItem('accountera_current_screen');
+  } catch(e) {}
+  const requestedScreen = urlParams.get('screen') || savedScreen;
   const requestedTheme = urlParams.get('theme');
   if (requestedTheme) {
     document.documentElement.setAttribute('data-theme', requestedTheme);
   }
 
-  if (requestedScreen) {
+  const currentUser = typeof AuthService !== 'undefined' ? AuthService.getCurrentUser() : null;
+  if (requestedScreen && requestedScreen !== 'landing') {
     window.navigateToScreen(requestedScreen);
   } else {
-    const currentUser = typeof AuthService !== 'undefined' ? AuthService.getCurrentUser() : null;
     if (currentUser) {
       AuthService.redirectAfterLogin(currentUser);
     } else {

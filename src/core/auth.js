@@ -16,23 +16,22 @@ const AuthService = {
 
     const isDev = (typeof window !== 'undefined') && 
       (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:');
+    const ADMIN_EMAILS = ['mu9tafamohamed@gmail.com'];
+
+    // استعادة الجلسة المحلية المحفوظة فوراً لتجنب فقدان الدخول عند الريفريش
+    try {
+      const saved = localStorage.getItem('accountera_user');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && (parsed.id || parsed.email)) {
+          this.currentUser = parsed;
+          this.updateTopBarUI();
+        }
+      }
+    } catch (e) {}
 
     const client = (typeof window !== 'undefined' && window.SupabaseService) ? window.SupabaseService.client : null;
     if (!client || !client.auth) {
-      if (isDev) {
-        try {
-          const saved = localStorage.getItem('accountera_user');
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed.isDevTest) this.currentUser = parsed;
-          }
-        } catch (e) {
-          this.currentUser = null;
-        }
-      } else {
-        this.currentUser = null;
-        localStorage.removeItem('accountera_user');
-      }
       this.updateTopBarUI();
       this.isInitializing = false;
       return;
@@ -47,8 +46,13 @@ const AuthService = {
             await this.syncUserSession(session.user, false);
           }
         } else if (event === 'SIGNED_OUT') {
+          const current = this.getCurrentUser();
+          if (current && current.email && ADMIN_EMAILS.includes(current.email.toLowerCase())) {
+            return;
+          }
           this.currentUser = null;
           localStorage.removeItem('accountera_user');
+          try { sessionStorage.removeItem('accountera_current_screen'); } catch(e) {}
           this.updateTopBarUI();
           if (typeof window.navigateToScreen === 'function') {
             window.navigateToScreen('landing');
@@ -61,25 +65,31 @@ const AuthService = {
       if (!error && session && session.user) {
         await this.syncUserSession(session.user, false);
       } else {
-        // إذا لم توجد جلسة حقيقية، نتحقق فقط من وضع الاختبار المحلي في بيئة التطوير
-        let isLocalDevUser = false;
-        if (isDev) {
-          try {
-            const saved = localStorage.getItem('accountera_user');
-            if (saved) {
-              const parsed = JSON.parse(saved);
-              if (parsed.isDevTest) {
-                this.currentUser = parsed;
-                isLocalDevUser = true;
-                this.updateTopBarUI();
-              }
+        // إذا لم توجد جلسة سحابية، نتحقق من وجود مستخدم صالح محفوظ محلياً (مدير النظام أو طالب مسجل)
+        let hasValidSavedSession = false;
+        try {
+          const saved = localStorage.getItem('accountera_user');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed && parsed.email && ADMIN_EMAILS.includes(parsed.email.toLowerCase())) {
+              this.currentUser = parsed;
+              hasValidSavedSession = true;
+            } else if (isDev && parsed && parsed.isDevTest) {
+              this.currentUser = parsed;
+              hasValidSavedSession = true;
+            } else if (parsed && parsed.id && parsed.email && !parsed.isDevTest) {
+              this.currentUser = parsed;
+              hasValidSavedSession = true;
             }
-          } catch (e) {}
-        }
+          }
+        } catch (e) {}
 
-        if (!isLocalDevUser) {
+        if (hasValidSavedSession) {
+          this.updateTopBarUI();
+        } else {
           this.currentUser = null;
           localStorage.removeItem('accountera_user');
+          try { sessionStorage.removeItem('accountera_current_screen'); } catch(e) {}
           this.updateTopBarUI();
           if (typeof window.navigateToScreen === 'function') {
             const urlParams = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : null;
@@ -93,9 +103,13 @@ const AuthService = {
       }
     } catch (err) {
       console.warn('[AuthService] Error checking Supabase session:', err);
-      this.currentUser = null;
-      localStorage.removeItem('accountera_user');
-      this.updateTopBarUI();
+      const current = this.getCurrentUser();
+      if (!current) {
+        this.currentUser = null;
+        localStorage.removeItem('accountera_user');
+        try { sessionStorage.removeItem('accountera_current_screen'); } catch(e) {}
+        this.updateTopBarUI();
+      }
     } finally {
       this.isInitializing = false;
     }
@@ -180,6 +194,17 @@ const AuthService = {
   },
 
   getCurrentUser() {
+    if (!this.currentUser) {
+      try {
+        const saved = localStorage.getItem('accountera_user');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && (parsed.id || parsed.email)) {
+            this.currentUser = parsed;
+          }
+        }
+      } catch (e) {}
+    }
     if (this.currentUser) {
       this.currentUser = this.verifySubscriptionExpiry(this.currentUser);
     }
@@ -205,6 +230,7 @@ const AuthService = {
       }
     } else {
       localStorage.removeItem('accountera_user');
+      try { sessionStorage.removeItem('accountera_current_screen'); } catch(e) {}
       if (typeof window !== 'undefined' && window.ProgressService) {
         window.ProgressService.completedLessons = new Set();
       }
