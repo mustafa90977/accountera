@@ -60,7 +60,7 @@ const ExcelCompanyWorkspaceView = {
     return `
       <div class="companies-hub-container">
         <div class="workspace-hero" style="margin-bottom: 24px;">
-          <div class="workspace-hero-content">
+          <div class="workspace-hero-content" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
             <div style="display:flex; align-items:center; gap: 14px;">
               <div style="width:52px; height:52px; border-radius:14px; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; border:1px solid var(--primary-border); flex-shrink:0;">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 28, strokeWidth: 1.75 }) : ''}
@@ -72,6 +72,13 @@ const ExcelCompanyWorkspaceView = {
                   عند اختيار أي شركة، سيتم تفعيل بيئة العمل المحاسبية ونقلك مباشرة إلى نظام المحاكاة المتكامل (Accounting OS).
                 </p>
               </div>
+            </div>
+            <div>
+              <button type="button" onclick="document.getElementById('hub_upload_company_json').click()" class="btn-cta-secondary" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; font-weight:700; font-size:0.88rem; cursor:pointer; border-radius:12px; border:1px solid var(--border-subtle); background:var(--surface-card); box-shadow:var(--elevation-1);" title="استيراد وتفعيل شركة جديدة من ملف JSON">
+                ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 18 }) : '📂'}
+                <span>استيراد شركة من ملف تدريبي (JSON)</span>
+              </button>
+              <input type="file" id="hub_upload_company_json" accept=".json" style="display:none;" onchange="ExcelCompanyWorkspaceView.handleCompanyUpload(event)">
             </div>
           </div>
         </div>
@@ -843,6 +850,108 @@ const ExcelCompanyWorkspaceView = {
         </div>
       </div>
     `;
+  },
+
+  async handleCompanyUpload(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const text = e.target.result;
+        const json = JSON.parse(text);
+
+        let parseFn = (typeof ExcelAdminDashboard !== 'undefined' && ExcelAdminDashboard.parseTrainingPlatformJson)
+          || window.parseTrainingPlatformJson;
+
+        let comp = null;
+        if (parseFn) {
+          comp = parseFn(json);
+        } else if (json.metadata && json.questions) {
+          const meta = json.metadata || {};
+          const companyMeta = meta.company || {};
+          const rawName = (companyMeta.name || json.name || 'شركة جديدة').trim();
+          const compName = rawName.startsWith('شركة') ? rawName : `شركة ${rawName}`;
+          const activity = (companyMeta.activity || 'الملابس').trim();
+          comp = {
+            id: `comp-${Date.now()}`,
+            name: compName,
+            sector: `تجارة ${activity} (${companyMeta.type || 'تجاري'})`,
+            badge: 'بيئة أعمال متكاملة',
+            icon: 'lightbulb',
+            role: meta.jobTrackNameAr || 'محاسب مالي عام',
+            capital: Number(companyMeta.capital) || 2000000,
+            description: `بيئة محاكاة محاسبية لـ ${compName} بـ ${json.questions.length} معاملة وسند مالي.`,
+            month: 'السنة المالية 2026',
+            transactions: json.questions.map((q, idx) => ({
+              id: q.id || `Q-${idx + 1}`,
+              num: idx + 1,
+              title: q.type || 'معاملة مالية',
+              desc: q.problemText || q.type || '',
+              amount: q.correctAnswer?.totalDebit || 0,
+              lines: q.correctAnswer?.lines || []
+            }))
+          };
+        } else if (json.name && (json.transactions || json.sector)) {
+          comp = json;
+        }
+
+        if (!comp) {
+          throw new Error('لم يتم التعرف على بنية ملف الشركة.');
+        }
+
+        // حفظ في acc_admin_companies
+        let companies = [];
+        try {
+          const raw = localStorage.getItem('acc_admin_companies');
+          if (raw) companies = JSON.parse(raw);
+        } catch(err) {}
+
+        const existingIdx = companies.findIndex(c => c.id === comp.id || c.name === comp.name);
+        if (existingIdx >= 0) {
+          companies[existingIdx] = comp;
+        } else {
+          companies.unshift(comp);
+        }
+        localStorage.setItem('acc_admin_companies', JSON.stringify(companies));
+
+        // تفعيل الشركة في بيئة المحاكي
+        if (typeof SimulationBridge !== 'undefined') {
+          SimulationBridge.setSimulatorActiveCompany(comp);
+        } else {
+          localStorage.setItem('sim_company_profile', JSON.stringify({
+            id: comp.id,
+            name: comp.name,
+            sector: comp.sector,
+            role: comp.role || 'محاسب مالي',
+            year: comp.month || 'السنة المالية 2026'
+          }));
+        }
+
+        if (typeof AccModal !== 'undefined') {
+          AccModal.toast(`تم استيراد ${comp.name} بنجاح (${comp.transactions.length} عملية)! جاري الدخول لبيئة المحاكاة...`, 'success');
+        } else {
+          alert(`تم استيراد ${comp.name} بنجاح!`);
+        }
+
+        // إعادة تحميل العرض أو التوجه للمحاكي
+        setTimeout(() => {
+          this.enterCompanySimulator(comp.id);
+        }, 600);
+
+      } catch (err) {
+        console.error('[CompanyUpload]', err);
+        if (typeof AccModal !== 'undefined') {
+          AccModal.toast('فشل استيراد ملف الشركة: ' + (err.message || 'خطأ في التنسيق'), 'error');
+        } else {
+          alert('فشل استيراد ملف الشركة: ' + err.message);
+        }
+      } finally {
+        event.target.value = '';
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
   }
 };
 

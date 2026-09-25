@@ -663,6 +663,239 @@ window.switchActiveSimulationCompany = function(compId) {
     }
 };
 
+// ================= TRAINING PLATFORM JSON PARSER & UPLOAD =================
+if (typeof window.parseTrainingPlatformJson === 'undefined') {
+    window.parseTrainingPlatformJson = function(json) {
+        if (!json || typeof json !== 'object') {
+            throw new Error('صيغة الملف غير صالحة.');
+        }
+
+        if (json.format === 'accounting-training-v1' || (json.metadata && json.questions)) {
+            const meta = json.metadata || {};
+            const companyMeta = meta.company || {};
+            const rawName = (companyMeta.name || json.name || 'شركة جديدة').trim();
+            const compName = rawName.startsWith('شركة') ? rawName : `شركة ${rawName}`;
+            const activity = (companyMeta.activity || 'الأجهزة والخدمات').trim();
+            const sector = `تجارة ${activity} (${companyMeta.type === 'Services' ? 'خدمي وتوزيع' : companyMeta.type || 'تجاري'})`;
+            const capital = Number(companyMeta.capital) || 2000000;
+            const role = meta.jobTrackNameAr || 'محاسب مالي عام';
+            const year = meta.startDate ? `السنة المالية ${meta.startDate.substring(0, 4)}` : 'السنة المالية 2026';
+            const compId = `comp-${(rawName.replace(/\s+/g, '-').toLowerCase()) || Date.now()}`;
+
+            const questions = Array.isArray(json.questions) ? json.questions : [];
+
+            const typeArMap = {
+                'Opening Balance': 'إثبات الأرصدة الافتتاحية والمركز المالي',
+                'Sale': 'فاتورة مبيعات بضاعة آجلة للعملاء',
+                'Cash Sale': 'فاتورة مبيعات نقدية بالخزينة',
+                'Collection': 'إيصال تحصيل نقدية وبنكي من عميل',
+                'Purchase': 'فاتورة شراء وتوريد بضاعة للمستودع',
+                'Payment': 'سداد مستحقات وفواتير موردين',
+                'Purchase Return': 'مردودات مشتريات وإشعار دائن',
+                'Sales Return': 'مردودات مبيعات وإشعار مدين',
+                'Sales Return Inv': 'مردودات مبيعات مخزنية',
+                'COGS': 'إثبات تكلفة البضاعة المباعة',
+                'Cash Sale COGS': 'إثبات تكلفة البضاعة المباعة النقدية',
+                'Payroll': 'مسير واستحقاق رواتب وأجور الموظفين',
+                'Payroll Settlement': 'سداد وصرف أجور ورواتب العاملين',
+                'Expense': 'إثبات وسداد مصروفات تشغيلية',
+                'Misc Expense': 'مصروفات نثرية وإدارية متنوعة',
+                'Prepayment': 'سداد مصروفات مدفوعة مقدماً',
+                'Prepayment Amortization': 'تسوية إهلاك واستنفاد المصروف المقدم',
+                'Accrual': 'إثبات مصروفات مستحقة غير مسددة',
+                'Accrued Revenue': 'إثبات إيرادات مستحقة غير محصلة',
+                'Accrual Settlement': 'سداد المصروفات المستحقة السابقة',
+                'Unearned Revenue': 'استلام إيرادات مقبوضة مقدماً',
+                'Unearned Rev Recognition': 'الاعتراف بالإيراد المقدم المحقق',
+                'Bank Charges': 'إثبات عمولات ومصروفات بنكية',
+                'Bank Loan': 'عقد وتسهيل قرض بنكي تمويلي',
+                'Loan Repayment': 'سداد قسط وفائدة قرض بنكي',
+                'Asset Purchase': 'شراء أصول ثابتة رأسمالية',
+                'Asset Disposal': 'استبعاد وبيع أصل ثابت',
+                'Depreciation': 'قسط إهلاك الأصول الثابتة السنوي',
+                'Bad Debt Provision': 'تكوين مخصص ديون مشكوك في تحصيلها',
+                'Inventory Impairment': 'إثبات هبوط وانخفاض أسعار المخزون',
+                'Interest Accrual': 'إثبات فوائد بنكية مستحقة',
+                'VAT Clearing': 'تسوية ومقاصة ضريبة القيمة المضافة',
+                'VAT Settlement': 'سداد إقرار ضريبة القيمة المضافة',
+                'Petty Cash Replenishment': 'استعاضة عهدة النقدية النثرية',
+                'Bank Transfer In': 'تحويل نقدية وارد بين الحسابات',
+                'Bank Transfer Out': 'تحويل نقدية صادر بين الحسابات',
+                'Cash Advance': 'صرف سلفة مؤقتة للموظف',
+                'Cash Advance Settlement': 'تسوية وإقفال سلفة الموظف',
+                'Cash Shortage': 'إثبات عجز الخزينة النقدية',
+                'Inventory Adjustment': 'تسوية فروقات الجرد المخزني'
+            };
+
+            const transactions = questions.map((q, idx) => {
+                const rawLines = q.correctAnswer?.lines || [];
+                const debits = rawLines.filter(l => (Number(l.debit) || 0) > 0);
+                const credits = rawLines.filter(l => (Number(l.credit) || 0) > 0);
+                const totalDebit = Number(q.correctAnswer?.totalDebit) || debits.reduce((s, l) => s + (Number(l.debit) || 0), 0);
+                const totalCredit = Number(q.correctAnswer?.totalCredit) || credits.reduce((s, l) => s + (Number(l.credit) || 0), 0);
+
+                const titleAr = typeArMap[q.type] || `${q.type} - ${q.categoryAr || 'معاملة مالية'}`;
+
+                let desc = '';
+                if (q.problemText && q.problemText.trim()) {
+                    desc = q.problemText.trim();
+                } else {
+                    const formattedTotal = (totalDebit || totalCredit || 0).toLocaleString() + ' ج.م';
+                    const drNames = debits.map(d => (d.accountName ? d.accountName.split('(')[0].trim() : 'حساب') + ' (' + Number(d.debit).toLocaleString() + ' ج.م)').join(' و ');
+                    const crNames = credits.map(c => (c.accountName ? c.accountName.split('(')[0].trim() : 'حساب') + ' (' + Number(c.credit).toLocaleString() + ' ج.م)').join(' و ');
+
+                    switch (q.type) {
+                        case 'Opening Balance':
+                            desc = `إثبات الأرصدة الافتتاحية للمركز المالي وتأسيس الشركة برأس مال قدره ${formattedTotal}.`;
+                            break;
+                        case 'Sale':
+                            desc = `إصدار فاتورة بيع بضاعة آجلة للعملاء بمبلغ ${formattedTotal}.`;
+                            break;
+                        case 'Cash Sale':
+                            desc = `إصدار فاتورة بيع بضاعة نقدية محصلة بالخزينة/البنك بمبلغ ${formattedTotal}.`;
+                            break;
+                        case 'Purchase':
+                            desc = `استلام وتوريد بضاعة للمستودع بموجب فاتورة شراء بمبلغ ${formattedTotal}.`;
+                            break;
+                        case 'Collection':
+                            desc = `تحصيل مبالغ مستحقة من العملاء بموجب إشعار بنكي/إيصال قبض بمبلغ ${formattedTotal}.`;
+                            break;
+                        case 'Payment':
+                            desc = `سداد مستحقات وفواتير موردين خصماً من الحساب البنكي بمبلغ ${formattedTotal}.`;
+                            break;
+                        case 'Expense':
+                            desc = `سداد مصروفات تشغيلية وإدارية: ${drNames} خصماً من ${crNames}.`;
+                            break;
+                        case 'Prepayment':
+                            desc = `سداد دفعات ومصروفات مدفوعة مقدماً عن فترات قادمة بمبلغ ${formattedTotal}.`;
+                            break;
+                        case 'Prepayment Amortization':
+                            desc = `تسوية وإهلاك قسط المصروف المدفوع مقدماً المحقق عن الفترة بقيمة ${formattedTotal}.`;
+                            break;
+                        case 'COGS':
+                        case 'Cash Sale COGS':
+                            desc = `إثبات تكلفة البضاعة المباعة وصرفها من المخزون بمبلغ ${formattedTotal}.`;
+                            break;
+                        case 'Asset Purchase':
+                            desc = `شراء أصول ثابتة جديدة للشركة بموجب مستند وفاتورة بقيمة ${formattedTotal}.`;
+                            break;
+                        case 'Payroll':
+                            desc = `إثبات كشف واستحقاق رواتب العاملين عن الشهر بقيمة إجمالية ${formattedTotal}.`;
+                            break;
+                        default:
+                            if (q.solutionSteps && q.solutionSteps.length > 1) {
+                                desc = q.solutionSteps.slice(0, 2).join(' ');
+                            } else {
+                                desc = `${titleAr} بمبلغ ${formattedTotal}: من ${drNames || 'المدين'} إلى ${crNames || 'الدائن'}.`;
+                            }
+                            break;
+                    }
+                }
+
+                const dayOffset = Math.floor((idx / Math.max(1, questions.length)) * 350);
+                const dateObj = new Date(2026, 0, 1 + dayOffset);
+                const dateStr = dateObj.toISOString().split('T')[0];
+
+                return {
+                    id: q.id || `Q-${String(idx + 1).padStart(3, '0')}`,
+                    num: idx + 1,
+                    title: titleAr,
+                    desc: desc,
+                    type: q.type || 'General',
+                    date: dateStr,
+                    amount: totalDebit || totalCredit || 0,
+                    difficulty: q.difficulty || 'Medium',
+                    category: q.category || 'general',
+                    categoryAr: q.categoryAr || 'محاسبة عامة',
+                    dr: debits[0]?.accountCode || '1101',
+                    cr: credits[0]?.accountCode || '4101',
+                    lines: rawLines.map((l, lIdx) => ({
+                        lineNum: lIdx + 1,
+                        accountCode: String(l.accountCode || ''),
+                        accountName: l.accountName || 'حساب',
+                        acctType: l.accountType || 'Asset',
+                        debit: Number(l.debit) || 0,
+                        credit: Number(l.credit) || 0,
+                        description: l.description || desc
+                    })),
+                    solutionSteps: q.solutionSteps || [],
+                    accountingRule: q.accountingRule || '',
+                    hints: q.hints || [],
+                    scoring: q.scoring || { totalPoints: 5 }
+                };
+            });
+
+            return {
+                id: compId,
+                name: compName,
+                sector: sector,
+                badge: meta.scenarioName ? 'شركة حقيقية مستقرة' : 'بيئة أعمال متكاملة',
+                icon: 'lightbulb',
+                role: role,
+                capital: capital,
+                description: `بيئة محاكاة محاسبية متقدمة لـ ${compName} (${sector}) برأس مال قدره ${capital.toLocaleString()} ج.م، تتضمن دورة تدريبية واقعية بـ ${transactions.length} معاملة وسند مالي.`,
+                month: year,
+                transactions: transactions
+            };
+        }
+
+        if (json.name && (json.transactions || json.sector)) {
+            return {
+                id: json.id || `comp-${Date.now()}`,
+                name: json.name,
+                sector: json.sector || 'قطاع عام',
+                badge: json.badge || 'نشاط تجاري',
+                icon: json.icon && !/[\u{1F300}-\u{1FAFF}]/u.test(json.icon) ? json.icon : 'buildings',
+                role: json.role || 'محاسب مالي',
+                capital: json.capital || 1000000,
+                description: json.description || `شركة ${json.name}`,
+                month: json.month || 'السنة المالية 2026',
+                transactions: Array.isArray(json.transactions) ? json.transactions : []
+            };
+        }
+
+        throw new Error('صيغة ملف التدريب غير متوافقة.');
+    };
+}
+
+window.handleSimCompanyJsonUpload = function(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const text = e.target.result;
+            const json = JSON.parse(text);
+            const comp = window.parseTrainingPlatformJson(json);
+            if (!comp) throw new Error('فشل قراءة بيانات الشركة من الملف.');
+
+            let companies = [];
+            try {
+                const raw = localStorage.getItem('acc_admin_companies');
+                if (raw) companies = JSON.parse(raw);
+            } catch(err) {}
+
+            const existingIdx = companies.findIndex(c => c.id === comp.id || c.name === comp.name);
+            if (existingIdx >= 0) {
+                companies[existingIdx] = comp;
+            } else {
+                companies.unshift(comp);
+            }
+            localStorage.setItem('acc_admin_companies', JSON.stringify(companies));
+
+            alert(`تم بنجاح استيراد "${comp.name}" وتضمين (${comp.transactions.length}) سند ومعاملة مالية! جاري تفعيلها في المحاكي...`);
+            window.switchActiveSimulationCompany(comp.id);
+        } catch(err) {
+            console.error('[SimCompanyUpload]', err);
+            alert('حدث خطأ أثناء قراءة ملف التدريب: ' + (err.message || 'تنسيق غير صالح'));
+        } finally {
+            event.target.value = '';
+        }
+    };
+    reader.readAsText(file, 'UTF-8');
+};
+
 window.openCompanySwitcherModal = function() {
     let overlay = document.getElementById('simCompanySwitcherModal');
     if (overlay) overlay.remove();
@@ -699,9 +932,9 @@ window.openCompanySwitcherModal = function() {
                 <button onclick="document.getElementById('simCompanySwitcherModal').remove()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm">✕</button>
             </div>
             
-            <div class="space-y-2.5 max-h-[380px] overflow-y-auto">
+            <div class="space-y-2.5 max-h-[340px] overflow-y-auto">
                 ${companies.length === 0 ? `
-                    <div class="text-center py-8 text-slate-400 text-xs">لا توجد شركات مضافة حالياً في المنظومة. يمكنك إضافتها من لوحة الإدارة.</div>
+                    <div class="text-center py-8 text-slate-400 text-xs">لا توجد شركات مضافة حالياً في المنظومة. يمكنك استيراد شركة بالأسفل أو إضافتها من لوحة الإدارة.</div>
                 ` : companies.map(c => {
                     const isSelected = c.id === currentCompId || (!currentCompId && c.name === currentName);
                     const txCount = (c.transactions || []).length;
@@ -722,6 +955,14 @@ window.openCompanySwitcherModal = function() {
                         </div>
                     `;
                 }).join('')}
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('sim_upload_company_json').click()" class="w-full py-2.5 px-4 rounded-xl border border-dashed border-blue-400 bg-blue-50/60 hover:bg-blue-100/70 text-blue-700 font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-sm">
+                    <span class="text-base">📂</span>
+                    <span>استيراد شركة من ملف تدريبي (JSON)</span>
+                </button>
+                <input type="file" id="sim_upload_company_json" accept=".json" style="display:none;" onchange="window.handleSimCompanyJsonUpload(event)">
             </div>
         </div>
     `;

@@ -954,12 +954,57 @@ const ExcelAdminDashboard = {
         let desc = '';
         if (q.problemText && q.problemText.trim()) {
           desc = q.problemText.trim();
-        } else if (q.solutionSteps && q.solutionSteps.length > 1) {
-          desc = q.solutionSteps.slice(0, 2).join(' ');
-        } else if (rawLines.length > 0) {
-          desc = rawLines[0].description || titleAr;
         } else {
-          desc = titleAr;
+          const formattedTotal = (totalDebit || totalCredit || 0).toLocaleString() + ' ج.م';
+          const drNames = debits.map(d => (d.accountName ? d.accountName.split('(')[0].trim() : 'حساب') + ' (' + Number(d.debit).toLocaleString() + ' ج.م)').join(' و ');
+          const crNames = credits.map(c => (c.accountName ? c.accountName.split('(')[0].trim() : 'حساب') + ' (' + Number(c.credit).toLocaleString() + ' ج.م)').join(' و ');
+
+          switch (q.type) {
+            case 'Opening Balance':
+              desc = `إثبات الأرصدة الافتتاحية للمركز المالي وتأسيس الشركة برأس مال قدره ${formattedTotal}.`;
+              break;
+            case 'Sale':
+              desc = `إصدار فاتورة بيع بضاعة آجلة للعملاء بمبلغ ${formattedTotal}.`;
+              break;
+            case 'Cash Sale':
+              desc = `إصدار فاتورة بيع بضاعة نقدية محصلة بالخزينة/البنك بمبلغ ${formattedTotal}.`;
+              break;
+            case 'Purchase':
+              desc = `استلام وتوريد بضاعة للمستودع بموجب فاتورة شراء بمبلغ ${formattedTotal}.`;
+              break;
+            case 'Collection':
+              desc = `تحصيل مبالغ مستحقة من العملاء بموجب إشعار بنكي/إيصال قبض بمبلغ ${formattedTotal}.`;
+              break;
+            case 'Payment':
+              desc = `سداد مستحقات وفواتير موردين خصماً من الحساب البنكي بمبلغ ${formattedTotal}.`;
+              break;
+            case 'Expense':
+              desc = `سداد مصروفات تشغيلية وإدارية: ${drNames} خصماً من ${crNames}.`;
+              break;
+            case 'Prepayment':
+              desc = `سداد دفعات ومصروفات مدفوعة مقدماً عن فترات قادمة بمبلغ ${formattedTotal}.`;
+              break;
+            case 'Prepayment Amortization':
+              desc = `تسوية وإهلاك قسط المصروف المدفوع مقدماً المحقق عن الفترة بقيمة ${formattedTotal}.`;
+              break;
+            case 'COGS':
+            case 'Cash Sale COGS':
+              desc = `إثبات تكلفة البضاعة المباعة وصرفها من المخزون بمبلغ ${formattedTotal}.`;
+              break;
+            case 'Asset Purchase':
+              desc = `شراء أصول ثابتة جديدة للشركة بموجب مستند وفاتورة بقيمة ${formattedTotal}.`;
+              break;
+            case 'Payroll':
+              desc = `إثبات كشف واستحقاق رواتب العاملين عن الشهر بقيمة إجمالية ${formattedTotal}.`;
+              break;
+            default:
+              if (q.solutionSteps && q.solutionSteps.length > 1) {
+                desc = q.solutionSteps.slice(0, 2).join(' ');
+              } else {
+                desc = `${titleAr} بمبلغ ${formattedTotal}: من ${drNames || 'المدين'} إلى ${crNames || 'الدائن'}.`;
+              }
+              break;
+          }
         }
 
         const dayOffset = Math.floor((idx / Math.max(1, questions.length)) * 350);
@@ -2513,5 +2558,6 @@ const ExcelAdminDashboard = {
 };
 
 window.ExcelAdminDashboard = ExcelAdminDashboard;
+window.parseTrainingPlatformJson = (json) => ExcelAdminDashboard.parseTrainingPlatformJson(json);
 
 
