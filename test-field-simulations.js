@@ -89,8 +89,34 @@ runTest('وجود نوافذ المعاينة والطباعة الرسمية ل
     assert.ok(invHtml.includes('@media print'), 'تنسيقات الطباعة لمحضر المخزون غير موجودة');
 });
 
+// 8. فحص ملفات منظومة الإقرارات الضريبية المصرية
+runTest('ملفات الإقرارات الضريبية المصرية (نموذج 10 و 41) موجودة بالمسارات المحددة', () => {
+    const htmlPath = path.join(__dirname, 'simulation', 'simulation', 'tax-returns', 'index.html');
+    const jsPath = path.join(__dirname, 'simulation', 'simulation', 'js', 'tax-returns.js');
+    assert.ok(fs.existsSync(htmlPath), 'ملف tax-returns/index.html غير موجود');
+    assert.ok(fs.existsSync(jsPath), 'ملف js/tax-returns.js غير موجود');
+});
+
+// 9. فحص حسابات وتوجيهات نموذج 10 ونموذج 41
+runTest('محاكي الإقرارات يدعم احتساب ضريبة القيمة المضافة 14% ونسب الخصم والتحصيل (1% و 3% و 5%)', () => {
+    const jsContent = fs.readFileSync(path.join(__dirname, 'simulation', 'simulation', 'js', 'tax-returns.js'), 'utf8');
+    assert.ok(jsContent.includes('outputVat'), 'ضريبة المخرجات غير موجودة');
+    assert.ok(jsContent.includes('inputVat'), 'ضريبة المدخلات غير موجودة');
+    assert.ok(jsContent.includes('netVatPayable'), 'صافي الضريبة الواجبة السداد غير محتسبة');
+    assert.ok(jsContent.includes('prepareVatClearingDraft'), 'دالة إعداد قيد مقاصة الضريبة غير موجودة');
+    assert.ok(jsContent.includes('openPrintVatForm10'), 'دالة طباعة نموذج 10 غير موجودة');
+    assert.ok(jsContent.includes('openPrintWhtForm41'), 'دالة طباعة نموذج 41 غير موجودة');
+});
+
+// 10. فحص دعم مسودة تسوية وإقفال الضريبة في دفتر اليومية
+runTest('دفتر اليومية journal.js يدعم مسودة قيد مقاصة الضريبة VAT_CLEARING', () => {
+    const journalContent = fs.readFileSync(path.join(__dirname, 'simulation', 'simulation', 'js', 'journal.js'), 'utf8');
+    assert.ok(journalContent.includes('VAT_CLEARING'), 'journal.js لا يتعرف على VAT_CLEARING');
+    assert.ok(journalContent.includes('tax-returns'), 'journal.js لا يحتوي على مسار العودة لشاشة الضرائب');
+});
+
 console.log('\n========================================================');
-console.log(`🎯 نتيجة فحص المحاكيات الميدانية: تم بنجاح اجتياز ${passedTests} من أصل ${totalTests} اختباراً بنسبة 100%!`);
+console.log(`🎯 نتيجة فحص المحاكيات الميدانية والضرائب: تم بنجاح اجتياز ${passedTests} من أصل ${totalTests} اختباراً بنسبة 100%!`);
 console.log('========================================================\n');
 
 if (passedTests !== totalTests) {

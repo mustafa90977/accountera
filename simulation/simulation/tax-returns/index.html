@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title>منظومة الإقرارات الضريبية المصرية - NTL-2026</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../css/theme.js"></script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 flex flex-col antialiased">
+  <!-- Header -->
+  <header class="fixed top-0 w-full z-50 pt-safe bg-white/90 backdrop-blur-xl shadow-xs border-b border-slate-200">
+    <div class="h-20 px-4 flex flex-col justify-center gap-1 max-w-7xl mx-auto">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-xs flex-shrink-0">
+            <span class="material-symbols-outlined text-[22px]">account_balance</span>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm text-slate-900 truncate max-w-[130px] xs:max-w-[180px] sm:max-w-[240px] company-title-display">شركة النيل للتجارة والتوزيع</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-900 font-bold flex-shrink-0 hidden xs:inline-block">الإقرارات الضريبية</span>
+            </div>
+            <span class="text-xs text-slate-500 truncate hidden sm:block">توليد إقرارات القيمة المضافة (نموذج 10) والخصم والتحصيل (نموذج 41) آلياً من الأستاذ العام</span>
+            <span class="text-xs text-slate-500 truncate sm:hidden">الضرائب المصرية (10 و 41)</span>
+          </div>
+        </div>
+
+        <div id="header-actions" class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          <button onclick="openPrintVatForm10()" class="text-xs bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-2 xs:px-3 py-1.5 rounded-lg flex items-center gap-1 transition shadow-xs min-h-[36px] flex-shrink-0 cursor-pointer" title="طباعة الإقرار الضريبي الرسمي المعتمد">
+            <span class="material-symbols-outlined text-[16px]">print</span> <span class="hidden md:inline">طباعة الإقرار A4</span>
+          </button>
+          <button onclick="prepareVatClearingDraft()" class="text-xs bg-slate-900 hover:bg-blue-900 text-white font-bold px-2 xs:px-3 py-1.5 rounded-lg flex items-center gap-1 transition shadow-xs min-h-[36px] flex-shrink-0 cursor-pointer" title="إعداد مسودة قيد مقاصة وسداد الضريبة">
+            <span class="material-symbols-outlined text-[16px]">draw</span> <span class="hidden sm:inline">قيد التسوية</span>
+          </button>
+          <a href="/index.html" onclick="returnToPlatform(event)" class="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-800 px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex-shrink-0 min-h-[36px] cursor-pointer" title="العودة لمنصة المحاسب الرئيسية">
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span><span class="hidden xs:inline">العودة</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex flex-col relative w-full pt-24 pb-28 min-h-screen px-4 max-w-7xl mx-auto space-y-6">
+    <!-- Tab Switcher -->
+    <div class="flex items-center gap-2 p-1.5 bg-slate-200/80 rounded-2xl max-w-lg mx-auto w-full">
+      <button id="tab-btn-vat" onclick="switchTaxTab('vat_form10')" class="flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold bg-slate-900 text-white shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+        <span>نموذج 10 (القيمة المضافة - شهري)</span>
+      </button>
+      <button id="tab-btn-wht" onclick="switchTaxTab('wht_form41')" class="flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center justify-center gap-2 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px]">request_quote</span>
+        <span>نموذج 41 (خصم وإضافة - ربع سنوي)</span>
+      </button>
+    </div>
+
+    <!-- VIEW 1: VAT Form 10 -->
+    <div id="tax-view-vat" class="space-y-6">
+      <!-- Top Summary KPI Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Sales Base -->
+        <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between text-slate-500 mb-1">
+            <span class="text-xs font-bold">المبيعات الخاضعة للضريبة</span>
+            <span class="material-symbols-outlined text-blue-600 text-lg">trending_up</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span id="kpi-vat-sales" class="text-xl font-mono font-black text-slate-900">0.00</span>
+            <span class="text-xs text-slate-400">ج.م</span>
+          </div>
+          <span class="text-[10px] text-slate-400 mt-1 block">وعاء الضريبة العام (14%)</span>
+        </div>
+
+        <!-- Output VAT (2102) -->
+        <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between text-slate-500 mb-1">
+            <span class="text-xs font-bold">ضريبة المخرجات (حـ/ 2102)</span>
+            <span class="material-symbols-outlined text-purple-600 text-lg">payments</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span id="kpi-vat-output" class="text-xl font-mono font-black text-blue-900">0.00</span>
+            <span class="text-xs text-slate-400">ج.م</span>
+          </div>
+          <span class="text-[10px] text-slate-400 mt-1 block">الضريبة المحصلة من العملاء</span>
+        </div>
+
+        <!-- Input VAT (1106) -->
+        <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between text-slate-500 mb-1">
+            <span class="text-xs font-bold">ضريبة المدخلات (حـ/ 1106)</span>
+            <span class="material-symbols-outlined text-emerald-600 text-lg">shopping_cart</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span id="kpi-vat-input" class="text-xl font-mono font-black text-emerald-800">0.00</span>
+            <span class="text-xs text-slate-400">ج.م</span>
+          </div>
+          <span class="text-[10px] text-slate-400 mt-1 block">الضريبة القابلة للخصم من المشتريات</span>
+        </div>
+
+        <!-- Net Payable -->
+        <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+          <div class="flex items-center justify-between text-slate-500 mb-1">
+            <span class="text-xs font-bold">صافي الضريبة المستحقة</span>
+            <span class="material-symbols-outlined text-rose-600 text-lg">account_balance_wallet</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span id="kpi-vat-net" class="text-xl font-mono font-black text-rose-700">0.00</span>
+            <span class="text-xs text-slate-400">ج.م</span>
+          </div>
+          <span class="text-[10px] text-slate-400 mt-1 block">واجبة السداد لمصلحة الضرائب المصرية</span>
+        </div>
+      </div>
+
+      <!-- VAT Table Card -->
+      <div class="bg-white rounded-2xl border-2 border-slate-200 shadow-xs overflow-hidden">
+        <div class="p-4 bg-slate-900 text-white flex justify-between items-center flex-wrap gap-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-purple-400">description</span>
+            <h2 class="text-sm sm:text-base font-bold">كشف حساب إقرار ضريبة القيمة المضافة (نموذج 10 إلكتروني)</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-300 bg-slate-800 px-3 py-1 rounded-full font-mono">الفترة: يناير 2026</span>
+            <button onclick="openPrintVatForm10()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-[15px]">print</span>
+              <span>طباعة A4</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
+              <tr>
+                <th class="p-3">بيان البنود والوعاء الخاضع</th>
+                <th class="p-3 text-center w-36">قيمة المعاملات (الوعاء)</th>
+                <th class="p-3 text-center w-24">فئة الضريبة</th>
+                <th class="p-3 text-center w-36">قيمة الضريبة (ج.م)</th>
+                <th class="p-3 text-center w-36">التوجيه المحاسبي</th>
+              </tr>
+            </thead>
+            <tbody id="vat-table-tbody" class="divide-y divide-slate-100">
+              <!-- JS Injected -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Action Card -->
+      <div class="p-4 bg-purple-50 border-2 border-purple-200 rounded-2xl flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-2xl text-purple-700">task_alt</span>
+          <div>
+            <strong class="text-sm text-purple-950 block">إجراء قيد المقاصة والتسوية الضريبية بالدفاتر:</strong>
+            <span class="text-xs text-slate-600">إقفال رصيد حـ/ 2102 مع حـ/ 1106 وإثبات سداد الصافي للمصلحة بشيك أو تحويل بنكي عبر منظومة الدفع الإلكتروني.</span>
+          </div>
+        </div>
+        <button onclick="prepareVatClearingDraft()" class="bg-purple-900 hover:bg-purple-950 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
+          <span>إعداد مسودة قيد مقاصة الضريبة باليومية</span>
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- VIEW 2: WHT Form 41 -->
+    <div id="tax-view-wht" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl border-2 border-slate-200 shadow-xs overflow-hidden">
+        <div class="p-4 bg-slate-900 text-white flex justify-between items-center flex-wrap gap-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-blue-400">summarize</span>
+            <h2 class="text-sm sm:text-base font-bold">كشف الخصم والتحصيل تحت حساب الضريبة (نموذج 41 ضرائب ربع سنوي)</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-300 bg-slate-800 px-3 py-1 rounded-full font-mono">الربع الأول (Q1 2026)</span>
+            <button onclick="openPrintWhtForm41()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-[15px]">print</span>
+              <span>طباعة A4</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
+              <tr>
+                <th class="p-3">بيانات المورد / الممول</th>
+                <th class="p-3">طبيعة المعاملة والتوريد</th>
+                <th class="p-3 text-center w-28">تاريخ المعاملة</th>
+                <th class="p-3 text-center w-36">قيمة المعاملة الخاضعة</th>
+                <th class="p-3 text-center w-24">نسبة الخصم</th>
+                <th class="p-3 text-center w-36">الضريبة المخصومة</th>
+              </tr>
+            </thead>
+            <tbody id="wht-table-tbody" class="divide-y divide-slate-100">
+              <!-- JS Injected -->
+            </tbody>
+            <tfoot class="bg-slate-100 font-black border-t-2 border-slate-800">
+              <tr>
+                <td colspan="3" class="p-3 text-right">إجمالي تعاملات الربع الأول والضريبة المستقطعة:</td>
+                <td class="p-3 text-center font-mono text-slate-900" id="wht-total-base">0.00 ج.م</td>
+                <td class="p-3 text-center">-</td>
+                <td class="p-3 text-center font-mono text-rose-800 text-sm" id="wht-total-tax">0.00 ج.م</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Printable Tax Declaration Modal -->
+  <div id="tax-print-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div class="p-4 bg-slate-900 text-white flex justify-between items-center print:hidden">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-emerald-400">verified</span>
+          <span class="font-bold text-sm">معاينة الإقرار الضريبي الرسمي المعتمد للطباعة والتصدير</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">print</span>
+            <span>طباعة الإقرار (A4)</span>
+          </button>
+          <button onclick="closePrintTaxModal()" class="text-slate-400 hover:text-white px-2 py-1 text-sm font-bold cursor-pointer">✕</button>
+        </div>
+      </div>
+
+      <div id="tax-printable-content" class="p-8 sm:p-10 overflow-y-auto flex-1 font-sans text-slate-900 text-right space-y-6">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #tax-printable-content, #tax-printable-content * { visibility: visible; }
+      #tax-printable-content {
+        position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 20px; background: white !important;
+      }
+      #tax-print-modal { position: static; background: transparent; padding: 0; }
+    }
+  </style>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(11,28,48,0.06)] border-t border-surface-variant">
+    <div class="flex items-center justify-around px-1 py-1 max-w-xl mx-auto w-full">
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../dashboard/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">dashboard</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center">نظرة عامة</span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../journal/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">menu_book</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">اليومية</span><span class="hidden xs:inline">قيود اليومية</span></span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../bank-recon/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">assured_workload</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">التسوية</span><span class="hidden xs:inline">التسوية البنكية</span></span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../cash-count/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">payments</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الخزينة</span><span class="hidden xs:inline">جرد الخزينة</span></span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../inventory-count/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">inventory_2</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">المخزون</span><span class="hidden xs:inline">جرد المخزون</span></span>
+      </a>
+      <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 px-0.5 transition-all text-primary font-bold" href="../tax-returns/index.html">
+        <span class="material-symbols-outlined text-[20px] xs:text-[22px]">account_balance</span>
+        <span class="text-[10px] xs:text-[11px] mt-0.5 whitespace-nowrap truncate max-w-full text-center"><span class="xs:hidden">الضرائب</span><span class="hidden xs:inline">الإقرارات</span></span>
+      </a>
+    </div>
+  </nav>
+
+  <script src="../data.js"></script>
+  <script src="../js/state.js"></script>
+  <script src="../js/tax-returns.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initTaxReturns();
+    });
+  </script>
+</body>
+</html>

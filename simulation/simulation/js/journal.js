@@ -75,6 +75,9 @@ function showDraftBanner(draft) {
     } else if (draft.sourceModule === 'INVENTORY_COUNT') {
         bannerTitle = 'مسودة قيد تسوية جرد المخزون (بانتظار مراجعتك واعتمادك)';
         sourceText = 'محضر جرد المخزن الفعلي';
+    } else if (draft.sourceModule === 'VAT_CLEARING') {
+        bannerTitle = 'مسودة قيد مقاصة وإقفال ضريبة القيمة المضافة (نموذج 10)';
+        sourceText = 'إقرار ضريبة القيمة المضافة وحساب المقاصة الدفترية';
     }
 
     slot.innerHTML = `
@@ -108,6 +111,9 @@ function renderDraftDocument(draft) {
     } else if (draft.sourceModule === 'INVENTORY_COUNT') {
         docSub = 'إشعار تسوية فروقات الجرد المخزني (Inventory Variance Notice)';
         footerNote = 'مرفق محضر جرد المخزن المعتمد لمطابقة رصيد المخزون السلعي بالدفاتر (حـ/ 1104)';
+    } else if (draft.sourceModule === 'VAT_CLEARING') {
+        docSub = 'إشعار مقاصة وسداد ضريبة القيمة المضافة (نموذج 10 ض.ق.م)';
+        footerNote = 'مرفق إقرار ضريبة القيمة المضافة نموذج 10 المعتمد لمصلحة الضرائب المصرية';
     }
 
     docViewer.innerHTML = `
@@ -1256,6 +1262,10 @@ window.postEntry = function() {
                 successTitle = 'تم اعتماد وتسجيل قيد تسوية جرد المخزون بنجاح! 💾';
                 returnLink = '../inventory-count/index.html';
                 returnText = 'العودة لمحاكي جرد المخزون';
+            } else if (draft.sourceModule === 'VAT_CLEARING') {
+                successTitle = 'تم اعتماد وتسجيل قيد مقاصة وسداد ضريبة القيمة المضافة بنجاح! 💾';
+                returnLink = '../tax-returns/index.html';
+                returnText = 'العودة لمنظومة الإقرارات الضريبية';
             }
 
             feedback.innerHTML = `
