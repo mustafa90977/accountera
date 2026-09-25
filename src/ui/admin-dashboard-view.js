@@ -284,9 +284,11 @@ const ExcelAdminDashboard = {
     `;
   },
 
-  switchTab(tab) {
+  switchTab(tab, resetEditor = true) {
     this.activeTab = tab;
-    this.editingPlanId = null;
+    if (resetEditor) {
+      this.editingPlanId = null;
+    }
     const content = document.getElementById('adminTabContent');
     const container = document.querySelector('.admin-container');
     if (content) {
@@ -1523,6 +1525,11 @@ const ExcelAdminDashboard = {
               <label>الحد الأقصى للتمارين المستقلة:</label>
               <input type="number" id="pe_max_exercises" class="admin-form-input" value="${plan.maxExercises}">
             </div>
+
+            <div class="admin-form-group">
+              <label>المميزات المعروضة للطالب (ميزة في كل سطر):</label>
+              <textarea id="pe_features" class="admin-form-textarea" rows="4" placeholder="أدخل كل ميزة في سطر منفصل...">${(plan.features || []).join('\n')}</textarea>
+            </div>
           </div>
         </div>
 
@@ -1588,12 +1595,14 @@ const ExcelAdminDashboard = {
 
   openPlanEditor(planId) {
     this.editingPlanId = planId;
-    this.switchTab('plans');
+    this.switchTab('plans', false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
   closePlanEditor() {
     this.editingPlanId = null;
-    this.switchTab('plans');
+    this.switchTab('plans', true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
   savePlanEditor(planId) {
@@ -1616,6 +1625,11 @@ const ExcelAdminDashboard = {
     plan.allowInterviewSim = document.getElementById('pe_allow_interview')?.checked || false;
     plan.allowSkillsPassport = document.getElementById('pe_allow_passport')?.checked || false;
     plan.allowLinkedInShare = document.getElementById('pe_allow_linkedin')?.checked || false;
+
+    const featVal = document.getElementById('pe_features')?.value;
+    if (featVal !== undefined) {
+      plan.features = featVal.split('\n').map(s => s.trim()).filter(Boolean);
+    }
 
     this.saveState('plans');
     if (typeof AccModal !== 'undefined') AccModal.toast(`✓ تم حفظ تعديلات باقة (${plan.name}) بنجاح!`, 'success');
