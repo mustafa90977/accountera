@@ -81,6 +81,23 @@ function initRecon() {
 }
 
 function loadBankReconState() {
+    let savedCase = null;
+    const rawCase = localStorage.getItem('sim_bank_recon_case');
+    if (rawCase) {
+        try { savedCase = JSON.parse(rawCase); } catch(e) {}
+    }
+
+    if (savedCase && savedCase.bankAccount) {
+        const bankAcc = savedCase.bankAccount;
+        const subEl = document.getElementById('recon-bank-name-sub');
+        const mobEl = document.getElementById('recon-bank-name-mob');
+        const bankTitle = bankAcc.bankNameAr || bankAcc.bankName || 'البنك التجاري';
+        const branchTitle = bankAcc.branchName || bankAcc.branch || 'الفرع الرئيسي';
+        const accNum = bankAcc.accountNumberMasked || bankAcc.accountNumberFull || '1102';
+        if (subEl) subEl.innerText = `${bankTitle} (${branchTitle}) • حساب جاري رقم ${accNum} (حـ/ 1102)`;
+        if (mobEl) mobEl.innerText = `حـ/ 1102 • ${bankTitle}`;
+    }
+
     const rawBank = localStorage.getItem('bank_statement_items');
     if(rawBank) {
         try {
@@ -92,23 +109,90 @@ function loadBankReconState() {
         bankStatementItems = [];
     }
 
+    // Fallback: If bankStatementItems is empty but savedCase has transactions
+    if (bankStatementItems.length === 0 && savedCase && Array.isArray(savedCase.bankTransactions)) {
+        const opening = Number(savedCase.bankAccount?.openingBalance) || 0;
+        if (opening > 0) {
+            bankStatementItems.push({
+                id: 'BNK-OP-001',
+                date: savedCase.period?.startDate || '2026-01-01',
+                desc: `رصيد أول المدة المنقول من الفترة السابقة (${savedCase.bankAccount?.bankNameAr || 'البنك'})`,
+                ref: 'OPENING',
+                deposit: opening,
+                withdrawal: 0,
+                matched: true,
+                isOpening: true
+            });
+        }
+        savedCase.bankTransactions.forEach((tx, idx) => {
+            const isDep = (tx.direction === 'CREDIT' || tx.sourceType === 'DEPOSIT');
+            bankStatementItems.push({
+                id: tx.bankTransactionId || `BNK-${idx + 1}`,
+                date: tx.date || tx.valueDate || '2026-01-01',
+                desc: tx.description || 'معاملة بنكية',
+                ref: tx.bankReference || '',
+                deposit: isDep ? (Number(tx.amount) || 0) : 0,
+                withdrawal: !isDep ? (Number(tx.amount) || 0) : 0,
+                matched: false
+            });
+        });
+        saveBankReconState();
+    }
+
     // Load actual student book movements for Account 1102 (البنك)
     const ledger = (typeof getStudentLedger === 'function') ? getStudentLedger() : (window.studentLedger || (typeof studentLedger !== 'undefined' ? studentLedger : {}));
     const bookMoves = ledger['1102'] || [];
-    bookReconItems = bookMoves.map((m, idx) => {
-        const savedMatched = localStorage.getItem('book_matched_' + m.trxId + '_' + idx);
-        const isMatched = savedMatched !== null ? (savedMatched === 'true') : false;
-        return {
-            id: 'BK-' + idx,
-            trxId: m.trxId,
-            ref: m.ref,
-            date: m.date,
-            desc: m.description || m.ref || 'حركة بنك',
-            debit: Number(m.debit) || 0,
-            credit: Number(m.credit) || 0,
-            matched: isMatched
-        };
-    });
+
+    if (bookMoves.length > 0) {
+        bookReconItems = bookMoves.map((m, idx) => {
+            const savedMatched = localStorage.getItem('book_matched_' + m.trxId + '_' + idx);
+            const isMatched = savedMatched !== null ? (savedMatched === 'true') : false;
+            return {
+                id: 'BK-' + idx,
+                trxId: m.trxId,
+                ref: m.ref,
+                date: m.date,
+                desc: m.description || m.ref || 'حركة بنك',
+                debit: Number(m.debit) || 0,
+                credit: Number(m.credit) || 0,
+                matched: isMatched
+            };
+        });
+    } else if (savedCase && Array.isArray(savedCase.bookTransactions) && savedCase.bookTransactions.length > 0) {
+        // Fallback to case book transactions if student has not posted journal entries yet
+        const bookOpening = Number(savedCase.bankAccount?.openingBalance) || 0;
+        const caseBookItems = [];
+        if (bookOpening > 0) {
+            caseBookItems.push({
+                id: 'BK-OP-001',
+                trxId: 'OP-001',
+                ref: 'BAL-FWD',
+                date: savedCase.period?.startDate || '2026-01-01',
+                desc: `رصيد أول المدة المنقول من الفترة السابقة (حـ/ 1102)`,
+                debit: bookOpening,
+                credit: 0,
+                matched: true,
+                isOpening: true
+            });
+        }
+        savedCase.bookTransactions.forEach((m, idx) => {
+            const savedMatched = localStorage.getItem('book_matched_' + (m.transactionId || idx));
+            const isMatched = savedMatched !== null ? (savedMatched === 'true') : false;
+            caseBookItems.push({
+                id: 'BK-' + (idx + 1),
+                trxId: m.transactionId || m.journalEntryId || ('TX-' + idx),
+                ref: m.reference || m.journalEntryId || '',
+                date: m.date || '2026-01-01',
+                desc: m.description || 'حركة بنك بالدفاتر',
+                debit: m.direction === 'DEBIT' ? Number(m.amount) || 0 : 0,
+                credit: m.direction === 'CREDIT' ? Number(m.amount) || 0 : 0,
+                matched: isMatched
+            });
+        });
+        bookReconItems = caseBookItems;
+    } else {
+        bookReconItems = [];
+    }
 }
 
 window.clearBankStatement = function() {
@@ -234,10 +318,14 @@ window.unmatchAllBookItems = function() {
 }
 
 window.resetReconToZero = function() {
-    bankStatementItems.forEach(i => i.matched = false);
+    bankStatementItems.forEach(i => {
+        if (!i.isOpening) i.matched = false;
+    });
     bookReconItems.forEach((i, idx) => {
-        i.matched = false;
-        localStorage.removeItem('book_matched_' + i.trxId + '_' + idx);
+        if (!i.isOpening) {
+            i.matched = false;
+            localStorage.removeItem('book_matched_' + (i.trxId || idx));
+        }
     });
     saveBankReconState();
     renderReconTables();
@@ -247,18 +335,19 @@ window.resetReconToZero = function() {
 window.autoMatchRecon = function() {
     // Smart auto match matching amounts
     bookReconItems.forEach((bItem, bIdx) => {
+        if (bItem.matched) return;
         const bAmt = bItem.debit > 0 ? bItem.debit : bItem.credit;
         const bSide = bItem.debit > 0 ? 'deposit' : 'withdrawal';
 
         const match = bankStatementItems.find(sItem => 
             !sItem.matched && 
-            sItem[bSide] === bAmt
+            Math.abs(sItem[bSide] - bAmt) < 0.01
         );
 
         if(match) {
             match.matched = true;
             bItem.matched = true;
-            localStorage.setItem('book_matched_' + bItem.trxId + '_' + bIdx, 'true');
+            localStorage.setItem('book_matched_' + (bItem.trxId || bIdx), 'true');
         }
     });
 
@@ -274,9 +363,12 @@ function calculateReconciliation() {
         bankBase += (item.deposit - item.withdrawal);
     });
 
-    // 2. Book side base: actual balance of account 1102
+    // 2. Book side base: actual balance of account 1102 or case book transactions sum
     const balances = calculateBalances();
-    const bookBase = balances['1102'] || 0;
+    let bookBase = balances['1102'] || 0;
+    if (bookBase === 0 && bookReconItems.length > 0) {
+        bookBase = bookReconItems.reduce((s, item) => s + (item.debit - item.credit), 0);
+    }
 
     // 3. Unmatched items from Book that should adjust Bank:
     // - Unmatched Book Debits = Deposits in Transit (+)

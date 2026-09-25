@@ -210,7 +210,8 @@ const SimulationBridge = {
       badge: company.badge || 'نشاط تجاري',
       employees: meta.employees,
       role: company.role || 'محاسب مالي',
-      year: company.month || 'السنة المالية 2026'
+      year: company.month || 'السنة المالية 2026',
+      bankAccount: company.bankReconciliation?.bankAccount || null
     };
     localStorage.setItem('sim_company_profile', JSON.stringify(profile));
 
@@ -218,13 +219,56 @@ const SimulationBridge = {
     const simTasks = this.transformTransactionsToSim(company.transactions || []);
     localStorage.setItem('sim_admin_tasks', JSON.stringify(simTasks));
 
-    // 3. محاولة استرجاع التقدم المحفوظ من السحابة إذا وُجد
+    // 3. تهيئة التسوية البنكية وكشف الحساب في حال توفرها في ملف الشركة
+    if (company.bankReconciliation) {
+      localStorage.setItem('sim_bank_recon_case', JSON.stringify(company.bankReconciliation));
+
+      const recon = company.bankReconciliation;
+      const opening = Number(recon.bankAccount?.openingBalance) || 0;
+      const bankTx = Array.isArray(recon.bankTransactions) ? recon.bankTransactions : [];
+
+      const statementItems = [];
+      if (opening > 0) {
+        statementItems.push({
+          id: 'BNK-OP-001',
+          date: recon.period?.startDate || '2026-01-01',
+          desc: `رصيد أول المدة المنقول من الفترة السابقة (${recon.bankAccount?.bankNameAr || recon.bankAccount?.bankName || 'البنك'})`,
+          ref: 'OPENING',
+          deposit: opening,
+          withdrawal: 0,
+          matched: true,
+          isOpening: true
+        });
+      }
+
+      bankTx.forEach((tx, idx) => {
+        const isDep = (tx.direction === 'CREDIT' || tx.sourceType === 'DEPOSIT');
+        statementItems.push({
+          id: tx.bankTransactionId || `BNK-${idx + 1}`,
+          date: tx.date || tx.valueDate || '2026-01-01',
+          desc: tx.description || 'معاملة بنكية',
+          ref: tx.bankReference || '',
+          deposit: isDep ? (Number(tx.amount) || 0) : 0,
+          withdrawal: !isDep ? (Number(tx.amount) || 0) : 0,
+          matched: false
+        });
+      });
+
+      localStorage.setItem('bank_statement_items', JSON.stringify(statementItems));
+    } else {
+      localStorage.removeItem('sim_bank_recon_case');
+    }
+
+    // 4. محاولة استرجاع التقدم المحفوظ من السحابة إذا وُجد
     if (typeof window !== 'undefined' && window.SimulationService && typeof window.SimulationService.loadProgress === 'function') {
       window.SimulationService.loadProgress(company.id).catch(e => console.warn('[SimulationBridge] Load state error:', e));
     } else {
-      ['student_journal', 'student_ledger', 'bank_statement_items'].forEach(k => {
+      ['student_journal', 'student_ledger'].forEach(k => {
         localStorage.removeItem(k);
       });
+      if (!company.bankReconciliation) {
+        localStorage.removeItem('bank_statement_items');
+      }
     }
   },
 
@@ -246,8 +290,11 @@ const SimulationBridge = {
   launchCompanyInSimulator(company) {
     if (!company) return;
     this.setSimulatorActiveCompany(company);
-    // فتح البيئة مباشرة على شاشة دفتر اليومية
-    window.location.href = 'simulation/simulation/journal/index.html';
+    if ((!company.transactions || company.transactions.length === 0) && company.bankReconciliation) {
+      window.location.href = 'simulation/simulation/bank-recon/index.html';
+    } else {
+      window.location.href = 'simulation/simulation/journal/index.html';
+    }
   },
 
   // جلب نتائج تقدم الطالب في المحاكي وعرضها في لوحة الطالب أو الأدمن

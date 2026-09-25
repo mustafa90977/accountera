@@ -1050,11 +1050,32 @@ const ExcelAdminDashboard = {
         capital: capital,
         description: `بيئة محاكاة محاسبية متقدمة لـ ${compName} (${sector}) برأس مال قدره ${capital.toLocaleString()} ج.م، تتضمن دورة تدريبية واقعية بـ ${transactions.length} معاملة وسند مالي.`,
         month: year,
-        transactions: transactions
+        transactions: transactions,
+        bankReconciliation: json.bankReconciliation || json.bank_reconciliation || null
       };
     }
 
-    // النمط 2: ملف شركة مباشر (Backup or Single Company export)
+    // النمط 2: ملف تسوية بنكية مستقل (Standalone Bank Reconciliation Case)
+    if (json.caseId && (json.bankTransactions || json.reconciliationSummary)) {
+      const rawCompName = (json.company?.name || 'شركة المحاكاة').trim();
+      const compName = rawCompName.startsWith('شركة') ? rawCompName : `شركة ${rawCompName}`;
+      const activity = (json.company?.activity || 'التجارة والتوزيع').trim();
+      return {
+        id: `comp-${json.caseId.toLowerCase()}`,
+        name: compName,
+        sector: `تجارة ${activity}`,
+        badge: 'تسوية بنكية معتمدة',
+        icon: 'assured_workload',
+        role: 'محاسب مالي / مراجع بنكي',
+        capital: Number(json.company?.capital) || 2000000,
+        description: `ملف تسوية بنكية متكامل للبنك (${json.bankAccount?.bankNameAr || json.bankAccount?.bankName || 'البنك التجاري'}) مع مطابقة كشف الحساب الخارجي والفروقات المعلقة.`,
+        month: json.period ? `الفترة المالية ${json.period.startDate} إلى ${json.period.endDate}` : 'السنة المالية 2026',
+        transactions: [],
+        bankReconciliation: json
+      };
+    }
+
+    // النمط 3: ملف شركة مباشر (Backup or Single Company export)
     if (json.name && (json.transactions || json.sector)) {
       return {
         id: json.id || `comp-${Date.now()}`,
@@ -1066,7 +1087,8 @@ const ExcelAdminDashboard = {
         capital: json.capital || 1000000,
         description: json.description || `شركة ${json.name}`,
         month: json.month || 'السنة المالية 2026',
-        transactions: Array.isArray(json.transactions) ? json.transactions : []
+        transactions: Array.isArray(json.transactions) ? json.transactions : [],
+        bankReconciliation: json.bankReconciliation || json.bank_reconciliation || null
       };
     }
 
