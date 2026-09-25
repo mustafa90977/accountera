@@ -279,6 +279,9 @@ const AuthService = {
     if (box) {
       box.textContent = message;
       box.style.display = 'block';
+      if (typeof ExcelAuthView !== 'undefined' && typeof ExcelAuthView.shakeError === 'function') {
+        ExcelAuthView.shakeError();
+      }
     } else {
       if (typeof AccModal !== 'undefined' && AccModal.toast) {
         AccModal.toast(message, 'error');

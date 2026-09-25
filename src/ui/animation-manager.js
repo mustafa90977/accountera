@@ -209,25 +209,57 @@ const AccounteraAnimations = {
     });
   },
 
-  // تحريك بطاقات لوحة التحكم الخاصة بالطالب
+  // اهتزاز كارت الدخول عند إدخال بيانات خاطئة
+  shakeAuthCard() {
+    if (typeof gsap === 'undefined') return;
+    const card = document.querySelector('.auth-card');
+    if (!card) return;
+    gsap.fromTo(card,
+      { x: -10 },
+      { x: 10, duration: 0.07, repeat: 5, yoyo: true, ease: 'power1.inOut', onComplete: () => {
+        gsap.set(card, { x: 0 });
+      }}
+    );
+  },
+
+  // تحريك بطاقات لوحة التحكم الخاصة بالطالب ومؤشرات الأداء
   animateStudentDashboard() {
     if (!this.initialized || typeof gsap === 'undefined') return;
 
-    const statCards = document.querySelectorAll('.stat-card, .metric-box, .overview-hero');
+    const statCards = document.querySelectorAll('.stat-card, .metric-box, .overview-hero, .student-stat-card, .accountely-streak-card, .accountely-getting-started-card, .dash-panel-card');
     if (statCards.length > 0) {
       gsap.fromTo(statCards, 
-        { opacity: 0, y: 20, scale: 0.98 }, 
-        { opacity: 1, y: 0, scale: 1, stagger: 0.08, duration: 0.5, ease: 'power2.out', clearProps: 'transform' }
+        { opacity: 0, y: 18, scale: 0.98 }, 
+        { opacity: 1, y: 0, scale: 1, stagger: 0.06, duration: 0.45, ease: 'power2.out', clearProps: 'transform' }
       );
     }
 
+    // عداد أرقام إحصائيات الطالب التصاعدي
+    document.querySelectorAll('.student-stat-card .stat-value').forEach(el => {
+      const rawText = el.innerText.trim();
+      const match = rawText.match(/^(\d+)/);
+      if (match) {
+        const targetNum = parseInt(match[1], 10);
+        const suffix = rawText.replace(/^\d+/, '');
+        const state = { val: 0 };
+        gsap.to(state, {
+          val: targetNum,
+          duration: 0.9,
+          ease: 'power1.out',
+          onUpdate: () => {
+            el.innerText = Math.round(state.val) + suffix;
+          }
+        });
+      }
+    });
+
     // خطوط التقدم التفاعلية
-    const progressBars = document.querySelectorAll('.progress-bar-fill, .progress-fill');
+    const progressBars = document.querySelectorAll('.progress-bar-fill, .progress-fill, .acc-progress-bar-fill');
     if (progressBars.length > 0) {
       progressBars.forEach(bar => {
         const targetWidth = bar.style.width || '100%';
         bar.style.width = '0%';
-        gsap.to(bar, { width: targetWidth, duration: 1.2, ease: 'power2.out' });
+        gsap.to(bar, { width: targetWidth, duration: 1.1, ease: 'power2.out' });
       });
     }
   },
@@ -245,7 +277,7 @@ const AccounteraAnimations = {
       setTimeout(() => {
         this.animateAuthPage();
       }, 50);
-    } else if (screenId === 'student-dashboard' || screenId === 'portfolio') {
+    } else if (screenId === 'student-dashboard' || screenId === 'portfolio' || screenId === 'student' || screenId === 'student-overview') {
       setTimeout(() => {
         this.animateStudentDashboard();
       }, 50);

@@ -154,7 +154,30 @@ const ExcelAuthView = {
       window.navigateToScreen(mode);
     } else {
       const app = document.getElementById('app');
-      if (app) app.innerHTML = this.render(mode);
+      if (app) {
+        app.innerHTML = this.render(mode);
+        this.animateEntrance();
+      }
+    }
+  },
+
+  animateEntrance() {
+    if (typeof gsap !== 'undefined') {
+      gsap.fromTo('.auth-card', 
+        { opacity: 0, y: 28, scale: 0.96 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'back.out(1.2)' }
+      );
+    }
+  },
+
+  shakeError() {
+    if (typeof gsap !== 'undefined') {
+      gsap.fromTo('.auth-card',
+        { x: -10 },
+        { x: 10, duration: 0.07, repeat: 5, yoyo: true, ease: 'power1.inOut', onComplete: () => {
+          gsap.set('.auth-card', { x: 0 });
+        }}
+      );
     }
   }
 };

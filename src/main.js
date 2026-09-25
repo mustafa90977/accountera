@@ -123,6 +123,9 @@ window.navigateToScreen = function(screenId) {
   } else if (screenId === 'login' || screenId === 'register') {
     if (typeof ExcelAuthView !== 'undefined') {
       appContainer.innerHTML = ExcelAuthView.render(screenId);
+      if (typeof ExcelAuthView.animateEntrance === 'function') {
+        ExcelAuthView.animateEntrance();
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   } else if (screenId.startsWith('lesson-')) {
@@ -176,6 +179,9 @@ window.navigateToScreen = function(screenId) {
     if (activeBtn) activeBtn.classList.add('active');
     if (typeof ExcelStudentDashboard !== 'undefined') {
       appContainer.innerHTML = ExcelStudentDashboard.render();
+      if (typeof ExcelStudentDashboard.animateEntrance === 'function') {
+        ExcelStudentDashboard.animateEntrance();
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   } else if (screenId === 'teacher-overview' || screenId === 'teacher') {
@@ -247,15 +253,19 @@ window.navigateToScreen = function(screenId) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // تشغيل مؤثرات الحركة التفاعلية من GSAP عند التنقل بين الشاشات
+  // تأثير انتقال ناعم وخفيف عبر GSAP للشاشات الداخلية
+  if (!isAuthScreen && typeof gsap !== 'undefined') {
+    gsap.fromTo(appContainer, { opacity: 0.88, y: 5 }, { opacity: 1, y: 0, duration: 0.22, ease: 'power1.out' });
+  }
+
+  // تحديث الحركات التفاعلية الخاصة بالشاشة
   if (typeof AccounteraAnimations !== 'undefined') {
-    AccounteraAnimations.animateScreenTransition('#app');
     AccounteraAnimations.refreshAnimations(screenId);
   }
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // تهيئة محرك الأنيميشن GSAP
+  // تهيئة محرك المؤثرات الحركية GSAP
   if (typeof AccounteraAnimations !== 'undefined') {
     AccounteraAnimations.init();
   }

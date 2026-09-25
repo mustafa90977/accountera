@@ -507,6 +507,45 @@ const ExcelStudentDashboard = {
         </div>
       </div>
     `;
+  },
+
+  animateEntrance() {
+    if (typeof gsap === 'undefined') return;
+
+    // 1. تحريك تدريجي للبطاقات ومجموعات الواجهة
+    gsap.from('.accountely-streak-card, .accountely-getting-started-card, .student-stat-card, .dash-panel-card', {
+      opacity: 0,
+      y: 18,
+      duration: 0.45,
+      stagger: 0.05,
+      ease: 'power2.out'
+    });
+
+    // 2. عداد الأرقام الديناميكي التصاعدي لمؤشرات الأداء (KPI Counters)
+    document.querySelectorAll('.student-stat-card .stat-value').forEach(el => {
+      const rawText = el.innerText.trim();
+      const match = rawText.match(/^(\d+)/);
+      if (match) {
+        const targetNum = parseInt(match[1], 10);
+        const suffix = rawText.replace(/^\d+/, '');
+        const state = { val: 0 };
+        gsap.to(state, {
+          val: targetNum,
+          duration: 0.9,
+          ease: 'power1.out',
+          onUpdate: () => {
+            el.innerText = Math.round(state.val) + suffix;
+          }
+        });
+      }
+    });
+
+    // 3. تحريك انسيابي لأشرطة التقدم
+    gsap.from('.acc-progress-bar-fill, .progress-fill', {
+      width: '0%',
+      duration: 0.85,
+      ease: 'power2.out'
+    });
   }
 };
 
