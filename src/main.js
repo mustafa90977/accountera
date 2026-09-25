@@ -56,10 +56,13 @@ window.navigateToScreen = function(screenId) {
     }
   }
 
-  // إدارة ظهور ونشاط الشريط الجانبي Accountely Sidebar
+  // إدارة ظهور ونشاط الشريط الجانبي ونمط صفحة الهبوط
+  const isLandingScreen = (screenId === 'landing' || screenId === 'welcome');
+  document.body.classList.toggle('landing-mode', isLandingScreen);
+
   const sidebar = document.getElementById('appSidebar');
   if (sidebar) {
-    if (screenId === 'landing' || screenId === 'welcome') {
+    if (isLandingScreen) {
       sidebar.classList.add('landing-hidden');
     } else {
       sidebar.classList.remove('landing-hidden');
