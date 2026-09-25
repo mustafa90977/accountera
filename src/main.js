@@ -43,14 +43,17 @@ window.navigateToScreen = function(screenId) {
   const appContainer = document.getElementById('app');
   if (!appContainer) return;
 
-  // حارس المسارات (Route Guard): حظر الوصول للشاشات المحمية بدون تسجيل دخول
-  const protectedScreens = ['student-dashboard', 'portfolio', 'student-settings', 'teacher-overview', 'admin-overview'];
-  const isProtected = protectedScreens.includes(screenId) || screenId.startsWith('admin-') || screenId.startsWith('teacher-');
+  // حارس المسارات الصارم (Strict Route Guard): حظر الوصول لكافة أقسام المنصة بدون تسجيل دخول موثق
+  const publicScreens = ['landing', 'welcome'];
+  const isProtected = !publicScreens.includes(screenId);
   const currentUser = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
 
   if (isProtected && !currentUser) {
     console.warn(`[RouteGuard] Screen "${screenId}" requires authentication.`);
     screenId = 'landing';
+    if (typeof AccModal !== 'undefined' && typeof AccModal.toast === 'function') {
+      AccModal.toast('يرجى تسجيل الدخول أو إنشاء حساب للوصول إلى المنصة', 'info', 3000);
+    }
     if (typeof AuthService !== 'undefined' && typeof AuthService.openAuthModal === 'function') {
       setTimeout(() => AuthService.openAuthModal('login'), 150);
     }

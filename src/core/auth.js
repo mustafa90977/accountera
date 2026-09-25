@@ -84,8 +84,8 @@ const AuthService = {
           if (typeof window.navigateToScreen === 'function') {
             const urlParams = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : null;
             const requestedScreen = urlParams ? urlParams.get('screen') : null;
-            const protectedScreens = ['student-dashboard', 'portfolio', 'student-settings', 'teacher-overview', 'admin-overview'];
-            if (!requestedScreen || protectedScreens.includes(requestedScreen) || requestedScreen.startsWith('admin-') || requestedScreen.startsWith('teacher-')) {
+            const publicScreens = ['landing', 'welcome'];
+            if (!requestedScreen || !publicScreens.includes(requestedScreen)) {
               window.navigateToScreen('landing');
             }
           }

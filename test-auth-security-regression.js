@@ -89,6 +89,23 @@ runTest('التأكد من بقاء ملفات النواة المحاسبية �
   });
 });
 
+// -------------------------------------------------------------
+// 6. فحص حارس المسارات الصارم (Strict RouteGuard Protection)
+// -------------------------------------------------------------
+runTest('حظر كافة الشاشات الداخلية والمحاكاة لغير المسجلين وقصر الوصول على صفحة الهبوط فقط', () => {
+  const mainCode = fs.readFileSync(path.join(__dirname, 'src/main.js'), 'utf8');
+  assert.ok(mainCode.includes("const publicScreens = ['landing', 'welcome']"), 'قائمة المسارات العامة غير مضبوطة في main.js!');
+  assert.ok(mainCode.includes('!publicScreens.includes(screenId)'), 'حارس المسارات لا يحظر كافة الشاشات غير العامة!');
+  assert.ok(mainCode.includes("AuthService.openAuthModal('login')"), 'لا يتم فتح نافذة تسجيل الدخول عند محاولة الوصول لشاشة محمية!');
+
+  const authCode = fs.readFileSync(path.join(__dirname, 'src/core/auth.js'), 'utf8');
+  assert.ok(authCode.includes("const publicScreens = ['landing', 'welcome']"), 'قائمة المسارات العامة غير مضبوطة في auth.js!');
+  assert.ok(authCode.includes('!publicScreens.includes(requestedScreen)'), 'فحص تهيئة الجلسة لا يحظر الشاشات الداخلية!');
+
+  const simCode = fs.readFileSync(path.join(__dirname, 'simulation/simulation/journal/index.html'), 'utf8');
+  assert.ok(simCode.includes("window.location.replace('/?screen=landing&auth=login')"), 'محاكي اليومية غير محمي بحارس المصادقة!');
+});
+
 console.log('\n========================================================');
 console.log(`🎯 نتيجة فحص الأمان: تم بنجاح اجتياز ${passedTests} من أصل ${totalTests} اختباراً بنسبة 100%!`);
 console.log('========================================================\n');
