@@ -87,7 +87,12 @@
     <!-- Right Pane: Journal Entry Form -->
     <div id="jpane-form" class="hidden lg:flex w-full lg:w-5/12 bg-surface-container-lowest rounded-xl shadow border border-surface-variant flex-col overflow-hidden min-h-[400px] lg:min-h-0 h-full">
       <div class="p-3.5 sm:p-4 bg-primary text-on-primary font-bold flex justify-between items-center">
-        <span>تسجيل القيد المحاسبي</span>
+        <div class="flex items-center gap-2">
+          <span>تسجيل القيد المحاسبي</span>
+          <button type="button" onclick="toggleAccountingHint(true)" class="text-xs bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-xs transition cursor-pointer" title="عرض تلميح محاسبي للمساعدة في تسجيل هذا القيد">
+            <span>💡 تلميح</span>
+          </button>
+        </div>
         <div class="flex items-center gap-2">
           <button type="button" onclick="switchJournalMobilePane('doc')" class="lg:hidden text-xs bg-white/20 hover:bg-white/30 text-white font-bold px-2.5 py-1 rounded-lg flex items-center gap-1">
             <span class="material-symbols-outlined text-[14px]">visibility</span>

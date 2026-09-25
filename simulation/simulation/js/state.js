@@ -61,6 +61,7 @@ const COA = {
 
 const ACCOUNTS = {};
 Object.keys(COA).forEach(k => { ACCOUNTS[k] = COA[k].name; });
+window.ACCOUNTS = ACCOUNTS;
 
 // ================= DYNAMIC TASK LOADER & CONVERTER =================
 function transformHostTransactions(transactions = []) {
@@ -73,8 +74,13 @@ function transformHostTransactions(transactions = []) {
                 ref: tx.ref || `INV-${1000 + (tx.num || idx + 1)}`,
                 date: tx.date || "2026-01-15",
                 type: tx.type || "General",
+                title: tx.title || tx.desc || "معاملة تجارية",
                 difficulty: tx.difficulty || "Medium",
                 desc: tx.desc || tx.title || "معاملة تجارية",
+                hints: tx.hints || [],
+                solutionSteps: tx.solutionSteps || [],
+                accountingRule: tx.accountingRule || '',
+                categoryAr: tx.categoryAr || '',
                 lines: tx.lines.map((l, lIdx) => {
                     const code = String(l.accountCode || '1101');
                     if (!COA[code]) {

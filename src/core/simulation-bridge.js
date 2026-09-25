@@ -122,8 +122,13 @@ const SimulationBridge = {
           ref: tx.ref || `INV-${1000 + (tx.num || idx + 1)}`,
           date: tx.date || "2026-01-15",
           type: tx.type || this.detectTxType(tx),
+          title: tx.title || tx.desc || "معاملة تجارية",
           difficulty: tx.difficulty || "Medium",
           desc: tx.desc || tx.title || "معاملة تجارية",
+          hints: tx.hints || [],
+          solutionSteps: tx.solutionSteps || [],
+          accountingRule: tx.accountingRule || '',
+          categoryAr: tx.categoryAr || '',
           lines: tx.lines
         };
       }
