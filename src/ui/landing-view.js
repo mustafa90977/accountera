@@ -819,10 +819,10 @@ const ExcelLandingView = {
                 <p style="color:#94a3b8; font-size:0.8rem; line-height:1.7; margin-bottom:1rem;">
                   المنصة الأولى المتخصصة في التدريب العملي والمحاكاة التفاعلية لمهنة المحاسبة المالية وفقاً للمعايير المصرية والدولية.
                 </p>
-                <div style="display:flex; gap:0.5rem;">
-                  <a href="https://linkedin.com" target="_blank" style="width:32px; height:32px; border-radius:50%; background:#152033; color:#94a3b8; display:flex; align-items:center; justify-content:center;">in</a>
-                  <a href="https://facebook.com" target="_blank" style="width:32px; height:32px; border-radius:50%; background:#152033; color:#94a3b8; display:flex; align-items:center; justify-content:center;">fb</a>
-                  <a href="https://youtube.com" target="_blank" style="width:32px; height:32px; border-radius:50%; background:#152033; color:#94a3b8; display:flex; align-items:center; justify-content:center;">yt</a>
+                <div style="display:flex; gap:0.6rem; align-items:center;">
+                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style="width:40px; height:40px; min-width:40px; min-height:40px; border-radius:50%; background:#152033; color:#94a3b8; display:flex; align-items:center; justify-content:center; font-weight:700; text-decoration:none;">in</a>
+                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style="width:40px; height:40px; min-width:40px; min-height:40px; border-radius:50%; background:#152033; color:#94a3b8; display:flex; align-items:center; justify-content:center; font-weight:700; text-decoration:none;">fb</a>
+                  <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube" style="width:40px; height:40px; min-width:40px; min-height:40px; border-radius:50%; background:#152033; color:#94a3b8; display:flex; align-items:center; justify-content:center; font-weight:700; text-decoration:none;">yt</a>
                 </div>
               </div>
 

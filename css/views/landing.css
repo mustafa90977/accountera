@@ -626,12 +626,22 @@ body.landing-mode .main-content {
     font-size: 0.92rem !important;
   }
   .btn-header-login {
-    padding: 0.35rem 0.55rem !important;
-    font-size: 0.78rem !important;
+    min-height: 40px;
+    min-width: 44px;
+    padding: 0.45rem 0.65rem !important;
+    font-size: 0.8rem !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   .btn-header-cta {
-    padding: 0.4rem 0.75rem !important;
-    font-size: 0.78rem !important;
+    min-height: 40px;
+    min-width: 44px;
+    padding: 0.45rem 0.85rem !important;
+    font-size: 0.8rem !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -1303,6 +1313,10 @@ body.landing-mode .main-content {
   color: #94a3b8;
   text-decoration: none;
   transition: color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 4px 0;
 }
 
 .footer-links-list a:hover {

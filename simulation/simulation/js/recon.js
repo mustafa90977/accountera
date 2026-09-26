@@ -222,8 +222,10 @@ function renderReconTables() {
                 if(item.matched) matchedCount++;
                 bankTbody.innerHTML += `
                   <tr class="${item.matched ? 'bg-emerald-50/40' : 'bg-white'} hover:bg-slate-50 transition border-b border-slate-100">
-                    <td class="p-2.5 text-center">
-                      <input type="checkbox" ${item.matched ? 'checked' : ''} onchange="toggleBankMatch(${idx})" class="w-4 h-4 rounded text-blue-600 focus:ring-0 cursor-pointer"/>
+                    <td class="p-1 text-center align-middle" onclick="toggleBankMatch(${idx})" style="cursor: pointer;">
+                      <label class="w-full h-full min-w-[44px] min-h-[44px] inline-flex items-center justify-center cursor-pointer" onclick="event.stopPropagation()">
+                        <input type="checkbox" ${item.matched ? 'checked' : ''} onchange="toggleBankMatch(${idx})" class="w-5 h-5 rounded text-blue-600 focus:ring-0 cursor-pointer"/>
+                      </label>
                     </td>
                     <td class="p-2.5 text-slate-500 font-mono text-[11px]">${item.date}</td>
                     <td class="p-2.5 font-sans font-medium text-slate-800">
@@ -249,8 +251,10 @@ function renderReconTables() {
                 if(item.matched) matchedCount++;
                 bookTbody.innerHTML += `
                   <tr class="${item.matched ? 'bg-emerald-50/40' : 'bg-white'} hover:bg-slate-50 transition border-b border-slate-100">
-                    <td class="p-2.5 text-center">
-                      <input type="checkbox" ${item.matched ? 'checked' : ''} onchange="toggleBookMatch(${idx})" class="w-4 h-4 rounded text-purple-600 focus:ring-0 cursor-pointer"/>
+                    <td class="p-1 text-center align-middle" onclick="toggleBookMatch(${idx})" style="cursor: pointer;">
+                      <label class="w-full h-full min-w-[44px] min-h-[44px] inline-flex items-center justify-center cursor-pointer" onclick="event.stopPropagation()">
+                        <input type="checkbox" ${item.matched ? 'checked' : ''} onchange="toggleBookMatch(${idx})" class="w-5 h-5 rounded text-purple-600 focus:ring-0 cursor-pointer"/>
+                      </label>
                     </td>
                     <td class="p-2.5 text-slate-500 font-mono text-[11px]">${item.date}</td>
                     <td class="p-2.5 font-sans font-medium text-slate-800">

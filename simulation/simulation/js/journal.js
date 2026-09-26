@@ -1215,18 +1215,18 @@ function renderForm() {
 
         tr.innerHTML = `
             <td class="p-2">
-                <select onchange="handleAccountChange(${index}, this.value)" class="w-full text-xs sm:text-sm border rounded-lg p-2 min-h-[42px] bg-white border-slate-300 focus:outline-none focus:border-slate-800">
+                <select onchange="handleAccountChange(${index}, this.value)" class="w-full text-xs sm:text-sm border rounded-lg p-2 min-h-[44px] bg-white border-slate-300 focus:outline-none focus:border-slate-800">
                     ${optionsHtml}
                 </select>
             </td>
             <td class="p-2">
-                <input type="number" step="any" oninput="handleDebitInput(${index}, this.value)" value="${line.debit || ''}" placeholder="0.00" class="w-full text-xs sm:text-sm text-center border rounded-lg p-2 min-h-[42px] border-slate-300 font-mono font-bold focus:outline-none focus:border-slate-800" />
+                <input type="number" step="any" inputmode="decimal" oninput="handleDebitInput(${index}, this.value)" value="${line.debit || ''}" placeholder="0.00" class="w-full text-xs sm:text-sm text-center border rounded-lg p-2 min-h-[44px] border-slate-300 font-mono font-bold focus:outline-none focus:border-slate-800" />
             </td>
             <td class="p-2">
-                <input type="number" step="any" oninput="handleCreditInput(${index}, this.value)" value="${line.credit || ''}" placeholder="0.00" class="w-full text-xs sm:text-sm text-center border rounded-lg p-2 min-h-[42px] border-slate-300 font-mono font-bold focus:outline-none focus:border-slate-800" />
+                <input type="number" step="any" inputmode="decimal" oninput="handleCreditInput(${index}, this.value)" value="${line.credit || ''}" placeholder="0.00" class="w-full text-xs sm:text-sm text-center border rounded-lg p-2 min-h-[44px] border-slate-300 font-mono font-bold focus:outline-none focus:border-slate-800" />
             </td>
             <td class="p-2 text-center">
-                ${formLines.length > 2 ? `<button onclick="removeLine(${index})" class="text-rose-500 hover:text-rose-700 w-9 h-9 inline-flex items-center justify-center rounded-lg hover:bg-rose-50 transition cursor-pointer" title="حذف السطر"><span class="material-symbols-outlined text-[18px]">delete</span></button>` : ''}
+                ${formLines.length > 2 ? `<button onclick="removeLine(${index})" class="text-rose-500 hover:text-rose-700 w-11 h-11 inline-flex items-center justify-center rounded-lg hover:bg-rose-50 transition cursor-pointer" title="حذف السطر"><span class="material-symbols-outlined text-[20px]">delete</span></button>` : ''}
             </td>
         `;
         tbody.appendChild(tr);

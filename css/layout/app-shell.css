@@ -236,3 +236,28 @@ body.pwa-standalone {
   gap: 8px;
 }
 
+/* =========================================================================
+   Mobile Touch Targets & Accessibility Enhancements (WCAG 2.1 AA)
+   ========================================================================= */
+@media (max-width: 768px) {
+  .btn-mobile-hamburger {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bottom-nav-item {
+    min-height: 48px;
+  }
+  .accountely-bell-btn,
+  .sidebar-toggle-btn {
+    min-width: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+
