@@ -32,6 +32,100 @@ window.toggleSidebar = function() {
   }
 };
 
+// وظيفة طي/فتح القائمة الجانبية السريعة للموبايل (Mobile Nav Drawer)
+window.toggleMobileDrawer = function(force) {
+  let drawer = document.getElementById('mobileNavDrawer');
+  let overlay = document.getElementById('mobileNavOverlay');
+  if (!drawer) {
+    window.createMobileNavDrawer();
+    drawer = document.getElementById('mobileNavDrawer');
+    overlay = document.getElementById('mobileNavOverlay');
+  }
+  if (!drawer || !overlay) return;
+  const isOpen = typeof force === 'boolean' ? force : !drawer.classList.contains('open');
+  drawer.classList.toggle('open', isOpen);
+  overlay.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+};
+
+window.createMobileNavDrawer = function() {
+  if (document.getElementById('mobileNavDrawer')) return;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'mobileNavOverlay';
+  overlay.className = 'mobile-nav-overlay';
+  overlay.onclick = () => window.toggleMobileDrawer(false);
+
+  const drawer = document.createElement('aside');
+  drawer.id = 'mobileNavDrawer';
+  drawer.className = 'mobile-nav-drawer';
+
+  drawer.innerHTML = `
+    <div class="drawer-header">
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <div style="width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg, #047857, #10b981); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-family:'JetBrains Mono', monospace; font-size:1rem;">A</div>
+        <div>
+          <div style="font-weight:900; font-size:1.05rem; color:var(--text-primary); font-family:'JetBrains Mono', monospace; letter-spacing:0.5px;">ACCOUNTERA</div>
+          <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">منصة المحاسب المالي التطبيقية</div>
+        </div>
+      </div>
+      <button onclick="window.toggleMobileDrawer(false)" style="background:var(--surface-hover); border:1px solid var(--border-subtle); border-radius:8px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-primary); font-size:1.1rem;" title="إغلاق">✕</button>
+    </div>
+
+    <div class="drawer-nav">
+      <button class="drawer-item" onclick="window.navigateToScreen('landing')">
+        <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+        <span>الصفحة الرئيسية</span>
+      </button>
+
+      <button class="drawer-item" onclick="window.navigateToScreen('student-dashboard')">
+        <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4"/><path d="M12 16v-8"/><path d="M17 16v-6"/></svg></span>
+        <span>لوحة التدريب والمتابعة</span>
+      </button>
+
+      <button class="drawer-item" onclick="window.navigateToScreen('companies-hub')">
+        <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></svg></span>
+        <span>بيئة الشركات والمحاكاة</span>
+      </button>
+
+      <a class="drawer-item" href="/simulation/simulation/dashboard/index.html" style="color:var(--primary); font-weight:800; background:var(--primary-subtle, rgba(16,185,129,0.08));">
+        <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+        <span>محاكي النظام المحاسبي (ERP Sim) ⚡</span>
+      </a>
+
+      <button class="drawer-item" onclick="window.navigateToScreen('learning')">
+        <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        <span>مسار الدروس والمحتوى</span>
+      </button>
+
+      <button class="drawer-item" onclick="window.navigateToScreen('practice')">
+        <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+        <span>بنك التدريبات العملية</span>
+      </button>
+
+      <button class="drawer-item" onclick="window.navigateToScreen('student-plans')">
+        <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
+        <span>باقات وأسعار التدريب</span>
+      </button>
+
+      <button class="drawer-item" onclick="window.navigateToScreen('student-settings')">
+        <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        <span>الإعدادات والملف الشخصي</span>
+      </button>
+    </div>
+
+    <div style="padding:1rem; border-top:1px solid var(--border-subtle); display:flex; flex-direction:column; gap:0.5rem; background:var(--surface-hover);">
+      <button onclick="toggleTheme()" class="drawer-item" style="border:1px solid var(--border-subtle); border-radius:10px; justify-content:center; min-height:44px;">
+        <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+        <span>تبديل الوضع الليلي / النهاري</span>
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  document.body.appendChild(drawer);
+};
+
 // تهيئة الثيم المحفوظ عند التحميل
 (function initTheme() {
   const savedTheme = localStorage.getItem('accountera_theme') || 'light';
@@ -42,6 +136,11 @@ window.navigateToScreen = function(screenId) {
   console.log(`Navigating to screen: ${screenId}`);
   const appContainer = document.getElementById('app');
   if (!appContainer) return;
+
+  // إغلاق درج الموبايل تلقائياً عند أي انتقال
+  if (typeof window.toggleMobileDrawer === 'function') {
+    window.toggleMobileDrawer(false);
+  }
 
   // حارس المسارات الصارم (Strict Route Guard): حظر الوصول لكافة أقسام المنصة بدون تسجيل دخول موثق
   const publicScreens = ['landing', 'welcome'];
@@ -59,6 +158,19 @@ window.navigateToScreen = function(screenId) {
   }
 
   const isAuthScreen = (screenId === 'login' || screenId === 'register');
+
+  // تحديث الهاش في الرابط لدعم الروابط المباشرة والرجوع
+  try {
+    if (screenId && screenId !== 'landing' && screenId !== 'welcome' && !isAuthScreen) {
+      if (window.location.hash.replace(/^#\/?/, '') !== screenId) {
+        window.history.replaceState(null, '', `#${screenId}`);
+      }
+    } else if (screenId === 'landing' || screenId === 'welcome') {
+      if (window.location.hash && window.location.hash !== '#') {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    }
+  } catch(e) {}
 
   // حفظ الشاشة الحالية لتجنب فقدانها عند عمل ريفريش
   if (screenId && screenId !== 'landing' && screenId !== 'welcome' && !isAuthScreen) {
@@ -292,13 +404,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // فحص معلمات الرابط أو حالة الدخول بعد اكتمال التحقق
+  // إنشاء درج الموبايل الجانبي فورياً
+  if (typeof window.createMobileNavDrawer === 'function') {
+    window.createMobileNavDrawer();
+  }
+
+  // الاستماع لتغير الـ hash في المتصفح للتنقل المباشر ودعم أزرار الرجوع والتقدم
+  window.addEventListener('hashchange', () => {
+    const targetHash = window.location.hash.replace(/^#\/?/, '').trim();
+    if (targetHash) {
+      const current = sessionStorage.getItem('accountera_current_screen');
+      if (targetHash !== current) {
+        window.navigateToScreen(targetHash);
+      }
+    } else {
+      window.navigateToScreen('landing');
+    }
+  });
+
+  // فحص معلمات الرابط أو الهاش المباشر أو الجلسة المحفوظة
   const urlParams = new URLSearchParams(window.location.search);
+  const hashScreen = window.location.hash ? window.location.hash.replace(/^#\/?/, '').trim() : '';
   let savedScreen = null;
   try {
     savedScreen = sessionStorage.getItem('accountera_current_screen');
   } catch(e) {}
-  const requestedScreen = urlParams.get('screen') || savedScreen;
+  const requestedScreen = urlParams.get('screen') || hashScreen || savedScreen;
   const requestedTheme = urlParams.get('theme');
   if (requestedTheme) {
     document.documentElement.setAttribute('data-theme', requestedTheme);

@@ -98,13 +98,13 @@ function renderDenominationsTable() {
                 <span class="text-xs font-mono font-bold text-slate-600">${d.type === 'note' ? 'بنكنوت ورقي' : 'عملة معدنية'}</span>
             </td>
             <td class="p-3 text-center">
-                <div class="flex items-center justify-center gap-1.5 max-w-[200px] mx-auto">
-                    <button type="button" onclick="adjustDenomCount(${d.value}, -10)" class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center justify-center" title="إنقاص 10">-10</button>
+                <div class="flex items-center justify-center gap-1.5 max-w-[220px] mx-auto">
+                    <button type="button" onclick="adjustDenomCount(${d.value}, -10)" class="min-w-[36px] h-9 sm:h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer shadow-2xs" title="إنقاص 10">-10</button>
                     <input type="number" min="0" step="1" value="${count || ''}" placeholder="0" 
                            oninput="setDenomCount(${d.value}, this.value)"
-                           class="w-20 text-center font-mono font-bold text-xs p-1.5 border border-slate-300 rounded-lg focus:outline-none focus:border-slate-800 bg-white" />
-                    <button type="button" onclick="adjustDenomCount(${d.value}, 10)" class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center justify-center" title="زيادة 10">+10</button>
-                    <button type="button" onclick="adjustDenomCount(${d.value}, 50)" class="w-7 h-7 bg-blue-50 hover:bg-blue-100 text-blue-900 rounded-lg text-xs font-bold transition flex items-center justify-center" title="زيادة 50">+50</button>
+                           class="w-20 text-center font-mono font-bold text-sm h-9 sm:h-10 p-1 border border-slate-300 rounded-lg focus:outline-none focus:border-slate-800 bg-white" />
+                    <button type="button" onclick="adjustDenomCount(${d.value}, 10)" class="min-w-[36px] h-9 sm:h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer shadow-2xs" title="زيادة 10">+10</button>
+                    <button type="button" onclick="adjustDenomCount(${d.value}, 50)" class="min-w-[36px] h-9 sm:h-10 bg-blue-50 hover:bg-blue-100 text-blue-900 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer shadow-2xs" title="زيادة 50">+50</button>
                 </div>
             </td>
             <td class="p-3 text-center font-mono font-bold text-sm text-slate-900">

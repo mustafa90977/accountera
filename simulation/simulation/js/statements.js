@@ -424,3 +424,10 @@ function updateStatements() {
 }
 
 window.updateStatements = updateStatements;
+
+// Auto-initialize statements on DOM ready or immediately if already loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateStatements);
+} else {
+    updateStatements();
+}

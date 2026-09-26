@@ -93,3 +93,72 @@ main > :last-child {
     max-width: 110px !important;
   }
 }
+
+/* ================= MOBILE BOTTOM NAVIGATION STREAMLINING ================= */
+nav.fixed.bottom-0 {
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+@media (max-width: 640px) {
+  nav.fixed.bottom-0 > div {
+    display: flex !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x mandatory !important;
+    scrollbar-width: none !important;
+    padding: 6px 8px !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+  }
+  nav.fixed.bottom-0 > div::-webkit-scrollbar {
+    display: none !important;
+  }
+  nav.fixed.bottom-0 a {
+    flex: 0 0 auto !important;
+    min-width: 64px !important;
+    min-height: 48px !important;
+    padding: 4px 6px !important;
+    scroll-snap-align: center !important;
+    border-radius: 10px !important;
+  }
+  nav.fixed.bottom-0 a span.text-\[9px\],
+  nav.fixed.bottom-0 a span[class*="text-"] {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* ================= TOUCH TARGETS & ACCESSIBILITY UPGRADES ================= */
+button,
+a,
+input[type="button"],
+input[type="submit"] {
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+  /* Quick counter buttons in Cash Count and Inventory Count */
+  button.w-7.h-7,
+  .w-7.h-7 {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    font-size: 13px !important;
+    border-radius: 10px !important;
+  }
+}
+
+/* ================= RESPONSIVE TABLES & OVERFLOW FIX ================= */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-x: contain !important;
+}
+
+table {
+  max-width: 100%;
+}

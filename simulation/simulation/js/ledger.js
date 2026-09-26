@@ -88,15 +88,33 @@ function renderPostingQueue() {
         headerPending.innerHTML = `<span class="hidden sm:inline">${pending.length} قيود معلقة</span><span class="sm:hidden">${pending.length} معلق</span>`;
     }
 
+    const allJournal = (typeof getStudentJournal === 'function') ? getStudentJournal() : (window.studentJournal || []);
     if(pending.length === 0) {
-        queueList.innerHTML = `
-          <div class="text-center py-12 p-4 text-slate-500">
-            <span class="material-symbols-outlined text-4xl text-emerald-500 mb-2">task_alt</span>
-            <p class="font-bold text-slate-800 text-sm">رائع! تم ترحيل جميع القيود بنجاح</p>
-            <p class="text-xs text-slate-400 mt-1">لا توجد أي قيود معلقة بانتظار الترحيل حالياً.</p>
-            <a href="../journal/index.html" class="inline-block mt-4 bg-slate-900 text-white font-bold text-xs px-4 py-2.5 rounded-xl min-h-[40px]">الرجوع لليومية لتسجيل قيود جديدة</a>
-          </div>
-        `;
+        if (allJournal.length === 0) {
+            queueList.innerHTML = `
+              <div class="text-center py-10 p-4 text-slate-500">
+                <span class="material-symbols-outlined text-4xl text-blue-500 mb-2">menu_book</span>
+                <p class="font-bold text-slate-800 text-sm">دفتر الأستاذ جاهز لاستقبال قيودك</p>
+                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto leading-relaxed">لم تسجل أي قيود في دفتر اليومية بعد. ابدأ باختيار مهمة وتسجيل قيدها لنقله هنا للترحيل اليدوي.</p>
+                <a href="../journal/index.html" class="inline-flex items-center gap-1.5 mt-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl min-h-[44px] transition shadow-xs">
+                  <span class="material-symbols-outlined text-sm">edit_document</span>
+                  <span>الذهاب لدفتر اليومية الآن</span>
+                </a>
+              </div>
+            `;
+        } else {
+            queueList.innerHTML = `
+              <div class="text-center py-12 p-4 text-slate-500">
+                <span class="material-symbols-outlined text-4xl text-emerald-500 mb-2">task_alt</span>
+                <p class="font-bold text-slate-800 text-sm">رائع! تم ترحيل جميع القيود المسجلة بنجاح ✓</p>
+                <p class="text-xs text-slate-400 mt-1">لا توجد أي قيود معلقة بانتظار الترحيل حالياً.</p>
+                <a href="../journal/index.html" class="inline-flex items-center gap-1.5 mt-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl min-h-[44px] transition shadow-xs">
+                  <span class="material-symbols-outlined text-sm">add_circle</span>
+                  <span>تسجيل قيد جديد في اليومية</span>
+                </a>
+              </div>
+            `;
+        }
         updateSelectedEntryBadge(null);
         return;
     }

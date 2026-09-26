@@ -105,13 +105,13 @@ function renderInventoryTable() {
                 <span class="text-[10px] text-slate-400 block">${bookVal.toLocaleString()} ج.م</span>
             </td>
             <td class="p-3 text-center">
-                <div class="flex items-center justify-center gap-1.5 max-w-[210px] mx-auto">
-                    <button type="button" onclick="adjustItemQty(${idx}, -5)" class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer" title="إنقاص 5">-5</button>
+                <div class="flex items-center justify-center gap-1.5 max-w-[230px] mx-auto">
+                    <button type="button" onclick="adjustItemQty(${idx}, -5)" class="min-w-[36px] h-9 sm:h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer shadow-2xs" title="إنقاص 5">-5</button>
                     <input type="number" min="0" step="1" value="${counted || ''}" placeholder="0" 
                            oninput="setItemQty(${idx}, this.value)"
-                           class="w-20 text-center font-mono font-bold text-xs p-1.5 border border-slate-300 rounded-lg focus:outline-none focus:border-slate-800 bg-white" />
-                    <button type="button" onclick="adjustItemQty(${idx}, 5)" class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer" title="زيادة 5">+5</button>
-                    <button type="button" onclick="matchItemQty(${idx})" class="w-7 h-7 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer" title="مطابقة مع الدفتري">✓</button>
+                           class="w-20 text-center font-mono font-bold text-sm h-9 sm:h-10 p-1 border border-slate-300 rounded-lg focus:outline-none focus:border-slate-800 bg-white" />
+                    <button type="button" onclick="adjustItemQty(${idx}, 5)" class="min-w-[36px] h-9 sm:h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer shadow-2xs" title="زيادة 5">+5</button>
+                    <button type="button" onclick="matchItemQty(${idx})" class="min-w-[36px] h-9 sm:h-10 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer shadow-2xs" title="مطابقة مع الدفتري">✓</button>
                 </div>
                 <span class="text-[10px] text-slate-500 font-mono block mt-1">${countVal.toLocaleString()} ج.م</span>
             </td>

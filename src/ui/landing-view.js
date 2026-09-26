@@ -199,18 +199,29 @@ const ExcelLandingView = {
           <!-- الهيدر الأنيق المتجاوب -->
           <header class="landing-header">
             <div class="landing-header-inner">
-              <!-- شعار وهوية المنصة في الموبايل -->
-              <div class="header-mobile-brand" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="ACCOUNTERA">
-                <div style="width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg, #047857, #10b981); display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(16, 185, 129, 0.3); flex-shrink:0;">
-                  <svg width="18" height="18" viewBox="0 0 40 40" fill="none">
-                    <rect width="40" height="40" rx="8" fill="transparent"/>
-                    <path d="M12 28V15C12 13.8954 12.8954 13 14 13C15.1046 13 16 13.8954 16 15V28" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
-                    <path d="M24 28V15C24 13.8954 24.8954 13 26 13C27.1046 13 28 13.8954 28 15V28" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
-                    <path d="M14 20H26" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
-                    <circle cx="20" cy="11" r="3" fill="#FFFFFF"/>
+              <div style="display:flex; align-items:center; gap:0.5rem; min-width:0;">
+                <!-- زر القائمة الجانبية المتجاوبة للموبايل -->
+                <button class="btn-mobile-hamburger" onclick="window.toggleMobileDrawer()" aria-label="فتح القائمة الرئيسية" title="القائمة الرئيسية">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
                   </svg>
+                </button>
+
+                <!-- شعار وهوية المنصة في الموبايل -->
+                <div class="header-mobile-brand" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="ACCOUNTERA">
+                  <div style="width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg, #047857, #10b981); display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(16, 185, 129, 0.3); flex-shrink:0;">
+                    <svg width="18" height="18" viewBox="0 0 40 40" fill="none">
+                      <rect width="40" height="40" rx="8" fill="transparent"/>
+                      <path d="M12 28V15C12 13.8954 12.8954 13 14 13C15.1046 13 16 13.8954 16 15V28" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+                      <path d="M24 28V15C24 13.8954 24.8954 13 26 13C27.1046 13 28 13.8954 28 15V28" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+                      <path d="M14 20H26" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+                      <circle cx="20" cy="11" r="3" fill="#FFFFFF"/>
+                    </svg>
+                  </div>
+                  <span class="header-mobile-brand-name" style="font-weight:900; font-size:1.05rem; color:var(--text-primary); letter-spacing:0.5px; font-family:'JetBrains Mono', sans-serif;">ACCOUNTERA</span>
                 </div>
-                <span class="header-mobile-brand-name" style="font-weight:900; font-size:1.05rem; color:var(--text-primary); letter-spacing:0.5px; font-family:'JetBrains Mono', sans-serif;">ACCOUNTERA</span>
               </div>
 
               <!-- مسار التنقل التوضيحي (للشاشات الكبيرة فقط) -->

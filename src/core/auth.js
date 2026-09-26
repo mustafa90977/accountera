@@ -93,9 +93,10 @@ const AuthService = {
           this.updateTopBarUI();
           if (typeof window.navigateToScreen === 'function') {
             const urlParams = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : null;
-            const requestedScreen = urlParams ? urlParams.get('screen') : null;
+            const hash = (typeof window !== 'undefined' && window.location.hash) ? window.location.hash.replace(/^#\/?/, '').trim() : '';
+            const requestedScreen = (urlParams ? urlParams.get('screen') : null) || hash;
             const publicScreens = ['landing', 'welcome'];
-            if (!requestedScreen || !publicScreens.includes(requestedScreen)) {
+            if (!requestedScreen || (!publicScreens.includes(requestedScreen) && requestedScreen !== 'login' && requestedScreen !== 'register')) {
               window.navigateToScreen('landing');
             }
           }

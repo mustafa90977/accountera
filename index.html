@@ -46,8 +46,16 @@
     <!-- 1. الشريط العلوي المتجاوب (Topbar) -->
     <header class="topbar">
       <div class="topbar-container">
-        <div class="brand-wrapper" onclick="navigateToScreen('landing')">
-          <div class="brand-icon" style="background:transparent; padding:0; box-shadow:none; width:auto; height:auto;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0;">
+          <button class="btn-mobile-hamburger" onclick="window.toggleMobileDrawer()" aria-label="فتح القائمة الرئيسية" title="القائمة الرئيسية">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="brand-wrapper" onclick="navigateToScreen('landing')">
+            <div class="brand-icon" style="background:transparent; padding:0; box-shadow:none; width:auto; height:auto;">
             <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="accountera-brandmark">
               <defs>
                 <linearGradient id="accBrandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
