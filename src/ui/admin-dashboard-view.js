@@ -1192,55 +1192,112 @@ const ExcelAdminDashboard = {
     };
 
     overlay.innerHTML = `
-      <div class="modal-sheet" style="max-width: 520px; width: 92%;">
+      <div class="modal-sheet" style="max-width: 660px; width: 94%; max-height: 90vh; overflow-y: auto;">
         <span class="sheet-drag-handle"></span>
         <div class="modal-header">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <span class="modal-icon-badge">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 24 }) : ''}</span>
+            <span class="modal-icon-badge" style="background:rgba(37, 99, 235, 0.1); color:var(--primary);">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 24 }) : '★'}</span>
             <div>
-              <h3 class="modal-title">إضافة سند مالي للشركة</h3>
-              <p style="margin: 2px 0 0; font-size: 0.8rem; color: var(--text-muted);">${comp.name}</p>
+              <h3 class="modal-title">المنشئ المرئي لسندات وسيناريوهات العمليات</h3>
+              <p style="margin: 2px 0 0; font-size: 0.8rem; color: var(--text-muted);">${comp.name} • بناء القيود المركبة وحساب الضرائب آلياً</p>
             </div>
           </div>
           <button class="modal-close-btn" id="closeTxModalBtn">✕</button>
         </div>
 
-        <div style="padding: 12px 0; display: flex; flex-direction: column; gap: 14px;">
+        <div style="padding: 12px 0; display: flex; flex-direction: column; gap: 14px; text-align: right;">
+          <!-- 1. اختيار نموذج المعاملة المصرية الجاهزة -->
           <div class="admin-form-group">
-            <label>عنوان السند المالي أو العملية *</label>
-            <input type="text" id="tx_modal_title" class="admin-form-input" placeholder="مثال: فاتورة مشتريات بضاعة نقدية" required>
+            <label style="font-weight: 700;">نوع ونموذج المعاملة (معايير المحاسبة المصرية):</label>
+            <select id="tx_builder_template" class="admin-form-input" style="font-weight: 600;">
+              <option value="SALE_CREDIT">1. فاتورة مبيعات بضاعة آجلة + ضريبة قيمة مضافة 14% (عملاء)</option>
+              <option value="SALE_CASH">2. فاتورة مبيعات نقدية محصلة بالبنك + ضريبة قيمة مضافة 14%</option>
+              <option value="PURCHASE_CREDIT">3. فاتورة مشتريات بضاعة بالآجل + ضريبة مدخلات 14% (موردين)</option>
+              <option value="RENT_EXPENSE">4. سداد إيجار مقر الشركة بشيك بنكي (مصروف إيجار / بنك)</option>
+              <option value="PAYROLL">5. مسير رواتب موظفين مع استقطاع ضرائب كسب عمل وتأمينات</option>
+              <option value="PAYMENT_SUPPLIER">6. سداد دفعة للمورد من الحساب البنكي الجاري</option>
+              <option value="COLLECTION_CUSTOMER">7. إيصال تحصيل نقدية من عميل بالخزينة</option>
+              <option value="BANK_CHARGES">8. إشعار رسوم وعمولات ومصروفات بنكية مخصومة</option>
+              <option value="DEPRECIATION">9. مذكرة تسوية قسط الإهلاك السنوي للأصول الثابتة</option>
+              <option value="CUSTOM">10. قيد يومية مخصص حر</option>
+            </select>
           </div>
 
-          <div class="admin-form-group">
-            <label>بيان وتفاصيل العملية</label>
-            <textarea id="tx_modal_desc" class="admin-form-textarea" rows="2" placeholder="بيان تفصيلي للسند المحاسبي المرفق"></textarea>
-          </div>
-
+          <!-- تفاصيل السند -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div class="admin-form-group">
-              <label>المبلغ الإجمالي (ج.م) *</label>
-              <input type="number" id="tx_modal_amount" class="admin-form-input" value="15000">
+              <label>عنوان السند أو الفاتورة *</label>
+              <input type="text" id="tx_modal_title" class="admin-form-input" value="فاتورة مبيعات بضاعة آجلة" required>
             </div>
             <div class="admin-form-group">
-              <label>التاريخ المالي</label>
-              <input type="text" id="tx_modal_date" class="admin-form-input" value="2026-01-15">
+              <label>رقم المرجع / الفاتورة (Ref)</label>
+              <input type="text" id="tx_modal_ref" class="admin-form-input" value="INV-${Math.floor(1000 + Math.random()*9000)}">
             </div>
           </div>
 
+          <div class="admin-form-group">
+            <label>بيان السند المحاسبي وتفاصيل المعاملة</label>
+            <textarea id="tx_modal_desc" class="admin-form-textarea" rows="2">بيع بضاعة بالآجل للعملاء مع احتساب ضريبة القيمة المضافة 14% وفق الفاتورة الضريبية المعتمدة.</textarea>
+          </div>
+
+          <!-- المبالغ والضرائب -->
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px;">
+            <div class="admin-form-group">
+              <label>المبلغ الأساسي (قبل الضريبة) *</label>
+              <input type="number" id="tx_modal_base_amount" class="admin-form-input" value="50000" min="1">
+            </div>
+            <div class="admin-form-group">
+              <label>تاريخ السند</label>
+              <input type="date" id="tx_modal_date" class="admin-form-input" value="2026-01-15">
+            </div>
+            <div class="admin-form-group">
+              <label>مستوى الصعوبة</label>
+              <select id="tx_modal_difficulty" class="admin-form-input">
+                <option value="Easy">مبتدئ (Easy)</option>
+                <option value="Medium" selected>متوسط (Medium)</option>
+                <option value="Hard">متقدم (Hard)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- المعاينة الحية لأطراف القيد المركب -->
+          <div style="background: var(--surface-ground); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong style="font-size: 0.86rem; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+                <span>⚡ المعاينة الحية لأطراف القيد المزدوج:</span>
+              </strong>
+              <span id="tx_preview_balance_badge" style="font-size: 0.75rem; font-weight: 700; background: var(--tier-starter-bg); color: var(--tier-starter); padding: 2px 8px; border-radius: 6px;">متزن 100% ✓</span>
+            </div>
+            <div id="tx_preview_lines_container" style="display: flex; flex-direction: column; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;">
+              <!-- Dynamic live preview generated via JS -->
+            </div>
+          </div>
+
+          <!-- خيار مزامنة كشف حساب البنك -->
+          <div style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">
+              <input type="checkbox" id="tx_modal_sync_bank" style="width: 16px; height: 16px;">
+              <span>تضمين هذه العملية في كشف حساب البنك (Bank Statement Sync)</span>
+            </label>
+            <span style="font-size: 0.75rem; color: var(--primary); font-weight: 600;">لمطابقة التسوية البنكية</span>
+          </div>
+
+          <!-- التعليم والإرشادات المرفقة للسند -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div class="admin-form-group">
-              <label>معرّف الحساب المدين (من حـ/)</label>
-              <input type="text" id="tx_modal_dr" class="admin-form-input" value="inventory" placeholder="مثال: inventory أو cash">
+              <label>تلميح محاسبي للطلاب (Hint):</label>
+              <input type="text" id="tx_modal_hint" class="admin-form-input" value="تذكر أن ضريبة القيمة المضافة مخرجات دائنة لحساب مصلحة الضرائب المصرية.">
             </div>
             <div class="admin-form-group">
-              <label>معرّف الحساب الدائن (إلى حـ/)</label>
-              <input type="text" id="tx_modal_cr" class="admin-form-input" value="cash" placeholder="مثال: cash أو ap">
+              <label>القاعدة المحاسبية (EAS Rule):</label>
+              <input type="text" id="tx_modal_rule" class="admin-form-input" value="معيار المحاسبة المصري (48) وقانون الضريبة 67 لسنة 2016.">
             </div>
           </div>
 
+          <!-- أزرار الحفظ والإغلاق -->
           <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
             <button class="btn-workspace-action" id="cancelTxModalBtn">إلغاء</button>
-            <button class="btn-workspace-action btn-workspace-primary" id="saveTxModalBtn">✓ إضافة السند</button>
+            <button class="btn-workspace-action btn-workspace-primary" id="saveTxModalBtn" style="background: var(--success); color: white; font-weight: 700;">✓ اعتماد وحفظ السند بالشركة</button>
           </div>
         </div>
       </div>
@@ -1254,35 +1311,255 @@ const ExcelAdminDashboard = {
       setTimeout(() => overlay.remove(), 250);
     }
 
+    // Dynamic Visual Calculations
+    function updateVisualPreview() {
+      const tpl = overlay.querySelector('#tx_builder_template').value;
+      const baseAmt = parseFloat(overlay.querySelector('#tx_modal_base_amount').value) || 0;
+      const linesContainer = overlay.querySelector('#tx_preview_lines_container');
+      const titleInput = overlay.querySelector('#tx_modal_title');
+      const descInput = overlay.querySelector('#tx_modal_desc');
+      const syncBankCheck = overlay.querySelector('#tx_modal_sync_bank');
+
+      let lines = [];
+
+      if (tpl === 'SALE_CREDIT') {
+        const vat = Math.round(baseAmt * 0.14);
+        const total = baseAmt + vat;
+        titleInput.value = 'فاتورة مبيعات بضاعة آجلة';
+        descInput.value = 'بيع بضاعة بالآجل للعملاء مع احتساب ضريبة القيمة المضافة 14%.';
+        syncBankCheck.checked = false;
+        lines = [
+          { code: '1103', name: 'العملاء (AR)', dr: total, cr: 0 },
+          { code: '4101', name: 'إيراد المبيعات', dr: 0, cr: baseAmt },
+          { code: '2102', name: 'ضريبة القيمة المضافة مخرجات (14%)', dr: 0, cr: vat }
+        ];
+      } else if (tpl === 'SALE_CASH') {
+        const vat = Math.round(baseAmt * 0.14);
+        const total = baseAmt + vat;
+        titleInput.value = 'فاتورة مبيعات نقدية محصلة بالبنك';
+        descInput.value = 'بيع بضاعة وتحصيل القيمة مضافاً إليها 14% ضريبة بالتحويل للحساب البنكي.';
+        syncBankCheck.checked = true;
+        lines = [
+          { code: '1102', name: 'البنك - الحساب الجاري', dr: total, cr: 0 },
+          { code: '4101', name: 'إيراد المبيعات', dr: 0, cr: baseAmt },
+          { code: '2102', name: 'ضريبة القيمة المضافة مخرجات (14%)', dr: 0, cr: vat }
+        ];
+      } else if (tpl === 'PURCHASE_CREDIT') {
+        const vat = Math.round(baseAmt * 0.14);
+        const total = baseAmt + vat;
+        titleInput.value = 'فاتورة مشتريات بضاعة بالآجل';
+        descInput.value = 'شراء بضاعة تجارية بالآجل مع احتساب ضريبة القيمة المضافة مدخلات 14%.';
+        syncBankCheck.checked = false;
+        lines = [
+          { code: '1104', name: 'المخزون السلعي', dr: baseAmt, cr: 0 },
+          { code: '1106', name: 'ضريبة القيمة المضافة مدخلات (14%)', dr: vat, cr: 0 },
+          { code: '2101', name: 'الموردون (AP)', dr: 0, cr: total }
+        ];
+      } else if (tpl === 'RENT_EXPENSE') {
+        titleInput.value = 'سداد إيجار مقر الشركة';
+        descInput.value = 'سداد قيمة إيجار مقر الشركة عن الفترة الحالية بشيك بنكي.';
+        syncBankCheck.checked = true;
+        lines = [
+          { code: '5202', name: 'مصروف إيجار', dr: baseAmt, cr: 0 },
+          { code: '1102', name: 'البنك - الحساب الجاري', dr: 0, cr: baseAmt }
+        ];
+      } else if (tpl === 'PAYROLL') {
+        const tax = Math.round(baseAmt * 0.05);
+        const soc = Math.round(baseAmt * 0.11);
+        const net = baseAmt - tax - soc;
+        titleInput.value = 'كشف مسير رواتب الموظفين';
+        descInput.value = 'استحقاق رواتب الشهر واستقطاع ضريبة كسب العمل 5% وتأمينات 11% والتحويل للبنوك.';
+        syncBankCheck.checked = true;
+        lines = [
+          { code: '5201', name: 'مصروف رواتب وأجور', dr: baseAmt, cr: 0 },
+          { code: '2105', name: 'ضرائب كسب عمل مستحقة (5%)', dr: 0, cr: tax },
+          { code: '2106', name: 'تأمينات اجتماعية مستحقة (11%)', dr: 0, cr: soc },
+          { code: '1102', name: 'البنك - الحساب الجاري (الصافي)', dr: 0, cr: net }
+        ];
+      } else if (tpl === 'PAYMENT_SUPPLIER') {
+        titleInput.value = 'إذن سداد دفعة للموردين';
+        descInput.value = 'سداد جزء من الرصيد المستحق للمورد بشيك بنكي.';
+        syncBankCheck.checked = true;
+        lines = [
+          { code: '2101', name: 'الموردون (AP)', dr: baseAmt, cr: 0 },
+          { code: '1102', name: 'البنك - الحساب الجاري', dr: 0, cr: baseAmt }
+        ];
+      } else if (tpl === 'COLLECTION_CUSTOMER') {
+        titleInput.value = 'إيصال تحصيل نقدية من عميل';
+        descInput.value = 'تحصيل دفعة نقدية بالخزينة من عميل تحت حساب الفواتير الآجلة.';
+        syncBankCheck.checked = false;
+        lines = [
+          { code: '1101', name: 'النقدية بالصندوق', dr: baseAmt, cr: 0 },
+          { code: '1103', name: 'العملاء (AR)', dr: 0, cr: baseAmt }
+        ];
+      } else if (tpl === 'BANK_CHARGES') {
+        titleInput.value = 'إشعار مصروفات ورسوم بنكية';
+        descInput.value = 'خصم مصروفات وعمولات مصرفية دورية من الحساب البنكي الجاري.';
+        syncBankCheck.checked = true;
+        lines = [
+          { code: '5208', name: 'مصروفات وعمولات بنكية', dr: baseAmt, cr: 0 },
+          { code: '1102', name: 'البنك - الحساب الجاري', dr: 0, cr: baseAmt }
+        ];
+      } else if (tpl === 'DEPRECIATION') {
+        titleInput.value = 'مذكرة تسوية قسط الإهلاك السنوي';
+        descInput.value = 'إثبات قسط إهلاك الأصول الثابتة السنوي وتحميله على الفترة المالية.';
+        syncBankCheck.checked = false;
+        lines = [
+          { code: '5204', name: 'مصروف إهلاك أصول ثابتة', dr: baseAmt, cr: 0 },
+          { code: '1202', name: 'مجمع إهلاك أصول ثابتة', dr: 0, cr: baseAmt }
+        ];
+      } else {
+        lines = [
+          { code: '1101', name: 'النقدية بالصندوق', dr: baseAmt, cr: 0 },
+          { code: '4101', name: 'إيراد المبيعات', dr: 0, cr: baseAmt }
+        ];
+      }
+
+      linesContainer.innerHTML = lines.map(l => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; background: var(--surface-card); border-radius: 6px; border-right: 3px solid ${l.dr > 0 ? 'var(--primary)' : 'var(--success)'};">
+          <div>
+            <strong style="color: var(--text-primary);">${l.code}</strong> - <span>${l.name}</span>
+          </div>
+          <div>
+            ${l.dr > 0 ? `<span style="color: var(--primary); font-weight: 700;">مدين: ${l.dr.toLocaleString()} ج.م</span>` : `<span style="color: var(--success); font-weight: 700;">دائن: ${l.cr.toLocaleString()} ج.م</span>`}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    overlay.querySelector('#tx_builder_template').onchange = updateVisualPreview;
+    overlay.querySelector('#tx_modal_base_amount').oninput = updateVisualPreview;
+    updateVisualPreview();
+
     overlay.querySelector('#closeTxModalBtn').onclick = closeTxModal;
     overlay.querySelector('#cancelTxModalBtn').onclick = closeTxModal;
+
     overlay.querySelector('#saveTxModalBtn').onclick = () => {
+      const tpl = overlay.querySelector('#tx_builder_template').value;
       const title = overlay.querySelector('#tx_modal_title').value.trim();
       if (!title) {
         if (typeof AccModal !== 'undefined') AccModal.toast('يرجى كتابة عنوان السند المالي', 'error');
         return;
       }
       const desc = overlay.querySelector('#tx_modal_desc').value.trim() || title;
-      const amount = parseFloat(overlay.querySelector('#tx_modal_amount').value) || 0;
+      const baseAmt = parseFloat(overlay.querySelector('#tx_modal_base_amount').value) || 0;
       const date = overlay.querySelector('#tx_modal_date').value.trim() || '2026-01-15';
-      const dr = overlay.querySelector('#tx_modal_dr').value.trim() || 'cash';
-      const cr = overlay.querySelector('#tx_modal_cr').value.trim() || 'sales_rev';
+      const ref = overlay.querySelector('#tx_modal_ref').value.trim() || `REF-${Math.floor(1000 + Math.random()*9000)}`;
+      const difficulty = overlay.querySelector('#tx_modal_difficulty').value;
+      const hint = overlay.querySelector('#tx_modal_hint').value.trim();
+      const rule = overlay.querySelector('#tx_modal_rule').value.trim();
+      const syncBank = overlay.querySelector('#tx_modal_sync_bank').checked;
+
+      let builtLines = [];
+      let totalAmount = baseAmt;
+      let primaryType = 'General';
+
+      if (tpl === 'SALE_CREDIT' || tpl === 'SALE_CASH') {
+        primaryType = tpl === 'SALE_CASH' ? 'Cash Sale' : 'Sale';
+        const vat = Math.round(baseAmt * 0.14);
+        totalAmount = baseAmt + vat;
+        const debitAccount = tpl === 'SALE_CASH' ? '1102' : '1103';
+        const debitName = tpl === 'SALE_CASH' ? 'Bank (بنك)' : 'Accounts Receivable (عملاء)';
+        builtLines = [
+          { lineNum: 1, accountCode: debitAccount, accountName: debitName, debit: totalAmount, credit: 0, description: desc },
+          { lineNum: 2, accountCode: '4101', accountName: 'Sales Revenue (إيرادات مبيعات)', debit: 0, credit: baseAmt, description: 'صافي قيمة المبيعات' },
+          { lineNum: 3, accountCode: '2102', accountName: 'Output VAT (ضريبة القيمة المضافة - مخرجات)', debit: 0, credit: vat, description: 'ضريبة القيمة المضافة 14%' }
+        ];
+      } else if (tpl === 'PURCHASE_CREDIT') {
+        primaryType = 'Purchase';
+        const vat = Math.round(baseAmt * 0.14);
+        totalAmount = baseAmt + vat;
+        builtLines = [
+          { lineNum: 1, accountCode: '1104', accountName: 'Inventory (مخزون)', debit: baseAmt, credit: 0, description: 'تكلفة البضاعة المشتراة' },
+          { lineNum: 2, accountCode: '1106', accountName: 'Input VAT (ضريبة القيمة المضافة - مدخلات)', debit: vat, credit: 0, description: 'ضريبة المدخلات 14%' },
+          { lineNum: 3, accountCode: '2101', accountName: 'Accounts Payable (موردون)', debit: 0, credit: totalAmount, description: desc }
+        ];
+      } else if (tpl === 'RENT_EXPENSE') {
+        primaryType = 'Expense';
+        builtLines = [
+          { lineNum: 1, accountCode: '5202', accountName: 'Rent Expense (مصروف إيجار)', debit: baseAmt, credit: 0, description: desc },
+          { lineNum: 2, accountCode: '1102', accountName: 'Bank (بنك)', debit: 0, credit: baseAmt, description: 'سداد بشيك بنكي' }
+        ];
+      } else if (tpl === 'PAYROLL') {
+        primaryType = 'Payroll';
+        const tax = Math.round(baseAmt * 0.05);
+        const soc = Math.round(baseAmt * 0.11);
+        const net = baseAmt - tax - soc;
+        builtLines = [
+          { lineNum: 1, accountCode: '5201', accountName: 'Salaries Expense (مصروف رواتب)', debit: baseAmt, credit: 0, description: desc },
+          { lineNum: 2, accountCode: '2105', accountName: 'Payroll Taxes Payable (ضرائب رواتب مستحقة)', debit: 0, credit: tax, description: 'ضريبة كسب عمل 5%' },
+          { lineNum: 3, accountCode: '2106', accountName: 'Social Insurance Payable (تأمينات اجتماعية مستحقة)', debit: 0, credit: soc, description: 'تأمينات اجتماعية 11%' },
+          { lineNum: 4, accountCode: '1102', accountName: 'Bank (بنك)', debit: 0, credit: net, description: 'صافي الرواتب المحولة للبنوك' }
+        ];
+      } else if (tpl === 'PAYMENT_SUPPLIER') {
+        primaryType = 'Payment';
+        builtLines = [
+          { lineNum: 1, accountCode: '2101', accountName: 'Accounts Payable (موردون)', debit: baseAmt, credit: 0, description: desc },
+          { lineNum: 2, accountCode: '1102', accountName: 'Bank (بنك)', debit: 0, credit: baseAmt, description: 'سداد بشيك بنكي' }
+        ];
+      } else if (tpl === 'COLLECTION_CUSTOMER') {
+        primaryType = 'Collection';
+        builtLines = [
+          { lineNum: 1, accountCode: '1101', accountName: 'Cash (نقدية بالصندوق)', debit: baseAmt, credit: 0, description: desc },
+          { lineNum: 2, accountCode: '1103', accountName: 'Accounts Receivable (عملاء)', debit: 0, credit: baseAmt, description: 'تحصيل دفعة نقدية' }
+        ];
+      } else if (tpl === 'BANK_CHARGES') {
+        primaryType = 'Expense';
+        builtLines = [
+          { lineNum: 1, accountCode: '5208', accountName: 'Bank Charges (مصروفات بنكية)', debit: baseAmt, credit: 0, description: desc },
+          { lineNum: 2, accountCode: '1102', accountName: 'Bank (بنك)', debit: 0, credit: baseAmt, description: 'خصم من الحساب الجاري' }
+        ];
+      } else if (tpl === 'DEPRECIATION') {
+        primaryType = 'Depreciation';
+        builtLines = [
+          { lineNum: 1, accountCode: '5204', accountName: 'Depreciation Expense (مصروف إهلاك)', debit: baseAmt, credit: 0, description: desc },
+          { lineNum: 2, accountCode: '1202', accountName: 'Accumulated Depreciation (مجمع إهلاك)', debit: 0, credit: baseAmt, description: 'مجمع إهلاك سنوي' }
+        ];
+      } else {
+        builtLines = [
+          { lineNum: 1, accountCode: '1101', accountName: 'Cash (نقدية بالصندوق)', debit: baseAmt, credit: 0, description: desc },
+          { lineNum: 2, accountCode: '4101', accountName: 'Sales Revenue (إيرادات مبيعات)', debit: 0, credit: baseAmt, description: desc }
+        ];
+      }
 
       if (!comp.transactions) comp.transactions = [];
-      comp.transactions.push({
+      const newTx = {
         id: "tx-" + Date.now(),
         num: comp.transactions.length + 1,
-        title,
-        desc,
-        amount,
-        date,
-        dr,
-        cr
-      });
+        ref: ref,
+        title: title,
+        type: primaryType,
+        desc: desc,
+        amount: totalAmount,
+        date: date,
+        difficulty: difficulty,
+        accountingRule: rule,
+        hints: hint ? [hint] : [],
+        lines: builtLines
+      };
+
+      comp.transactions.push(newTx);
+
+      // إذا تم تفعيل خيار مزامنة كشف حساب البنك
+      if (syncBank) {
+        const bankLine = builtLines.find(l => l.accountCode === '1102');
+        if (bankLine) {
+          if (!comp.bank_statement_items) comp.bank_statement_items = [];
+          comp.bank_statement_items.push({
+            id: "stmt-" + Date.now(),
+            date: date,
+            desc: title,
+            ref: ref,
+            amount: bankLine.debit > 0 ? bankLine.debit : bankLine.credit,
+            type: bankLine.debit > 0 ? 'CREDIT' : 'DEBIT', // طبيعة كشف حساب البنك العكسية
+            matched: false
+          });
+        }
+      }
 
       ExcelAdminDashboard.saveState('companies');
       closeTxModal();
-      if (typeof AccModal !== 'undefined') AccModal.toast('✓ تمت إضافة السند المالي بنجاح!', 'success');
+      if (typeof AccModal !== 'undefined') AccModal.toast('✓ تم إنشاء السند المالي بالمنشئ المرئي وربطه بالشركة بنجاح!', 'success');
       ExcelAdminDashboard.switchTab('companies');
     };
   },

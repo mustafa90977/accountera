@@ -423,6 +423,122 @@ window.requestAccountingHint = function() {
 
 window.toggleAccountingHint = window.requestAccountingHint;
 
+// =========================================================================
+// Interactive Document Inspector & Visual Autofill Engine (Phase 4)
+// =========================================================================
+
+function renderInspectableRow(label, amount, code, side, rationale, colorClass = 'text-slate-800') {
+    const safeRationale = encodeURIComponent(rationale || '');
+    return `
+      <div class="flex justify-between items-center py-1.5 px-2 rounded-lg border border-transparent hover:border-blue-300 hover:bg-blue-50/80 transition group cursor-pointer" onclick="inspectDocumentFigure('${code}', ${amount}, '${side}', '${label}', '${safeRationale}')" title="انقر لتشغيل الفاحص الذكي ومعاينة التوجيه المحاسبي">
+        <span class="text-slate-600 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[14px] text-blue-600 opacity-60 group-hover:opacity-100">travel_explore</span>
+          <span>${label}:</span>
+        </span>
+        <div class="flex items-center gap-1.5">
+          <span class="font-mono font-bold ${colorClass}">${Number(amount).toLocaleString()} ج.م</span>
+          <span class="text-[9px] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition shadow-2xs">فحص ➔</span>
+        </div>
+      </div>
+    `;
+}
+
+window.inspectDocumentFigure = function(accountCode, amount, side, label, encRationale) {
+    const rationale = decodeURIComponent(encRationale || '');
+    const accName = (typeof ACCOUNTS !== 'undefined' && ACCOUNTS[accountCode]) ? ACCOUNTS[accountCode] : `حساب (${accountCode})`;
+    const isDebit = side === 'debit';
+    const sideBadge = isDebit 
+        ? '<span class="bg-blue-100 text-blue-900 border border-blue-300 px-2 py-0.5 rounded font-bold">مدين (منه) +Dr</span>'
+        : '<span class="bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded font-bold">دائن (له) +Cr</span>';
+
+    let drawer = document.getElementById('doc-inspector-drawer');
+    if (!drawer) return;
+
+    drawer.classList.remove('hidden');
+    drawer.innerHTML = `
+      <div class="space-y-3 animate-in zoom-in-95 duration-150">
+        <div class="flex justify-between items-start border-b border-blue-200 pb-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-blue-700 text-[20px]">psychology</span>
+            <div>
+              <h4 class="font-extrabold text-xs text-blue-950">فاحص المستند التوجيهي الذكي</h4>
+              <p class="text-[10px] text-slate-500">تحليل البند: <strong>${label}</strong> بمبلغ <span class="font-mono font-bold text-slate-800">${Number(amount).toLocaleString()} ج.م</span></p>
+            </div>
+          </div>
+          <button type="button" onclick="document.getElementById('doc-inspector-drawer').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-xs font-bold px-1 cursor-pointer">✕</button>
+        </div>
+
+        <div class="bg-white p-3 rounded-xl border border-blue-200 text-xs space-y-2 shadow-2xs">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500">الطرف المحاسبي في الدليل:</span>
+            <div class="flex items-center gap-1.5">
+              <span class="font-mono font-bold bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">${accountCode}</span>
+              <strong class="text-slate-900">${accName}</strong>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500">طبيعة الحركة في القيد:</span>
+            <div>${sideBadge}</div>
+          </div>
+
+          <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-[11px] text-slate-700 leading-relaxed">
+            <strong class="text-slate-900 block mb-0.5">📌 التوجيه والتعليل المحاسبي:</strong>
+            ${rationale}
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 pt-1">
+          <button type="button" onclick="autofillJournalLine('${accountCode}', ${amount}, '${side}')" class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer shadow-sm">
+            <span class="material-symbols-outlined text-[15px]">input</span>
+            <span>إدراج هذا الطرف تلقائياً في سطر القيد</span>
+          </button>
+          <button type="button" onclick="document.getElementById('doc-inspector-drawer').classList.add('hidden')" class="bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs py-2 px-3 rounded-xl border border-slate-300 cursor-pointer">
+            إغلاق
+          </button>
+        </div>
+      </div>
+    `;
+    drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
+window.autofillJournalLine = function(accountCode, amount, side) {
+    if (!formLines || !Array.isArray(formLines)) return;
+
+    let targetLine = formLines.find(l => (!l.account || l.account === '') && Number(l.debit) === 0 && Number(l.credit) === 0);
+    if (!targetLine) {
+        targetLine = { account: '', debit: 0, credit: 0 };
+        formLines.push(targetLine);
+    }
+
+    targetLine.account = String(accountCode);
+    if (side === 'debit') {
+        targetLine.debit = Number(amount);
+        targetLine.credit = 0;
+    } else {
+        targetLine.credit = Number(amount);
+        targetLine.debit = 0;
+    }
+
+    renderForm();
+    recalculateTotals();
+
+    const feedback = document.getElementById('feedback-msg');
+    if (feedback) {
+        const accName = (typeof ACCOUNTS !== 'undefined' && ACCOUNTS[accountCode]) ? ACCOUNTS[accountCode] : accountCode;
+        feedback.innerHTML = `
+          <div class="p-2.5 bg-blue-50 border border-blue-200 text-blue-900 rounded-xl text-xs font-bold flex items-center gap-2 animate-in fade-in">
+            <span class="material-symbols-outlined text-[18px] text-blue-700">check_circle</span>
+            <span>تم إدراج حـ/ ${accName} بمبلغ (${Number(amount).toLocaleString()} ج.م) في القيد بنجاح!</span>
+          </div>
+        `;
+    }
+
+    if (window.innerWidth < 1024 && typeof switchJournalMobilePane === 'function') {
+        switchJournalMobilePane('form');
+    }
+};
+
 function renderDocument(trx) {
     const viewer = document.getElementById('document-viewer');
     if(!viewer) return;
@@ -453,27 +569,21 @@ function renderDocument(trx) {
             </div>
           </div>
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
             <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">طريقة السداد:</span>
               <span class="font-bold text-slate-800">آجل (حساب الموردين AP)</span>
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">قيمة البضاعة المشتراة:</span>
-              <span class="font-mono font-bold text-slate-800">${invAmt.toLocaleString()} ج.م</span>
+            ${renderInspectableRow('قيمة البضاعة المشتراة', invAmt, '1104', 'debit', 'إثبات إضافة المخزون السلعي بتكلفة الشراء قبل الضريبة كأصل متداول مدين وفق معيار المحاسبة المصري (2).', 'text-slate-800')}
+            ${renderInspectableRow('ضريبة القيمة المضافة مدخلات (14%)', vatAmt, '1106', 'debit', 'ضريبة مدخلات قابلة للخصم والمقاصة مع ضريبة المخرجات وفقاً للمادة (22) من قانون الضريبة على القيمة المضافة رقم 67 لسنة 2016.', 'text-emerald-700')}
+            <div class="border-t border-slate-200 pt-1">
+              ${renderInspectableRow('الإجمالي المستحق للمورد', total, '2101', 'credit', 'إثبات الالتزام المالي المستحق للموردين بالجانب الدائن حتى يتم السداد الفعلي.', 'text-blue-900 font-extrabold')}
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">ضريبة القيمة المضافة مدخلات (14%):</span>
-              <span class="font-mono font-bold text-emerald-700">${vatAmt.toLocaleString()} ج.م</span>
-            </div>
-            <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
-              <span>الإجمالي المستحق للمورد:</span>
-              <span class="font-mono text-blue-900 text-base">${total.toLocaleString()} ج.م</span>
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif">
+            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
+          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">أصل الفاتورة مستلم ومقيد بالسجلات المخزنية</p>
           ${buildHintHtml(trx)}
         </div>
@@ -503,27 +613,21 @@ function renderDocument(trx) {
             </div>
           </div>
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
             <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">طريقة البيع:</span>
               <span class="font-bold ${isCash ? 'text-emerald-700' : 'text-blue-800'}">${isCash ? 'نقداً / تحويل بنكي فوري' : 'آجل (حساب العملاء AR)'}</span>
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">قيمة المبيعات الخاضعة للضريبة:</span>
-              <span class="font-mono font-bold text-slate-800">${revAmt.toLocaleString()} ج.م</span>
+            ${renderInspectableRow('قيمة المبيعات الخاضعة للضريبة', revAmt, '4101', 'credit', 'إثبات تحقق إيراد المبيعات بالجانب الدائن وفق معيار المحاسبة المصري (48) - الإيراد من العقود مع العملاء.', 'text-slate-800')}
+            ${renderInspectableRow('ضريبة القيمة المضافة مخرجات (14%)', vatAmt, '2102', 'credit', 'ضريبة مبيعات محصلة لحساب مصلحة الضرائب المصرية تلتزم المنشأة بتوريدها بنموذج 10 شهرياً (التزام دائن).', 'text-purple-700')}
+            <div class="border-t border-slate-200 pt-1">
+              ${renderInspectableRow(isCash ? 'المحصل بالخزينة/البنك' : 'المستحق على العميل (مدين)', total, isCash ? (cashLine ? cashLine.accountCode : '1101') : '1103', 'debit', isCash ? 'زيادة في النقدية كأصل متداول مدين.' : 'إثبات مديونية العميل بالجانب المدين حتى التحصيل.', 'text-blue-900 font-extrabold')}
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">ضريبة القيمة المضافة مخرجات (14%):</span>
-              <span class="font-mono font-bold text-purple-700">${vatAmt.toLocaleString()} ج.م</span>
-            </div>
-            <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
-              <span>إجمالي قيمة الفاتورة:</span>
-              <span class="font-mono text-blue-900 text-base">${total.toLocaleString()} ج.م</span>
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif">
+            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
+          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">أصل الفاتورة للعميل - صالحة للإقرار الضريبي</p>
           ${buildHintHtml(trx)}
         </div>
@@ -553,27 +657,18 @@ function renderDocument(trx) {
             </div>
           </div>
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">إجمالي الرواتب والأجور المستحقة:</span>
-              <span class="font-mono font-bold text-slate-900">${grossAmt.toLocaleString()} ج.م</span>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
+            ${renderInspectableRow('إجمالي الرواتب والأجور المستحقة', grossAmt, '5201', 'debit', 'تحميل الفترة المالية بتكلفة الرواتب التشغيلية والإدارية وفق مبدأ الاستحقاق (مصروف مدين).', 'text-slate-900')}
+            ${renderInspectableRow('استقطاع ضريبة كسب العمل (5%)', taxAmt, '2105', 'credit', 'ضريبة مستقطعة من منبع المرتبات واجبة التوريد لمأمورية الضرائب المختصة نموذج 4 كسب عمل (التزام دائن).', 'text-amber-700')}
+            ${renderInspectableRow('استقطاع التأمينات الاجتماعية (11%)', socAmt, '2106', 'credit', 'حصة العامل والمنشأة المستقطعة لصالح الهيئة القومية للتأمين الاجتماعي (التزام دائن).', 'text-amber-700')}
+            <div class="border-t border-slate-200 pt-1">
+              ${renderInspectableRow('صافي الرواتب المحولة للبنوك', netAmt, '1102', 'credit', 'نقص في الرصيد البنكي بالجانب الدائن نتيجة التحويل المصرفي لبطاقات الموظفين.', 'text-emerald-800 font-extrabold')}
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">استقطاع ضريبة كسب العمل (5%):</span>
-              <span class="font-mono font-bold text-amber-700">(${taxAmt.toLocaleString()}) ج.م</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">استقطاع التأمينات الاجتماعية (11%):</span>
-              <span class="font-mono font-bold text-amber-700">(${socAmt.toLocaleString()}) ج.م</span>
-            </div>
-            <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
-              <span>صافي الرواتب المحولة للبنوك:</span>
-              <span class="font-mono text-emerald-800 text-base">${netAmt.toLocaleString()} ج.م</span>
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif">
+            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
+          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">معتمد من إدارة الموارد البشرية والشؤون المالية</p>
           ${buildHintHtml(trx)}
         </div>
@@ -755,7 +850,9 @@ function renderDocument(trx) {
         </div>
         `;
     } else if (trx.type === 'Collection') {
-        const amt = trx.lines.find(l => l.accountCode === '1102')?.debit || trx.lines.find(l => l.accountCode === '1101')?.debit || 0;
+        const cashLine = trx.lines.find(l => l.accountCode === '1102' || l.accountCode === '1101');
+        const arLine = trx.lines.find(l => l.accountCode === '1103');
+        const amt = cashLine ? cashLine.debit : 0;
         const words = tafqeetArabic(amt);
 
         docHtml = `
@@ -771,29 +868,28 @@ function renderDocument(trx) {
             </div>
           </div>
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
             <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">استلمنا من السادة:</span>
               <span class="font-medium text-slate-800">حساب العملاء المعتمد</span>
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">وذلك عن:</span>
-              <span class="font-medium text-slate-800">سداد دفعة نقدية / تحويل بنكي تحت حساب الفواتير الآجلة</span>
+            ${renderInspectableRow('المتحصل بالخزينة/البنك', amt, cashLine ? cashLine.accountCode : '1102', 'debit', 'إثبات التدفق النقدي الوارد بالصندوق أو البنك كأصل متداول مدين.', 'text-emerald-800 font-bold')}
+            <div class="border-t border-slate-200 pt-1">
+              ${renderInspectableRow('تخفيض مديونية العميل', amt, '1103', 'credit', 'إنقاص رصيد العملاء بالجانب الدائن نتيجة التحصيل والسداد.', 'text-slate-900 font-bold')}
             </div>
-            <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
-              <span>المبلغ المحصل بالبنك:</span>
-              <span class="font-mono text-emerald-800 text-base">${amt.toLocaleString()} ج.م</span>
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif">
+            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
+          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">إشعار إيداع بنكي صادر ومعتمد من البنك</p>
           ${buildHintHtml(trx)}
         </div>
         `;
     } else if (trx.type === 'Payment') {
-        const amt = trx.lines.find(l => l.accountCode === '1102')?.credit || trx.lines.find(l => l.accountCode === '1101')?.credit || 0;
+        const bankLine = trx.lines.find(l => l.accountCode === '1102' || l.accountCode === '1101');
+        const apLine = trx.lines.find(l => l.accountCode === '2101');
+        const amt = bankLine ? bankLine.credit : 0;
         const words = tafqeetArabic(amt);
 
         docHtml = `
@@ -809,23 +905,20 @@ function renderDocument(trx) {
             </div>
           </div>
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
             <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">يصرف لأمر السادة:</span>
               <span class="font-medium text-slate-800">حساب الموردين المعتمد</span>
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">خصماً من حساب:</span>
-              <span class="font-medium text-slate-800">البنك - الحساب الجاري</span>
+            ${renderInspectableRow('تخفيض مستحقات الموردين', amt, '2101', 'debit', 'إنقاص الالتزام المالي للمورد بالجانب المدين نتيجة السداد.', 'text-blue-900 font-bold')}
+            <div class="border-t border-slate-200 pt-1">
+              ${renderInspectableRow('المدفوع من البنك/الخزينة', amt, bankLine ? bankLine.accountCode : '1102', 'credit', 'نقص في الأصل النقدي بالجانب الدائن نتيجة إصدار شيك أو تحويل بنكي.', 'text-rose-800 font-bold')}
             </div>
-            <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
-              <span>المبلغ المصروف:</span>
-              <span class="font-mono text-blue-900 text-base">${amt.toLocaleString()} ج.م</span>
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif">
+            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
+          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">أصل الشيك / إشعار الخصم الإلكتروني مرفق</p>
           ${buildHintHtml(trx)}
         </div>
@@ -980,13 +1073,7 @@ function renderDocument(trx) {
               </div>
               <div class="divide-y divide-slate-100 bg-white">
                 ${debits.map(d => `
-                  <div class="flex justify-between items-center p-2.5 hover:bg-slate-50">
-                    <div>
-                      <span class="font-bold text-slate-800 block text-xs">${ACCOUNTS[d.accountCode] || d.accountName}</span>
-                      <span class="text-[10px] text-slate-500 font-mono">كود الحساب: ${d.accountCode}</span>
-                    </div>
-                    <span class="font-mono font-extrabold text-slate-900 text-xs">${Number(d.debit).toLocaleString()} ج.م</span>
-                  </div>
+                  ${renderInspectableRow(ACCOUNTS[d.accountCode] || d.accountName || `حساب ${d.accountCode}`, d.debit, d.accountCode, 'debit', `إثبات تحميل الفترة المالية بمصروف (${ACCOUNTS[d.accountCode] || d.accountName}) كطرف مدين وفق مبدأ الاستحقاق.`, 'text-blue-900')}
                 `).join('')}
               </div>
             </div>
@@ -997,9 +1084,10 @@ function renderDocument(trx) {
                 <span class="text-slate-500">طريقة السداد المعتمدة:</span>
                 <strong class="text-slate-900">${creditAccountNames}</strong>
               </div>
-              <div class="flex justify-between py-1 text-xs font-bold text-slate-900">
-                <span>إجمالي المنصرف:</span>
-                <span class="font-mono text-base text-blue-900 font-extrabold">${totalAmt.toLocaleString()} ج.م</span>
+              <div class="border-t border-slate-200 pt-1">
+                ${credits.map(c => `
+                  ${renderInspectableRow(ACCOUNTS[c.accountCode] || c.accountName || `حساب ${c.accountCode}`, c.credit, c.accountCode, 'credit', `إثبات سداد المصروف خصماً من (${ACCOUNTS[c.accountCode] || c.accountName}) كطرف دائن.`, 'text-rose-800')}
+                `).join('')}
               </div>
               <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
                 فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
@@ -1007,6 +1095,7 @@ function renderDocument(trx) {
             </div>
           </div>
 
+          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">أصل الفواتير وإيصالات السداد الحكومية مرفقة ومعتمدة</p>
           ${buildHintHtml(trx)}
         </div>
@@ -1017,8 +1106,6 @@ function renderDocument(trx) {
         const totalAmt = debits.reduce((s,l)=>s+(Number(l.debit)||0), 0);
         const words = tafqeetArabic(totalAmt);
         const desc = trx.desc || trx.title || 'مذكرة تسوية إدارية معتمدة';
-
-        const creditDetails = credits.map(c => `${ACCOUNTS[c.accountCode] || c.accountName || c.accountCode} (${Number(c.credit).toLocaleString()} ج.م)`).join(' و ');
 
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
@@ -1045,24 +1132,21 @@ function renderDocument(trx) {
             </div>
             <div class="divide-y divide-slate-100 bg-white">
               ${debits.map(d => `
-                <div class="flex justify-between items-center p-2.5 hover:bg-slate-50">
-                  <div>
-                    <span class="font-bold text-slate-800 block text-xs">${ACCOUNTS[d.accountCode] || d.accountName}</span>
-                    <span class="text-[10px] text-slate-500 font-mono">كود الحساب: ${d.accountCode}</span>
-                  </div>
-                  <span class="font-mono font-extrabold text-slate-900 text-xs">${Number(d.debit).toLocaleString()} ج.م</span>
-                </div>
+                ${renderInspectableRow(ACCOUNTS[d.accountCode] || d.accountName || `حساب ${d.accountCode}`, d.debit, d.accountCode, 'debit', `توجيه محاسبي مدين للعملية وفق معايير المحاسبة المصرية.`, 'text-blue-900')}
               `).join('')}
             </div>
-            <div class="p-2.5 bg-slate-50 border-t border-slate-200 text-xs">
-              <span class="text-slate-500">الطرف المقابل / طريقة السداد: </span>
-              <strong class="text-slate-800">${creditDetails}</strong>
+            <div class="p-2.5 bg-slate-50 border-t border-slate-200 text-xs space-y-1">
+              <span class="text-slate-500 block mb-1">الطرف المقابل / طريقة السداد (الطرف الدائن): </span>
+              ${credits.map(c => `
+                ${renderInspectableRow(ACCOUNTS[c.accountCode] || c.accountName || `حساب ${c.accountCode}`, c.credit, c.accountCode, 'credit', `توجيه محاسبي دائن للعملية.`, 'text-rose-800')}
+              `).join('')}
             </div>
           </div>
 
           <div class="p-2.5 bg-slate-50 rounded-xl text-center text-xs text-slate-600 font-serif border border-slate-200 mb-2">
             المبلغ المعتمد بالمذكرة: <strong>${words}</strong> جنيهاً مصرياً لا غير.
           </div>
+          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">مذكرة إدارية معتمدة للتسجيل باليومية العامة</p>
           ${buildHintHtml(trx)}
         </div>
