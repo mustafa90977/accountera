@@ -5,10 +5,12 @@ __pycache__/
 .env.local
 .vercel
 supabase/.temp
-.vercel
+supabase/backups/
+backups/
 tools/
 test-results/
 output/
 audit_evidence/
 bank_reconciliation_*.json
 training_platform_data*.json
+*.log
