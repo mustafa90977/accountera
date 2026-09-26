@@ -49,16 +49,28 @@ window.toggleMobileDrawer = function(force) {
 };
 
 window.createMobileNavDrawer = function() {
-  if (document.getElementById('mobileNavDrawer')) return;
+  let overlay = document.getElementById('mobileNavOverlay');
+  let drawer = document.getElementById('mobileNavDrawer');
 
-  const overlay = document.createElement('div');
-  overlay.id = 'mobileNavOverlay';
-  overlay.className = 'mobile-nav-overlay';
-  overlay.onclick = () => window.toggleMobileDrawer(false);
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'mobileNavOverlay';
+    overlay.className = 'mobile-nav-overlay';
+    overlay.onclick = () => window.toggleMobileDrawer(false);
+    document.body.appendChild(overlay);
+  }
 
-  const drawer = document.createElement('aside');
-  drawer.id = 'mobileNavDrawer';
-  drawer.className = 'mobile-nav-drawer';
+  if (!drawer) {
+    drawer = document.createElement('aside');
+    drawer.id = 'mobileNavDrawer';
+    drawer.className = 'mobile-nav-drawer';
+    document.body.appendChild(drawer);
+  }
+
+  const currentUser = typeof AuthService !== 'undefined' ? AuthService.getCurrentUser() : null;
+  const isStudent = currentUser && (currentUser.role || 'student') === 'student';
+  const isAdmin = currentUser && currentUser.role === 'admin';
+  const initial = currentUser && currentUser.name ? currentUser.name.trim().charAt(0).toUpperCase() : 'M';
 
   drawer.innerHTML = `
     <div class="drawer-header">
@@ -69,8 +81,37 @@ window.createMobileNavDrawer = function() {
           <div style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">منصة المحاسب المالي التطبيقية</div>
         </div>
       </div>
-      <button onclick="window.toggleMobileDrawer(false)" style="background:var(--surface-hover); border:1px solid var(--border-subtle); border-radius:8px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-primary); font-size:1.1rem;" title="إغلاق">✕</button>
+      <button onclick="window.toggleMobileDrawer(false)" style="background:var(--surface-hover); border:1px solid var(--border-subtle); border-radius:8px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-primary); font-size:1.1rem;" title="إغلاق" aria-label="إغلاق">✕</button>
     </div>
+
+    ${currentUser ? `
+      <div style="padding:0.85rem 1rem; border-bottom:1px solid var(--border-subtle); background:var(--surface-muted); display:flex; align-items:center; justify-content:space-between; gap:0.75rem;">
+        <div style="display:flex; align-items:center; gap:0.65rem; min-width:0;">
+          <div style="width:36px; height:36px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.95rem; flex-shrink:0;">${initial}</div>
+          <div style="min-width:0;">
+            <div style="font-weight:800; font-size:0.9rem; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${currentUser.name || 'مستخدم'}</div>
+            <div style="font-size:0.72rem; color:var(--text-muted);">${isAdmin ? 'مدير النظام • Admin' : (currentUser.plan === 'vip' ? 'باقة VIP ⭐' : (currentUser.plan === 'pro' ? 'باقة المحترف Pro ⭐' : 'الحساب الأساسي Free'))}</div>
+          </div>
+        </div>
+        <button onclick="window.toggleMobileDrawer(false); navigateToScreen('${isAdmin ? 'admin-settings' : 'student-settings'}')" style="padding:4px 10px; border-radius:8px; border:1px solid var(--border-subtle); background:var(--surface-card); font-size:0.75rem; font-weight:700; color:var(--text-secondary); cursor:pointer;">إدارة</button>
+      </div>
+    ` : ''}
+
+    ${isStudent ? `
+      <div style="padding:0.75rem 0.85rem 0.25rem 0.85rem; display:flex; flex-direction:column; gap:0.5rem;">
+        <button onclick="window.toggleMobileDrawer(false); navigateToScreen('student-plans')" style="display:flex; align-items:center; justify-content:space-between; padding:0.65rem 0.85rem; border-radius:12px; background:linear-gradient(135deg, #FEF3C7, #FDE68A); border:1.5px solid #F59E0B; color:#92400E; font-weight:800; font-size:0.85rem; cursor:pointer; box-shadow:0 1px 3px rgba(245, 158, 11, 0.25);">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <span>⭐</span>
+            <span>ترقية الحساب إلى Pro</span>
+          </div>
+          <span style="font-size:0.75rem; background:#F59E0B; color:#fff; padding:2px 8px; border-radius:999px;">خصم 40%</span>
+        </button>
+        <button onclick="window.toggleMobileDrawer(false); navigateToScreen('student-plans')" style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.85rem; border-radius:10px; background:var(--surface-hover); border:1px dashed var(--border-strong); color:var(--text-secondary); font-weight:700; font-size:0.8rem; cursor:pointer;">
+          <span>✨</span>
+          <span>دعوة زميل واربح 20% رصيد</span>
+        </button>
+      </div>
+    ` : ''}
 
     <div class="drawer-nav">
       <button class="drawer-item" onclick="window.navigateToScreen('landing')">
@@ -119,11 +160,19 @@ window.createMobileNavDrawer = function() {
         <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
         <span>تبديل الوضع الليلي / النهاري</span>
       </button>
+
+      ${currentUser ? `
+        <button onclick="window.toggleMobileDrawer(false); AuthService.logout();" class="drawer-item" style="border:1px solid rgba(239, 68, 68, 0.25); border-radius:10px; justify-content:center; min-height:44px; color:#ef4444; background:rgba(239, 68, 68, 0.05);">
+          <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+          <span style="font-weight:700;">تسجيل الخروج (Logout)</span>
+        </button>
+      ` : `
+        <button onclick="window.toggleMobileDrawer(false); AuthService.openAuthModal('login');" class="drawer-item" style="border:1px solid var(--primary-border); border-radius:10px; justify-content:center; min-height:44px; color:var(--primary); background:var(--primary-light); font-weight:800;">
+          <span>تسجيل الدخول / إنشاء حساب</span>
+        </button>
+      `}
     </div>
   `;
-
-  document.body.appendChild(overlay);
-  document.body.appendChild(drawer);
 };
 
 // تهيئة الثيم المحفوظ عند التحميل

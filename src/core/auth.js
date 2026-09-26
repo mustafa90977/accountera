@@ -697,9 +697,9 @@ const AuthService = {
               <span>Refer & earn 20%</span>
             </button>
             
-            <button onclick="navigateToScreen('student-plans')" class="accountely-upgrade-btn">
-              <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('star', { size: 14 }) : ''}</span>
-              <span>Upgrade • ترقية</span>
+            <button onclick="navigateToScreen('student-plans')" class="accountely-upgrade-btn" title="ترقية الحساب إلى Pro" aria-label="ترقية الحساب">
+              <span class="upgrade-icon" style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('star', { size: 16 }) : '★'}</span>
+              <span class="accountely-upgrade-text">Upgrade • ترقية</span>
             </button>
           ` : (isAdmin ? `
             <button onclick="navigateToScreen('admin-overview')" class="accountely-promo-pill" style="background:var(--primary-light); border-color:var(--primary-border); color:var(--primary); font-weight:800;">
@@ -708,27 +708,32 @@ const AuthService = {
             </button>
           ` : '')}
 
-          <div class="accountely-bell-btn" onclick="navigateToScreen(isAdmin ? 'admin-overview' : 'student-dashboard')" title="الإشعارات والتنبيهات">
+          <div class="accountely-bell-btn" onclick="navigateToScreen(isAdmin ? 'admin-overview' : 'student-dashboard')" title="الإشعارات والتنبيهات" aria-label="الإشعارات">
             <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('bell', { size: 16 }) : ''}</span>
             <span style="position:absolute; top:-3px; right:-3px; background:#ef4444; color:#fff; font-size:0.65rem; font-weight:800; width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center;">1</span>
           </div>
 
-          <div class="accountely-user-dock" onclick="navigateToScreen(isAdmin ? 'admin-settings' : 'student-settings')" title="إعدادات الحساب والملف الشخصي">
-            <span style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-left:4px;">${this.currentUser.name || 'مستخدم'}</span>
-            <div style="width:28px; height:28px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.82rem;">${initial}</div>
+          <div class="accountely-user-dock" onclick="navigateToScreen(isAdmin ? 'admin-settings' : 'student-settings')" title="إعدادات الحساب والملف الشخصي" aria-label="الملف الشخصي">
+            <span class="accountely-user-name" style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-left:4px;">${this.currentUser.name || 'مستخدم'}</span>
+            <div class="accountely-user-avatar" style="width:28px; height:28px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.82rem;">${initial}</div>
           </div>
           
-          <button onclick="AuthService.logout()" class="sidebar-toggle-btn" style="width:32px; height:32px; border-radius:50%; margin-right:4px;" title="تسجيل الخروج">
+          <button onclick="AuthService.logout()" class="sidebar-toggle-btn accountely-logout-btn" style="width:32px; height:32px; border-radius:50%; margin-right:4px;" title="تسجيل الخروج" aria-label="تسجيل الخروج">
             ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('x', { size: 16 }) : '×'}
           </button>
         </div>
       `;
     } else {
       authDock.innerHTML = `
-        <button class="accountely-upgrade-btn" style="background:#10b981; color:#fff; border:none; display:inline-flex; align-items:center; gap:6px;" onclick="AuthService.openAuthModal('login')">
+        <button class="accountely-login-btn" onclick="AuthService.openAuthModal('login')">
           <span>دخول المنصة / Login</span>
         </button>
       `;
+    }
+
+    // مزامنة درج الملاحة الجانبي للموبايل مع بيانات المستخدم
+    if (typeof window.createMobileNavDrawer === 'function') {
+      window.createMobileNavDrawer();
     }
   }
 };

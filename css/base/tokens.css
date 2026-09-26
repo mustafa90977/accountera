@@ -120,6 +120,9 @@
   --header-height-desktop: 68px;
   --bottom-nav-height: 64px;
   --sidebar-width: 250px;
+  --container-max: 1280px;
+  --container-padding-mobile: 0.75rem;
+  --container-padding-desktop: 1.5rem;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
 

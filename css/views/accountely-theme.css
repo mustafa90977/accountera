@@ -208,6 +208,27 @@
   filter: brightness(0.95);
 }
 
+.accountely-login-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.accountely-login-btn:hover {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+}
+
 .accountely-bell-btn {
   position: relative;
   width: 36px;
@@ -245,11 +266,115 @@
   background: var(--primary-border);
 }
 
+/* =========================================================================
+   تكييف الشريط العلوي على شاشات الموبايل (Topbar Mobile Responsive Engine)
+   ========================================================================= */
 @media (max-width: 640px) {
+  /* 1. إخفاء نص البراند الطويل، والاحتفاظ فقط بالأيقونة/الشعار المميز */
+  .brand-text {
+    display: none !important;
+  }
+
+  /* 2. إخفاء زر تبديل الثيم من الشريط العلوي على الموبايل (متاح داخل القائمة الجانبية للموبايل) */
+  #themeToggleBtn {
+    display: none !important;
+  }
+
+  /* 3. إخفاء كبسولة الدعوة والربح من الشريط العلوي (متاحة في درج الملاحة واللوحة) */
   .accountely-promo-pill {
-    display: none;
+    display: none !important;
+  }
+
+  /* 4. إخفاء زر الخروج السريع الصغير من الشريط العلوي لمنع الضغط بالخطأ والازدحام */
+  .accountely-logout-btn,
+  .accountely-topbar-actions > .sidebar-toggle-btn {
+    display: none !important;
+  }
+
+  /* 5. إخفاء اسم الطالب نصياً من حوض المستخدم بصرياً فقط، مع إبقاء الصورة الرمزية */
+  .accountely-user-name {
+    display: none !important;
+  }
+
+  /* 6. تحويل حوض المستخدم لأيقونة دائرية مريحة للمس وبدون حواف زائدة */
+  .accountely-user-dock {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+  .accountely-user-dock:hover {
+    background: transparent !important;
+  }
+
+  .accountely-user-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  }
+
+  /* 7. زر الترقية الألماسي/الذهبي المميز على الموبايل (واضح بصرياً ومريح للمس) */
+  .accountely-upgrade-text {
+    display: none !important;
+  }
+
+  .accountely-upgrade-btn {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, #FEF3C7, #FDE68A) !important;
+    border: 1.5px solid #F59E0B !important;
+    color: #B45309 !important;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3) !important;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast) !important;
+    touch-action: manipulation;
+  }
+
+  .accountely-upgrade-btn:active {
+    transform: scale(0.92);
+  }
+
+  [data-theme="dark"] .accountely-upgrade-btn {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.35)) !important;
+    border-color: #F59E0B !important;
+    color: #FBBF24 !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35) !important;
+  }
+
+  .accountely-upgrade-btn .upgrade-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .accountely-upgrade-btn .upgrade-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke: currentColor;
+    fill: currentColor;
+  }
+
+  /* 8. زر الإشعارات */
+  .accountely-bell-btn {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  /* 9. مسافات مريحة وتلقائية لمنع أي تلاصق */
+  .accountely-topbar-actions {
+    gap: 8px !important;
   }
 }
+
 
 /* 3. كارت الـ Streak والنشاط اليومي (مستند بالكامل للرموز الدلالية) */
 .accountely-streak-card {
