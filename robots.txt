@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /simulation/
+
+Sitemap: https://accountera.vercel.app/sitemap.xml
