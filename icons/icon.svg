@@ -1,0 +1,15 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="accBrandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#047857" />
+      <stop offset="50%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#accBrandGrad)"/>
+  <path d="M153 358V192C153 177.86 164.86 166 179 166C193.14 166 205 177.86 205 192V358" stroke="#FFFFFF" stroke-width="26" stroke-linecap="round"/>
+  <path d="M307 358V192C307 177.86 318.86 166 333 166C347.14 166 359 177.86 359 192V358" stroke="#FFFFFF" stroke-width="26" stroke-linecap="round"/>
+  <path d="M179 256H333" stroke="#FFFFFF" stroke-width="26" stroke-linecap="round"/>
+  <circle cx="256" cy="140" r="32" fill="#FFFFFF"/>
+  <path d="M217 358H295" stroke="#FFFFFF" stroke-width="26" stroke-linecap="round"/>
+</svg>

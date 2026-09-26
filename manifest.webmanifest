@@ -1,0 +1,72 @@
+{
+  "name": "أكونتيرا | Accountera - محاكي المحاسب المصري",
+  "short_name": "Accountera",
+  "description": "محاكي عملي لبيئة عمل المحاسب المصري، قيود اليومية، الأستاذ، القوائم المالية، التسويات البنكية، الجرد والضرائب.",
+  "id": "/?source=pwa",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "window-controls-overlay"],
+  "orientation": "any",
+  "background_color": "#0B1C30",
+  "theme_color": "#10B981",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["education", "finance", "business"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "اليومية العامة",
+      "short_name": "اليومية",
+      "description": "تسجيل وفحص قيود اليومية العامة والمستندات",
+      "url": "./simulation/simulation/journal/index.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "مذكرة التسوية البنكية",
+      "short_name": "التسوية",
+      "description": "مطابقة كشف حساب البنك وتسجيل قيود التسوية",
+      "url": "./simulation/simulation/bank-recon/index.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "محاكي جرد الخزينة",
+      "short_name": "جرد الخزينة",
+      "description": "جرد النقدية بالعملات المصرية وتسوية الفروقات",
+      "url": "./simulation/simulation/cash-count/index.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "الإقرارات الضريبية",
+      "short_name": "الضرائب",
+      "description": "إعداد نموذج 10 ونموذج 41 خصم وتحصيل",
+      "url": "./simulation/simulation/tax-returns/index.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
