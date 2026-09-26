@@ -13,5 +13,13 @@
   "dependencies": {
     "browser-use-sdk": "^3.11.3",
     "gsap": "^3.15.0"
+  },
+  "devDependencies": {
+    "@axe-core/cli": "^4.13.0",
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0",
+    "axe-core": "^4.13.0",
+    "playwright": "^1.63.0",
+    "playwright-core": "^1.63.0"
   }
 }

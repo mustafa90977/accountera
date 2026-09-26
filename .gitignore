@@ -6,4 +6,9 @@ __pycache__/
 .vercel
 supabase/.temp
 .vercel
-.env*
+tools/
+test-results/
+output/
+audit_evidence/
+bank_reconciliation_*.json
+training_platform_data*.json
