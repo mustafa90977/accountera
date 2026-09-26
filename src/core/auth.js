@@ -16,7 +16,6 @@ const AuthService = {
 
     const isDev = (typeof window !== 'undefined') && 
       (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:');
-    const ADMIN_EMAILS = ['mu9tafamohamed@gmail.com'];
 
     // استعادة الجلسة المحلية المحفوظة فوراً لتجنب فقدان الدخول عند الريفريش
     try {
@@ -46,10 +45,6 @@ const AuthService = {
             await this.syncUserSession(session.user, false);
           }
         } else if (event === 'SIGNED_OUT') {
-          const current = this.getCurrentUser();
-          if (current && current.email && ADMIN_EMAILS.includes(current.email.toLowerCase())) {
-            return;
-          }
           this.currentUser = null;
           localStorage.removeItem('accountera_user');
           try { sessionStorage.removeItem('accountera_current_screen'); } catch(e) {}
@@ -65,16 +60,13 @@ const AuthService = {
       if (!error && session && session.user) {
         await this.syncUserSession(session.user, false);
       } else {
-        // إذا لم توجد جلسة سحابية، نتحقق من وجود مستخدم صالح محفوظ محلياً (مدير النظام أو طالب مسجل)
+        // إذا لم توجد جلسة سحابية، نتحقق من وجود مستخدم صالح محفوظ محلياً
         let hasValidSavedSession = false;
         try {
           const saved = localStorage.getItem('accountera_user');
           if (saved) {
             const parsed = JSON.parse(saved);
-            if (parsed && parsed.email && ADMIN_EMAILS.includes(parsed.email.toLowerCase())) {
-              this.currentUser = parsed;
-              hasValidSavedSession = true;
-            } else if (isDev && parsed && parsed.isDevTest) {
+            if (isDev && parsed && parsed.isDevTest) {
               this.currentUser = parsed;
               hasValidSavedSession = true;
             } else if (parsed && parsed.id && parsed.email && !parsed.isDevTest) {
@@ -378,55 +370,22 @@ const AuthService = {
           }
         }
       } else {
-        // تسجيل الدخول
-        try {
-          const { data, error } = await client.auth.signInWithPassword({
-            email: email,
-            password: password
-          });
+        // تسجيل الدخول حصرياً عبر التحقق السحابي الموثق
+        const { data, error } = await client.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
 
-          if (error) {
-            // توفير دخول مباشر وموثق للمسؤول الرئيسي حال تعليق تأكيد البريد في Supabase
-            if (email.trim().toLowerCase() === 'mu9tafamohamed@gmail.com' && password === '01129535297') {
-              const adminUser = {
-                id: '0c4bf876-aba2-441c-bd31-f78f189b4a0a',
-                email: 'mu9tafamohamed@gmail.com',
-                name: 'مصطفى محمد',
-                role: 'admin'
-              };
-              this.setCurrentUser(adminUser, true);
-              this.closeAuthModal();
-              if (typeof AccModal !== 'undefined' && AccModal.toast) {
-                AccModal.toast('أهلاً بك يا أستاذ مصطفى! تم تسجيل الدخول كمدير نظام (Admin).', 'success');
-              }
-              return;
-            }
-            throw error;
-          }
+        if (error) {
+          throw error;
+        }
 
-          if (data.user) {
-            await this.syncUserSession(data.user, true);
-            this.closeAuthModal();
-            if (typeof AccModal !== 'undefined' && AccModal.toast) {
-              AccModal.toast('أهلاً بك مجدداً! تم تسجيل الدخول بنجاح.', 'success');
-            }
+        if (data && data.user) {
+          await this.syncUserSession(data.user, true);
+          this.closeAuthModal();
+          if (typeof AccModal !== 'undefined' && AccModal.toast) {
+            AccModal.toast('أهلاً بك مجدداً! تم تسجيل الدخول بنجاح.', 'success');
           }
-        } catch (err) {
-          if (email.trim().toLowerCase() === 'mu9tafamohamed@gmail.com' && password === '01129535297') {
-            const adminUser = {
-              id: '0c4bf876-aba2-441c-bd31-f78f189b4a0a',
-              email: 'mu9tafamohamed@gmail.com',
-              name: 'مصطفى محمد',
-              role: 'admin'
-            };
-            this.setCurrentUser(adminUser, true);
-            this.closeAuthModal();
-            if (typeof AccModal !== 'undefined' && AccModal.toast) {
-              AccModal.toast('أهلاً بك يا أستاذ مصطفى! تم تسجيل الدخول كمدير نظام (Admin).', 'success');
-            }
-            return;
-          }
-          throw err;
         }
       }
     } catch (err) {

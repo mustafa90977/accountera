@@ -297,6 +297,32 @@ window.navigateToScreen = function(screenId) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   } else if (screenId === 'teacher-overview' || screenId === 'teacher') {
+    const currentUser = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
+    const isTeacherOrAdmin = currentUser && (currentUser.role === 'teacher' || currentUser.role === 'admin');
+
+    if (!isTeacherOrAdmin) {
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast('هذا القسم مخصص للأساتذة والمعلمين فقط.', 'error');
+      }
+      appContainer.innerHTML = `
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-radius:18px; padding:3rem 2rem; text-align:center; max-width:540px; margin:3rem auto; box-shadow:0 4px 20px rgba(234,88,12,0.08);">
+          <div style="width:64px; height:64px; border-radius:50%; background:#fff7ed; color:#ea580c; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem;">
+            ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('shield', { size: 28 }) : ''}
+          </div>
+          <h2 style="font-size:1.35rem; font-weight:800; color:#0f172a; margin-bottom:0.5rem;">منطقة مخصصة للأساتذة والمعلمين</h2>
+          <p style="color:#64748b; font-size:0.88rem; line-height:1.6; margin-bottom:1.5rem;">
+            أنت مسجل حالياً كـ <strong>${currentUser ? currentUser.name : 'طالب متدرب'}</strong>. بوابة المعلم ومتابعة تقدم الفصول مخصصة للكادر التدريسي وإدارة المنصة فقط.
+          </p>
+          <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+            <button class="btn-cta-primary" onclick="navigateToScreen('student-dashboard')">العودة للوحة دراستي</button>
+            <button class="btn-cta-secondary" onclick="navigateToScreen('companies-hub')">التدريب على الشركات</button>
+          </div>
+        </div>
+      `;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     const teacherActiveBtn = document.getElementById('bn-teacher-overview');
     if (teacherActiveBtn) teacherActiveBtn.classList.add('active');
     if (typeof ExcelTeacherDashboard !== 'undefined') {
@@ -313,7 +339,7 @@ window.navigateToScreen = function(screenId) {
     }
   } else if (screenId === 'admin' || screenId.startsWith('admin-')) {
     const currentUser = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
-    const isAdmin = currentUser && (currentUser.role === 'admin' || currentUser.email === 'admin@accountera.edu');
+    const isAdmin = currentUser && currentUser.role === 'admin';
 
     if (!isAdmin) {
       if (screenId === 'admin-plans') {

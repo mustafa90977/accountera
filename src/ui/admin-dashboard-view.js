@@ -167,6 +167,19 @@ const ExcelAdminDashboard = {
     trialPlan: "pro"
   },
 
+  requireAdmin() {
+    const user = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
+    const isAdmin = user && user.role === 'admin';
+    if (!isAdmin) {
+      console.error('[ExcelAdminDashboard] Unauthorized admin action attempt blocked');
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast('غير مصرح لك بتنفيذ هذا الإجراء الإداري.', 'error');
+      }
+      throw new Error('غير مصرح لك بتنفيذ هذا الإجراء الإداري');
+    }
+    return user;
+  },
+
   init() {
     try {
       const savedPlans = localStorage.getItem('acc_admin_plans');
@@ -774,6 +787,7 @@ const ExcelAdminDashboard = {
   },
 
   submitAddCompanyModal() {
+    this.requireAdmin();
     const name = document.getElementById('modal_cname')?.value.trim();
     if (!name) {
       if (typeof AccModal !== 'undefined') AccModal.toast('يرجى كتابة اسم الشركة أولاً', 'error');
@@ -823,6 +837,7 @@ const ExcelAdminDashboard = {
   },
 
   saveCompanyMeta(compId) {
+    this.requireAdmin();
     const comp = this.companies.find(c => c.id === compId);
     if (!comp) return;
 
@@ -838,6 +853,7 @@ const ExcelAdminDashboard = {
   },
 
   async deleteCompany(compId) {
+    this.requireAdmin();
     const comp = this.companies.find(c => c.id === compId);
     if (!comp) return;
 
@@ -1096,6 +1112,7 @@ const ExcelAdminDashboard = {
   },
 
   async addOrUpdateCompany(comp) {
+    this.requireAdmin();
     const existingIndex = this.companies.findIndex(c => c.id === comp.id || c.name === comp.name);
     if (existingIndex >= 0) {
       let confirmed = false;
@@ -1123,6 +1140,7 @@ const ExcelAdminDashboard = {
   },
 
   handleCompanyJsonUpload(event) {
+    this.requireAdmin();
     const file = event.target.files && event.target.files[0];
     if (!file) return;
 
@@ -1565,6 +1583,7 @@ const ExcelAdminDashboard = {
   },
 
   async deleteCompanyTransaction(compId, txId) {
+    this.requireAdmin();
     const comp = this.companies.find(c => c.id === compId);
     if (!comp || !comp.transactions) return;
 
@@ -1613,6 +1632,7 @@ const ExcelAdminDashboard = {
   },
 
   importCompanyTransactionsFromCsv(event, compId) {
+    this.requireAdmin();
     const file = event.target.files[0];
     if (!file) return;
 
@@ -2003,6 +2023,7 @@ const ExcelAdminDashboard = {
   },
 
   savePlanEditor(planId) {
+    this.requireAdmin();
     const plan = this.plans.find(p => p.id === planId);
     if (!plan) return;
 
@@ -2037,6 +2058,7 @@ const ExcelAdminDashboard = {
   },
 
   async addNewPlan() {
+    this.requireAdmin();
     let name = '';
     if (typeof AccModal !== 'undefined') {
       name = await AccModal.prompt({
@@ -2074,6 +2096,7 @@ const ExcelAdminDashboard = {
   },
 
   async deletePlan(planId) {
+    this.requireAdmin();
     let conf = false;
     if (typeof AccModal !== 'undefined') {
       conf = await AccModal.confirm({
@@ -2203,6 +2226,7 @@ const ExcelAdminDashboard = {
   },
 
   saveNewCoupon() {
+    this.requireAdmin();
     const code = document.getElementById('cpn_code')?.value.trim().toUpperCase();
     const type = document.getElementById('cpn_type')?.value;
     const val = parseFloat(document.getElementById('cpn_val')?.value) || 0;
@@ -2238,6 +2262,7 @@ const ExcelAdminDashboard = {
   },
 
   toggleCouponStatus(code) {
+    this.requireAdmin();
     const cpn = this.coupons.find(c => c.code === code);
     if (cpn) {
       cpn.isActive = !cpn.isActive;
@@ -2247,6 +2272,7 @@ const ExcelAdminDashboard = {
   },
 
   async deleteCoupon(code) {
+    this.requireAdmin();
     let conf = false;
     if (typeof AccModal !== 'undefined') {
       conf = await AccModal.confirm({
@@ -2424,6 +2450,7 @@ const ExcelAdminDashboard = {
   },
 
   changeUserRole(userId, newRole) {
+    this.requireAdmin();
     let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
     const user = users.find(u => u.id === userId);
     if (user) {
@@ -2435,6 +2462,7 @@ const ExcelAdminDashboard = {
   },
 
   changeUserPlan(userId, newPlan) {
+    this.requireAdmin();
     let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
     const user = users.find(u => u.id === userId);
     if (user) {
@@ -2473,6 +2501,7 @@ const ExcelAdminDashboard = {
   },
 
   extendUserSubscription(userId, days = 30) {
+    this.requireAdmin();
     let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
     const user = users.find(u => u.id === userId);
     if (!user) return;
@@ -2499,6 +2528,7 @@ const ExcelAdminDashboard = {
   },
 
   updateTrialDays(days) {
+    this.requireAdmin();
     const d = parseInt(days, 10);
     if (!d || d < 1) {
       if (typeof AccModal !== 'undefined') AccModal.toast('يرجى إدخال عدد أيام صحيح (يوم أو أكثر)', 'error');
@@ -2511,6 +2541,7 @@ const ExcelAdminDashboard = {
   },
 
   toggleTrialEnabled() {
+    this.requireAdmin();
     this.systemConfig.trialEnabled = !this.systemConfig.trialEnabled;
     this.saveState('config');
     const msg = this.systemConfig.trialEnabled ? '✓ تم تفعيل الفترة التجريبية للطلاب.' : '✓ تم إيقاف الفترة التجريبية.';
@@ -2519,6 +2550,7 @@ const ExcelAdminDashboard = {
   },
 
   async deleteUser(userId) {
+    this.requireAdmin();
     let conf = false;
     if (typeof AccModal !== 'undefined') {
       conf = await AccModal.confirm({
@@ -2636,6 +2668,7 @@ const ExcelAdminDashboard = {
   },
 
   async showAddAuditSampleModal() {
+    this.requireAdmin();
     let title = '';
     if (typeof AccModal !== 'undefined') {
       title = await AccModal.prompt({
@@ -2767,6 +2800,7 @@ const ExcelAdminDashboard = {
   },
 
   togglePlanGating() {
+    this.requireAdmin();
     this.systemConfig.enforcePlanGating = !this.systemConfig.enforcePlanGating;
     this.saveState('config');
     const msg = this.systemConfig.enforcePlanGating ? '✓ تم تفعيل قيود الباقات وإلزام الترقية.' : '✓ تم فتح المنصة بالكامل (Open Access Demo).';
@@ -2776,11 +2810,13 @@ const ExcelAdminDashboard = {
   },
 
   updateConfig(key, val) {
+    this.requireAdmin();
     this.systemConfig[key] = val;
     this.saveState('config');
   },
 
   exportBackupJson() {
+    this.requireAdmin();
     const backup = {
       appName: "Accountera",
       timestamp: new Date().toISOString(),
@@ -2803,6 +2839,7 @@ const ExcelAdminDashboard = {
   },
 
   handleImportJson(event) {
+    this.requireAdmin();
     const file = event.target.files[0];
     if (!file) return;
 
@@ -2829,6 +2866,7 @@ const ExcelAdminDashboard = {
   },
 
   async resetPlatformData() {
+    this.requireAdmin();
     let conf = false;
     if (typeof AccModal !== 'undefined') {
       conf = await AccModal.confirm({
