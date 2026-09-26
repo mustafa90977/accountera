@@ -1,12 +1,12 @@
 /**
- * Browser Use Cloud API Client
- * Official integration for Accountera workspace
+ * Browser Use Cloud Integration for Accountera
+ * Uses official `browser-use-sdk` & API v4 (Recommended)
  */
 
 const fs = require('fs');
 const path = require('path');
+const { BrowserUse } = require('browser-use-sdk');
 
-// Load API key from environment or .env file
 function getApiKey() {
   if (process.env.BROWSER_USE_API_KEY) {
     return process.env.BROWSER_USE_API_KEY.trim();
@@ -24,46 +24,47 @@ function getApiKey() {
   return null;
 }
 
-const API_BASE = 'https://api.browser-use.com/api/v4';
-const API_BASE_V3 = 'https://api.browser-use.com/api/v3';
+const API_V4_BASE = 'https://api.browser-use.com/api/v4';
 
-class BrowserUseClient {
+class BrowserUseService {
   constructor(apiKey = getApiKey()) {
     if (!apiKey) {
-      throw new Error('BROWSER_USE_API_KEY is not defined in environment or .env file');
+      throw new Error('BROWSER_USE_API_KEY not found in environment or .env');
     }
     this.apiKey = apiKey;
+    this.sdk = new BrowserUse({ apiKey: this.apiKey });
   }
 
-  get headers() {
-    return {
-      'Content-Type': 'application/json',
-      'X-Browser-Use-API-Key': this.apiKey
-    };
+  // 1. Get Account & Balance Info (GET /api/v2/billing/account)
+  async getAccount() {
+    return await this.sdk.billing.account();
   }
 
-  // 1. Run a browsing task on Browser Use Cloud
-  async createRun(task, options = {}) {
-    const body = {
+  // 2. Run an Agent Task via API v4
+  async runTask(task, options = {}) {
+    const payload = {
       task,
       ...options
     };
-    const res = await fetch(`${API_BASE}/runs`, {
+    const res = await fetch(`${API_V4_BASE}/runs`, {
       method: 'POST',
-      headers: this.headers,
-      body: JSON.stringify(body)
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Browser-Use-API-Key': this.apiKey
+      },
+      body: JSON.stringify(payload)
     });
     if (!res.ok) {
       const err = await res.text();
-      throw new Error(`Browser Use createRun failed (${res.status}): ${err}`);
+      throw new Error(`Browser Use runTask failed (${res.status}): ${err}`);
     }
     return res.json();
   }
 
-  // 2. Get status / details of a run
+  // 3. Get run status (API v4)
   async getRun(runId) {
-    const res = await fetch(`${API_BASE}/runs/${runId}`, {
-      headers: this.headers
+    const res = await fetch(`${API_V4_BASE}/runs/${runId}`, {
+      headers: { 'X-Browser-Use-API-Key': this.apiKey }
     });
     if (!res.ok) {
       const err = await res.text();
@@ -72,11 +73,11 @@ class BrowserUseClient {
     return res.json();
   }
 
-  // 3. Stop an ongoing run
+  // 4. Stop a run (API v4)
   async stopRun(runId) {
-    const res = await fetch(`${API_BASE}/runs/${runId}/stop`, {
+    const res = await fetch(`${API_V4_BASE}/runs/${runId}/stop`, {
       method: 'POST',
-      headers: this.headers
+      headers: { 'X-Browser-Use-API-Key': this.apiKey }
     });
     if (!res.ok) {
       const err = await res.text();
@@ -85,58 +86,76 @@ class BrowserUseClient {
     return res.json();
   }
 
-  // 4. List recent runs
-  async listRuns() {
-    const res = await fetch(`${API_BASE}/runs`, {
-      headers: this.headers
+  // 5. Create Standalone Browser (API v4)
+  async createBrowser(options = {}) {
+    const res = await fetch(`${API_V4_BASE}/browsers`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Browser-Use-API-Key': this.apiKey
+      },
+      body: JSON.stringify(options)
     });
     if (!res.ok) {
       const err = await res.text();
-      throw new Error(`Browser Use listRuns failed (${res.status}): ${err}`);
+      throw new Error(`Browser Use createBrowser failed (${res.status}): ${err}`);
     }
     return res.json();
   }
 
-  // 5. List browsers (V3)
-  async listBrowsers() {
-    const res = await fetch(`${API_BASE_V3}/browsers`, {
-      headers: this.headers
+  // 6. Stop Standalone Browser properly to refund unused time and stop billing
+  // Trap prevention: client.close() does NOT stop billing; PATCH with {"action":"stop"} is required.
+  async stopBrowser(browserSessionId) {
+    const res = await fetch(`${API_V4_BASE}/browsers/${browserSessionId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Browser-Use-API-Key': this.apiKey
+      },
+      body: JSON.stringify({ action: 'stop' })
     });
     if (!res.ok) {
       const err = await res.text();
-      throw new Error(`Browser Use listBrowsers failed (${res.status}): ${err}`);
+      throw new Error(`Browser Use stopBrowser failed (${res.status}): ${err}`);
     }
     return res.json();
+  }
+
+  // 7. List existing browsers
+  async listBrowsers() {
+    return await this.sdk.browsers.list();
   }
 }
 
-module.exports = { BrowserUseClient, getApiKey };
+module.exports = { BrowserUseService, getApiKey };
 
-// CLI execution helper
+// CLI Runner
 if (require.main === module) {
-  const args = process.argv.slice(2);
-  const command = args[0] || 'status';
-
-  const client = new BrowserUseClient();
-
   (async () => {
     try {
+      const service = new BrowserUseService();
+      const args = process.argv.slice(2);
+      const command = args[0] || 'status';
+
       if (command === 'status') {
-        const browsers = await client.listBrowsers();
-        const runs = await client.listRuns();
-        console.log('✅ الاتصال مع Browser Use ناجح ومفعل 100%!');
-        console.log(`📊 عدد المتصفحات السابقة: ${browsers.totalItems || (browsers.items ? browsers.items.length : 0)}`);
-        console.log('⚡ أحدث العمليات:');
-        console.dir(runs, { depth: 3 });
+        const account = await service.getAccount();
+        console.log('========================================================');
+        console.log('✅ تم التحقق والاتصال مع Browser Use Cloud بنجاح:');
+        console.log(`   - اسم المشروع: ${account.name}`);
+        console.log(`   - رصيد الحساب المتاح: $${account.totalCreditsBalanceUsd.toFixed(2)} USD`);
+        console.log(`   - أقصى جلسات متزامنة: ${account.concurrentSessionLimit}`);
+        console.log(`   - الجلسات النشطة حالياً: ${account.activeSessionCount}`);
+        console.log(`   - معرف المشروع: ${account.projectId}`);
+        console.log('========================================================');
       } else if (command === 'run') {
-        const task = args.slice(1).join(' ') || 'Open accountera.vercel.app and take a screenshot';
-        console.log(`🚀 بدء مهمة جديدة على Browser Use Cloud: "${task}"...`);
-        const run = await client.createRun(task);
-        console.log('✓ تم إنشاء المهمة بنجاح:');
-        console.dir(run, { depth: 3 });
+        const goal = args.slice(1).join(' ') || 'Open accountera.vercel.app and verify the mobile layout';
+        console.log(`🚀 جاري إطلاق مهمة V4 جديدة: "${goal}"...`);
+        const result = await service.runTask(goal);
+        console.log('✓ تم تسجيل المهمة بنجاح على Browser Use Cloud:');
+        console.dir(result, { depth: 3 });
       }
-    } catch (err) {
-      console.error('❌ خطأ في الاتصال مع Browser Use:', err.message);
+    } catch (e) {
+      console.error('❌ خطأ:', e.message);
       process.exit(1);
     }
   })();
