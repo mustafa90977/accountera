@@ -335,6 +335,9 @@ window.navigateToScreen = function(screenId) {
     if (activeSidebarBtn) activeSidebarBtn.classList.add('active');
     if (typeof ExcelStudentPlansView !== 'undefined') {
       appContainer.innerHTML = ExcelStudentPlansView.render();
+      if (typeof ExcelStudentPlansView.init === 'function') {
+        ExcelStudentPlansView.init();
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   } else if (screenId === 'admin' || screenId.startsWith('admin-')) {
@@ -403,6 +406,11 @@ window.navigateToScreen = function(screenId) {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // تنظيف فوري لمفتاح خطط الباقات القديمة من التخزين المحلي لضمان المزامنة السحابية الحية
+  try {
+    localStorage.removeItem('acc_admin_plans');
+  } catch(e) {}
+
   // تهيئة محرك المؤثرات الحركية GSAP
   if (typeof AccounteraAnimations !== 'undefined') {
     AccounteraAnimations.init();
@@ -411,6 +419,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // تهيئة عميل Supabase السحابي
   if (typeof SupabaseService !== 'undefined') {
     SupabaseService.init();
+    if (typeof SupabaseService.getActivePlans === 'function') {
+      SupabaseService.getActivePlans().catch(() => {});
+    }
   }
 
   const savedTheme = localStorage.getItem('accountera_theme') || 'light';

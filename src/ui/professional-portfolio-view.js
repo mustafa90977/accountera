@@ -130,23 +130,17 @@ const AccounteraPortfolioEngine = {
 
     const userPlanId = (user && user.plan) ? user.plan : 'free';
 
-    let plans = (typeof DEFAULT_ADMIN_PLANS !== 'undefined') ? DEFAULT_ADMIN_PLANS : [
-      { id: 'free', name: 'الباقة التأسيسية (Free)', allowLinkedInShare: false },
-      { id: 'pro', name: 'المحاسب المحترف (Pro)', allowLinkedInShare: true },
-      { id: 'vip', name: 'خبير النمذجة (VIP Master)', allowLinkedInShare: true }
-    ];
-    try {
-      const savedPlans = localStorage.getItem('acc_admin_plans');
-      if (savedPlans) plans = JSON.parse(savedPlans);
-    } catch(e) {}
+    let plans = (typeof SupabaseService !== 'undefined' && SupabaseService.getCachedActivePlans)
+      ? SupabaseService.getCachedActivePlans()
+      : ((typeof window !== 'undefined' && window.DEFAULT_ADMIN_PLANS) ? window.DEFAULT_ADMIN_PLANS : []);
 
     const planObj = plans.find(p => p.id === userPlanId) || plans.find(p => p.id === 'free');
-    const allowed = planObj ? !!planObj.allowLinkedInShare : false;
+    const allowed = userPlanId !== 'free';
 
     return {
       allowed,
       planId: userPlanId,
-      planName: planObj ? planObj.name : 'الباقة التأسيسية (Free)'
+      planName: planObj ? planObj.name : 'الباقة التأسيسية'
     };
   },
 

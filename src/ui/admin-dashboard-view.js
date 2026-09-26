@@ -182,20 +182,34 @@ const ExcelAdminDashboard = {
     return user;
   },
 
+  async loadPlans() {
+    if (typeof SupabaseService !== 'undefined' && typeof SupabaseService.getPlans === 'function') {
+      try {
+        const remotePlans = await SupabaseService.getPlans();
+        if (remotePlans && remotePlans.length > 0) {
+          this.plans = remotePlans;
+          this.plansLoaded = true;
+          if (this.activeTab === 'plans' && !this.editingPlanId) {
+            const content = document.getElementById('adminTabContent');
+            if (content) {
+              content.innerHTML = this.renderPlansTab();
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[AdminDashboard] Error loading plans from cloud:', err);
+      }
+    }
+  },
+
   init() {
     try {
-      const savedPlans = localStorage.getItem('acc_admin_plans');
-      this.plans = savedPlans ? JSON.parse(savedPlans) : DEFAULT_ADMIN_PLANS;
-      if (Array.isArray(this.plans)) {
-        this.plans.forEach(p => {
-          if (p.allowLinkedInShare === undefined) {
-            p.allowLinkedInShare = (p.id !== 'free');
-          }
-          if (p.durationDays === undefined) {
-            p.durationDays = (p.id === 'free' ? 0 : (p.id === 'vip' ? 365 : 30));
-          }
-        });
+      // تنظيف مفتاح الباقات القديم من التخزين المحلي
+      try { localStorage.removeItem('acc_admin_plans'); } catch(e) {}
+      if (!this.plans || this.plans.length === 0) {
+        this.plans = (typeof DEFAULT_ADMIN_PLANS !== 'undefined') ? DEFAULT_ADMIN_PLANS : [];
       }
+      this.loadPlans();
 
       const savedCoupons = localStorage.getItem('acc_admin_coupons');
       this.coupons = savedCoupons ? JSON.parse(savedCoupons) : DEFAULT_ADMIN_COUPONS;
@@ -218,7 +232,6 @@ const ExcelAdminDashboard = {
 
   saveState(key) {
     try {
-      if (!key || key === 'plans') localStorage.setItem('acc_admin_plans', JSON.stringify(this.plans));
       if (!key || key === 'coupons') localStorage.setItem('acc_admin_coupons', JSON.stringify(this.coupons));
       if (!key || key === 'audit') localStorage.setItem('acc_admin_audit', JSON.stringify(this.auditEngagements));
       if (!key || key === 'companies') {
@@ -362,9 +375,11 @@ const ExcelAdminDashboard = {
       users = JSON.parse(localStorage.getItem('jr_users') || '[]');
     } catch (e) {}
 
-    const proCount = users.filter(u => u.plan === 'pro').length;
-    const vipCount = users.filter(u => u.plan === 'vip').length;
-    const estimatedRev = (proCount * 299) + (vipCount * 599);
+    const proPlan = this.plans?.find(p => p.id === 'pro');
+    const vipPlan = this.plans?.find(p => p.id === 'vip');
+    const proPrice = proPlan ? Number(proPlan.price) : 299;
+    const vipPrice = vipPlan ? Number(vipPlan.price) : 599;
+    const estimatedRev = (proCount * proPrice) + (vipCount * vipPrice);
 
     return `
       <!-- 1. شبكة بطاقات الأداء المالي والمنظومة -->
@@ -2058,7 +2073,7 @@ const ExcelAdminDashboard = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
-  savePlanEditor(planId) {
+  async savePlanEditor(planId) {
     this.requireAdmin();
     const plan = this.plans.find(p => p.id === planId);
     if (!plan) return;
@@ -2067,6 +2082,7 @@ const ExcelAdminDashboard = {
     plan.price = parseFloat(document.getElementById('pe_price')?.value) || 0;
     const daysVal = parseInt(document.getElementById('pe_duration_days')?.value, 10);
     plan.durationDays = isNaN(daysVal) ? 30 : daysVal;
+    plan.duration_days = plan.durationDays;
     plan.period = document.getElementById('pe_period')?.value.trim() || plan.period;
     plan.badge = document.getElementById('pe_badge')?.value.trim() || '';
     plan.icon = document.getElementById('pe_icon')?.value.trim() || plan.icon;
@@ -2087,9 +2103,16 @@ const ExcelAdminDashboard = {
       plan.features = featVal.split('\n').map(s => s.trim()).filter(Boolean);
     }
 
-    this.saveState('plans');
-    if (typeof AccModal !== 'undefined') AccModal.toast(`✓ تم حفظ تعديلات باقة (${plan.name}) بنجاح!`, 'success');
-    else alert(`✓ تم حفظ تعديلات وصلاحيات باقة (${plan.name}) بنجاح!`);
+    try {
+      if (typeof SupabaseService !== 'undefined' && typeof SupabaseService.savePlan === 'function') {
+        await SupabaseService.savePlan(plan);
+      }
+      if (typeof AccModal !== 'undefined') AccModal.toast(`✓ تم حفظ تعديلات باقة (${plan.name}) في قاعدة البيانات بنجاح!`, 'success');
+      else alert(`✓ تم حفظ تعديلات وصلاحيات باقة (${plan.name}) بنجاح!`);
+    } catch (err) {
+      console.error('[AdminDashboard] Error saving plan to Supabase:', err);
+      if (typeof AccModal !== 'undefined') AccModal.toast('حدث خطأ أثناء حفظ الباقة: ' + (err.message || ''), 'error');
+    }
     this.closePlanEditor();
   },
 
@@ -2257,11 +2280,13 @@ const ExcelAdminDashboard = {
     }
     if (!name) return;
     const newId = 'plan-' + Date.now();
-    this.plans.push({
+    const newPlan = {
       id: newId,
       name,
       price: 199,
       period: 'شهر واحد',
+      durationDays: 30,
+      duration_days: 30,
       badge: 'جديد',
       icon: 'sparkle',
       color: '#10b981',
@@ -2273,10 +2298,20 @@ const ExcelAdminDashboard = {
       allowInterviewSim: false,
       allowSkillsPassport: true,
       allowLinkedInShare: false,
+      is_active: true,
       features: ['صلاحيات مخصصة للطلاب']
-    });
-    this.saveState('plans');
-    if (typeof AccModal !== 'undefined') AccModal.toast(`✓ تم إنشاء باقة (${name}) بنجاح!`, 'success');
+    };
+
+    try {
+      if (typeof SupabaseService !== 'undefined' && typeof SupabaseService.savePlan === 'function') {
+        await SupabaseService.savePlan(newPlan);
+      }
+      this.plans.push(newPlan);
+      if (typeof AccModal !== 'undefined') AccModal.toast(`✓ تم إنشاء باقة (${name}) في قاعدة البيانات بنجاح!`, 'success');
+    } catch(err) {
+      console.error('[AdminDashboard] Error saving new plan:', err);
+      this.plans.push(newPlan);
+    }
     this.openPlanEditor(newId);
   },
 
@@ -2295,9 +2330,16 @@ const ExcelAdminDashboard = {
       conf = confirm('هل أنت متأكد من رغبتك في حذف هذه الباقة؟');
     }
     if (conf) {
-      this.plans = this.plans.filter(p => p.id !== planId);
-      this.saveState('plans');
-      if (typeof AccModal !== 'undefined') AccModal.toast('✓ تم حذف الباقة بنجاح', 'info');
+      try {
+        if (typeof SupabaseService !== 'undefined' && typeof SupabaseService.deletePlan === 'function') {
+          await SupabaseService.deletePlan(planId);
+        }
+        this.plans = this.plans.filter(p => p.id !== planId);
+        if (typeof AccModal !== 'undefined') AccModal.toast('✓ تم حذف الباقة بنجاح من قاعدة البيانات', 'info');
+      } catch(err) {
+        console.error('[AdminDashboard] Error deleting plan:', err);
+        if (typeof AccModal !== 'undefined') AccModal.toast('حدث خطأ أثناء حذف الباقة: ' + (err.message || ''), 'error');
+      }
       this.switchTab('plans');
     }
   },

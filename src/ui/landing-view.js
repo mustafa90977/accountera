@@ -21,6 +21,12 @@ const ExcelLandingView = {
       ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
       : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 
+    const plans = (typeof SupabaseService !== 'undefined' && SupabaseService.getCachedActivePlans)
+      ? SupabaseService.getCachedActivePlans()
+      : ((typeof window !== 'undefined' && window.DEFAULT_ADMIN_PLANS) ? window.DEFAULT_ADMIN_PLANS : []);
+    const proPlan = plans.find(p => p.id === 'pro') || { price: 299, period: '30 يوم' };
+    const vipPlan = plans.find(p => p.id === 'vip') || { price: 599, period: 'سنة كاملة' };
+
     return `
       <div class="landing-shell grid-pattern-bg">
         <!-- هالة ضوئية خلفية جمالية -->
@@ -662,9 +668,9 @@ const ExcelLandingView = {
                   <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:1.5rem;">الدورة الكاملة للانتقال لسوق العمل بثقة وممارسة فعلية</p>
                   
                   <div class="pricing-price-wrap" style="border-color:rgba(255,255,255,0.12);">
-                    <span class="pricing-amount" style="color:#ffffff;">299</span>
+                    <span class="pricing-amount" style="color:#ffffff;">${proPlan.price}</span>
                     <span style="font-size:1.1rem; color:#34d399; font-weight:700;"> ج.م</span>
-                    <span style="font-size:0.85rem; color:#94a3b8;"> / اشتراك 3 أشهر</span>
+                    <span style="font-size:0.85rem; color:#94a3b8;"> / ${proPlan.period || '30 يوم'}</span>
                   </div>
 
                   <ul class="pricing-features-list" style="color:#e2e8f0;">
@@ -707,9 +713,9 @@ const ExcelLandingView = {
                   <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1.5rem;">للمحاسبين الطامحين للعمل بشركات الـ Big 4 والاستشارات</p>
                   
                   <div class="pricing-price-wrap">
-                    <span class="pricing-amount">599</span>
+                    <span class="pricing-amount">${vipPlan.price}</span>
                     <span style="font-size:1.1rem; color:#10b981; font-weight:700;"> ج.م</span>
-                    <span style="font-size:0.85rem; color:var(--text-secondary);"> / اشتراك 6 أشهر</span>
+                    <span style="font-size:0.85rem; color:var(--text-secondary);"> / ${vipPlan.period || 'سنة كاملة'}</span>
                   </div>
 
                   <ul class="pricing-features-list">

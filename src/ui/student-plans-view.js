@@ -28,21 +28,43 @@ const ExcelStudentPlansView = {
     };
   },
 
+  plans: null,
+
+  async init() {
+    await this.loadPlans();
+  },
+
+  async loadPlans() {
+    try {
+      if (typeof SupabaseService !== 'undefined' && SupabaseService.getActivePlans) {
+        const cloudPlans = await SupabaseService.getActivePlans();
+        if (cloudPlans && cloudPlans.length > 0) {
+          const oldJson = JSON.stringify(this.plans);
+          const newJson = JSON.stringify(cloudPlans);
+          if (oldJson !== newJson) {
+            this.plans = cloudPlans;
+            const container = document.querySelector('.student-plans-container');
+            if (container && document.getElementById('app')) {
+              document.getElementById('app').innerHTML = this.render();
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[StudentPlansView] Error loading plans from Supabase:', e);
+    }
+  },
+
   render() {
     const user = this.getUser();
     const currentPlanId = user.plan || 'free';
     const referralCode = `ACC-REF-${(user.id || '2026').replace(/[^a-zA-Z0-9]/g, '').slice(-6)}`;
     const referralLink = `https://accountera.vercel.app?ref=${referralCode}`;
 
-    let plans = (typeof DEFAULT_ADMIN_PLANS !== 'undefined') ? DEFAULT_ADMIN_PLANS : [
-      { id: 'free', name: 'الباقة التأسيسية (Free)', price: 0, period: 'مدى الحياة', durationDays: 0 },
-      { id: 'pro', name: 'المحاسب المحترف (Pro)', price: 299, period: '30 يوم', durationDays: 30 },
-      { id: 'vip', name: 'خبير النمذجة (VIP Master)', price: 599, period: 'سنة كاملة', durationDays: 365 }
-    ];
-    try {
-      const savedPlans = localStorage.getItem('acc_admin_plans');
-      if (savedPlans) plans = JSON.parse(savedPlans);
-    } catch(e) {}
+    let plans = this.plans || (typeof SupabaseService !== 'undefined' && SupabaseService.getCachedActivePlans ? SupabaseService.getCachedActivePlans() : (typeof window !== 'undefined' && window.DEFAULT_ADMIN_PLANS ? window.DEFAULT_ADMIN_PLANS : []));
+    if (!this.plans && typeof SupabaseService !== 'undefined' && SupabaseService.getActivePlans) {
+      setTimeout(() => this.loadPlans(), 0);
+    }
 
     let systemConfig = { trialEnabled: true, trialDays: 3, trialPlan: 'pro' };
     try {
@@ -50,13 +72,14 @@ const ExcelStudentPlansView = {
       if (savedCfg) systemConfig = { ...systemConfig, ...JSON.parse(savedCfg) };
     } catch(e) {}
 
-    const freePlan = plans.find(p => p.id === 'free') || { id: 'free', name: 'الباقة التأسيسية (Free)', price: 0, period: 'مدى الحياة', durationDays: 0 };
-    const proPlan = plans.find(p => p.id === 'pro') || { id: 'pro', name: 'المحاسب المحترف (Pro)', price: 299, period: '30 يوم', durationDays: 30 };
+    const freePlan = plans.find(p => p.id === 'free') || { id: 'free', name: 'الباقة التأسيسية', price: 0, period: 'مدى الحياة', durationDays: 0 };
+    const proPlan = plans.find(p => p.id === 'pro') || { id: 'pro', name: 'المحاسب المحترف', price: 299, period: '30 يوم', durationDays: 30 };
     const vipPlan = plans.find(p => p.id === 'vip') || { id: 'vip', name: 'خبير النمذجة (VIP Master)', price: 599, period: 'سنة كاملة', durationDays: 365 };
 
     let pendingNoticeHtml = '';
     if (user.subscriptionStatus === 'pending') {
-      const pPlanName = (user.pendingPlan === 'vip' ? 'خبير النمذجة (VIP Master)' : (user.pendingPlan === 'pro' ? 'المحاسب المحترف (Pro)' : 'المدفوعة'));
+      const pendingObj = plans.find(p => p.id === user.pendingPlan);
+      const pPlanName = pendingObj ? pendingObj.name : (user.pendingPlan === 'vip' ? vipPlan.name : (user.pendingPlan === 'pro' ? proPlan.name : 'المدفوعة'));
       pendingNoticeHtml = `
         <div style="background: rgba(245, 158, 11, 0.08); border: 1.5px dashed #f59e0b; border-radius: var(--radius-lg); padding: 1.25rem 1.75rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
           <div style="display: flex; align-items: center; gap: 14px;">
@@ -147,7 +170,7 @@ const ExcelStudentPlansView = {
               <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <h1 style="font-size: 1.5rem; font-weight: 900; margin: 0; color: var(--text-primary);">باقات الاشتراك والترقية المهنية</h1>
                 <span style="background: var(--tier-starter-bg); color: var(--tier-starter-text); border: 1px solid var(--tier-starter-border); padding: 3px 12px; border-radius: var(--radius-full); font-size: 0.78rem; font-weight: 800;">
-                  باقتك الحالية: ${currentPlanId === 'vip' ? 'خبير النمذجة (VIP)' : (currentPlanId === 'pro' ? 'المحاسب المحترف (Pro)' : 'الباقة التأسيسية (Free)')}
+                  باقتك الحالية: ${(plans.find(p => p.id === currentPlanId) || {}).name || (currentPlanId === 'vip' ? vipPlan.name : (currentPlanId === 'pro' ? proPlan.name : freePlan.name))}
                 </span>
               </div>
               <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 4px 0 0;">

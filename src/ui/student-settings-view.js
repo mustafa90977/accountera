@@ -361,14 +361,23 @@ const ExcelStudentSettingsView = {
 
   // 4. تبويب تفاصيل الباقة والاشتراك
   renderPlanTab(user) {
-    let plans = (typeof DEFAULT_ADMIN_PLANS !== 'undefined') ? DEFAULT_ADMIN_PLANS : [];
-    try {
-      const saved = localStorage.getItem('acc_admin_plans');
-      if (saved) plans = JSON.parse(saved);
-    } catch(e) {}
+    let plans = (typeof SupabaseService !== 'undefined' && SupabaseService.getCachedActivePlans)
+      ? SupabaseService.getCachedActivePlans()
+      : ((typeof window !== 'undefined' && window.DEFAULT_ADMIN_PLANS) ? window.DEFAULT_ADMIN_PLANS : []);
+
+    if (typeof SupabaseService !== 'undefined' && SupabaseService.getActivePlans && (!plans || plans.length === 0)) {
+      SupabaseService.getActivePlans().then(loadedPlans => {
+        if (loadedPlans && loadedPlans.length > 0) {
+          const tabContent = document.getElementById('settingsTabContent');
+          if (tabContent && document.querySelector('.settings-tab-btn.active')?.getAttribute('data-tab') === 'plan') {
+            tabContent.innerHTML = ExcelStudentSettingsView.renderPlanTab(user);
+          }
+        }
+      }).catch(() => {});
+    }
 
     const currentPlan = plans.find(p => p.id === user.plan) || plans.find(p => p.id === 'free') || {
-      name: 'الباقة التأسيسية (Free)',
+      name: 'الباقة التأسيسية',
       price: 0,
       period: 'مدى الحياة',
       allowLinkedInShare: false
