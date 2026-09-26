@@ -9,12 +9,22 @@ window.toggleTheme = function() {
   document.documentElement.setAttribute('data-theme', newTheme);
   localStorage.setItem('accountera_theme', newTheme);
   
+  const sunSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+  const moonSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  
   const themeBtn = document.getElementById('themeToggleBtn');
   if (themeBtn) {
-    const sunSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-    const moonSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
     themeBtn.innerHTML = newTheme === 'dark' ? sunSvg : moonSvg;
     themeBtn.setAttribute('title', newTheme === 'dark' ? 'التحويل للوضع النهاري' : 'التحويل للوضع الليلي');
+  }
+
+  const drawerIcon = document.getElementById('drawerThemeIcon');
+  const drawerLabel = document.getElementById('drawerThemeLabel');
+  if (drawerIcon) {
+    drawerIcon.innerHTML = newTheme === 'dark' ? sunSvg : moonSvg;
+  }
+  if (drawerLabel) {
+    drawerLabel.textContent = newTheme === 'dark' ? 'التحويل للوضع النهاري (Light Mode)' : 'التحويل للوضع الليلي (Dark Mode)';
   }
 };
 
@@ -71,6 +81,10 @@ window.createMobileNavDrawer = function() {
   const isStudent = currentUser && (currentUser.role || 'student') === 'student';
   const isAdmin = currentUser && currentUser.role === 'admin';
   const initial = currentUser && currentUser.name ? currentUser.name.trim().charAt(0).toUpperCase() : 'M';
+  const currentTheme = document.documentElement.getAttribute('data-theme') || localStorage.getItem('accountera_theme') || 'light';
+  const isDark = currentTheme === 'dark';
+  const sunSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+  const moonSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 
   drawer.innerHTML = `
     <div class="drawer-header">
@@ -156,9 +170,9 @@ window.createMobileNavDrawer = function() {
     </div>
 
     <div style="padding:1rem; border-top:1px solid var(--border-subtle); display:flex; flex-direction:column; gap:0.5rem; background:var(--surface-hover);">
-      <button onclick="toggleTheme()" class="drawer-item" style="border:1px solid var(--border-subtle); border-radius:10px; justify-content:center; min-height:44px;">
-        <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
-        <span>تبديل الوضع الليلي / النهاري</span>
+      <button id="drawerThemeToggleBtn" onclick="toggleTheme()" class="drawer-item" style="border:1px solid var(--border-subtle); border-radius:10px; justify-content:center; min-height:44px;">
+        <span class="drawer-item-icon" id="drawerThemeIcon">${isDark ? sunSvg : moonSvg}</span>
+        <span id="drawerThemeLabel">${isDark ? 'التحويل للوضع النهاري (Light Mode)' : 'التحويل للوضع الليلي (Dark Mode)'}</span>
       </button>
 
       ${currentUser ? `

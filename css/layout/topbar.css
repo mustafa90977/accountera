@@ -92,3 +92,10 @@
   align-items: center;
   gap: var(--space-2);
 }
+
+/* إخفاء زر الوضع الليلي من شريط التنقل العلوي على كافة الشاشات غير الديسكتوب (< 1024px) لوجوده بالقائمة الجانبية */
+@media (max-width: 1023px) {
+  #themeToggleBtn {
+    display: none !important;
+  }
+}
