@@ -3,7 +3,7 @@
  * Complete Admin Suite: Plans, Coupons, Users, Audit Hub, & System Settings.
  */
 
-const DEFAULT_ADMIN_PLANS = [
+var DEFAULT_ADMIN_PLANS = window.DEFAULT_ADMIN_PLANS || [
   {
     id: "free",
     name: "الباقة التأسيسية (Free)",
@@ -375,6 +375,8 @@ const ExcelAdminDashboard = {
       users = JSON.parse(localStorage.getItem('jr_users') || '[]');
     } catch (e) {}
 
+    const proCount = users.filter(u => u.plan === 'pro').length;
+    const vipCount = users.filter(u => u.plan === 'vip').length;
     const proPlan = this.plans?.find(p => p.id === 'pro');
     const vipPlan = this.plans?.find(p => p.id === 'vip');
     const proPrice = proPlan ? Number(proPlan.price) : 299;

@@ -7,14 +7,14 @@ const SUPABASE_CONFIG = {
   anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlYnR5dm53aGpqbnZhbHp3eW92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3NDA1MjksImV4cCI6MjEwNTMxNjUyOX0.bB_S0mrsno2ZatF6VdpN1krpyV9op3-A1L1scWXOBgE'
 };
 
-const DEFAULT_ADMIN_PLANS = [
+const DEFAULT_FALLBACK_PLANS = [
   { id: 'free', name: 'الباقة التأسيسية', price: 0, period: 'مدى الحياة', duration_days: 0, durationDays: 0, badge: 'تأسيسي', icon: 'book-open', color: '#64748b', features: ['الوصول للدروس التأسيسية الثلاثة الأولى', 'محاكاة شركة تجارية واحدة كاملة الدورة', 'دفتر اليومية والأستاذ وميزان المراجعة'], is_active: true, isActive: true },
   { id: 'pro', name: 'المحاسب المحترف', price: 299, period: '30 يوم', duration_days: 30, durationDays: 30, badge: 'الأكثر طلباً', icon: 'sparkle', color: '#10b981', features: ['فتح كافة الدروس التأسيسية 100%', 'محاكاة 5 شركات تجارية وصناعية وخدمية', 'مشاركة المحفظة والاعتماد على LinkedIn', 'وضع المراجع الخارجي واكتشاف الأخطاء العملية', 'جناح نماذج الإكسل المحاسبية المتقدمة'], is_active: true, isActive: true },
   { id: 'vip', name: 'خبير النمذجة (VIP Master)', price: 599, period: '365 يوم', duration_days: 365, durationDays: 365, badge: 'النخبة', icon: 'star', color: '#8b5cf6', features: ['وصول غير محدود لجميع الشركات والقطاعات', 'محاكي مقابلات التوظيف وأسئلة Big 4', 'شهادة خبرة معتمدة موثقة برقم كودي وطني', 'أولوية الدعم الفني والمراجعة المباشرة من المدرب'], is_active: true, isActive: true }
 ];
 
 if (typeof window !== 'undefined') {
-  window.DEFAULT_ADMIN_PLANS = DEFAULT_ADMIN_PLANS;
+  window.DEFAULT_ADMIN_PLANS = DEFAULT_FALLBACK_PLANS;
 }
 
 const SupabaseService = {
@@ -321,12 +321,12 @@ const SupabaseService = {
 
   // جلب الباقات المخزنة مؤقتاً في الذاكرة للرندر الفوري
   getCachedActivePlans() {
-    return this._cachedPlans || (typeof window !== 'undefined' && window.DEFAULT_ADMIN_PLANS ? window.DEFAULT_ADMIN_PLANS : DEFAULT_ADMIN_PLANS);
+    return this._cachedPlans || (typeof window !== 'undefined' && window.DEFAULT_ADMIN_PLANS ? window.DEFAULT_ADMIN_PLANS : DEFAULT_FALLBACK_PLANS);
   },
 
   // جلب كافة الباقات من جدول plans (للأدمن)
   async getPlans(force = false) {
-    const fallback = (typeof window !== 'undefined' && window.DEFAULT_ADMIN_PLANS) ? window.DEFAULT_ADMIN_PLANS : DEFAULT_ADMIN_PLANS;
+    const fallback = (typeof window !== 'undefined' && window.DEFAULT_ADMIN_PLANS) ? window.DEFAULT_ADMIN_PLANS : DEFAULT_FALLBACK_PLANS;
     if (!this.client) return fallback;
 
     try {
@@ -353,7 +353,7 @@ const SupabaseService = {
     if (!force && this._cachedPlans && this._cachedPlans.length > 0) {
       return this._cachedPlans;
     }
-    const fallback = (typeof window !== 'undefined' && window.DEFAULT_ADMIN_PLANS) ? window.DEFAULT_ADMIN_PLANS : DEFAULT_ADMIN_PLANS;
+    const fallback = (typeof window !== 'undefined' && window.DEFAULT_ADMIN_PLANS) ? window.DEFAULT_ADMIN_PLANS : DEFAULT_FALLBACK_PLANS;
     if (!this.client) {
       return fallback.filter(p => p.is_active !== false);
     }
