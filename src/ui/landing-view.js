@@ -187,9 +187,9 @@ const ExcelLandingView = {
             <div class="announcement-inner">
               <div style="display:flex; align-items:center; gap:0.5rem;">
                 <span class="announcement-tag">خصم التدريب الصيفي %30</span>
-                <span style="color:#cbd5e1;">متاح لفترة محدودة لجميع طلبة كليات التجارة والمحاسبين المبتدئين</span>
+                <span class="announcement-text-long" style="color:#cbd5e1;">متاح لفترة محدودة لجميع طلبة كليات التجارة والمحاسبين المبتدئين</span>
               </div>
-              <div style="display:flex; align-items:center; gap:0.5rem; color:#cbd5e1; font-size:0.78rem;">
+              <div class="announcement-support-link" style="display:flex; align-items:center; gap:0.5rem; color:#cbd5e1; font-size:0.78rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 <span>دعم المتدربين المباشر</span>
               </div>
@@ -199,7 +199,21 @@ const ExcelLandingView = {
           <!-- الهيدر الأنيق المتجاوب -->
           <header class="landing-header">
             <div class="landing-header-inner">
-              <!-- مسار التنقل التوضيحي -->
+              <!-- شعار وهوية المنصة في الموبايل -->
+              <div class="header-mobile-brand" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="ACCOUNTERA">
+                <div style="width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg, #047857, #10b981); display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(16, 185, 129, 0.3); flex-shrink:0;">
+                  <svg width="18" height="18" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="transparent"/>
+                    <path d="M12 28V15C12 13.8954 12.8954 13 14 13C15.1046 13 16 13.8954 16 15V28" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M24 28V15C24 13.8954 24.8954 13 26 13C27.1046 13 28 13.8954 28 15V28" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M14 20H26" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="20" cy="11" r="3" fill="#FFFFFF"/>
+                  </svg>
+                </div>
+                <span class="header-mobile-brand-name" style="font-weight:900; font-size:1.05rem; color:var(--text-primary); letter-spacing:0.5px; font-family:'JetBrains Mono', sans-serif;">ACCOUNTERA</span>
+              </div>
+
+              <!-- مسار التنقل التوضيحي (للشاشات الكبيرة فقط) -->
               <div class="header-breadcrumbs">
                 <span style="color:var(--text-muted);">المنصة التعليمية</span>
                 <span style="font-size:10px; color:var(--text-muted);">&larr;</span>
@@ -215,17 +229,16 @@ const ExcelLandingView = {
                 </div>
 
                 <!-- زر تبديل الثيم ليلي / نهاري -->
-                <button onclick="toggleTheme()" class="btn-header-login" style="padding:0.45rem; border-radius:50%;" title="تبديل الوضع الليلي / النهاري">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <button onclick="toggleTheme()" class="btn-header-login" style="padding:0.45rem; border-radius:50%; min-width:32px; height:32px; display:flex; align-items:center; justify-content:center;" title="تبديل الوضع الليلي / النهاري">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                 </button>
 
                 <button class="btn-header-login" onclick="typeof AuthService !== 'undefined' ? AuthService.openAuthModal('login') : navigateToScreen('welcome')">
-                  <span>تسجيل الدخول</span>
+                  <span>دخول</span>
                 </button>
 
                 <button class="btn-header-cta" onclick="typeof AuthService !== 'undefined' ? AuthService.openAuthModal('register') : navigateToScreen('welcome')">
                   <span>ابدأ مجاناً</span>
-                  <span style="font-size:11px;">&larr;</span>
                 </button>
               </div>
             </div>
