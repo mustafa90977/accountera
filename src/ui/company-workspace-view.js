@@ -57,6 +57,9 @@ const ExcelCompanyWorkspaceView = {
       }
     }
 
+    const currentUser = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
+    const isAdmin = currentUser && currentUser.role === 'admin';
+
     return `
       <div class="companies-hub-container">
         <div class="workspace-hero" style="margin-bottom: 24px;">
@@ -73,6 +76,7 @@ const ExcelCompanyWorkspaceView = {
                 </p>
               </div>
             </div>
+            ${isAdmin ? `
             <div>
               <button type="button" onclick="document.getElementById('hub_upload_company_json').click()" class="btn-cta-secondary" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; font-weight:700; font-size:0.88rem; cursor:pointer; border-radius:12px; border:1px solid var(--border-subtle); background:var(--surface-card); box-shadow:var(--elevation-1);" title="استيراد وتفعيل شركة جديدة من ملف JSON">
                 ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('file-text', { size: 18 }) : '📂'}
@@ -80,6 +84,7 @@ const ExcelCompanyWorkspaceView = {
               </button>
               <input type="file" id="hub_upload_company_json" accept=".json" style="display:none;" onchange="ExcelCompanyWorkspaceView.handleCompanyUpload(event)">
             </div>
+            ` : ''}
           </div>
         </div>
 
@@ -853,6 +858,14 @@ const ExcelCompanyWorkspaceView = {
   },
 
   async handleCompanyUpload(event) {
+    const currentUser = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
+    if (!currentUser || currentUser.role !== 'admin') {
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast('عذراً، استيراد وتفعيل شركات جديدة متاح فقط لإدارة المنصة.', 'error');
+      }
+      return;
+    }
+
     const file = event.target.files && event.target.files[0];
     if (!file) return;
 
