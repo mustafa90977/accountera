@@ -54,6 +54,32 @@ const ExcelStudentPlansView = {
     const proPlan = plans.find(p => p.id === 'pro') || { id: 'pro', name: 'المحاسب المحترف (Pro)', price: 299, period: '30 يوم', durationDays: 30 };
     const vipPlan = plans.find(p => p.id === 'vip') || { id: 'vip', name: 'خبير النمذجة (VIP Master)', price: 599, period: 'سنة كاملة', durationDays: 365 };
 
+    let pendingNoticeHtml = '';
+    if (user.subscriptionStatus === 'pending') {
+      const pPlanName = (user.pendingPlan === 'vip' ? 'خبير النمذجة (VIP Master)' : (user.pendingPlan === 'pro' ? 'المحاسب المحترف (Pro)' : 'المدفوعة'));
+      pendingNoticeHtml = `
+        <div style="background: rgba(245, 158, 11, 0.08); border: 1.5px dashed #f59e0b; border-radius: var(--radius-lg); padding: 1.25rem 1.75rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(245, 158, 11, 0.18); color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+              ⏳
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <strong style="color: #b45309; font-size: 1rem; font-weight: 800;">طلب ترقية قيد المراجعة والاعتماد لدى الإدارة</strong>
+                <span style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 800;">معلّق (Pending)</span>
+              </div>
+              <p style="margin: 0; color: var(--text-secondary); font-size: 0.85rem;">
+                تم استلام طلب ترقيتك لباقة <strong>${pPlanName}</strong> بنجاح. سيتم تفعيل حسابك فور مراجعة واعتماد الإدارة للطلب.
+              </p>
+            </div>
+          </div>
+          <button onclick="if(typeof AuthService !== 'undefined' && AuthService.refreshUserSubscription){ AuthService.refreshUserSubscription().then(() => { const c = document.getElementById('app'); if(c) c.innerHTML = ExcelStudentPlansView.render(); }); }" class="btn-cta-secondary" style="padding: 6px 14px; font-size: 0.82rem; font-weight: 700; border-radius: var(--radius-sm);">
+            تحديث الحالة 🔄
+          </button>
+        </div>
+      `;
+    }
+
     let timerHtml = '';
     if (user.plan !== 'free' || user.isTrial) {
       let remainingDaysText = 'غير محدد';
@@ -141,6 +167,9 @@ const ExcelStudentPlansView = {
             </button>
           </div>
         </div>
+
+        <!-- إشعار حالة طلب الترقية المعلق -->
+        ${pendingNoticeHtml}
 
         <!-- بطاقة مؤقت وصلاحية الاشتراك النشط -->
         ${timerHtml}
@@ -261,9 +290,13 @@ const ExcelStudentPlansView = {
                 <button disabled style="width: 100%; background: var(--tier-starter-bg); color: var(--tier-starter-text); border: 1px solid var(--tier-starter-border); padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem; cursor: default;">
                   ✓ باقتك الحالية النشطة
                 </button>
+              ` : user.subscriptionStatus === 'pending' && user.pendingPlan === 'pro' ? `
+                <button disabled style="width: 100%; background: #fef3c7; color: #b45309; border: 1.5px dashed #f59e0b; padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem; cursor: not-allowed;">
+                  ⏳ طلبك لباقة Pro قيد المراجعة لدى الإدارة
+                </button>
               ` : `
                 <button onclick="ExcelStudentPlansView.subscribePlan('pro', ${proPlan.price})" class="btn-cta-primary" style="width: 100%; padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem;">
-                  ترقية إلى باقة Pro (${proPlan.price} ج.م)
+                  طلب ترقية لباقة Pro (${proPlan.price} ج.م)
                 </button>
                 ${systemConfig.trialEnabled ? (
                   user.hasUsedTrial ? `
@@ -272,7 +305,7 @@ const ExcelStudentPlansView = {
                     </button>
                   ` : `
                     <button onclick="ExcelStudentPlansView.activateTrial()" class="btn-cta-secondary" style="width: 100%; padding: 9px; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 700; border: 1px dashed var(--primary); color: var(--primary);">
-                      تجربة مجانية فورية (${systemConfig.trialDays || 3} أيام)
+                      طلب تجربة مجانية (${systemConfig.trialDays || 3} أيام)
                     </button>
                   `
                 ) : ''}
@@ -331,9 +364,13 @@ const ExcelStudentPlansView = {
                 <button disabled style="width: 100%; background: var(--tier-starter-bg); color: var(--tier-starter-text); border: 1px solid var(--tier-starter-border); padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem; cursor: default;">
                   ✓ باقتك الحالية النشطة
                 </button>
+              ` : user.subscriptionStatus === 'pending' && user.pendingPlan === 'vip' ? `
+                <button disabled style="width: 100%; background: #fef3c7; color: #b45309; border: 1.5px dashed #f59e0b; padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem; cursor: not-allowed;">
+                  ⏳ طلبك لباقة VIP قيد المراجعة لدى الإدارة
+                </button>
               ` : `
                 <button onclick="ExcelStudentPlansView.subscribePlan('vip', ${vipPlan.price})" class="btn-cta-primary" style="width: 100%; background: var(--tier-vip); padding: 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem;">
-                  الترقية لباقة VIP Master (${vipPlan.price} ج.م)
+                  طلب ترقية لباقة VIP Master (${vipPlan.price} ج.م)
                 </button>
               `}
             </div>
@@ -428,55 +465,50 @@ const ExcelStudentPlansView = {
     }
   },
 
-  subscribePlan(planId, price) {
+  async subscribePlan(planId, price) {
     const user = this.getUser();
-    let plans = (typeof DEFAULT_ADMIN_PLANS !== 'undefined') ? DEFAULT_ADMIN_PLANS : [];
-    try {
-      const saved = localStorage.getItem('acc_admin_plans');
-      if (saved) plans = JSON.parse(saved);
-    } catch(e) {}
-
-    const selectedPlan = plans.find(p => p.id === planId) || {
-      id: planId,
-      durationDays: planId === 'pro' ? 30 : (planId === 'vip' ? 365 : 0)
-    };
-
-    const now = new Date();
-    user.plan = planId;
-    user.isTrial = false;
-    user.subscribedAt = now.toISOString();
-
-    const durationDays = selectedPlan.durationDays || (planId === 'pro' ? 30 : (planId === 'vip' ? 365 : 0));
-    if (durationDays > 0) {
-      const expDate = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000);
-      user.expiresAt = expDate.toISOString();
-    } else {
-      user.expiresAt = null;
-    }
-
-    localStorage.setItem('accountera_user', JSON.stringify(user));
-
-    try {
-      let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
-      const idx = users.findIndex(u => u.id === user.id || u.email === user.email);
-      if (idx >= 0) {
-        users[idx].plan = planId;
-        users[idx].isTrial = false;
-        users[idx].subscribedAt = user.subscribedAt;
-        users[idx].expiresAt = user.expiresAt;
-        localStorage.setItem('jr_users', JSON.stringify(users));
+    if (!user || !user.id || user.id.startsWith('ACC-2026') || user.id.startsWith('usr-')) {
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast("يرجى تسجيل الدخول بحسابك أولاً لإرسال طلب الترقية.", "warning");
+      } else {
+        alert("يرجى تسجيل الدخول بحسابك أولاً لإرسال طلب الترقية.");
       }
-    } catch(e) {}
-
-    if (typeof AuthService !== 'undefined') {
-      AuthService.currentUser = user;
-      AuthService.updateTopBarUI();
+      return;
     }
 
-    if (typeof AccModal !== 'undefined' && AccModal.toast) {
-      AccModal.toast(`تم تفعيل باقة ${planId.toUpperCase()} بنجاح لمدة ${durationDays > 0 ? durationDays + ' يوم' : 'مدى الحياة'}.`, "success");
-    } else {
-      alert(`تم تفعيل باقة ${planId.toUpperCase()} بنجاح!`);
+    if (user.subscriptionStatus === 'pending') {
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast("لديك بالفعل طلب ترقية معلق قيد المراجعة والاعتماد لدى الإدارة.", "warning");
+      } else {
+        alert("لديك بالفعل طلب ترقية معلق قيد المراجعة والاعتماد لدى الإدارة.");
+      }
+      return;
+    }
+
+    try {
+      if (typeof SupabaseService !== 'undefined' && SupabaseService.client) {
+        await SupabaseService.requestSubscription(planId);
+      } else {
+        throw new Error('قاعدة البيانات السحابية غير متصلة.');
+      }
+
+      if (typeof AuthService !== 'undefined' && typeof AuthService.refreshUserSubscription === 'function') {
+        await AuthService.refreshUserSubscription();
+      }
+
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast("تم إرسال طلب الترقية بنجاح، بانتظار اعتماد الإدارة", "success", 6000);
+      } else {
+        alert("تم إرسال طلب الترقية بنجاح، بانتظار اعتماد الإدارة");
+      }
+    } catch (err) {
+      console.error('[StudentPlansView] Subscription error:', err);
+      const msg = err.message || "حدث خطأ أثناء إرسال طلب الترقية.";
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast(msg, "warning", 6000);
+      } else {
+        alert(msg);
+      }
     }
 
     const appContainer = document.getElementById('app');
@@ -485,67 +517,41 @@ const ExcelStudentPlansView = {
     }
   },
 
-  activateTrial() {
-    let systemConfig = { trialEnabled: true, trialDays: 3, trialPlan: 'pro' };
-    try {
-      const savedCfg = localStorage.getItem('acc_system_config');
-      if (savedCfg) systemConfig = { ...systemConfig, ...JSON.parse(savedCfg) };
-    } catch(e) {}
-
-    if (!systemConfig.trialEnabled) {
-      if (typeof AccModal !== 'undefined' && AccModal.toast) {
-        AccModal.toast("الفترة التجريبية المجانية غير متاحة حالياً بأمر الإدارة.", "warning");
-      } else {
-        alert("الفترة التجريبية المجانية غير متاحة حالياً.");
-      }
-      return;
-    }
-
+  async activateTrial() {
     const user = this.getUser();
-    if (user.hasUsedTrial) {
+    if (!user || !user.id || user.id.startsWith('ACC-2026') || user.id.startsWith('usr-')) {
       if (typeof AccModal !== 'undefined' && AccModal.toast) {
-        AccModal.toast("عفواً، لقد استهلكت الفترة التجريبية المجانية الخاصة بحسابك مسبقاً.", "warning");
+        AccModal.toast("يرجى تسجيل الدخول بحسابك أولاً.", "warning");
       } else {
-        alert("عفواً، لقد استهلكت الفترة التجريبية المجانية مسبقاً.");
+        alert("يرجى تسجيل الدخول بحسابك أولاً.");
       }
       return;
     }
 
-    const trialDays = systemConfig.trialDays || 3;
-    const targetPlan = systemConfig.trialPlan || 'pro';
-    const now = new Date();
-    const expDate = new Date(now.getTime() + trialDays * 24 * 60 * 60 * 1000);
-
-    user.plan = targetPlan;
-    user.isTrial = true;
-    user.hasUsedTrial = true;
-    user.subscribedAt = now.toISOString();
-    user.expiresAt = expDate.toISOString();
-
-    localStorage.setItem('accountera_user', JSON.stringify(user));
-
     try {
-      let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
-      const idx = users.findIndex(u => u.id === user.id || u.email === user.email);
-      if (idx >= 0) {
-        users[idx].plan = targetPlan;
-        users[idx].isTrial = true;
-        users[idx].hasUsedTrial = true;
-        users[idx].subscribedAt = user.subscribedAt;
-        users[idx].expiresAt = user.expiresAt;
-        localStorage.setItem('jr_users', JSON.stringify(users));
+      if (typeof SupabaseService !== 'undefined' && SupabaseService.client) {
+        await SupabaseService.requestSubscription('pro');
+      } else {
+        throw new Error('قاعدة البيانات السحابية غير متصلة.');
       }
-    } catch(e) {}
 
-    if (typeof AuthService !== 'undefined') {
-      AuthService.currentUser = user;
-      AuthService.updateTopBarUI();
-    }
+      if (typeof AuthService !== 'undefined' && typeof AuthService.refreshUserSubscription === 'function') {
+        await AuthService.refreshUserSubscription();
+      }
 
-    if (typeof AccModal !== 'undefined' && AccModal.toast) {
-      AccModal.toast(`تم تفعيل الفترة التجريبية لباقة ${targetPlan.toUpperCase()} مجاناً لمدة ${trialDays} أيام!`, "success");
-    } else {
-      alert(`تم تفعيل الفترة التجريبية المجانية بنجاح لمدة ${trialDays} أيام!`);
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast("تم إرسال طلب الترقية بنجاح، بانتظار اعتماد الإدارة", "success", 6000);
+      } else {
+        alert("تم إرسال طلب الترقية بنجاح، بانتظار اعتماد الإدارة");
+      }
+    } catch (err) {
+      console.error('[StudentPlansView] Trial error:', err);
+      const msg = err.message || "حدث خطأ أثناء إرسال طلب التجربة.";
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast(msg, "warning", 6000);
+      } else {
+        alert(msg);
+      }
     }
 
     const appContainer = document.getElementById('app');
@@ -555,35 +561,10 @@ const ExcelStudentPlansView = {
   },
 
   downgradeToFree() {
-    const user = this.getUser();
-    user.plan = 'free';
-    user.isTrial = false;
-    user.expiresAt = null;
-    localStorage.setItem('accountera_user', JSON.stringify(user));
-
-    try {
-      let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
-      const idx = users.findIndex(u => u.id === user.id || u.email === user.email);
-      if (idx >= 0) {
-        users[idx].plan = 'free';
-        users[idx].isTrial = false;
-        users[idx].expiresAt = null;
-        localStorage.setItem('jr_users', JSON.stringify(users));
-      }
-    } catch(e) {}
-
-    if (typeof AuthService !== 'undefined') {
-      AuthService.currentUser = user;
-      AuthService.updateTopBarUI();
-    }
-
     if (typeof AccModal !== 'undefined' && AccModal.toast) {
-      AccModal.toast("تم الرجوع إلى الباقة التأسيسية المجانية.", "info");
-    }
-
-    const appContainer = document.getElementById('app');
-    if (appContainer) {
-      appContainer.innerHTML = this.render();
+      AccModal.toast("لإلغاء الاشتراك أو التعديل، يرجى التواصل مع إدارة المنصة.", "info");
+    } else {
+      alert("لإلغاء الاشتراك أو التعديل، يرجى التواصل مع إدارة المنصة.");
     }
   }
 };

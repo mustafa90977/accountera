@@ -128,6 +128,176 @@ const SupabaseService = {
     }
   },
 
+  // جلب الاشتراك النشط للمستخدم (حيث status = 'active' والوقت لم ينتهِ بعد)
+  async getUserActiveSubscription(userId) {
+    if (!this.client || !userId) return null;
+    try {
+      const now = new Date().toISOString();
+      const { data, error } = await this.client
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'active')
+        .or(`expires_at.is.null,expires_at.gt.${now}`)
+        .order('activated_at', { ascending: false })
+        .limit(1);
+
+      if (error) {
+        console.warn('[Supabase] Error fetching active subscription:', error);
+        return null;
+      }
+      return (data && data.length > 0) ? data[0] : null;
+    } catch (err) {
+      console.error('[Supabase] getUserActiveSubscription exception:', err);
+      return null;
+    }
+  },
+
+  // جلب الطلب المعلق للمستخدم إن وجد
+  async getUserPendingSubscription(userId) {
+    if (!this.client || !userId) return null;
+    try {
+      const { data, error } = await this.client
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'pending')
+        .order('requested_at', { ascending: false })
+        .limit(1);
+
+      if (error) return null;
+      return (data && data.length > 0) ? data[0] : null;
+    } catch (err) {
+      return null;
+    }
+  },
+
+  // إرسال طلب اشتراك / ترقية جديد بحالة pending فقط
+  async requestSubscription(planId) {
+    if (!this.client) throw new Error('عميل Supabase غير متصل');
+    
+    // جلب معرف المستخدم الحالي من الجلسة
+    let authUserId = null;
+    if (this.client.auth) {
+      const { data: { session } } = await this.client.auth.getSession();
+      if (session && session.user) {
+        authUserId = session.user.id;
+      }
+    }
+
+    if (!authUserId) {
+      throw new Error('يجب تسجيل الدخول أولاً لإرسال طلب الترقية.');
+    }
+
+    // التحقق أولاً من عدم وجود طلب معلق مسبقاً
+    const pending = await this.getUserPendingSubscription(authUserId);
+    if (pending) {
+      throw new Error('لديك بالفعل طلب ترقية معلق قيد المراجعة لدى الإدارة.');
+    }
+
+    const { data, error } = await this.client
+      .from('subscriptions')
+      .insert({
+        user_id: authUserId,
+        plan_id: planId,
+        status: 'pending',
+        requested_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('[Supabase] Error requesting subscription:', error);
+      throw error;
+    }
+
+    console.log('✅ Subscription request created with pending status:', data);
+    return data;
+  },
+
+  // جلب كافة طلبات الترقية المعلقة (متاح لمدير النظام Admin فقط عبر RLS)
+  async getPendingSubscriptions() {
+    if (!this.client) return [];
+    try {
+      const { data, error } = await this.client
+        .from('subscriptions')
+        .select(`
+          id,
+          user_id,
+          plan_id,
+          status,
+          requested_at,
+          expires_at,
+          profiles:user_id (
+            id,
+            email,
+            full_name,
+            role
+          )
+        `)
+        .eq('status', 'pending')
+        .order('requested_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (err) {
+      console.error('[Supabase] getPendingSubscriptions error:', err);
+      return [];
+    }
+  },
+
+  // اعتماد وتفعيل اشتراك الطالب من قبل الأدمن
+  async approveSubscription(subscriptionId, durationDays = 30) {
+    if (!this.client) throw new Error('عميل Supabase غير متصل');
+
+    let adminId = null;
+    if (this.client.auth) {
+      const { data: { session } } = await this.client.auth.getSession();
+      if (session && session.user) {
+        adminId = session.user.id;
+      }
+    }
+
+    const now = new Date();
+    const expiresAt = durationDays > 0 
+      ? new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000).toISOString()
+      : null;
+
+    const { data, error } = await this.client
+      .from('subscriptions')
+      .update({
+        status: 'active',
+        activated_at: now.toISOString(),
+        activated_by: adminId,
+        expires_at: expiresAt
+      })
+      .eq('id', subscriptionId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    console.log('✅ Subscription approved successfully:', data);
+    return data;
+  },
+
+  // رفض طلب ترقية الطالب
+  async rejectSubscription(subscriptionId) {
+    if (!this.client) throw new Error('عميل Supabase غير متصل');
+
+    const { data, error } = await this.client
+      .from('subscriptions')
+      .update({
+        status: 'rejected'
+      })
+      .eq('id', subscriptionId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    console.log('✅ Subscription rejected successfully:', data);
+    return data;
+  },
+
   // مزامنة الشركات الافتراضية لأول مرة إذا كانت قاعدة البيانات فارغة
   async syncInitialData() {
     try {

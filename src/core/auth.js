@@ -138,14 +138,70 @@ const AuthService = {
       fullName = fullName === 'طالب' ? 'مصطفى محمد' : fullName;
     }
 
+    let plan = 'free';
+    let expiresAt = null;
+    let subscriptionStatus = 'none';
+    let pendingPlan = null;
+
+    if (window.SupabaseService && typeof window.SupabaseService.getUserActiveSubscription === 'function') {
+      try {
+        const activeSub = await window.SupabaseService.getUserActiveSubscription(authUser.id);
+        if (activeSub) {
+          plan = activeSub.plan_id;
+          expiresAt = activeSub.expires_at;
+          subscriptionStatus = 'active';
+        } else {
+          const pendingSub = await window.SupabaseService.getUserPendingSubscription(authUser.id);
+          if (pendingSub) {
+            pendingPlan = pendingSub.plan_id;
+            subscriptionStatus = 'pending';
+          }
+        }
+      } catch (e) {
+        console.warn('[AuthService] Subscription fetch error:', e);
+      }
+    }
+
     const userData = {
       id: authUser.id,
       email: authUser.email,
       name: fullName,
-      role: role
+      role: role,
+      plan: plan,
+      expiresAt: expiresAt,
+      subscriptionStatus: subscriptionStatus,
+      pendingPlan: pendingPlan
     };
 
     this.setCurrentUser(userData, redirect);
+  },
+
+  // إعادة مزامنة وتحديث حالة الاشتراك الحالية مباشرة من Supabase
+  async refreshUserSubscription() {
+    if (!this.currentUser || !this.currentUser.id) return;
+    if (window.SupabaseService && typeof window.SupabaseService.getUserActiveSubscription === 'function') {
+      try {
+        const activeSub = await window.SupabaseService.getUserActiveSubscription(this.currentUser.id);
+        const pendingSub = await window.SupabaseService.getUserPendingSubscription(this.currentUser.id);
+
+        if (activeSub) {
+          this.currentUser.plan = activeSub.plan_id;
+          this.currentUser.expiresAt = activeSub.expires_at;
+          this.currentUser.subscriptionStatus = 'active';
+          this.currentUser.pendingPlan = null;
+        } else {
+          this.currentUser.plan = 'free';
+          this.currentUser.expiresAt = null;
+          this.currentUser.subscriptionStatus = pendingSub ? 'pending' : 'none';
+          this.currentUser.pendingPlan = pendingSub ? pendingSub.plan_id : null;
+        }
+
+        localStorage.setItem('accountera_user', JSON.stringify(this.currentUser));
+        this.updateTopBarUI();
+      } catch (e) {
+        console.warn('[AuthService] Error refreshing subscription:', e);
+      }
+    }
   },
 
   // فحص صلاحية باقة المستخدم والتحقق من انتهاء المؤقت الزمني

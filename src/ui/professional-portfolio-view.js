@@ -406,51 +406,15 @@ const AccounteraPortfolioEngine = {
    * تفعيل تجربة Pro للمستخدم الفوري في المحاكي لإتاحة التجربة التفاعلية
    */
   upgradeToProTrial() {
-    let user = null;
-    try {
-      if (typeof AuthService !== 'undefined') {
-        user = AuthService.getCurrentUser();
-      }
-      if (!user) {
-        const rawUser = localStorage.getItem('accountera_user');
-        if (rawUser) user = JSON.parse(rawUser);
-      }
-    } catch(e) {}
-
-    if (!user) {
-      user = { name: "محاسب مالي متدرب", email: "student@accountera.edu", role: "student" };
-    }
-
-    user.plan = 'pro';
-    try {
-      localStorage.setItem('accountera_user', JSON.stringify(user));
-      let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
-      const idx = users.findIndex(u => u.id === user.id || u.email === user.email);
-      if (idx >= 0) {
-        users[idx].plan = 'pro';
-        localStorage.setItem('jr_users', JSON.stringify(users));
-      }
-    } catch(e) {}
-
     const modal = document.getElementById('accLinkedInUpgradeModal');
     if (modal) modal.remove();
 
     if (typeof AccModal !== 'undefined') {
-      AccModal.toast("تم تفعيل باقة المحاسب المحترف (Pro) بنجاح! تم فتح مشاركة LinkedIn.", "success");
-    } else {
-      alert("تم ترقية حسابك إلى باقة المحاسب المحترف (Pro) بنجاح!");
+      AccModal.toast("ميزة المشاركة تتطلب باقة Pro معتمدة. يرجى إرسال طلب ترقية للإدارة.", "info", 5000);
     }
-
-    // إعادة عرض المحفظة بالصلاحيات المفتوحة
-    const appContainer = document.getElementById('app');
-    if (appContainer) {
-      appContainer.innerHTML = this.renderPortfolioView();
+    if (typeof navigateToScreen === 'function') {
+      navigateToScreen('student-plans');
     }
-
-    // تشغيل المشاركة فوراً
-    setTimeout(() => {
-      this.shareLinkedIn();
-    }, 400);
   },
 
   goToPlans() {

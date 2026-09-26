@@ -153,6 +153,8 @@ const ExcelAdminDashboard = {
   usersSearch: '',
 
   // البيانات المحملة من localStorage
+  pendingSubscriptions: [],
+  pendingSubsLoaded: false,
   plans: [],
   coupons: [],
   auditEngagements: [],
@@ -1730,6 +1732,10 @@ const ExcelAdminDashboard = {
       return this.renderPlanEditor(this.editingPlanId);
     }
 
+    if (!this.pendingSubsLoaded) {
+      setTimeout(() => this.loadPendingSubscriptions(), 50);
+    }
+
     return `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
         <div>
@@ -1743,6 +1749,36 @@ const ExcelAdminDashboard = {
           ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('plus', { size: 14 }) : '+'}
           <span>إضافة باقة جديدة</span>
         </button>
+      </div>
+
+      <!-- قسم طلبات الترقية المعلقة (Pending Subscriptions) - اعتماد الأدمن اليدوي -->
+      <div style="background:var(--surface-ground); border:1.5px solid var(--border-subtle); border-radius:14px; padding:18px 20px; margin-bottom:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:40px; height:40px; border-radius:10px; background:rgba(245,158,11,0.15); color:#d97706; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0;">
+              ⏳
+            </div>
+            <div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <h3 style="margin:0; font-size:1.05rem; font-weight:800; color:var(--text-primary);">طلبات الترقية المعلقة (Pending Subscriptions)</h3>
+                <span class="badge" style="background:${(this.pendingSubscriptions?.length || 0) > 0 ? '#ef4444' : '#10b981'}; color:#ffffff; font-size:0.75rem; font-weight:bold; padding:2px 8px; border-radius:999px;">
+                  ${this.pendingSubscriptions?.length || 0} طلبات
+                </span>
+              </div>
+              <p style="margin:3px 0 0; font-size:0.83rem; color:var(--text-secondary);">
+                مراجعة طلبات ترقية الطلاب واعتمادها يدوياً لتفعيل باقات PRO و VIP
+              </p>
+            </div>
+          </div>
+
+          <button class="btn-workspace-action" style="padding:6px 14px; font-size:0.82rem; display:inline-flex; align-items:center; gap:6px;" onclick="ExcelAdminDashboard.loadPendingSubscriptions()">
+            <span>تحديث القائمة 🔄</span>
+          </button>
+        </div>
+
+        <div id="pending_subs_container">
+          ${this.renderPendingSubscriptionsList()}
+        </div>
       </div>
 
       <!-- لوحة التحكم بالفترة التجريبية للطلاب (Free Trial Configuration) -->
@@ -2055,6 +2091,155 @@ const ExcelAdminDashboard = {
     if (typeof AccModal !== 'undefined') AccModal.toast(`✓ تم حفظ تعديلات باقة (${plan.name}) بنجاح!`, 'success');
     else alert(`✓ تم حفظ تعديلات وصلاحيات باقة (${plan.name}) بنجاح!`);
     this.closePlanEditor();
+  },
+
+  // جلب كافة طلبات الترقية المعلقة من Supabase
+  async loadPendingSubscriptions() {
+    this.pendingSubsLoaded = true;
+    if (typeof SupabaseService !== 'undefined' && typeof SupabaseService.getPendingSubscriptions === 'function') {
+      try {
+        this.pendingSubscriptions = await SupabaseService.getPendingSubscriptions();
+        const container = document.getElementById('pending_subs_container');
+        if (container) {
+          container.innerHTML = this.renderPendingSubscriptionsList();
+        }
+      } catch (err) {
+        console.warn('[AdminDashboard] Error loading pending subscriptions:', err);
+      }
+    }
+  },
+
+  // عرض جدول طلبات الترقية المعلقة
+  renderPendingSubscriptionsList() {
+    const list = this.pendingSubscriptions || [];
+    if (list.length === 0) {
+      return `
+        <div style="text-align: center; padding: 2rem 1rem; color: var(--text-muted); background: var(--surface-card); border-radius: 12px; border: 1px dashed var(--border-subtle);">
+          <div style="font-size: 2rem; margin-bottom: 8px;">🎉</div>
+          <strong style="color: var(--text-primary); font-size: 0.95rem;">لا توجد أي طلبات ترقية معلقة حالياً</strong>
+          <p style="margin: 4px 0 0; font-size: 0.82rem;">كافة اشتراكات الطلاب معتمدة ومحدثة بالكامل.</p>
+        </div>
+      `;
+    }
+
+    return `
+      <div style="overflow-x: auto; background: var(--surface-card); border-radius: 12px; border: 1px solid var(--border-subtle);">
+        <table style="width: 100%; border-collapse: collapse; text-align: right; font-size: 0.88rem;">
+          <thead>
+            <tr style="background: var(--surface-ground); border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); font-size: 0.78rem;">
+              <th style="padding: 10px 14px;">الطالب</th>
+              <th style="padding: 10px 14px;">الباقة المطلوبة</th>
+              <th style="padding: 10px 14px;">تاريخ ووقت الطلب</th>
+              <th style="padding: 10px 14px;">الحالة</th>
+              <th style="padding: 10px 14px; text-align: center;">إجراء الاعتماد</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${list.map(sub => {
+              const profile = sub.profiles || {};
+              const studentName = profile.full_name || 'طالب جديد';
+              const studentEmail = profile.email || sub.user_id;
+              const planBadge = sub.plan_id === 'vip' 
+                ? '<span style="background: rgba(20, 184, 166, 0.15); color: var(--primary); padding: 3px 10px; border-radius: 999px; font-weight: 800; font-size: 0.78rem;">VIP Master</span>'
+                : '<span style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 3px 10px; border-radius: 999px; font-weight: 800; font-size: 0.78rem;">PRO</span>';
+              const dateStr = sub.requested_at ? new Date(sub.requested_at).toLocaleString('ar-EG') : 'الآن';
+
+              return `
+                <tr style="border-bottom: 1px solid var(--border-subtle);">
+                  <td style="padding: 12px 14px;">
+                    <strong style="display: block; color: var(--text-primary); font-size: 0.92rem;">${studentName}</strong>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">${studentEmail}</span>
+                  </td>
+                  <td style="padding: 12px 14px;">
+                    ${planBadge}
+                  </td>
+                  <td style="padding: 12px 14px; color: var(--text-secondary); font-size: 0.82rem;">
+                    ${dateStr}
+                  </td>
+                  <td style="padding: 12px 14px;">
+                    <span style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 800;">معلق (Pending)</span>
+                  </td>
+                  <td style="padding: 12px 14px; text-align: center;">
+                    <div style="display: inline-flex; gap: 8px;">
+                      <button onclick="ExcelAdminDashboard.approveSubscription('${sub.id}', '${sub.plan_id}')" class="btn-workspace-action" style="background: #10b981; color: #ffffff; padding: 6px 14px; font-size: 0.8rem; font-weight: 800; border-radius: 6px;">
+                        ✓ موافقة وتفعيل
+                      </button>
+                      <button onclick="ExcelAdminDashboard.rejectSubscription('${sub.id}')" class="btn-workspace-action" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 14px; font-size: 0.8rem; font-weight: 800; border-radius: 6px;">
+                        ✕ رفض
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  },
+
+  // اعتماد الأدمن لاشتراك الطالب
+  async approveSubscription(subId, planId) {
+    this.requireAdmin();
+    const plan = this.plans.find(p => p.id === planId);
+    const durationDays = plan?.durationDays !== undefined ? plan.durationDays : (planId === 'vip' ? 365 : 30);
+
+    try {
+      if (typeof SupabaseService !== 'undefined' && typeof SupabaseService.approveSubscription === 'function') {
+        await SupabaseService.approveSubscription(subId, durationDays);
+      }
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast('✓ تم اعتماد وتفعيل اشتراك الطالب بنجاح!', 'success');
+      } else {
+        alert('✓ تم اعتماد وتفعيل اشتراك الطالب بنجاح!');
+      }
+      await this.loadPendingSubscriptions();
+      this.switchTab('plans');
+    } catch (err) {
+      console.error('[AdminDashboard] approveSubscription error:', err);
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast('حدث خطأ أثناء اعتماد الاشتراك: ' + (err.message || ''), 'error');
+      } else {
+        alert('حدث خطأ أثناء اعتماد الاشتراك: ' + (err.message || ''));
+      }
+    }
+  },
+
+  // رفض الأدمن لطلب الترقية
+  async rejectSubscription(subId) {
+    this.requireAdmin();
+    if (typeof AccModal !== 'undefined' && AccModal.confirm) {
+      const ok = await AccModal.confirm({
+        title: 'رفض طلب الترقية',
+        message: 'هل أنت متأكد من رفض هذا الطلب؟',
+        confirmText: 'نعم، ارفض الطلب',
+        cancelText: 'تراجع',
+        type: 'danger'
+      });
+      if (!ok) return;
+    } else if (!confirm('هل أنت متأكد من رفض هذا الطلب؟')) {
+      return;
+    }
+
+    try {
+      if (typeof SupabaseService !== 'undefined' && typeof SupabaseService.rejectSubscription === 'function') {
+        await SupabaseService.rejectSubscription(subId);
+      }
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast('تم رفض طلب الترقية.', 'info');
+      } else {
+        alert('تم رفض طلب الترقية.');
+      }
+      await this.loadPendingSubscriptions();
+      this.switchTab('plans');
+    } catch (err) {
+      console.error('[AdminDashboard] rejectSubscription error:', err);
+      if (typeof AccModal !== 'undefined' && AccModal.toast) {
+        AccModal.toast('حدث خطأ أثناء رفض الطلب: ' + (err.message || ''), 'error');
+      } else {
+        alert('حدث خطأ أثناء رفض الطلب: ' + (err.message || ''));
+      }
+    }
   },
 
   async addNewPlan() {

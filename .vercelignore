@@ -17,3 +17,6 @@ backups/
 *.log
 *.sh
 *.py
+test*.js
+*.test.js
+
