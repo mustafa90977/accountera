@@ -8,11 +8,25 @@ const PwaManager = {
   isAppInstalled: false,
 
   init() {
+    this.purgeOldCaches();
     this.checkStandaloneMode();
     this.registerServiceWorker();
     this.setupInstallPromptListener();
     this.setupNetworkStatusListeners();
     this.renderInstallButtonInHeader();
+  },
+
+  purgeOldCaches() {
+    if ('caches' in window) {
+      caches.keys().then((keys) => {
+        keys.forEach((key) => {
+          if (key !== 'accountera-pwa-v2') {
+            console.log(`[PWA] Purging outdated cache: ${key}`);
+            caches.delete(key);
+          }
+        });
+      }).catch(() => {});
+    }
   },
 
   checkStandaloneMode() {
