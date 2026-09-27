@@ -37,6 +37,7 @@ const PwaManager = {
               if (newWorker) {
                 newWorker.addEventListener('statechange', () => {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
                     this.showUpdateBanner();
                   }
                 });

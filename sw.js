@@ -4,7 +4,7 @@
  * Provides offline caching, lightning-fast loads, and resilient accounting practice.
  */
 
-const CACHE_NAME = 'accountera-pwa-v1';
+const CACHE_NAME = 'accountera-pwa-v2';
 
 const STATIC_PRECACHE_URLS = [
   './',
@@ -148,7 +148,23 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static Assets (CSS, JS, Fonts, Images): Stale-While-Revalidate
+  // Application Scripts (JS): Network-First to guarantee latest production code
+  if (url.pathname.endsWith('.js') || url.pathname.includes('/src/')) {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const resClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, resClone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // Static Assets (CSS, Fonts, Images): Stale-While-Revalidate
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       const fetchPromise = fetch(request)

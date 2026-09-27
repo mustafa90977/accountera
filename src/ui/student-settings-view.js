@@ -638,21 +638,23 @@ const ExcelStudentSettingsView = {
     }
 
     try {
-      // التحقق من صحة كلمة المرور الحالية أولاً
+      // 1. التحقق من صحة كلمة المرور الحالية عبر عميل منفصل لا يمس الجلسة الحالية
       if (current && session.user.email) {
-        const { error: verifyErr } = await client.auth.signInWithPassword({
-          email: session.user.email,
-          password: current
-        });
-        if (verifyErr) {
-          const vMsg = (verifyErr.message || '').toLowerCase();
-          if (vMsg.includes('invalid') || vMsg.includes('credentials')) {
+        if (typeof window.supabase !== 'undefined' && typeof SUPABASE_CONFIG !== 'undefined') {
+          const tempClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
+            auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+          });
+          const { error: verifyErr } = await tempClient.auth.signInWithPassword({
+            email: session.user.email,
+            password: current
+          });
+          if (verifyErr) {
             throw new Error("كلمة المرور الحالية غير صحيحة!");
           }
         }
       }
 
-      // تحديث كلمة المرور الحقيقية في Supabase
+      // 2. تحديث كلمة المرور الحقيقية في Supabase عبر جلسة المستخدم الحالية
       const { data, error } = await client.auth.updateUser({
         password: newPwd
       });
@@ -660,8 +662,12 @@ const ExcelStudentSettingsView = {
       if (error) {
         const translated = (typeof AuthService !== 'undefined' && AuthService.translateAuthError)
           ? AuthService.translateAuthError(error)
-          : error.message;
+          : (error.message || "فشل تحديث كلمة المرور في الخادم.");
         throw new Error(translated);
+      }
+
+      if (!data || !data.user) {
+        throw new Error("لم تستجب خدمة المصادقة بتأكيد التحديث، يرجى المحاولة مرة أخرى.");
       }
 
       // إزالة أي بقايا سابقة للباسورد من التخزين المحلي نهائياً
