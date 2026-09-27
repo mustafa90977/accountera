@@ -131,13 +131,6 @@ const AuthService = {
       }
     }
 
-    // إسناد رتبة مدير النظام (Admin) تلقائياً لبريد المسؤول الرئيسي
-    const ADMIN_EMAILS = ['mu9tafamohamed@gmail.com'];
-    if (authUser.email && ADMIN_EMAILS.includes(authUser.email.toLowerCase())) {
-      role = 'admin';
-      fullName = fullName === 'طالب' ? 'مصطفى محمد' : fullName;
-    }
-
     let plan = 'free';
     let expiresAt = null;
     let subscriptionStatus = 'none';
