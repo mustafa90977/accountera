@@ -682,9 +682,9 @@ const ExcelStudentSettingsView = {
       } catch (e) {}
 
       if (typeof AccModal !== 'undefined') {
-        AccModal.toast("✓ تم تحديث كلمة المرور في Supabase بنجاح وحماية حسابك!", "success");
+        AccModal.toast("تم الحفظ بنجاح", "success");
       } else if (typeof alert !== 'undefined') {
-        alert("✓ تم تحديث كلمة المرور في Supabase بنجاح وحماية حسابك!");
+        alert("تم الحفظ بنجاح");
       }
 
       // تصفير الحقول
