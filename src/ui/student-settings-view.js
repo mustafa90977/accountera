@@ -241,7 +241,7 @@ const ExcelStudentSettingsView = {
           <div style="margin-bottom: 1.25rem;">
             <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">كلمة المرور الحالية:</label>
             <input type="password" id="pwd_current" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary);" placeholder="••••••••" required>
-            <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">إذا كان هذا حساباً تجريبياً، يمكنك كتابة أي كلمة مرور أو تركها.</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">أدخل كلمة المرور الحالية لتأكيد هويتك.</span>
           </div>
 
           <div style="margin-bottom: 1.25rem;">
@@ -263,7 +263,7 @@ const ExcelStudentSettingsView = {
           </div>
 
           <div style="display: flex; gap: 10px;">
-            <button type="submit" class="btn-cta-primary" style="padding: 10px 24px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
+            <button type="submit" id="pwd_submit_btn" class="btn-cta-primary" style="padding: 10px 24px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
               ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lock', { size: 16 }) : ''}
               <span>تحديث كلمة المرور الآن</span>
             </button>
@@ -553,7 +553,7 @@ const ExcelStudentSettingsView = {
   },
 
   // حفظ البيانات الشخصية
-  savePersonalInfo(e) {
+  async savePersonalInfo(e) {
     e.preventDefault();
     const { user } = this.getUserData();
 
@@ -565,23 +565,28 @@ const ExcelStudentSettingsView = {
     user.gradYear = document.getElementById('set_grad_year')?.value.trim() || '';
     user.bio = document.getElementById('set_bio')?.value.trim() || '';
 
-    // حفظ في الجلسة وفي قاعدة المستخدمين
+    // حفظ في الجلسة المحلية مع إزالة أي أثر قديم لـ jr_users
     try {
       localStorage.setItem('accountera_user', JSON.stringify(user));
       if (typeof AuthService !== 'undefined') {
         AuthService.currentUser = user;
         AuthService.updateTopBarUI();
       }
-
-      let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
-      const idx = users.findIndex(u => u.id === user.id || u.email === user.email);
-      if (idx >= 0) {
-        users[idx] = { ...users[idx], ...user };
-      } else {
-        users.push(user);
-      }
-      localStorage.setItem('jr_users', JSON.stringify(users));
+      localStorage.removeItem('jr_users');
     } catch (err) {}
+
+    // تحديث الاسم في Supabase إذا كانت الجلسة نشطة
+    const client = (typeof window !== 'undefined' && window.SupabaseService) ? window.SupabaseService.client : null;
+    if (client && client.auth) {
+      try {
+        const { data: { session } } = await client.auth.getSession();
+        if (session && session.user) {
+          await client.from('profiles').update({ full_name: user.name }).eq('id', session.user.id);
+        }
+      } catch (e) {
+        console.warn('[Settings] Failed to sync profile to Supabase:', e);
+      }
+    }
 
     if (typeof AccModal !== 'undefined') {
       AccModal.toast("✓ تم حفظ وتحديث البيانات الشخصية بنجاح!", "success");
@@ -590,14 +595,14 @@ const ExcelStudentSettingsView = {
     }
   },
 
-  // تغيير كلمة المرور
-  changePassword(e) {
+  // تغيير كلمة المرور - تحديث سحابي حقيقي عبر Supabase Auth حصرياً
+  async changePassword(e) {
     e.preventDefault();
-    const { user } = this.getUserData();
 
     const current = document.getElementById('pwd_current')?.value;
     const newPwd = document.getElementById('pwd_new')?.value;
     const confirmPwd = document.getElementById('pwd_confirm')?.value;
+    const submitBtn = document.getElementById('pwd_submit_btn');
 
     if (!newPwd || newPwd.length < 6) {
       if (typeof AccModal !== 'undefined') AccModal.toast("يجب أن تكون كلمة المرور الجديدة 6 أحرف أو أرقام على الأقل", "error");
@@ -611,36 +616,91 @@ const ExcelStudentSettingsView = {
       return;
     }
 
-    // التحقق من كلمة المرور الحالية إذا كانت مسجلة مسبقاً
-    if (user.password && user.password !== current) {
-      if (typeof AccModal !== 'undefined') AccModal.toast("كلمة المرور الحالية غير صحيحة!", "error");
-      else if (typeof alert !== 'undefined') alert("كلمة المرور الحالية غير صحيحة!");
+    const client = (typeof window !== 'undefined' && window.SupabaseService) ? window.SupabaseService.client : null;
+    if (!client || !client.auth) {
+      const msg = "خدمة المصادقة السحابية غير متصلة حالياً، يرجى التحقق من اتصالك بالإنترنت.";
+      if (typeof AccModal !== 'undefined') AccModal.toast(msg, "error");
+      else if (typeof alert !== 'undefined') alert(msg);
       return;
     }
 
-    user.password = newPwd;
-
-    try {
-      localStorage.setItem('accountera_user', JSON.stringify(user));
-      let users = JSON.parse(localStorage.getItem('jr_users') || '[]');
-      const idx = users.findIndex(u => u.id === user.id || u.email === user.email);
-      if (idx >= 0) {
-        users[idx].password = newPwd;
-        localStorage.setItem('jr_users', JSON.stringify(users));
-      }
-    } catch (err) {}
-
-    if (typeof AccModal !== 'undefined') {
-      AccModal.toast("✓ تم تحديث كلمة المرور لحسابك بنجاح وحمايته!", "success");
-    } else if (typeof alert !== 'undefined') {
-      alert("✓ تم تحديث كلمة المرور لحسابك بنجاح وحمايته!");
+    const { data: { session } } = await client.auth.getSession();
+    if (!session || !session.user) {
+      const msg = "يجب تسجيل الدخول بحساب موثق لتغيير كلمة المرور.";
+      if (typeof AccModal !== 'undefined') AccModal.toast(msg, "error");
+      else if (typeof alert !== 'undefined') alert(msg);
+      return;
     }
 
-    // تصفير الحقول
-    if (document.getElementById('pwd_current')) document.getElementById('pwd_current').value = '';
-    if (document.getElementById('pwd_new')) document.getElementById('pwd_new').value = '';
-    if (document.getElementById('pwd_confirm')) document.getElementById('pwd_confirm').value = '';
-    this.checkPasswordStrength('');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>جاري تحديث كلمة المرور...</span>`;
+    }
+
+    try {
+      // التحقق من صحة كلمة المرور الحالية أولاً
+      if (current && session.user.email) {
+        const { error: verifyErr } = await client.auth.signInWithPassword({
+          email: session.user.email,
+          password: current
+        });
+        if (verifyErr) {
+          const vMsg = (verifyErr.message || '').toLowerCase();
+          if (vMsg.includes('invalid') || vMsg.includes('credentials')) {
+            throw new Error("كلمة المرور الحالية غير صحيحة!");
+          }
+        }
+      }
+
+      // تحديث كلمة المرور الحقيقية في Supabase
+      const { data, error } = await client.auth.updateUser({
+        password: newPwd
+      });
+
+      if (error) {
+        const translated = (typeof AuthService !== 'undefined' && AuthService.translateAuthError)
+          ? AuthService.translateAuthError(error)
+          : error.message;
+        throw new Error(translated);
+      }
+
+      // إزالة أي بقايا سابقة للباسورد من التخزين المحلي نهائياً
+      try {
+        const savedRaw = localStorage.getItem('accountera_user');
+        if (savedRaw) {
+          const savedUser = JSON.parse(savedRaw);
+          delete savedUser.password;
+          localStorage.setItem('accountera_user', JSON.stringify(savedUser));
+        }
+        localStorage.removeItem('jr_users');
+      } catch (e) {}
+
+      if (typeof AccModal !== 'undefined') {
+        AccModal.toast("✓ تم تحديث كلمة المرور في Supabase بنجاح وحماية حسابك!", "success");
+      } else if (typeof alert !== 'undefined') {
+        alert("✓ تم تحديث كلمة المرور في Supabase بنجاح وحماية حسابك!");
+      }
+
+      // تصفير الحقول
+      if (document.getElementById('pwd_current')) document.getElementById('pwd_current').value = '';
+      if (document.getElementById('pwd_new')) document.getElementById('pwd_new').value = '';
+      if (document.getElementById('pwd_confirm')) document.getElementById('pwd_confirm').value = '';
+      this.checkPasswordStrength('');
+    } catch (err) {
+      if (typeof AccModal !== 'undefined') {
+        AccModal.toast(err.message || "فشل تحديث كلمة المرور.", "error");
+      } else if (typeof alert !== 'undefined') {
+        alert(err.message || "فشل تحديث كلمة المرور.");
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('lock', { size: 16 }) : ''}
+          <span>تحديث كلمة المرور الآن</span>
+        `;
+      }
+    }
   },
 
   // حفظ التفضيلات
