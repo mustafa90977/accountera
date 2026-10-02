@@ -183,6 +183,24 @@ const SupabaseService = {
     }
   },
 
+  // جلب آخر اشتراك أو طلب للمستخدم لمعرفة حالته (مرفوض، نشط، معلق)
+  async getUserLatestSubscription(userId) {
+    if (!this.client || !userId) return null;
+    try {
+      const { data, error } = await this.client
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', userId)
+        .order('requested_at', { ascending: false })
+        .limit(1);
+
+      if (error) return null;
+      return (data && data.length > 0) ? data[0] : null;
+    } catch (err) {
+      return null;
+    }
+  },
+
   // إرسال طلب اشتراك / ترقية جديد بحالة pending فقط
   async requestSubscription(planId) {
     if (!this.client) throw new Error('عميل Supabase غير متصل');

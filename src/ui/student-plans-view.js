@@ -103,6 +103,33 @@ const ExcelStudentPlansView = {
       `;
     }
 
+    let rejectedNoticeHtml = '';
+    if (user.subscriptionStatus === 'rejected') {
+      const rejObj = plans.find(p => p.id === user.rejectedPlan || p.id === user.pendingPlan);
+      const rejPlanName = rejObj ? rejObj.name : 'المدفوعة';
+      rejectedNoticeHtml = `
+        <div class="rejected-subscription-banner" style="background: rgba(239, 68, 68, 0.08); border: 1.5px dashed #ef4444; border-radius: var(--radius-lg); padding: 1.25rem 1.75rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(239, 68, 68, 0.18); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+              ❌
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <strong style="color: #b91c1c; font-size: 1rem; font-weight: 800;">تم رفض طلب الترقية لباقة ${rejPlanName}</strong>
+                <span style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 800;">مرفوض (Rejected)</span>
+              </div>
+              <p style="margin: 0; color: var(--text-secondary); font-size: 0.85rem;">
+                تعذر اعتماد طلب ترقيتك السابق من قبل الإدارة. يرجى التأكد من بيانات السداد وإعادة إرسال طلب جديد أدناه.
+              </p>
+            </div>
+          </div>
+          <button onclick="if(typeof AuthService !== 'undefined' && AuthService.refreshUserSubscription){ AuthService.refreshUserSubscription().then(() => { const c = document.getElementById('app'); if(c) c.innerHTML = ExcelStudentPlansView.render(); }); }" class="btn-cta-secondary" style="padding: 6px 14px; font-size: 0.82rem; font-weight: 700; border-radius: var(--radius-sm);">
+            تحديث الحالة 🔄
+          </button>
+        </div>
+      `;
+    }
+
     let timerHtml = '';
     if (user.plan !== 'free' || user.isTrial) {
       let remainingDaysText = 'غير محدد';
@@ -193,6 +220,9 @@ const ExcelStudentPlansView = {
 
         <!-- إشعار حالة طلب الترقية المعلق -->
         ${pendingNoticeHtml}
+
+        <!-- إشعار حالة طلب الترقية المرفوض -->
+        ${rejectedNoticeHtml}
 
         <!-- بطاقة مؤقت وصلاحية الاشتراك النشط -->
         ${timerHtml}

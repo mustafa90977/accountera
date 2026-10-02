@@ -135,6 +135,7 @@ const AuthService = {
     let expiresAt = null;
     let subscriptionStatus = 'none';
     let pendingPlan = null;
+    let rejectedPlan = null;
 
     if (window.SupabaseService && typeof window.SupabaseService.getUserActiveSubscription === 'function') {
       try {
@@ -148,6 +149,12 @@ const AuthService = {
           if (pendingSub) {
             pendingPlan = pendingSub.plan_id;
             subscriptionStatus = 'pending';
+          } else if (typeof window.SupabaseService.getUserLatestSubscription === 'function') {
+            const latestSub = await window.SupabaseService.getUserLatestSubscription(authUser.id);
+            if (latestSub && latestSub.status === 'rejected') {
+              subscriptionStatus = 'rejected';
+              rejectedPlan = latestSub.plan_id;
+            }
           }
         }
       } catch (e) {
@@ -163,7 +170,8 @@ const AuthService = {
       plan: plan,
       expiresAt: expiresAt,
       subscriptionStatus: subscriptionStatus,
-      pendingPlan: pendingPlan
+      pendingPlan: pendingPlan,
+      rejectedPlan: rejectedPlan
     };
 
     this.setCurrentUser(userData, redirect);
@@ -176,17 +184,28 @@ const AuthService = {
       try {
         const activeSub = await window.SupabaseService.getUserActiveSubscription(this.currentUser.id);
         const pendingSub = await window.SupabaseService.getUserPendingSubscription(this.currentUser.id);
+        const latestSub = (typeof window.SupabaseService.getUserLatestSubscription === 'function')
+          ? await window.SupabaseService.getUserLatestSubscription(this.currentUser.id)
+          : null;
 
         if (activeSub) {
           this.currentUser.plan = activeSub.plan_id;
           this.currentUser.expiresAt = activeSub.expires_at;
           this.currentUser.subscriptionStatus = 'active';
           this.currentUser.pendingPlan = null;
+          this.currentUser.rejectedPlan = null;
+        } else if (pendingSub) {
+          this.currentUser.plan = 'free';
+          this.currentUser.expiresAt = null;
+          this.currentUser.subscriptionStatus = 'pending';
+          this.currentUser.pendingPlan = pendingSub.plan_id;
+          this.currentUser.rejectedPlan = null;
         } else {
           this.currentUser.plan = 'free';
           this.currentUser.expiresAt = null;
-          this.currentUser.subscriptionStatus = pendingSub ? 'pending' : 'none';
-          this.currentUser.pendingPlan = pendingSub ? pendingSub.plan_id : null;
+          this.currentUser.subscriptionStatus = (latestSub && latestSub.status === 'rejected') ? 'rejected' : 'none';
+          this.currentUser.pendingPlan = null;
+          this.currentUser.rejectedPlan = (latestSub && latestSub.status === 'rejected') ? latestSub.plan_id : null;
         }
 
         localStorage.setItem('accountera_user', JSON.stringify(this.currentUser));
