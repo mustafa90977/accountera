@@ -20,7 +20,7 @@ const PwaManager = {
     if ('caches' in window) {
       caches.keys().then((keys) => {
         keys.forEach((key) => {
-          if (key !== 'accountera-pwa-v2') {
+          if (key !== 'accountera-pwa-v3') {
             console.log(`[PWA] Purging outdated cache: ${key}`);
             caches.delete(key);
           }

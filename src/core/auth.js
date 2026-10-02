@@ -45,9 +45,10 @@ const AuthService = {
             await this.syncUserSession(session.user, false);
           }
         } else if (event === 'SIGNED_OUT') {
-          this.currentUser = null;
-          localStorage.removeItem('accountera_user');
-          try { sessionStorage.removeItem('accountera_current_screen'); } catch(e) {}
+          this.clearAuthStorage();
+          if (typeof window !== 'undefined' && window.ProgressService) {
+            window.ProgressService.completedLessons = new Set();
+          }
           this.updateTopBarUI();
           if (typeof window.navigateToScreen === 'function') {
             window.navigateToScreen('landing');
@@ -285,6 +286,28 @@ const AuthService = {
     return this.currentUser;
   },
 
+  clearAuthStorage() {
+    this.currentUser = null;
+    try {
+      localStorage.removeItem('accountera_user');
+      // مسح كافة مفاتيح توكنات Supabase وجلسات المستخدم محلياً فوراً
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('sb-') || k.includes('auth-token') || k.includes('supabase') || k.startsWith('acc_'))) {
+          // نحتفظ فقط بإعدادات المظهر إن وجدت
+          if (!k.includes('theme') && !k.includes('mode')) {
+            keysToRemove.push(k);
+          }
+        }
+      }
+      keysToRemove.forEach(k => localStorage.removeItem(k));
+      sessionStorage.removeItem('accountera_current_screen');
+    } catch (e) {
+      console.warn('[AuthService] Error clearing auth storage:', e);
+    }
+  },
+
   setCurrentUser(user, redirect = true) {
     this.currentUser = user;
     if (user) {
@@ -303,8 +326,7 @@ const AuthService = {
         this.redirectAfterLogin(user);
       }
     } else {
-      localStorage.removeItem('accountera_user');
-      try { sessionStorage.removeItem('accountera_current_screen'); } catch(e) {}
+      this.clearAuthStorage();
       if (typeof window !== 'undefined' && window.ProgressService) {
         window.ProgressService.completedLessons = new Set();
       }
@@ -535,6 +557,10 @@ const AuthService = {
   },
 
   async logout() {
+    // 1. مسح فوري وصارم لكافة آثار التوكن وجلسة المصادقة من التخزين والذاكرة قبل أي استدعاء شبكة
+    this.clearAuthStorage();
+    
+    // 2. إخطار خادم Supabase بإلغاء الجلسة السحابية
     const client = window.SupabaseService?.client;
     if (client && client.auth) {
       try {

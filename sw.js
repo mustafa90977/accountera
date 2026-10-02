@@ -4,7 +4,7 @@
  * Provides offline caching, lightning-fast loads, and resilient accounting practice.
  */
 
-const CACHE_NAME = 'accountera-pwa-v2';
+const CACHE_NAME = 'accountera-pwa-v3';
 
 const STATIC_PRECACHE_URLS = [
   './',
