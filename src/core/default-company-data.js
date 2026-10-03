@@ -1,5 +1,7 @@
 /**
- * default-company-data.js — البيانات الأساسية لشركة التدريب (شركة النور)
+ * default-company-data.js — البيانات الأساسية لشركة التدريب (شركة النور) - نسخة مشفرة ومؤمنة بالـ Hash
+ * All answer lines and debit/credit solutions have been removed.
+ * Entries are verified via SHA-256 validationHash + unique salt.
  */
 const DEFAULT_PLATFORM_COMPANY = {
   "id": "comp-al-noor",
@@ -23,9 +25,19 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "2101.001",
-      "lines": [
+      "requiredLinesCount": 63,
+      "docData": {
+        "totalAmount": 1800000,
+        "subtotal": 1800000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مؤسسة الشرق للجملة ذ.م.م",
+        "date": "2026-01-15",
+        "ref": "INV-1001"
+      },
+      "salt": "656544d0a49d927e1bec82330dcc745a",
+      "validationHash": "52a3adede443286079b8fa090a4beee2efc78fed856d0b225a084457d0159ca3",
+      "openingBalances": [
         {
           "lineNum": 1,
           "accountCode": "1102",
@@ -606,37 +618,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2101.001",
-      "cr": "1106",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2101.001",
-          "accountName": "مصنع الوفاء للتوزيع توصية بسيطة",
-          "acctType": "Liability",
-          "debit": 4485,
-          "credit": 0,
-          "description": "AP Reduction (تخفيض حساب الموردين)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 585,
-          "description": "Input VAT Reversal (عكس ضريبة مدخلات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 3900,
-          "description": "Inventory Return (مردودات مخزون)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 4485,
+        "subtotal": 3900,
+        "vatAmount": 585,
+        "vatRate": "14%",
+        "partyName": "مصنع الوفاء للتوزيع توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1002"
+      },
+      "salt": "bdce319d25f0ec51a5117090004ead35",
+      "validationHash": "5091a87f1d3355ae759260400c6dbd9b53f38b569bed24d6d2e39e538f3df92b"
     },
     {
       "id": "Q-003",
@@ -649,28 +642,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5206",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5206",
-          "accountName": "Inventory Obsolescence Expense (مصروف هبوط أسعار المخزون)",
-          "acctType": "Expense",
-          "debit": 3500,
-          "credit": 0,
-          "description": "Inventory Shrinkage/Variance (تسوية عجز وفروق جرد المخزون)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 3500,
-          "description": "Inv Reduction (تخفيض حساب المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 3500,
+        "subtotal": 3500,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1003"
+      },
+      "salt": "3b04644a5885fe869b10115ce9aa5ae6",
+      "validationHash": "28fb4364545341fcaf300e22e9aa6d107f1919b6f9ec1475d5dd285124f78f4d"
     },
     {
       "id": "Q-004",
@@ -683,28 +666,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "2104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 18000,
-          "credit": 0,
-          "description": "Cash Received in Advance (نقدية مستلمة مقدماً)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2104",
-          "accountName": "Unearned Revenue (إيرادات غير مكتسبة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 18000,
-          "description": "Unearned Revenue (إيرادات غير مكتسبة)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 18000,
+        "subtotal": 18000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1004"
+      },
+      "salt": "e9289f7bf347de7a9601e8e844067188",
+      "validationHash": "94134d6da7b4de54ef183fbeb819f28f45f93dfa680e08d8fc9e54fd72783f6f"
     },
     {
       "id": "Q-005",
@@ -717,28 +690,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1101",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 9000,
-          "credit": 0,
-          "description": "Petty Cash Replenishment (استعاضة سلفة مستديمة للخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 9000,
-          "description": "Bank Outflow (سحب شيك استعاضة من البنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 9000,
+        "subtotal": 9000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1005"
+      },
+      "salt": "38eed350a5b8f248b1bb19b3a6d166d0",
+      "validationHash": "50e53e64ce6b97b38721acdfe54f9fdc02a883118a32123748e2f6c51967477a"
     },
     {
       "id": "Q-006",
@@ -751,37 +714,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2101.001",
-      "cr": "1106",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2101.001",
-          "accountName": "مصنع الوفاء للتوزيع توصية بسيطة",
-          "acctType": "Liability",
-          "debit": 2760,
-          "credit": 0,
-          "description": "AP Reduction (تخفيض حساب الموردين)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 360,
-          "description": "Input VAT Reversal (عكس ضريبة مدخلات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 2400,
-          "description": "Inventory Return (مردودات مخزون)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 2760,
+        "subtotal": 2400,
+        "vatAmount": 360,
+        "vatRate": "14%",
+        "partyName": "مصنع الوفاء للتوزيع توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1006"
+      },
+      "salt": "093cfa3946f6042bf12561ed297bea29",
+      "validationHash": "39616a902fac4e0678f06f95fcf22816787ed747fd8a6c3075015cc2ebfd1102"
     },
     {
       "id": "Q-007",
@@ -794,28 +738,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5208",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5208",
-          "accountName": "Bank Charges (مصروفات بنكية)",
-          "acctType": "Expense",
-          "debit": 372,
-          "credit": 0,
-          "description": "Bank Fees & Commissions (رسوم ومصاريف بنكية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 372,
-          "description": "Bank Outflow (خصم مصاريف بنكية)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 372,
+        "subtotal": 372,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1007"
+      },
+      "salt": "8cf9165cb9ad07204a79de0428e065fc",
+      "validationHash": "cd105a128735d62d4aff9bf47953e1d1dd57e3bc376a94782ecfb597eacf1b37"
     },
     {
       "id": "Q-008",
@@ -828,28 +762,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1101",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 6000,
-          "credit": 0,
-          "description": "Petty Cash Replenishment (استعاضة سلفة مستديمة للخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 6000,
-          "description": "Bank Outflow (سحب شيك استعاضة من البنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 6000,
+        "subtotal": 6000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1008"
+      },
+      "salt": "44c898acc5709d766c7830e21f78732f",
+      "validationHash": "501f46a0a69d4a006284532635ddff727d02c800c2eb0348f7cdac2135745f3e"
     },
     {
       "id": "Q-009",
@@ -862,28 +786,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5206",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5206",
-          "accountName": "Inventory Obsolescence Expense (مصروف هبوط أسعار المخزون)",
-          "acctType": "Expense",
-          "debit": 1900,
-          "credit": 0,
-          "description": "Inventory Shrinkage/Variance (تسوية عجز وفروق جرد المخزون)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1900,
-          "description": "Inv Reduction (تخفيض حساب المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 1900,
+        "subtotal": 1900,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1009"
+      },
+      "salt": "a08aa2762726672af3d6019da7c5dd4e",
+      "validationHash": "5901f443dbafd701182499d64f0d3933f72bb49061794e985608a85a8202cdcd"
     },
     {
       "id": "Q-010",
@@ -896,46 +810,22 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5201",
-      "cr": "2105",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5201",
-          "accountName": "Salaries Expense (مصروف رواتب)",
-          "acctType": "Expense",
-          "debit": 11000,
-          "credit": 0,
-          "description": "Salaries (رواتب)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2105",
-          "accountName": "Payroll Taxes Payable (ضرائب رواتب مستحقة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 1100,
-          "description": "Taxes (ضرائب)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2106",
-          "accountName": "Social Insurance Payable (تأمينات اجتماعية مستحقة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 550,
-          "description": "Social Ins (تأمينات)"
-        },
-        {
-          "lineNum": 4,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 9350,
-          "description": "Net Pay (صافي الدفع)"
-        }
-      ]
+      "requiredLinesCount": 4,
+      "docData": {
+        "totalAmount": 11000,
+        "subtotal": 11000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1010",
+        "grossAmount": 11000,
+        "taxAmount": 1100,
+        "socAmount": 550,
+        "netAmount": 9350
+      },
+      "salt": "1c5adad91720765acec36688818607a1",
+      "validationHash": "3ad543258f86c77863678585d7843ef645274e375599bcd721a0462d080bea78"
     },
     {
       "id": "Q-011",
@@ -948,37 +838,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1103.035",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1103.035",
-          "accountName": "شركة المستقبل للخدمات لصاحبها",
-          "acctType": "Asset",
-          "debit": 141864,
-          "credit": 0,
-          "description": "Credit Sale (إيراد الاجهزه ) - شركة المستقبل للخدمات لصاحبها"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 123360,
-          "description": "Revenue (إيرادات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 18504,
-          "description": "Output VAT (ضريبة مخرجات)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 141864,
+        "subtotal": 123360,
+        "vatAmount": 18504,
+        "vatRate": "14%",
+        "partyName": "شركة المستقبل للخدمات لصاحبها",
+        "date": "2026-01-15",
+        "ref": "INV-1011"
+      },
+      "salt": "f035b628c6a7c9dbacd734024e3489f8",
+      "validationHash": "3c2fb0f55db4f9c6288bda80f587564492f0db6bf27fb7901978340ba8dbcfec"
     },
     {
       "id": "Q-012",
@@ -991,28 +862,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5101",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 102800,
-          "credit": 0,
-          "description": "COGS (تكلفة البضاعة المباعة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 102800,
-          "description": "Inv Reduction (تخفيض المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 102800,
+        "subtotal": 102800,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1012"
+      },
+      "salt": "2e54d64ed4e3f4186c293ad713e79b81",
+      "validationHash": "0294aae8de23265cfb4d4fb6d3ab89e16a3089bf1be7d7b748ac5f9bd62ce9ba"
     },
     {
       "id": "Q-013",
@@ -1025,28 +886,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2101.001",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2101.001",
-          "accountName": "مصنع الوفاء للتوزيع توصية بسيطة",
-          "acctType": "Liability",
-          "debit": 17800,
-          "credit": 0,
-          "description": "Payment (دفعة للمورد)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 17800,
-          "description": "Bank Outflow (تدفق بنكي خارج)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 17800,
+        "subtotal": 17800,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مصنع الوفاء للتوزيع توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1013"
+      },
+      "salt": "545d4f2bdace4a211397e48ea6335064",
+      "validationHash": "a213fbe382c9d349d13b33d0279ed03bbfbc4dc1a20b03bbcfb2908dca03b39a"
     },
     {
       "id": "Q-014",
@@ -1059,37 +910,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 38502,
-          "credit": 0,
-          "description": "Cash Sale (بيع نقدي)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 33480,
-          "description": "Revenue (إيرادات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 5022,
-          "description": "Output VAT (ضريبة مخرجات)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 38502,
+        "subtotal": 33480,
+        "vatAmount": 5022,
+        "vatRate": "14%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1014"
+      },
+      "salt": "e2ba062619175cd05f401a087a8a7946",
+      "validationHash": "470e2152e7180765e6a3e80ecc369ebbb5e22b9abaca7c847f8d51f8ce7ebd9c"
     },
     {
       "id": "Q-015",
@@ -1102,28 +934,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5101",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 27900,
-          "credit": 0,
-          "description": "COGS (تكلفة البضاعة المباعة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 27900,
-          "description": "Inv Reduction (تخفيض المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 27900,
+        "subtotal": 27900,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1015"
+      },
+      "salt": "3ee5cdae1446df4a05dadd4319eb069e",
+      "validationHash": "2ad164453d8803622f94c155e397c2de82dcb76e9f1c026ff1fd6e1d40649717"
     },
     {
       "id": "Q-016",
@@ -1136,37 +958,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1201",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 41342,
-          "credit": 0,
-          "description": "Disposal Proceeds (متحصلات استبعاد أصول)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1201",
-          "accountName": "Fixed Assets (أصول ثابتة)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 40000,
-          "description": "Remove Asset (إقفال تكلفة الأصل)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "4201",
-          "accountName": "Gain on Asset Disposal (أرباح استبعاد أصول)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 1342,
-          "description": "Gain on Disposal (أرباح استبعاد)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 41342,
+        "subtotal": 41342,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1016"
+      },
+      "salt": "2f92911739dd8da2bbef738d57c829a4",
+      "validationHash": "24fa7452ee89597585e08bc04381a3ff3c6ba2f8e0474b5d05ef6ac22dcab7d8"
     },
     {
       "id": "Q-017",
@@ -1179,28 +982,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1105",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1105",
-          "accountName": "Prepaid Expenses (مصروفات مدفوعة مقدماً)",
-          "acctType": "Asset",
-          "debit": 18000,
-          "credit": 0,
-          "description": "Prepaid Rent (إيجار مدفوع مقدماً)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 18000,
-          "description": "Bank Outflow (سداد بنكي للإيجار)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 18000,
+        "subtotal": 18000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1017"
+      },
+      "salt": "86bd1d75af74701796596099a5bef799",
+      "validationHash": "8b289fd0062158bd9ee14006ac6b6e8bc3f6dc1724b49e290cbdfa6e4ff82285"
     },
     {
       "id": "Q-018",
@@ -1213,28 +1006,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.001",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 4018,
-          "credit": 0,
-          "description": "Collection from 1103.001 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.001",
-          "accountName": "مؤسسة الشرق للجملة ذ.م.م",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 4018,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 4018,
+        "subtotal": 4018,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مؤسسة الشرق للجملة ذ.م.م",
+        "date": "2026-01-15",
+        "ref": "INV-1018"
+      },
+      "salt": "dff823b4704cc2ae801fcba3fdb884af",
+      "validationHash": "d83d5556a5b831168a968cd8bd9373a106db39b2f47f0c495b0825ce2b9f74d8"
     },
     {
       "id": "Q-019",
@@ -1247,28 +1030,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 7500,
-          "credit": 0,
-          "description": "Cash Deposit to Bank (إيداع نقدي بالبنك من الخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 7500,
-          "description": "Cash Transfer Out (صرف من الخزينة للإيداع البنكي)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 7500,
+        "subtotal": 7500,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1019"
+      },
+      "salt": "ac570c6db84bb5248a1763adfd7338ac",
+      "validationHash": "19c57e22e4a118583080eaca68a89fd752a18561de4f0c2cde7e363c7cb08943"
     },
     {
       "id": "Q-020",
@@ -1281,37 +1054,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1201",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1201",
-          "accountName": "Fixed Assets (أصول ثابتة)",
-          "acctType": "Asset",
-          "debit": 51000,
-          "credit": 0,
-          "description": "Fixed Asset Purchase (شراء أصل ثابت)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 7650,
-          "credit": 0,
-          "description": "Input VAT (ضريبة مدخلات على الأصول)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 58650,
-          "description": "Bank Outflow (سداد قيمة الأصل)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 58650,
+        "subtotal": 51000,
+        "vatAmount": 7650,
+        "vatRate": "14%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1020"
+      },
+      "salt": "e568973d5ef59a0e424d49410cc83acf",
+      "validationHash": "b8fb8a5c6b492cb6cc91e3ae47221d7d7a2f1d011355a10246642e2f56b83ee2"
     },
     {
       "id": "Q-021",
@@ -1324,28 +1078,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1101",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 3500,
-          "credit": 0,
-          "description": "Petty Cash Replenishment (استعاضة سلفة مستديمة للخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 3500,
-          "description": "Bank Outflow (سحب شيك استعاضة من البنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 3500,
+        "subtotal": 3500,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1021"
+      },
+      "salt": "febe1e05c369d686cf57ab6d58b5a44a",
+      "validationHash": "63cd4bbaa56f6b0af00a18bd75deec23e3ed6b6eb2a3144a222cbc7afc3a5db9"
     },
     {
       "id": "Q-022",
@@ -1358,28 +1102,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "2104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 29400,
-          "credit": 0,
-          "description": "Cash Received in Advance (نقدية مستلمة مقدماً)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2104",
-          "accountName": "Unearned Revenue (إيرادات غير مكتسبة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 29400,
-          "description": "Unearned Revenue (إيرادات غير مكتسبة)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 29400,
+        "subtotal": 29400,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1022"
+      },
+      "salt": "88a17ebc54d7bf9fca4ee6dc4f4c3a6b",
+      "validationHash": "2e15ae27eb465cc3301ac4dd648c5369af4aaa9a97250388b2d81d0fa7359990"
     },
     {
       "id": "Q-023",
@@ -1392,28 +1126,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.002",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 3069,
-          "credit": 0,
-          "description": "Collection from 1103.002 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.002",
-          "accountName": "مصنع الحديثة للخدمات ذ.م.م",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 3069,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 3069,
+        "subtotal": 3069,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مصنع الحديثة للخدمات ذ.م.م",
+        "date": "2026-01-15",
+        "ref": "INV-1023"
+      },
+      "salt": "b08312960df3e247dee2e3783d5abf18",
+      "validationHash": "c28a16b50d8018c89e263c692f3681d98b5aed2fd68fe8088af3cdb64058a3fe"
     },
     {
       "id": "Q-024",
@@ -1426,37 +1150,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1103.031",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1103.031",
-          "accountName": "مصنع السلام للتجزئة توصية بسيطة",
-          "acctType": "Asset",
-          "debit": 46092,
-          "credit": 0,
-          "description": "Credit Sale (إيراد الاجهزه ) - مصنع السلام للتجزئة توصية بسيطة"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 40080,
-          "description": "Revenue (إيرادات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 6012,
-          "description": "Output VAT (ضريبة مخرجات)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 46092,
+        "subtotal": 40080,
+        "vatAmount": 6012,
+        "vatRate": "14%",
+        "partyName": "مصنع السلام للتجزئة توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1024"
+      },
+      "salt": "3332554ca5f83fd4b7c720284f85037a",
+      "validationHash": "e84e2ec5f96939ab8518e3adbcc6088bb599c99fbca5e80dc6410deb24498b5b"
     },
     {
       "id": "Q-025",
@@ -1469,28 +1174,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5101",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 33400,
-          "credit": 0,
-          "description": "COGS (تكلفة البضاعة المباعة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 33400,
-          "description": "Inv Reduction (تخفيض المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 33400,
+        "subtotal": 33400,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1025"
+      },
+      "salt": "e553e10caddd77e7604dca0a0ce08849",
+      "validationHash": "c6abf0e2f12094cd46c1ef32d200194f3cdeb652df4bebb192f4f75031d94245"
     },
     {
       "id": "Q-026",
@@ -1503,28 +1198,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1101",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 8000,
-          "credit": 0,
-          "description": "Petty Cash Replenishment (استعاضة سلفة مستديمة للخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 8000,
-          "description": "Bank Outflow (سحب شيك استعاضة من البنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 8000,
+        "subtotal": 8000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1026"
+      },
+      "salt": "dcaabe23774acdffae17b6bb069ecda4",
+      "validationHash": "fcd6957e4574fba96c86ebe2c98cc399ee18a225ec562d90c93bd186a84b5a0c"
     },
     {
       "id": "Q-027",
@@ -1537,28 +1222,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5211",
-      "cr": "1101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5211",
-          "accountName": "Cash Shortage Expense (عجز الخزينة)",
-          "acctType": "Expense",
-          "debit": 121,
-          "credit": 0,
-          "description": "Cash Shortage (تسوية عجز الخزينة / فروق جرد نقدية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 121,
-          "description": "Cash Reduction (تخفيض رصيد الصندوق)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 121,
+        "subtotal": 121,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1027"
+      },
+      "salt": "3cc098ee10cd8c1453b85abc42388a85",
+      "validationHash": "4016e3c6293fae765b6c5c6cebce82742e74c7f18f519fdf98b3093f008a69e8"
     },
     {
       "id": "Q-028",
@@ -1571,28 +1246,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5208",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5208",
-          "accountName": "Bank Charges (مصروفات بنكية)",
-          "acctType": "Expense",
-          "debit": 393,
-          "credit": 0,
-          "description": "Bank Fees & Commissions (رسوم ومصاريف بنكية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 393,
-          "description": "Bank Outflow (خصم مصاريف بنكية)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 393,
+        "subtotal": 393,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1028"
+      },
+      "salt": "27ab6d834e58c1d0c646fbc346ee936e",
+      "validationHash": "b77ab8c5c94687c95df2bee9be8e011ce1e845aca79a6bdbad3105ef4423ed29"
     },
     {
       "id": "Q-029",
@@ -1605,37 +1270,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2105",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2105",
-          "accountName": "Payroll Taxes Payable (ضرائب رواتب مستحقة)",
-          "acctType": "Liability",
-          "debit": 1100,
-          "credit": 0,
-          "description": "Taxes Settlement (تسوية ضرائب)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2106",
-          "accountName": "Social Insurance Payable (تأمينات اجتماعية مستحقة)",
-          "acctType": "Liability",
-          "debit": 550,
-          "credit": 0,
-          "description": "Social Ins Settlement (تسوية تأمينات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1650,
-          "description": "Bank Outflow (تدفق بنكي خارج)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 1650,
+        "subtotal": 1650,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1029"
+      },
+      "salt": "cba743e6ea5e453067af1df3463225e8",
+      "validationHash": "c85ff8c74fe372a300d84e3d464fd3502fcc5db508b5a77de4f41af0aa0c5a6f"
     },
     {
       "id": "Q-030",
@@ -1648,37 +1294,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5202",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5202",
-          "accountName": "Rent Expense (مصروف إيجار)",
-          "acctType": "Expense",
-          "debit": 3100,
-          "credit": 0,
-          "description": "Rent Expense (مصروف إيجار)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "5203",
-          "accountName": "Utilities Expense (مصروف مرافق)",
-          "acctType": "Expense",
-          "debit": 2200,
-          "credit": 0,
-          "description": "Utilities Expense (مصروف مرافق)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 5300,
-          "description": "Bank (بنك)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 5300,
+        "subtotal": 5300,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1030"
+      },
+      "salt": "662550e35c777a286dbb82647281b611",
+      "validationHash": "0c770b32fc2492fe367d30ce564a4ce25fdd39cb0ded1d8d03bf2b82dc82586d"
     },
     {
       "id": "Q-031",
@@ -1691,28 +1318,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5207",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5207",
-          "accountName": "Maintenance Expense (مصروف صيانة)",
-          "acctType": "Expense",
-          "debit": 1000,
-          "credit": 0,
-          "description": "Maintenance (صيانة دورية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1000,
-          "description": "Bank (بنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 1000,
+        "subtotal": 1000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1031"
+      },
+      "salt": "cbc8124ad43217a0f03adf8aae73b042",
+      "validationHash": "cb99775b35c98251e631250c5c34a08ac3e04ac55bfd08fa30782a33f4efb24e"
     },
     {
       "id": "Q-032",
@@ -1725,37 +1342,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5202",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5202",
-          "accountName": "Rent Expense (مصروف إيجار)",
-          "acctType": "Expense",
-          "debit": 5700,
-          "credit": 0,
-          "description": "Rent Expense (مصروف إيجار)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "5203",
-          "accountName": "Utilities Expense (مصروف مرافق)",
-          "acctType": "Expense",
-          "debit": 1450,
-          "credit": 0,
-          "description": "Utilities Expense (مصروف مرافق)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 7150,
-          "description": "Bank (بنك)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 7150,
+        "subtotal": 7150,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1032"
+      },
+      "salt": "dc8af615887c775bf6fc1c3986076248",
+      "validationHash": "9274d162a22c4f82f34b6f2c5fefea1070815fc50a591e5fadca16054c0699f6"
     },
     {
       "id": "Q-033",
@@ -1768,28 +1366,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5207",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5207",
-          "accountName": "Maintenance Expense (مصروف صيانة)",
-          "acctType": "Expense",
-          "debit": 1000,
-          "credit": 0,
-          "description": "Maintenance (صيانة دورية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1000,
-          "description": "Bank (بنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 1000,
+        "subtotal": 1000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1033"
+      },
+      "salt": "ab3b79f0089a478b083a65402e4e16c4",
+      "validationHash": "e245a29574c539bf1bc5970e47a82b62f880194d7a1c03c51391231feb801ee0"
     },
     {
       "id": "Q-034",
@@ -1802,37 +1390,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1103.023",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1103.023",
-          "accountName": "شركة النور للمقاولات توصية بسيطة",
-          "acctType": "Asset",
-          "debit": 99084,
-          "credit": 0,
-          "description": "Credit Sale (إيراد الاجهزه ) - شركة النور للمقاولات توصية بسيطة"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 86160,
-          "description": "Revenue (إيرادات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 12924,
-          "description": "Output VAT (ضريبة مخرجات)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 99084,
+        "subtotal": 86160,
+        "vatAmount": 12924,
+        "vatRate": "14%",
+        "partyName": "شركة النور للمقاولات توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1034"
+      },
+      "salt": "efd1bcfa13ea49850201e2448bb58184",
+      "validationHash": "c4f6464bfb7ddb854da2b79925744d1cb445e111e501ba8c5223ec96b5d50285"
     },
     {
       "id": "Q-035",
@@ -1845,28 +1414,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5101",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 71800,
-          "credit": 0,
-          "description": "COGS (تكلفة البضاعة المباعة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 71800,
-          "description": "Inv Reduction (تخفيض المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 71800,
+        "subtotal": 71800,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1035"
+      },
+      "salt": "c4be72ccec2a5ad2712f0e74f3b5f4df",
+      "validationHash": "84e29284261ec0bc1d7c3313727acada4163b8e509b4f57e266aa0115ad901b3"
     },
     {
       "id": "Q-036",
@@ -1879,28 +1438,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.003",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 4122,
-          "credit": 0,
-          "description": "Collection from 1103.003 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.003",
-          "accountName": "مؤسسة المجد للتجزئة توصية بسيطة",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 4122,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 4122,
+        "subtotal": 4122,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مؤسسة المجد للتجزئة توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1036"
+      },
+      "salt": "045d05fa2ba649751b7c5806182387eb",
+      "validationHash": "be0a1b5736c2935d2c34e69616a1e36c2a6f1cbfbbdef0db04de8b0a8cae5ce3"
     },
     {
       "id": "Q-037",
@@ -1913,46 +1462,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1103.004",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1103.004",
-          "accountName": "مصنع الغرب للتسويق ش.م.م",
-          "acctType": "Asset",
-          "debit": 90230.15,
-          "credit": 0,
-          "description": "Credit Sale (إيراد الاجهزه ) - مصنع الغرب للتسويق ش.م.م"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4104",
-          "accountName": "Sales Discount (خصم مسموح به)",
-          "acctType": "Contra Revenue",
-          "debit": 5899,
-          "credit": 0,
-          "description": "Sales Discount (خصم مبيعات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 84360,
-          "description": "Revenue (إيرادات)"
-        },
-        {
-          "lineNum": 4,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 11769.15,
-          "description": "Output VAT (ضريبة مخرجات)"
-        }
-      ]
+      "requiredLinesCount": 4,
+      "docData": {
+        "totalAmount": 96129.15,
+        "subtotal": 84360,
+        "vatAmount": 11769.15,
+        "vatRate": "14%",
+        "partyName": "مصنع الغرب للتسويق ش.م.م",
+        "date": "2026-01-15",
+        "ref": "INV-1037"
+      },
+      "salt": "6701095fcc98d892db2b82676a9d2104",
+      "validationHash": "2e85d2b352626282bfc45475d066a0812fdce1bf44869e7a2a73b7fb387d0221"
     },
     {
       "id": "Q-038",
@@ -1965,28 +1486,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5101",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 70300,
-          "credit": 0,
-          "description": "COGS (تكلفة البضاعة المباعة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 70300,
-          "description": "Inv Reduction (تخفيض المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 70300,
+        "subtotal": 70300,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1038"
+      },
+      "salt": "481dc0024192c781cb167d3e7d261895",
+      "validationHash": "6591d4bb71b255472ef4a27b483ce0b4d3f96eb006ec572ac9c8872c46028a27"
     },
     {
       "id": "Q-039",
@@ -1999,28 +1510,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1105",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1105",
-          "accountName": "Prepaid Expenses (مصروفات مدفوعة مقدماً)",
-          "acctType": "Asset",
-          "debit": 6600,
-          "credit": 0,
-          "description": "Prepaid Rent (إيجار مدفوع مقدماً)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 6600,
-          "description": "Bank Outflow (سداد بنكي للإيجار)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 6600,
+        "subtotal": 6600,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1039"
+      },
+      "salt": "91b12c06d30339e811b15171e640388f",
+      "validationHash": "a9b9676d7cdfd4d25830d4ae6b4358438832d4b35ac907943fb03ad230adf1db"
     },
     {
       "id": "Q-040",
@@ -2033,37 +1534,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5202",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5202",
-          "accountName": "Rent Expense (مصروف إيجار)",
-          "acctType": "Expense",
-          "debit": 5000,
-          "credit": 0,
-          "description": "Rent Expense (مصروف إيجار)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "5203",
-          "accountName": "Utilities Expense (مصروف مرافق)",
-          "acctType": "Expense",
-          "debit": 1450,
-          "credit": 0,
-          "description": "Utilities Expense (مصروف مرافق)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 6450,
-          "description": "Bank (بنك)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 6450,
+        "subtotal": 6450,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1040"
+      },
+      "salt": "f003d05b1240a7d84ea929170a569c94",
+      "validationHash": "7f6180604bd8a870775704167a399bd61be184269e4506babc239292531f4293"
     },
     {
       "id": "Q-041",
@@ -2076,28 +1558,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.004",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 45400,
-          "credit": 0,
-          "description": "Collection from 1103.004 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.004",
-          "accountName": "مصنع الغرب للتسويق ش.م.م",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 45400,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 45400,
+        "subtotal": 45400,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مصنع الغرب للتسويق ش.م.م",
+        "date": "2026-01-15",
+        "ref": "INV-1041"
+      },
+      "salt": "e9526d1366a79f9dd024a5d2754333c3",
+      "validationHash": "3b761231f918773c5ac29ad7ae642e005016ea30fa131ecc41ec1bf8453cc229"
     },
     {
       "id": "Q-042",
@@ -2110,37 +1582,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1103.047",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1103.047",
-          "accountName": "شركة المجد للتجزئة ش.م.م",
-          "acctType": "Asset",
-          "debit": 78384,
-          "credit": 0,
-          "description": "Credit Sale (إيراد الاجهزه ) - شركة المجد للتجزئة ش.م.م"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 68160,
-          "description": "Revenue (إيرادات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 10224,
-          "description": "Output VAT (ضريبة مخرجات)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 78384,
+        "subtotal": 68160,
+        "vatAmount": 10224,
+        "vatRate": "14%",
+        "partyName": "شركة المجد للتجزئة ش.م.م",
+        "date": "2026-01-15",
+        "ref": "INV-1042"
+      },
+      "salt": "15721bdd9fec3eb677021accd9cfdb85",
+      "validationHash": "dce97c9d77ccc413f783cceb5c95f60f4d8fd17266e156b2c85a3b706478b278"
     },
     {
       "id": "Q-043",
@@ -2153,28 +1606,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5101",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 56800,
-          "credit": 0,
-          "description": "COGS (تكلفة البضاعة المباعة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 56800,
-          "description": "Inv Reduction (تخفيض المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 56800,
+        "subtotal": 56800,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1043"
+      },
+      "salt": "daf7328ba58b152c30eb81a326261731",
+      "validationHash": "5d221d483e6f6b803dd15210c2353ed94016e921c73bb22eb25844954363c89c"
     },
     {
       "id": "Q-044",
@@ -2187,46 +1630,22 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5201",
-      "cr": "2105",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5201",
-          "accountName": "Salaries Expense (مصروف رواتب)",
-          "acctType": "Expense",
-          "debit": 11100,
-          "credit": 0,
-          "description": "Salaries (رواتب)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2105",
-          "accountName": "Payroll Taxes Payable (ضرائب رواتب مستحقة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 1110,
-          "description": "Taxes (ضرائب)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2106",
-          "accountName": "Social Insurance Payable (تأمينات اجتماعية مستحقة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 555,
-          "description": "Social Ins (تأمينات)"
-        },
-        {
-          "lineNum": 4,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 9435,
-          "description": "Net Pay (صافي الدفع)"
-        }
-      ]
+      "requiredLinesCount": 4,
+      "docData": {
+        "totalAmount": 11100,
+        "subtotal": 11100,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1044",
+        "grossAmount": 11100,
+        "taxAmount": 1110,
+        "socAmount": 555,
+        "netAmount": 9435
+      },
+      "salt": "c732ae99da3b135830885c5096e99135",
+      "validationHash": "7f58d09e04313b8fd3ea3174b49c3d0b6f858557c426568b0f1afc0bef62d7c8"
     },
     {
       "id": "Q-045",
@@ -2239,46 +1658,22 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5201",
-      "cr": "2105",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5201",
-          "accountName": "Salaries Expense (مصروف رواتب)",
-          "acctType": "Expense",
-          "debit": 21700,
-          "credit": 0,
-          "description": "Salaries (رواتب)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2105",
-          "accountName": "Payroll Taxes Payable (ضرائب رواتب مستحقة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 2170,
-          "description": "Taxes (ضرائب)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2106",
-          "accountName": "Social Insurance Payable (تأمينات اجتماعية مستحقة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 1085,
-          "description": "Social Ins (تأمينات)"
-        },
-        {
-          "lineNum": 4,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 18445,
-          "description": "Net Pay (صافي الدفع)"
-        }
-      ]
+      "requiredLinesCount": 4,
+      "docData": {
+        "totalAmount": 21700,
+        "subtotal": 21700,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1045",
+        "grossAmount": 21700,
+        "taxAmount": 2170,
+        "socAmount": 1085,
+        "netAmount": 18445
+      },
+      "salt": "94159c888f1c8a45b679b16f29deedf4",
+      "validationHash": "68b3208a92b009172e8647ca1cf65abeb934e5525d6a049061a52dab7afdb8da"
     },
     {
       "id": "Q-046",
@@ -2291,28 +1686,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5208",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5208",
-          "accountName": "Bank Charges (مصروفات بنكية)",
-          "acctType": "Expense",
-          "debit": 318,
-          "credit": 0,
-          "description": "Bank Fees & Commissions (رسوم ومصاريف بنكية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 318,
-          "description": "Bank Outflow (خصم مصاريف بنكية)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 318,
+        "subtotal": 318,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1046"
+      },
+      "salt": "96be6f97ec662236ea23b5bde9d4e13c",
+      "validationHash": "a922842f02cd48b43e43fd7e675fc2cb2572b54d01356f0d454289df335e8579"
     },
     {
       "id": "Q-047",
@@ -2325,37 +1710,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2105",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2105",
-          "accountName": "Payroll Taxes Payable (ضرائب رواتب مستحقة)",
-          "acctType": "Liability",
-          "debit": 3280,
-          "credit": 0,
-          "description": "Taxes Settlement (تسوية ضرائب)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2106",
-          "accountName": "Social Insurance Payable (تأمينات اجتماعية مستحقة)",
-          "acctType": "Liability",
-          "debit": 1640,
-          "credit": 0,
-          "description": "Social Ins Settlement (تسوية تأمينات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 4920,
-          "description": "Bank Outflow (تدفق بنكي خارج)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 4920,
+        "subtotal": 4920,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1047"
+      },
+      "salt": "76bfead7ed8aabd681d02a6f5054a481",
+      "validationHash": "1448818f0a1792d677855fb9be1f559d7697161da59b72874e62fd11c09809b1"
     },
     {
       "id": "Q-048",
@@ -2368,28 +1734,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.004",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 35800,
-          "credit": 0,
-          "description": "Collection from 1103.004 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.004",
-          "accountName": "مصنع الغرب للتسويق ش.م.م",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 35800,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 35800,
+        "subtotal": 35800,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مصنع الغرب للتسويق ش.م.م",
+        "date": "2026-01-15",
+        "ref": "INV-1048"
+      },
+      "salt": "e50434a2faf0c739cfc591ac1499471a",
+      "validationHash": "33cbe4b7185ea01bd0504762bf0e386cfc3e7edc35946c1f326a6c909506de80"
     },
     {
       "id": "Q-049",
@@ -2402,28 +1758,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5211",
-      "cr": "1101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5211",
-          "accountName": "Cash Shortage Expense (عجز الخزينة)",
-          "acctType": "Expense",
-          "debit": 203,
-          "credit": 0,
-          "description": "Cash Shortage (تسوية عجز الخزينة / فروق جرد نقدية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 203,
-          "description": "Cash Reduction (تخفيض رصيد الصندوق)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 203,
+        "subtotal": 203,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1049"
+      },
+      "salt": "3d4abc12291f54b0767ebf5a35aa1c7a",
+      "validationHash": "7f9ae2861c96a9c63e4dd0fdf63dc8a227870e080791cf76965d475cae623d95"
     },
     {
       "id": "Q-050",
@@ -2436,28 +1782,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5207",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5207",
-          "accountName": "Maintenance Expense (مصروف صيانة)",
-          "acctType": "Expense",
-          "debit": 1000,
-          "credit": 0,
-          "description": "Maintenance (صيانة دورية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1000,
-          "description": "Bank (بنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 1000,
+        "subtotal": 1000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1050"
+      },
+      "salt": "cbc136287bc66e69777989970fe7ea46",
+      "validationHash": "a95661bc2a7bc07ec8d2a4a5da7aa0f7213895cb976fb6c370b628f5468c428c"
     },
     {
       "id": "Q-051",
@@ -2470,28 +1806,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1105",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1105",
-          "accountName": "Prepaid Expenses (مصروفات مدفوعة مقدماً)",
-          "acctType": "Asset",
-          "debit": 22800,
-          "credit": 0,
-          "description": "Prepaid Rent (إيجار مدفوع مقدماً)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 22800,
-          "description": "Bank Outflow (سداد بنكي للإيجار)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 22800,
+        "subtotal": 22800,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1051"
+      },
+      "salt": "901173f028c45e3cf6f43f8d2168a045",
+      "validationHash": "1e7326b56d1fd0817c5c68e88d90aa96586f2565abcb17b3b2f88ee739f0c9e5"
     },
     {
       "id": "Q-052",
@@ -2504,28 +1830,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.004",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 13221.15,
-          "credit": 0,
-          "description": "Collection from 1103.004 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.004",
-          "accountName": "مصنع الغرب للتسويق ش.م.م",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 13221.15,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 13221.15,
+        "subtotal": 13221.15,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مصنع الغرب للتسويق ش.م.م",
+        "date": "2026-01-15",
+        "ref": "INV-1052"
+      },
+      "salt": "71773bc7d56f4551c4a48c645872dfea",
+      "validationHash": "82d8fd08a6aef273e3623e06011f06ffe75674ca94d6ff8706666c5011edfd86"
     },
     {
       "id": "Q-053",
@@ -2538,28 +1854,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "2104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 25800,
-          "credit": 0,
-          "description": "Cash Received in Advance (نقدية مستلمة مقدماً)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2104",
-          "accountName": "Unearned Revenue (إيرادات غير مكتسبة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 25800,
-          "description": "Unearned Revenue (إيرادات غير مكتسبة)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 25800,
+        "subtotal": 25800,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1053"
+      },
+      "salt": "a167baa31ef71103d6b05b0046e225ff",
+      "validationHash": "4543556c362614c74b9c4be8a23938bf123eca91f6803a3f50c438c539df980f"
     },
     {
       "id": "Q-054",
@@ -2572,28 +1878,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5203",
-      "cr": "2103",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5203",
-          "accountName": "Utilities Expense (مصروف مرافق)",
-          "acctType": "Expense",
-          "debit": 3200,
-          "credit": 0,
-          "description": "Utilities Expense (مصروف مرافق)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2103",
-          "accountName": "Accrued Expenses (مصروفات مستحقة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 3200,
-          "description": "Accrued Expenses (مصروفات مستحقة)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 3200,
+        "subtotal": 3200,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1054"
+      },
+      "salt": "e1de9701494de48a735b744397c4a173",
+      "validationHash": "82f0d65b60cc5b2fac18e05822c77111ea0db0d19ec6689fc4b095544ba0b541"
     },
     {
       "id": "Q-055",
@@ -2606,37 +1902,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1103.037",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1103.037",
-          "accountName": "معرض السلام للجملة تضامن",
-          "acctType": "Asset",
-          "debit": 34914,
-          "credit": 0,
-          "description": "Credit Sale (إيراد الاجهزه ) - معرض السلام للجملة تضامن"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 30360,
-          "description": "Revenue (إيرادات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 4554,
-          "description": "Output VAT (ضريبة مخرجات)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 34914,
+        "subtotal": 30360,
+        "vatAmount": 4554,
+        "vatRate": "14%",
+        "partyName": "معرض السلام للجملة تضامن",
+        "date": "2026-01-15",
+        "ref": "INV-1055"
+      },
+      "salt": "be53010625af46bc70a62a4ea5125537",
+      "validationHash": "23901bc946dbbcc6385eece69fc2867493b5b85bf81f366fab5d0b0b74f185a5"
     },
     {
       "id": "Q-056",
@@ -2649,28 +1926,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5101",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 25300,
-          "credit": 0,
-          "description": "COGS (تكلفة البضاعة المباعة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 25300,
-          "description": "Inv Reduction (تخفيض المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 25300,
+        "subtotal": 25300,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1056"
+      },
+      "salt": "496ce859c56a61132618fea9952ee900",
+      "validationHash": "c0edb2099240efc362df29343ab323ef52962bd6b34cc63812e50c617e822ebd"
     },
     {
       "id": "Q-057",
@@ -2683,37 +1950,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2102",
-      "cr": "1106",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 69009.15,
-          "credit": 0,
-          "description": "Output VAT Clearing (تسوية ضريبة مخرجات)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 6705,
-          "description": "Input VAT Clearing (تسوية ضريبة مدخلات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 62304.15,
-          "description": "VAT Payment (مدفوعات ضريبية)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 69009.15,
+        "subtotal": 0,
+        "vatAmount": 69009.15,
+        "vatRate": "14%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1057"
+      },
+      "salt": "d199a18541fd521bbb51e7b1422288df",
+      "validationHash": "bf8ce9e4ade9b74cec1ca681efe84e26f6197dd0ea4948f0c406c55fd109c20b"
     },
     {
       "id": "Q-058",
@@ -2726,28 +1974,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5207",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5207",
-          "accountName": "Maintenance Expense (مصروف صيانة)",
-          "acctType": "Expense",
-          "debit": 1000,
-          "credit": 0,
-          "description": "Maintenance (صيانة دورية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1000,
-          "description": "Bank (بنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 1000,
+        "subtotal": 1000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1058"
+      },
+      "salt": "ab0f8715cc1d2aed7bdd8acba3bad477",
+      "validationHash": "1c04c5eb82e3a45b1fde8b497c73f63c8025cbc4405bc153e0acdd9f9c8e66db"
     },
     {
       "id": "Q-059",
@@ -2760,37 +1998,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1201",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 32288,
-          "credit": 0,
-          "description": "Disposal Proceeds (متحصلات استبعاد أصول)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1201",
-          "accountName": "Fixed Assets (أصول ثابتة)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 40000,
-          "description": "Remove Asset (إقفال تكلفة الأصل)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "5210",
-          "accountName": "Loss on Asset Disposal (خسائر استبعاد أصول)",
-          "acctType": "Expense",
-          "debit": 7712,
-          "credit": 0,
-          "description": "Loss on Disposal (خسائر استبعاد)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 40000,
+        "subtotal": 40000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1059"
+      },
+      "salt": "8c20e72205a74d7d315c64bbbf8829a3",
+      "validationHash": "e69b6df640722ba4785019f314c2f686f4ea725b151fc5efacc747de8b345363"
     },
     {
       "id": "Q-060",
@@ -2803,37 +2022,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1104",
-      "cr": "2101.005",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 138800,
-          "credit": 0,
-          "description": "Inventory Purchase (شراء الاجهزه )"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 20820,
-          "credit": 0,
-          "description": "Input VAT (ضريبة مدخلات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2101.005",
-          "accountName": "مصنع الشرق للتجارة تضامن",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 159620,
-          "description": "AP (موردون) - مصنع الشرق للتجارة تضامن"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 159620,
+        "subtotal": 138800,
+        "vatAmount": 20820,
+        "vatRate": "14%",
+        "partyName": "مصنع الشرق للتجارة تضامن",
+        "date": "2026-01-15",
+        "ref": "INV-1060"
+      },
+      "salt": "00c270c5314928c1836653ae28487b15",
+      "validationHash": "331c699b473f3be881615f9cd984c48993cc9f5352564e73f338b31a2635c05d"
     },
     {
       "id": "Q-061",
@@ -2846,28 +2046,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5206",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5206",
-          "accountName": "Inventory Obsolescence Expense (مصروف هبوط أسعار المخزون)",
-          "acctType": "Expense",
-          "debit": 1600,
-          "credit": 0,
-          "description": "Inventory Shrinkage/Variance (تسوية عجز وفروق جرد المخزون)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1600,
-          "description": "Inv Reduction (تخفيض حساب المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 1600,
+        "subtotal": 1600,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1061"
+      },
+      "salt": "9b553756d26a92d6d2f3058bf085732c",
+      "validationHash": "7766c2da4d4a7c1e5d9850c1b6dd84ad2fb3dc348c9338ab03d7375fc80f3e90"
     },
     {
       "id": "Q-062",
@@ -2880,28 +2070,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5207",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5207",
-          "accountName": "Maintenance Expense (مصروف صيانة)",
-          "acctType": "Expense",
-          "debit": 1000,
-          "credit": 0,
-          "description": "Maintenance (صيانة دورية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1000,
-          "description": "Bank (بنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 1000,
+        "subtotal": 1000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1062"
+      },
+      "salt": "03295854913843fcd19be5f619085090",
+      "validationHash": "b37dbb8d81ff5e717c51881434d7c21d88407c7894116cc10c9c8347db699dca"
     },
     {
       "id": "Q-063",
@@ -2914,28 +2094,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.005",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 4589,
-          "credit": 0,
-          "description": "Collection from 1103.005 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.005",
-          "accountName": "معرض الوفاء للتسويق ش.م.م",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 4589,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 4589,
+        "subtotal": 4589,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "معرض الوفاء للتسويق ش.م.م",
+        "date": "2026-01-15",
+        "ref": "INV-1063"
+      },
+      "salt": "d6b3e250e5b17a77976267ba078a2e43",
+      "validationHash": "5564e04bcbb3cfe8b81cd080bcb0c586925717b1aaa89bdaf760256161d5e426"
     },
     {
       "id": "Q-064",
@@ -2948,28 +2118,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 9500,
-          "credit": 0,
-          "description": "Cash Deposit to Bank (إيداع نقدي بالبنك من الخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 9500,
-          "description": "Cash Transfer Out (صرف من الخزينة للإيداع البنكي)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 9500,
+        "subtotal": 9500,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1064"
+      },
+      "salt": "e613b4df8fb4ce5b1a55db31c7f659a3",
+      "validationHash": "d5db5e0e8ff53c3dac2c766ae17021b26dde4651fdf28056b5dbd0408ea51f2d"
     },
     {
       "id": "Q-065",
@@ -2982,46 +2142,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1103.036",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1103.036",
-          "accountName": "معرض الوفاء للتجزئة توصية بسيطة",
-          "acctType": "Asset",
-          "debit": 150742,
-          "credit": 0,
-          "description": "Credit Sale (إيراد الاجهزه ) - معرض الوفاء للتجزئة توصية بسيطة"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4104",
-          "accountName": "Sales Discount (خصم مسموح به)",
-          "acctType": "Contra Revenue",
-          "debit": 10040,
-          "credit": 0,
-          "description": "Sales Discount (خصم مبيعات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 141120,
-          "description": "Revenue (إيرادات)"
-        },
-        {
-          "lineNum": 4,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 19662,
-          "description": "Output VAT (ضريبة مخرجات)"
-        }
-      ]
+      "requiredLinesCount": 4,
+      "docData": {
+        "totalAmount": 160782,
+        "subtotal": 141120,
+        "vatAmount": 19662,
+        "vatRate": "14%",
+        "partyName": "معرض الوفاء للتجزئة توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1065"
+      },
+      "salt": "a489a420be03285edb67cda8ae5df7fc",
+      "validationHash": "65ed35d01532f91231b995b014e47dc7dc024b85613af784810c5620ec53d688"
     },
     {
       "id": "Q-066",
@@ -3034,28 +2166,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5101",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 117600,
-          "credit": 0,
-          "description": "COGS (تكلفة البضاعة المباعة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 117600,
-          "description": "Inv Reduction (تخفيض المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 117600,
+        "subtotal": 117600,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1066"
+      },
+      "salt": "8f7e8bcc448cccdf650d23e52e6bd8a6",
+      "validationHash": "a3cd36b0c07e7eb2d83fdd6f79ce9a9a7e09f582e081405020c8b3d880d27c1e"
     },
     {
       "id": "Q-067",
@@ -3068,28 +2190,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1107",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1107",
-          "accountName": "Accrued Revenue (إيرادات مستحقة)",
-          "acctType": "Asset",
-          "debit": 8100,
-          "credit": 0,
-          "description": "Accrued Service Rev (إيرادات خدمات مستحقة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 8100,
-          "description": "Revenue Recognized (إيرادات معترف بها)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 8100,
+        "subtotal": 8100,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1067"
+      },
+      "salt": "e6a27ee0e18c9107cf79113d8451f94e",
+      "validationHash": "b507b577b8d7b48e9942a1acaa9a8a1d06540d2e8abd6283a5fb337e2df0c346"
     },
     {
       "id": "Q-068",
@@ -3102,28 +2214,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.006",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 3748,
-          "credit": 0,
-          "description": "Collection from 1103.006 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.006",
-          "accountName": "شركة النور للجملة تضامن",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 3748,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 3748,
+        "subtotal": 3748,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "شركة النور للجملة تضامن",
+        "date": "2026-01-15",
+        "ref": "INV-1068"
+      },
+      "salt": "d36985e2d6292a9bea5b51f4a037afaf",
+      "validationHash": "e0d3c891b258f922fdc50b0f0ba5ba381fd7d2efc6f721cda4e988453621880f"
     },
     {
       "id": "Q-069",
@@ -3136,28 +2238,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1108",
-      "cr": "1101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1108",
-          "accountName": "Employee Advances (سلف الموظفين)",
-          "acctType": "Asset",
-          "debit": 600,
-          "credit": 0,
-          "description": "Employee Custody Advance (صرف سلفة مؤقتة لموظف)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 600,
-          "description": "Petty Cash Outflow (صرف من الخزينة)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 600,
+        "subtotal": 600,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1069"
+      },
+      "salt": "dcab7f9cbea80a1fbc9e4aaabc008957",
+      "validationHash": "a18e7f41ce7d91bb55234687df946ab1a7ee1aa8f6dbfd5577236840635a5e02"
     },
     {
       "id": "Q-070",
@@ -3170,28 +2262,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.007",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 2539,
-          "credit": 0,
-          "description": "Collection from 1103.007 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.007",
-          "accountName": "مصنع المستقبل للتجزئة توصية بسيطة",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 2539,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 2539,
+        "subtotal": 2539,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مصنع المستقبل للتجزئة توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1070"
+      },
+      "salt": "bcb709580968a492b52badd2ceb39e9f",
+      "validationHash": "04ef2cfaa67a48ccb7ba4d67838aae9367292883fc89da9f3d43c057dce01f92"
     },
     {
       "id": "Q-071",
@@ -3204,37 +2286,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1103.003",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1103.003",
-          "accountName": "مؤسسة المجد للتجزئة توصية بسيطة",
-          "acctType": "Asset",
-          "debit": 27048,
-          "credit": 0,
-          "description": "Credit Sale (إيراد الاجهزه ) - مؤسسة المجد للتجزئة توصية بسيطة"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 23520,
-          "description": "Revenue (إيرادات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 3528,
-          "description": "Output VAT (ضريبة مخرجات)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 27048,
+        "subtotal": 23520,
+        "vatAmount": 3528,
+        "vatRate": "14%",
+        "partyName": "مؤسسة المجد للتجزئة توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1071"
+      },
+      "salt": "f531dac8b6c6b50d57503f78b9ffb9c3",
+      "validationHash": "7073ccb133f91c7e09da41ee39d2ea23f2f51fb6579c204383e617916289dc91"
     },
     {
       "id": "Q-072",
@@ -3247,28 +2310,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5101",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 19600,
-          "credit": 0,
-          "description": "COGS (تكلفة البضاعة المباعة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 19600,
-          "description": "Inv Reduction (تخفيض المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 19600,
+        "subtotal": 19600,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1072"
+      },
+      "salt": "070db51e67e417bddf66d9c7c796cefe",
+      "validationHash": "8b61c81fc6918a435793a27abcb3b375e0becaefce91bdf9941cf04d779a66b1"
     },
     {
       "id": "Q-073",
@@ -3281,28 +2334,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 2500,
-          "credit": 0,
-          "description": "Cash Deposit to Bank (إيداع نقدي بالبنك من الخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 2500,
-          "description": "Cash Transfer Out (صرف من الخزينة للإيداع البنكي)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 2500,
+        "subtotal": 2500,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1073"
+      },
+      "salt": "a94745a2448a905e9faeeedff36a8850",
+      "validationHash": "d264a5de1ffcbdb468825dcff1a730f728f9a4dcff9f861e286ba92da100d8b4"
     },
     {
       "id": "Q-074",
@@ -3315,28 +2358,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1101",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 3500,
-          "credit": 0,
-          "description": "Bank Withdrawal to Cash (سحب نقدي لتغذية الخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 3500,
-          "description": "Bank Outflow (شيك مسحوب لتغذية الخزينة)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 3500,
+        "subtotal": 3500,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1074"
+      },
+      "salt": "95d2767340802bcad568385681174f5a",
+      "validationHash": "003b45302bc19395dc4db6fef604bcf20e26efa0b5d76ef88143837d202b1b45"
     },
     {
       "id": "Q-075",
@@ -3349,37 +2382,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1201",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1201",
-          "accountName": "Fixed Assets (أصول ثابتة)",
-          "acctType": "Asset",
-          "debit": 31000,
-          "credit": 0,
-          "description": "Fixed Asset Purchase (شراء أصل ثابت)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 4650,
-          "credit": 0,
-          "description": "Input VAT (ضريبة مدخلات على الأصول)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 35650,
-          "description": "Bank Outflow (سداد قيمة الأصل)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 35650,
+        "subtotal": 31000,
+        "vatAmount": 4650,
+        "vatRate": "14%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1075"
+      },
+      "salt": "a63b85aa91714f10ae3c7550d0cc30b8",
+      "validationHash": "4b22e9fe33b1708621acefeacd6e06db9e35719d96c4c4da9c8b6b8f520af71d"
     },
     {
       "id": "Q-076",
@@ -3392,28 +2406,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1101",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 7000,
-          "credit": 0,
-          "description": "Petty Cash Replenishment (استعاضة سلفة مستديمة للخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 7000,
-          "description": "Bank Outflow (سحب شيك استعاضة من البنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 7000,
+        "subtotal": 7000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1076"
+      },
+      "salt": "2816b6de73b4055d70d376a0c92921a6",
+      "validationHash": "13683b48b0a6e0d1c8e6b2b617858f5818868d4a1ce62d031cc34844257bc580"
     },
     {
       "id": "Q-077",
@@ -3426,28 +2430,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5207",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5207",
-          "accountName": "Maintenance Expense (مصروف صيانة)",
-          "acctType": "Expense",
-          "debit": 1000,
-          "credit": 0,
-          "description": "Maintenance (صيانة دورية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1000,
-          "description": "Bank (بنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 1000,
+        "subtotal": 1000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1077"
+      },
+      "salt": "f4b2a71bdb07c0235a6bf039fbbef60f",
+      "validationHash": "92763164505096882e1f251dffdce7ca3b2c542ce45c5cc8dbd62b75080bcdc4"
     },
     {
       "id": "Q-078",
@@ -3460,37 +2454,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1104",
-      "cr": "2101.010",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 186300,
-          "credit": 0,
-          "description": "Inventory Purchase (شراء الاجهزه )"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 27945,
-          "credit": 0,
-          "description": "Input VAT (ضريبة مدخلات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2101.010",
-          "accountName": "شركة النور للتوريدات تضامن",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 214245,
-          "description": "AP (موردون) - شركة النور للتوريدات تضامن"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 214245,
+        "subtotal": 186300,
+        "vatAmount": 27945,
+        "vatRate": "14%",
+        "partyName": "شركة النور للتوريدات تضامن",
+        "date": "2026-01-15",
+        "ref": "INV-1078"
+      },
+      "salt": "4323192343733575d04b0be7b0976bac",
+      "validationHash": "499a8c2de5dd012c5a4f970d20653f5203edd9ad14dc026a0454e2789fbd1966"
     },
     {
       "id": "Q-079",
@@ -3503,37 +2478,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1104",
-      "cr": "2101.010",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 197300,
-          "credit": 0,
-          "description": "Inventory Purchase (شراء الاجهزه )"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 29595,
-          "credit": 0,
-          "description": "Input VAT (ضريبة مدخلات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2101.010",
-          "accountName": "شركة النور للتوريدات تضامن",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 226895,
-          "description": "AP (موردون) - شركة النور للتوريدات تضامن"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 226895,
+        "subtotal": 197300,
+        "vatAmount": 29595,
+        "vatRate": "14%",
+        "partyName": "شركة النور للتوريدات تضامن",
+        "date": "2026-01-15",
+        "ref": "INV-1079"
+      },
+      "salt": "cf38e6e5edcdf847472edc55f9f4647e",
+      "validationHash": "3e74fcdae11b24d6d306096c45dd98c399c957105edd2e968374c5c5e4c17bef"
     },
     {
       "id": "Q-080",
@@ -3546,28 +2502,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5207",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5207",
-          "accountName": "Maintenance Expense (مصروف صيانة)",
-          "acctType": "Expense",
-          "debit": 1000,
-          "credit": 0,
-          "description": "Maintenance (صيانة دورية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1000,
-          "description": "Bank (بنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 1000,
+        "subtotal": 1000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1080"
+      },
+      "salt": "a3d685013a3d6da0df74c31de860560b",
+      "validationHash": "4821e2bb8c25c63ed29b7a39b59b108b2bdb9cc25fa0a0a852909bc5a2d4a125"
     },
     {
       "id": "Q-081",
@@ -3580,37 +2526,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "4105",
-      "cr": "1103.003",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "4105",
-          "accountName": "Sales Returns (مردودات مبيعات)",
-          "acctType": "Contra Revenue",
-          "debit": 1900,
-          "credit": 0,
-          "description": "Sales Returns (مردودات مبيعات)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 285,
-          "credit": 0,
-          "description": "VAT Reversal (عكس ضريبة)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1103.003",
-          "accountName": "مؤسسة المجد للتجزئة توصية بسيطة",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 2185,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 2185,
+        "subtotal": 1900,
+        "vatAmount": 285,
+        "vatRate": "14%",
+        "partyName": "مؤسسة المجد للتجزئة توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1081"
+      },
+      "salt": "0e6106336fecd3f650aabfb0a5848681",
+      "validationHash": "b2ba7bf3910244207ba6d4cb9341de31336fc6770f9c5b73f3cedfe414c13e89"
     },
     {
       "id": "Q-082",
@@ -3623,28 +2550,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1104",
-      "cr": "5101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 863,
-          "credit": 0,
-          "description": "Inv Restoration (رد مخزون)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 0,
-          "credit": 863,
-          "description": "COGS Reversal (عكس تكلفة البضاعة)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 863,
+        "subtotal": 863,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1082"
+      },
+      "salt": "1d2fc511303fb8a088393d00aa87bd44",
+      "validationHash": "fb3554c56a27403f62cf66f23c5b51b72af91ed8f6fb03e0838efbb5775aa4ef"
     },
     {
       "id": "Q-083",
@@ -3657,37 +2574,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2101.002",
-      "cr": "1106",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2101.002",
-          "accountName": "شركة الاتحاد للاستيراد والتصدير توصية بسيطة",
-          "acctType": "Liability",
-          "debit": 3220,
-          "credit": 0,
-          "description": "AP Reduction (تخفيض حساب الموردين)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 420,
-          "description": "Input VAT Reversal (عكس ضريبة مدخلات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 2800,
-          "description": "Inventory Return (مردودات مخزون)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 3220,
+        "subtotal": 2800,
+        "vatAmount": 420,
+        "vatRate": "14%",
+        "partyName": "شركة الاتحاد للاستيراد والتصدير توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1083"
+      },
+      "salt": "384208605f3826d12bb8ee3f607d759f",
+      "validationHash": "bdca3353ffbf55f04619af3e74f553fa7d6794fb5a37179a1d16bca1e6fda92a"
     },
     {
       "id": "Q-084",
@@ -3700,28 +2598,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1108",
-      "cr": "1101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1108",
-          "accountName": "Employee Advances (سلف الموظفين)",
-          "acctType": "Asset",
-          "debit": 800,
-          "credit": 0,
-          "description": "Employee Custody Advance (صرف سلفة مؤقتة لموظف)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 800,
-          "description": "Petty Cash Outflow (صرف من الخزينة)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 800,
+        "subtotal": 800,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1084"
+      },
+      "salt": "7b590f44662123c672a33779d24b426c",
+      "validationHash": "0a74494ff9e504332baa83c52d4fdf6b2683039e78330e6ae6d5f027debf7792"
     },
     {
       "id": "Q-085",
@@ -3734,28 +2622,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 8500,
-          "credit": 0,
-          "description": "Cash Deposit to Bank (إيداع نقدي بالبنك من الخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 8500,
-          "description": "Cash Transfer Out (صرف من الخزينة للإيداع البنكي)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 8500,
+        "subtotal": 8500,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1085"
+      },
+      "salt": "7ed271cf87e92d7c349504b60aeaeeef",
+      "validationHash": "9511244f2a75507e9a875b918f45967b15b34801b20feedbb3862c259e8854b4"
     },
     {
       "id": "Q-086",
@@ -3768,28 +2646,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5206",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5206",
-          "accountName": "Inventory Obsolescence Expense (مصروف هبوط أسعار المخزون)",
-          "acctType": "Expense",
-          "debit": 2000,
-          "credit": 0,
-          "description": "Inventory Shrinkage/Variance (تسوية عجز وفروق جرد المخزون)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 2000,
-          "description": "Inv Reduction (تخفيض حساب المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 2000,
+        "subtotal": 2000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1086"
+      },
+      "salt": "9ed734f1c3254828b56ea661c1f932c1",
+      "validationHash": "cdee1646e17ec4a6425e09788cf50ce11b17b7ea5aea981dc6b0a67ce86da4b5"
     },
     {
       "id": "Q-087",
@@ -3802,28 +2670,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1101",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 4000,
-          "credit": 0,
-          "description": "Petty Cash Replenishment (استعاضة سلفة مستديمة للخزينة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 4000,
-          "description": "Bank Outflow (سحب شيك استعاضة من البنك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 4000,
+        "subtotal": 4000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1087"
+      },
+      "salt": "66128a56fc55579da9facd821d5d5c6c",
+      "validationHash": "4da74d6bad1d93618a19ebad7a9b70bdc16f8bdefafce0df663c5e5dade14885"
     },
     {
       "id": "Q-088",
@@ -3836,46 +2694,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 27640.25,
-          "credit": 0,
-          "description": "Cash Sale (بيع نقدي)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4104",
-          "accountName": "Sales Discount (خصم مسموح به)",
-          "acctType": "Contra Revenue",
-          "debit": 1765,
-          "credit": 0,
-          "description": "Sales Discount (خصم مبيعات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 25800,
-          "description": "Revenue (إيرادات)"
-        },
-        {
-          "lineNum": 4,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 3605.25,
-          "description": "Output VAT (ضريبة مخرجات)"
-        }
-      ]
+      "requiredLinesCount": 4,
+      "docData": {
+        "totalAmount": 29405.25,
+        "subtotal": 25800,
+        "vatAmount": 3605.25,
+        "vatRate": "14%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1088"
+      },
+      "salt": "3278bd51b6d34283dfaf21c282d6f1e8",
+      "validationHash": "7f6462858ada6e20e1e83e3a00aa569138ae71cd2ecf1c7f9142ff8a92237207"
     },
     {
       "id": "Q-089",
@@ -3888,28 +2718,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5101",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5101",
-          "accountName": "Cost of Goods Sold (تكلفة البضاعة المباعة)",
-          "acctType": "Expense",
-          "debit": 21500,
-          "credit": 0,
-          "description": "COGS (تكلفة البضاعة المباعة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 21500,
-          "description": "Inv Reduction (تخفيض المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 21500,
+        "subtotal": 21500,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1089"
+      },
+      "salt": "a0e2d34e66edd0878b062e3ae2f6b95b",
+      "validationHash": "78d501a9ac2f92743e6d5fa76ea7d7fecb83c296f702f9c3df09e9964f570cb8"
     },
     {
       "id": "Q-090",
@@ -3922,28 +2742,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.003",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 24863,
-          "credit": 0,
-          "description": "Collection from 1103.003 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.003",
-          "accountName": "مؤسسة المجد للتجزئة توصية بسيطة",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 24863,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 24863,
+        "subtotal": 24863,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مؤسسة المجد للتجزئة توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1090"
+      },
+      "salt": "a41e725ef1bcf23475c28275cd6ff43f",
+      "validationHash": "5894945247f64d6f2390d0eb3f215a85a331edd75339b0beec202163f46b1807"
     },
     {
       "id": "Q-091",
@@ -3956,46 +2766,22 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5201",
-      "cr": "2105",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5201",
-          "accountName": "Salaries Expense (مصروف رواتب)",
-          "acctType": "Expense",
-          "debit": 18700,
-          "credit": 0,
-          "description": "Salaries (رواتب)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2105",
-          "accountName": "Payroll Taxes Payable (ضرائب رواتب مستحقة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 1870,
-          "description": "Taxes (ضرائب)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "2106",
-          "accountName": "Social Insurance Payable (تأمينات اجتماعية مستحقة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 935,
-          "description": "Social Ins (تأمينات)"
-        },
-        {
-          "lineNum": 4,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 15895,
-          "description": "Net Pay (صافي الدفع)"
-        }
-      ]
+      "requiredLinesCount": 4,
+      "docData": {
+        "totalAmount": 18700,
+        "subtotal": 18700,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1091",
+        "grossAmount": 18700,
+        "taxAmount": 1870,
+        "socAmount": 935,
+        "netAmount": 15895
+      },
+      "salt": "f727646082bcb0710f1db3bbeef6abc0",
+      "validationHash": "bda0c5a1eff1aedf82812ab862f03430759759f25883fc4673332254732a537e"
     },
     {
       "id": "Q-092",
@@ -4008,28 +2794,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.008",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 2015,
-          "credit": 0,
-          "description": "Collection from 1103.008 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.008",
-          "accountName": "معرض المجد للمقاولات ش.م.م",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 2015,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 2015,
+        "subtotal": 2015,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "معرض المجد للمقاولات ش.م.م",
+        "date": "2026-01-15",
+        "ref": "INV-1092"
+      },
+      "salt": "de863d9fc1192eacb411bf993f6aa43c",
+      "validationHash": "b5709a11f656b5a084d9b7f15610579fe9d4de533dde8a3be33692e0cc0fe8dd"
     },
     {
       "id": "Q-093",
@@ -4042,37 +2818,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2101.002",
-      "cr": "1106",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2101.002",
-          "accountName": "شركة الاتحاد للاستيراد والتصدير توصية بسيطة",
-          "acctType": "Liability",
-          "debit": 2645,
-          "credit": 0,
-          "description": "AP Reduction (تخفيض حساب الموردين)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 345,
-          "description": "Input VAT Reversal (عكس ضريبة مدخلات)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 2300,
-          "description": "Inventory Return (مردودات مخزون)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 2645,
+        "subtotal": 2300,
+        "vatAmount": 345,
+        "vatRate": "14%",
+        "partyName": "شركة الاتحاد للاستيراد والتصدير توصية بسيطة",
+        "date": "2026-01-15",
+        "ref": "INV-1093"
+      },
+      "salt": "8e1f6732f9c11072721c26dae3c38e46",
+      "validationHash": "e6c3356d36c062e4a3e8d13ef3d66e588536f7e67822f4e3f3c64c23763715c4"
     },
     {
       "id": "Q-094",
@@ -4085,37 +2842,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1201",
-      "cr": "1102",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1201",
-          "accountName": "Fixed Assets (أصول ثابتة)",
-          "acctType": "Asset",
-          "debit": 57000,
-          "credit": 0,
-          "description": "Fixed Asset Purchase (شراء أصل ثابت)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 8550,
-          "credit": 0,
-          "description": "Input VAT (ضريبة مدخلات على الأصول)"
-        },
-        {
-          "lineNum": 3,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 65550,
-          "description": "Bank Outflow (سداد قيمة الأصل)"
-        }
-      ]
+      "requiredLinesCount": 3,
+      "docData": {
+        "totalAmount": 65550,
+        "subtotal": 57000,
+        "vatAmount": 8550,
+        "vatRate": "14%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1094"
+      },
+      "salt": "fb3df1aacc24b5c47960c04b85a3c26d",
+      "validationHash": "89801797a02e8abe87fc64aef27a853097743e1f2be43687b623138708e556fc"
     },
     {
       "id": "Q-095",
@@ -4128,28 +2866,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "2104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 22800,
-          "credit": 0,
-          "description": "Cash Received in Advance (نقدية مستلمة مقدماً)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "2104",
-          "accountName": "Unearned Revenue (إيرادات غير مكتسبة)",
-          "acctType": "Liability",
-          "debit": 0,
-          "credit": 22800,
-          "description": "Unearned Revenue (إيرادات غير مكتسبة)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 22800,
+        "subtotal": 22800,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1095"
+      },
+      "salt": "3b8978309673838d816aa3f0080f09da",
+      "validationHash": "74063200c8d45ab710d74ef8b39fa04d29de8098e408ca1d9943ec2e76e56108"
     },
     {
       "id": "Q-096",
@@ -4162,28 +2890,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.009",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 2592,
-          "credit": 0,
-          "description": "Collection from 1103.009 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.009",
-          "accountName": "مجموعة الحديثة للتجزئة لصاحبها",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 2592,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 2592,
+        "subtotal": 2592,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مجموعة الحديثة للتجزئة لصاحبها",
+        "date": "2026-01-15",
+        "ref": "INV-1096"
+      },
+      "salt": "e6a6c2e0400a96f06ce2aaa76d67996f",
+      "validationHash": "ab4616f9eed4192fdd801650476684820ddd9d7a6c428b27bb2cee3c35ed3ef5"
     },
     {
       "id": "Q-097",
@@ -4196,28 +2914,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5207",
-      "cr": "1108",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5207",
-          "accountName": "Maintenance Expense (مصروف صيانة)",
-          "acctType": "Expense",
-          "debit": 1400,
-          "credit": 0,
-          "description": "Maintenance via Custody (تسوية سلفة بفواتير مصروفات)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1108",
-          "accountName": "Employee Advances (سلف الموظفين)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 1400,
-          "description": "Employee Custody Settlement (إقفال سلفة الموظف)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 1400,
+        "subtotal": 1400,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1097"
+      },
+      "salt": "8635d914ad10037600ad0626b049a4cd",
+      "validationHash": "3533077927c1730140a024f276190cd375ab6b3f490fb2daa52e6556fb0c631f"
     },
     {
       "id": "Q-098",
@@ -4230,28 +2938,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "1102",
-      "cr": "1103.010",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "1102",
-          "accountName": "Bank (بنك)",
-          "acctType": "Asset",
-          "debit": 5772,
-          "credit": 0,
-          "description": "Collection from 1103.010 (تحصيل دفعة من العميل)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.010",
-          "accountName": "مجموعة المستقبل للخدمات تضامن",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 5772,
-          "description": "AR Reduction (تخفيض حساب العملاء)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 5772,
+        "subtotal": 5772,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "مجموعة المستقبل للخدمات تضامن",
+        "date": "2026-01-15",
+        "ref": "INV-1098"
+      },
+      "salt": "aff769e3e7bb7f190ac542488a591869",
+      "validationHash": "29d9ae81432e3364691c0ce374b5bf50aaf7c1f7abac74772045f0d4d7fcb3d2"
     },
     {
       "id": "Q-099",
@@ -4264,28 +2962,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5211",
-      "cr": "1101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5211",
-          "accountName": "Cash Shortage Expense (عجز الخزينة)",
-          "acctType": "Expense",
-          "debit": 160,
-          "credit": 0,
-          "description": "Cash Shortage (تسوية عجز الخزينة / فروق جرد نقدية)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1101",
-          "accountName": "Cash (نقدية)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 160,
-          "description": "Cash Reduction (تخفيض رصيد الصندوق)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 160,
+        "subtotal": 160,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1099"
+      },
+      "salt": "918cec29f978d1a04a8b0332976752ba",
+      "validationHash": "fe138115e7a0b52f8d7f59efbc7e8aa0cd3b987821d78aedc03ee052245f1f41"
     },
     {
       "id": "Q-100",
@@ -4298,28 +2986,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5206",
-      "cr": "1104",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5206",
-          "accountName": "Inventory Obsolescence Expense (مصروف هبوط أسعار المخزون)",
-          "acctType": "Expense",
-          "debit": 3500,
-          "credit": 0,
-          "description": "Inventory Shrinkage/Variance (تسوية عجز وفروق جرد المخزون)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104",
-          "accountName": "Inventory (مخزون)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 3500,
-          "description": "Inv Reduction (تخفيض حساب المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 3500,
+        "subtotal": 3500,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1100"
+      },
+      "salt": "b2f7bee5a5b7c9e6847b15ae861613a6",
+      "validationHash": "25a0040910ac057ef1bd69d41a2d999804508cdfdc653875808a272c973d6662"
     },
     {
       "id": "Q-101",
@@ -4332,28 +3010,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5202",
-      "cr": "1105",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5202",
-          "accountName": "Rent Expense (مصروف إيجار)",
-          "acctType": "Expense",
-          "debit": 15435,
-          "credit": 0,
-          "description": "Prepaid Rent Amortization (إطفاء)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1105",
-          "accountName": "Prepaid Expenses (مصروفات مدفوعة مقدماً)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 15435,
-          "description": "Prepaid Reduction (تخفيض مدفوع مقدماً)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 15435,
+        "subtotal": 15435,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1101"
+      },
+      "salt": "7d57c3267bbad85f92c457d1ed06583e",
+      "validationHash": "8dd195adcf82c4175f091038d18b96e13656c255def55553a5998150a47c258b"
     },
     {
       "id": "Q-102",
@@ -4366,28 +3034,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5202",
-      "cr": "1105",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5202",
-          "accountName": "Rent Expense (مصروف إيجار)",
-          "acctType": "Expense",
-          "debit": 4412,
-          "credit": 0,
-          "description": "Prepaid Rent Amortization (إطفاء)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1105",
-          "accountName": "Prepaid Expenses (مصروفات مدفوعة مقدماً)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 4412,
-          "description": "Prepaid Reduction (تخفيض مدفوع مقدماً)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 4412,
+        "subtotal": 4412,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1102"
+      },
+      "salt": "fcee5d410ab78e65c4faead2ad366a93",
+      "validationHash": "e9dee747be65267410e9722f735e870cc0fadb965c3246bb8ccc1fd083ffff92"
     },
     {
       "id": "Q-103",
@@ -4400,28 +3058,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5202",
-      "cr": "1105",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5202",
-          "accountName": "Rent Expense (مصروف إيجار)",
-          "acctType": "Expense",
-          "debit": 12305,
-          "credit": 0,
-          "description": "Prepaid Rent Amortization (إطفاء)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1105",
-          "accountName": "Prepaid Expenses (مصروفات مدفوعة مقدماً)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 12305,
-          "description": "Prepaid Reduction (تخفيض مدفوع مقدماً)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 12305,
+        "subtotal": 12305,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1103"
+      },
+      "salt": "fc8ce03fdcda3c821086cdb579b272eb",
+      "validationHash": "1aeea9b638457e3b4afd575f5116c0f69a5603500d7fb03439b157e22a0a2d9f"
     },
     {
       "id": "Q-104",
@@ -4434,28 +3082,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2104",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2104",
-          "accountName": "Unearned Revenue (إيرادات غير مكتسبة)",
-          "acctType": "Liability",
-          "debit": 18000,
-          "credit": 0,
-          "description": "Unearned Service Revenue Recognition (اعتراف)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 18000,
-          "description": "Revenue Recognized (إيرادات معترف بها)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 18000,
+        "subtotal": 18000,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1104"
+      },
+      "salt": "e4d8a276416ba5da2e76878aeb29b1e6",
+      "validationHash": "f7211424f71889df12f137feefc0491b35ca8567987ade1d38f56b19edfbfcef"
     },
     {
       "id": "Q-105",
@@ -4468,28 +3106,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2104",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2104",
-          "accountName": "Unearned Revenue (إيرادات غير مكتسبة)",
-          "acctType": "Liability",
-          "debit": 29400,
-          "credit": 0,
-          "description": "Unearned Service Revenue Recognition (اعتراف)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 29400,
-          "description": "Revenue Recognized (إيرادات معترف بها)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 29400,
+        "subtotal": 29400,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1105"
+      },
+      "salt": "12b1afee951b03ca7d5a412a43fefa9f",
+      "validationHash": "75d18d59cbb7672e216cd7794c4ef2f95c3ac6cf24c92a90ad66160b1fbdd1d1"
     },
     {
       "id": "Q-106",
@@ -4502,28 +3130,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2104",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2104",
-          "accountName": "Unearned Revenue (إيرادات غير مكتسبة)",
-          "acctType": "Liability",
-          "debit": 25800,
-          "credit": 0,
-          "description": "Unearned Service Revenue Recognition (اعتراف)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 25800,
-          "description": "Revenue Recognized (إيرادات معترف بها)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 25800,
+        "subtotal": 25800,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1106"
+      },
+      "salt": "1284487b34a539368cc85f4857053b20",
+      "validationHash": "d072a11be6fe5136b834a522f3de6e4c08ae88fa0686849c2098629be3d7aba4"
     },
     {
       "id": "Q-107",
@@ -4536,28 +3154,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2104",
-      "cr": "4101",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2104",
-          "accountName": "Unearned Revenue (إيرادات غير مكتسبة)",
-          "acctType": "Liability",
-          "debit": 5826,
-          "credit": 0,
-          "description": "Unearned Service Revenue Recognition (اعتراف)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "4101",
-          "accountName": "Sales Revenue (إيرادات مبيعات)",
-          "acctType": "Revenue",
-          "debit": 0,
-          "credit": 5826,
-          "description": "Revenue Recognized (إيرادات معترف بها)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 5826,
+        "subtotal": 5826,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1107"
+      },
+      "salt": "c6b3340e8f1bd9b59b335e95f8cef9af",
+      "validationHash": "2e0b721a884e99dac8179229e2f571ced9b314bc3e2bf026323cc968838d70e1"
     },
     {
       "id": "Q-108",
@@ -4570,28 +3178,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5205",
-      "cr": "1103.1",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5205",
-          "accountName": "Bad Debt Expense (مصروف ديون معدومة)",
-          "acctType": "Expense",
-          "debit": 35721,
-          "credit": 0,
-          "description": "Bad Debt Expense (مصروف ديون معدومة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1103.1",
-          "accountName": "Allowance for Doubtful Accounts (مخصص ديون مشكوك فيها)",
-          "acctType": "Contra Asset",
-          "debit": 0,
-          "credit": 35721,
-          "description": "Allowance for Doubtful Accounts (مخصص ديون مشكوك فيها)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 35721,
+        "subtotal": 35721,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "Allowance for Doubtful Accounts (مخصص ديون مشكوك فيها)",
+        "date": "2026-01-15",
+        "ref": "INV-1108"
+      },
+      "salt": "30710445e48dfce1d1479a1ddab7745a",
+      "validationHash": "dde5e25d31c8a804f694cc0a575c1be7ddd02e3e7253481ca63a1bd962c637bd"
     },
     {
       "id": "Q-109",
@@ -4604,28 +3202,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Hard",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5206",
-      "cr": "1104.1",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5206",
-          "accountName": "Inventory Obsolescence Expense (مصروف هبوط أسعار المخزون)",
-          "acctType": "Expense",
-          "debit": 7047,
-          "credit": 0,
-          "description": "Inventory Obsolescence Exp (مصروف هبوط المخزون)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1104.1",
-          "accountName": "Allowance for Inventory Obsolescence (مخصص هبوط أسعار المخزون)",
-          "acctType": "Contra Asset",
-          "debit": 0,
-          "credit": 7047,
-          "description": "Allowance for Obsolescence (مخصص هبوط المخزون)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 7047,
+        "subtotal": 7047,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1109"
+      },
+      "salt": "c12e5c35ef4b4faa0d164f4eb7ddc928",
+      "validationHash": "c0f66e535d72d09b91a6a25e968de74831d2e815a1aa932cbc6b3054c528b294"
     },
     {
       "id": "Q-110",
@@ -4638,28 +3226,18 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Medium",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "2102",
-      "cr": "1106",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "2102",
-          "accountName": "Output VAT (ضريبة القيمة المضافة - مخرجات)",
-          "acctType": "Liability",
-          "debit": 26510.25,
-          "credit": 0,
-          "description": "Output VAT Clearing (تسوية ضريبة مخرجات)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1106",
-          "accountName": "Input VAT (ضريبة القيمة المضافة - مدخلات)",
-          "acctType": "Asset",
-          "debit": 0,
-          "credit": 26510.25,
-          "description": "Input VAT Clearing (تسوية ضريبة مدخلات)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 26510.25,
+        "subtotal": 0,
+        "vatAmount": 26510.25,
+        "vatRate": "14%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1110"
+      },
+      "salt": "fac7b8b3218e1a59270cc2d87a05a3f4",
+      "validationHash": "8f50616e350b8cdb36f8cab622f0b22cd702c817245cd30a2e285afedd5a98a0"
     },
     {
       "id": "Q-111",
@@ -4672,35 +3250,26 @@ const DEFAULT_PLATFORM_COMPANY = {
       "difficulty": "Easy",
       "category": "general",
       "categoryAr": "محاسبة عامة",
-      "dr": "5204",
-      "cr": "1202",
-      "lines": [
-        {
-          "lineNum": 1,
-          "accountCode": "5204",
-          "accountName": "Depreciation Expense (مصروف إهلاك)",
-          "acctType": "Expense",
-          "debit": 47886,
-          "credit": 0,
-          "description": "Annual Depreciation (إهلاك الأصول الثابتة)"
-        },
-        {
-          "lineNum": 2,
-          "accountCode": "1202",
-          "accountName": "Accumulated Depreciation (مجمع إهلاك)",
-          "acctType": "Contra Asset",
-          "debit": 0,
-          "credit": 47886,
-          "description": "Accumulated Depreciation (مجمع إهلاك)"
-        }
-      ]
+      "requiredLinesCount": 2,
+      "docData": {
+        "totalAmount": 47886,
+        "subtotal": 47886,
+        "vatAmount": 0,
+        "vatRate": "0%",
+        "partyName": "",
+        "date": "2026-01-15",
+        "ref": "INV-1111"
+      },
+      "salt": "22b3b780989dcf078b27e2ed6615f6dd",
+      "validationHash": "977e30452c37c1a629aaf283ae4693f0413979b519cd3282fec0f08000a1ef59"
     }
   ]
 };
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.DEFAULT_PLATFORM_COMPANY = DEFAULT_PLATFORM_COMPANY;
 }
-if (typeof module !== 'undefined') {
+
+if (typeof module !== "undefined" && module.exports) {
   module.exports = DEFAULT_PLATFORM_COMPANY;
 }

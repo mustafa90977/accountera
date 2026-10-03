@@ -63,9 +63,131 @@ const ACCOUNTS = {};
 Object.keys(COA).forEach(k => { ACCOUNTS[k] = COA[k].name; });
 window.ACCOUNTS = ACCOUNTS;
 
+// ================= CRYPTOGRAPHIC CANONICAL EVALUATION ENGINE =================
+function canonicalizeLines(lines) {
+    if (!lines || !Array.isArray(lines)) return '';
+    const normalized = lines.map(l => ({
+        accountCode: String(l.account || l.accountCode || '').trim(),
+        debit: Math.round((Number(l.debit) || 0) * 100) / 100,
+        credit: Math.round((Number(l.credit) || 0) * 100) / 100
+    })).filter(l => l.debit > 0 || l.credit > 0);
+
+    normalized.sort((a, b) => {
+        if (a.debit > 0 && b.debit === 0) return -1;
+        if (b.debit > 0 && a.debit === 0) return 1;
+        if (a.accountCode !== b.accountCode) return a.accountCode.localeCompare(b.accountCode);
+        if (a.debit !== b.debit) return a.debit - b.debit;
+        return a.credit - b.credit;
+    });
+
+    return JSON.stringify(normalized);
+}
+
+function sha256Sync(str) {
+    // UTF-8 encode to seamlessly handle any Unicode/Arabic characters without silent failure
+    const ascii = unescape(encodeURIComponent(str || ''));
+    function rightRotate(value, amount) {
+        return (value >>> amount) | (value << (32 - amount));
+    }
+    const mathPow = Math.pow;
+    const maxWord = mathPow(2, 32);
+    let lengthProperty = 'length';
+    let i, j;
+    let result = '';
+    const words = [];
+    const asciiBitLength = ascii[lengthProperty] * 8;
+    let hash = [];
+    const k = [];
+    let primeCounter = 0;
+    const isComposite = {};
+    for (let candidate = 2; primeCounter < 64; candidate++) {
+        if (!isComposite[candidate]) {
+            for (i = 0; i < 313; i += candidate) {
+                isComposite[i] = candidate;
+            }
+            hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
+            k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+        }
+    }
+    hash = hash.slice(0, 8);
+    let padded = ascii + '\x80';
+    while ((padded[lengthProperty] % 64) - 56) padded += '\x00';
+    for (i = 0; i < padded[lengthProperty]; i++) {
+        j = padded.charCodeAt(i);
+        words[i >> 2] |= j << (((3 - i) % 4) * 8);
+    }
+    words[words[lengthProperty]] = (asciiBitLength / maxWord) | 0;
+    words[words[lengthProperty]] = asciiBitLength;
+    for (j = 0; j < words[lengthProperty];) {
+        const w = words.slice(j, (j += 16));
+        const oldHash = hash;
+        hash = hash.slice(0, 8);
+        for (i = 0; i < 64; i++) {
+            const w15 = w[i - 15], w2 = w[i - 2];
+            const a = hash[0], e = hash[4];
+            const temp1 =
+                hash[7] +
+                (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) +
+                ((e & hash[5]) ^ (~e & hash[6])) +
+                k[i] +
+                (w[i] =
+                    i < 16
+                        ? w[i]
+                        : (w[i - 16] +
+                            (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) +
+                            w[i - 7] +
+                            (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))) |
+                        0);
+            const temp2 =
+                (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) +
+                ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+            hash = [(temp1 + temp2) | 0].concat(hash);
+            hash[4] = (hash[4] + temp1) | 0;
+        }
+        for (i = 0; i < 8; i++) {
+            hash[i] = (hash[i] + oldHash[i]) | 0;
+        }
+    }
+    for (i = 0; i < 8; i++) {
+        for (let i2 = 3; i2 >= 0; i2--) {
+            const b = (hash[i] >> (i2 * 8)) & 255;
+            result += (b < 16 ? '0' : '') + b.toString(16);
+        }
+    }
+    return result;
+}
+
+window.canonicalizeLines = canonicalizeLines;
+window.sha256Sync = sha256Sync;
+
 // ================= DYNAMIC TASK LOADER & CONVERTER =================
 function transformHostTransactions(transactions = []) {
     return transactions.map((tx, idx) => {
+        // Mode A: Hashed & Secured transaction (No plaintext answers/lines)
+        if (tx.validationHash && tx.salt) {
+            return {
+                id: tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
+                txId: tx.txId || tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
+                jeId: tx.jeId || `JE-${String(idx + 1).padStart(6, '0')}`,
+                num: tx.num || idx + 1,
+                ref: tx.ref || (tx.docData && tx.docData.ref) || `INV-${1000 + (tx.num || idx + 1)}`,
+                date: tx.date || (tx.docData && tx.docData.date) || "2026-01-15",
+                type: tx.type || "General",
+                title: tx.title || tx.desc || "معاملة تجارية",
+                difficulty: tx.difficulty || "Medium",
+                desc: tx.desc || tx.title || "معاملة تجارية",
+                category: tx.category || "general",
+                categoryAr: tx.categoryAr || "محاسبة عامة",
+                amount: Number(tx.amount) || 0,
+                requiredLinesCount: tx.requiredLinesCount || 2,
+                docData: tx.docData || { totalAmount: Number(tx.amount) || 0, date: tx.date, ref: tx.ref },
+                salt: tx.salt,
+                validationHash: tx.validationHash,
+                openingBalances: tx.openingBalances || null
+            };
+        }
+
+        // Mode B: Legacy custom upload with lines (e.g. from local test uploads)
         if (tx.lines && Array.isArray(tx.lines) && tx.lines.length > 0) {
             return {
                 id: tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
@@ -254,7 +376,6 @@ function initApp() {
     if (typeof updateHeaderClosingStatus === 'function') updateHeaderClosingStatus();
 
     answerKey = loadTasks();
-    window.ANSWER_KEY = answerKey;
 
     loadStudentState();
     updateAllHeaderBadges();
@@ -302,14 +423,17 @@ function autoPostOpeningBalance() {
         (t.ref && t.ref.includes('OP')) ||
         (t.desc && (t.desc.includes('افتتاحي') || t.desc.includes('الأرصدة الافتتاحية') || t.desc.includes('Opening Balances'))) ||
         (t.title && (t.title.includes('افتتاحي') || t.title.includes('الأرصدة الافتتاحية'))) ||
+        (t.openingBalances && t.openingBalances.length > 20) ||
         (t.lines && t.lines.length > 20)
     );
 
     if (!openingTask) return;
 
+    const opBalances = openingTask.openingBalances || openingTask.lines || [];
+
     // Register all accounts from opening task in COA and ACCOUNTS
-    if (Array.isArray(openingTask.lines)) {
-        openingTask.lines.forEach(l => {
+    if (Array.isArray(opBalances)) {
+        opBalances.forEach(l => {
             const code = String(l.accountCode || '');
             if (code && !COA[code]) {
                 const isContra = code.includes('.1');
@@ -330,7 +454,7 @@ function autoPostOpeningBalance() {
     let existing = (studentJournal || []).find(j => j.id === openingTask.id);
 
     if (!existing) {
-        const openingLines = (openingTask.lines || []).map((l, idx) => ({
+        const openingLines = opBalances.map((l, idx) => ({
             lineId: openingTask.id + '_' + idx,
             accountCode: String(l.accountCode || '1101'),
             accountName: l.accountName || (COA[l.accountCode] ? COA[l.accountCode].name : 'حساب'),

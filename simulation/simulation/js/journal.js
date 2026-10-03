@@ -313,12 +313,11 @@ function buildHintHtml(trx) {
         return `<div id="doc-hint-wrapper" class="hidden"></div>`;
     }
 
-    const debits = (trx.lines || []).filter(l => Number(l.debit) > 0);
-    const credits = (trx.lines || []).filter(l => Number(l.credit) > 0);
-    const isCompound = (debits.length + credits.length) > 2;
+    const reqLines = trx.requiredLinesCount || (trx.lines ? trx.lines.length : 2);
+    const isCompound = reqLines > 2;
 
     const entryTypeTitle = isCompound 
-      ? `قيد مركب (${debits.length + credits.length} أسطر)`
+      ? `قيد مركب (${reqLines} أسطر)`
       : `قيد بسيط (سطران: طرف مدين وطرف دائن)`;
 
     let stepsHtml = '';
@@ -334,8 +333,9 @@ function buildHintHtml(trx) {
     } else {
         stepsHtml = `
             <div class="space-y-1 text-slate-700 text-[11px] leading-relaxed">
-                <div>• <strong class="text-slate-900">الطرف المدين (من حـ/):</strong> ${debits.map(d => `${ACCOUNTS[d.accountCode] || d.accountName || d.accountCode} (${Number(d.debit).toLocaleString()} ج.م)`).join(' + ')}</div>
-                <div>• <strong class="text-slate-900">الطرف الدائن (إلى حـ/):</strong> ${credits.map(c => `${ACCOUNTS[c.accountCode] || c.accountName || c.accountCode} (${Number(c.credit).toLocaleString()} ج.م)`).join(' + ')}</div>
+                <div>• حدد الحسابات المتأثرة بالمعاملة وفق طبيعتها (أصل / التزام / إيراد / مصروف).</div>
+                <div>• تحقق من وسيلة السداد أو التحصيل (نقداً بالخزينة، تحويل بنكي، أو على الحساب).</div>
+                <div>• تأكد من توازن إجمالي المدين والدائن في أسطر القيد.</div>
             </div>
         `;
     }
@@ -372,7 +372,7 @@ function buildHintHtml(trx) {
                         <span class="text-blue-900 font-extrabold">${entryTypeTitle}</span>
                     </span>
                     <div class="flex items-center gap-1.5">
-                        <span class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-bold">${debits.length} مدين / ${credits.length} دائن</span>
+                        <span class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-bold">${reqLines} أسطر</span>
                         <button type="button" onclick="taskHintRequested['${trx.id}'] = false; renderDocument(selectedTaskObject());" class="text-slate-400 hover:text-slate-700 font-bold text-xs px-1" title="إخفاء التلميح">✕</button>
                     </div>
                 </div>
@@ -424,138 +424,41 @@ window.requestAccountingHint = function() {
 window.toggleAccountingHint = window.requestAccountingHint;
 
 // =========================================================================
-// Interactive Document Inspector & Visual Autofill Engine (Phase 4)
+// Realistic Business Document Viewer (Sanitized - Zero Answer Leaks)
 // =========================================================================
 
-function renderInspectableRow(label, amount, code, side, rationale, colorClass = 'text-slate-800') {
-    const safeRationale = encodeURIComponent(rationale || '');
+function renderDocRow(label, amount, colorClass = 'text-slate-800') {
     return `
-      <div class="flex justify-between items-center py-1.5 px-2 rounded-lg border border-transparent hover:border-blue-300 hover:bg-blue-50/80 transition group cursor-pointer" onclick="inspectDocumentFigure('${code}', ${amount}, '${side}', '${label}', '${safeRationale}')" title="انقر لتشغيل الفاحص الذكي ومعاينة التوجيه المحاسبي">
-        <span class="text-slate-600 flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-[14px] text-blue-600 opacity-60 group-hover:opacity-100">travel_explore</span>
-          <span>${label}:</span>
-        </span>
-        <div class="flex items-center gap-1.5">
-          <span class="font-mono font-bold ${colorClass}">${Number(amount).toLocaleString()} ج.م</span>
-          <span class="text-[9px] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition shadow-2xs">فحص ➔</span>
-        </div>
+      <div class="flex justify-between items-center py-1.5 px-2.5 rounded-lg border-b border-slate-100 last:border-b-0">
+        <span class="text-slate-600 font-medium text-xs">${label}:</span>
+        <span class="font-mono font-bold text-xs ${colorClass}">${Number(amount || 0).toLocaleString()} ج.م</span>
       </div>
     `;
 }
 
-window.inspectDocumentFigure = function(accountCode, amount, side, label, encRationale) {
-    const rationale = decodeURIComponent(encRationale || '');
-    const accName = (typeof ACCOUNTS !== 'undefined' && ACCOUNTS[accountCode]) ? ACCOUNTS[accountCode] : `حساب (${accountCode})`;
-    const isDebit = side === 'debit';
-    const sideBadge = isDebit 
-        ? '<span class="bg-blue-100 text-blue-900 border border-blue-300 px-2 py-0.5 rounded font-bold">مدين (منه) +Dr</span>'
-        : '<span class="bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded font-bold">دائن (له) +Cr</span>';
+function renderInspectableRow(label, amount, code, side, rationale, colorClass = 'text-slate-800') {
+    return renderDocRow(label, amount, colorClass);
+}
 
-    let drawer = document.getElementById('doc-inspector-drawer');
-    if (!drawer) return;
-
-    drawer.classList.remove('hidden');
-    drawer.innerHTML = `
-      <div class="space-y-3 animate-in zoom-in-95 duration-150">
-        <div class="flex justify-between items-start border-b border-blue-200 pb-2">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-blue-700 text-[20px]">psychology</span>
-            <div>
-              <h4 class="font-extrabold text-xs text-blue-950">فاحص المستند التوجيهي الذكي</h4>
-              <p class="text-[10px] text-slate-500">تحليل البند: <strong>${label}</strong> بمبلغ <span class="font-mono font-bold text-slate-800">${Number(amount).toLocaleString()} ج.م</span></p>
-            </div>
-          </div>
-          <button type="button" onclick="document.getElementById('doc-inspector-drawer').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 text-xs font-bold px-1 cursor-pointer">✕</button>
-        </div>
-
-        <div class="bg-white p-3 rounded-xl border border-blue-200 text-xs space-y-2 shadow-2xs">
-          <div class="flex justify-between items-center">
-            <span class="text-slate-500">الطرف المحاسبي في الدليل:</span>
-            <div class="flex items-center gap-1.5">
-              <span class="font-mono font-bold bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">${accountCode}</span>
-              <strong class="text-slate-900">${accName}</strong>
-            </div>
-          </div>
-
-          <div class="flex justify-between items-center">
-            <span class="text-slate-500">طبيعة الحركة في القيد:</span>
-            <div>${sideBadge}</div>
-          </div>
-
-          <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-[11px] text-slate-700 leading-relaxed">
-            <strong class="text-slate-900 block mb-0.5">📌 التوجيه والتعليل المحاسبي:</strong>
-            ${rationale}
-          </div>
-        </div>
-
-        <div class="flex items-center justify-between gap-2 pt-1">
-          <button type="button" onclick="autofillJournalLine('${accountCode}', ${amount}, '${side}')" class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer shadow-sm">
-            <span class="material-symbols-outlined text-[15px]">input</span>
-            <span>إدراج هذا الطرف تلقائياً في سطر القيد</span>
-          </button>
-          <button type="button" onclick="document.getElementById('doc-inspector-drawer').classList.add('hidden')" class="bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs py-2 px-3 rounded-xl border border-slate-300 cursor-pointer">
-            إغلاق
-          </button>
-        </div>
-      </div>
-    `;
-    drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-};
-
-window.autofillJournalLine = function(accountCode, amount, side) {
-    if (!formLines || !Array.isArray(formLines)) return;
-
-    let targetLine = formLines.find(l => (!l.account || l.account === '') && Number(l.debit) === 0 && Number(l.credit) === 0);
-    if (!targetLine) {
-        targetLine = { account: '', debit: 0, credit: 0 };
-        formLines.push(targetLine);
-    }
-
-    targetLine.account = String(accountCode);
-    if (side === 'debit') {
-        targetLine.debit = Number(amount);
-        targetLine.credit = 0;
-    } else {
-        targetLine.credit = Number(amount);
-        targetLine.debit = 0;
-    }
-
-    renderForm();
-    recalculateTotals();
-
-    const feedback = document.getElementById('feedback-msg');
-    if (feedback) {
-        const accName = (typeof ACCOUNTS !== 'undefined' && ACCOUNTS[accountCode]) ? ACCOUNTS[accountCode] : accountCode;
-        feedback.innerHTML = `
-          <div class="p-2.5 bg-blue-50 border border-blue-200 text-blue-900 rounded-xl text-xs font-bold flex items-center gap-2 animate-in fade-in">
-            <span class="material-symbols-outlined text-[18px] text-blue-700">check_circle</span>
-            <span>تم إدراج حـ/ ${accName} بمبلغ (${Number(amount).toLocaleString()} ج.م) في القيد بنجاح!</span>
-          </div>
-        `;
-    }
-
-    if (window.innerWidth < 1024 && typeof switchJournalMobilePane === 'function') {
-        switchJournalMobilePane('form');
-    }
-};
+window.inspectDocumentFigure = function() {};
+window.autofillJournalLine = function() {};
 
 function renderDocument(trx) {
     const viewer = document.getElementById('document-viewer');
-    if(!viewer) return;
+    if(!viewer || !trx) return;
 
     let docHtml = '';
     const compName = getCompanyName();
+    const doc = trx.docData || {};
+    const total = (doc.totalAmount != null) ? Number(doc.totalAmount) : (Number(trx.amount) || 0);
+    const subtotal = (doc.subtotal != null) ? Number(doc.subtotal) : total;
+    const vatAmt = Number(doc.vatAmount) || 0;
+    const date = doc.date || trx.date || '2026-01-15';
+    const ref = doc.ref || trx.ref || `INV-${1000 + (trx.num || 1)}`;
+    const partyName = doc.partyName || '';
+    const words = tafqeetArabic(total);
 
     if (trx.type === 'Purchase') {
-        const invLine = trx.lines.find(l => l.accountCode === '1104');
-        const vatLine = trx.lines.find(l => l.accountCode === '1106');
-        const apLine = trx.lines.find(l => l.accountCode === '2101');
-        
-        const invAmt = invLine ? invLine.debit : 0;
-        const vatAmt = vatLine ? vatLine.debit : 0;
-        const total = apLine ? apLine.credit : (invAmt + vatAmt);
-        const words = tafqeetArabic(total);
-
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
@@ -564,42 +467,35 @@ function renderDocument(trx) {
               <p class="text-[10px] text-slate-500">فاتورة مشتريات بضاعة (Purchase Invoice)</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
             <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">طريقة السداد:</span>
-              <span class="font-bold text-slate-800">آجل (حساب الموردين AP)</span>
+              <span class="text-slate-500">المورد:</span>
+              <span class="font-bold text-slate-800">${partyName || 'حساب الموردين AP'}</span>
             </div>
-            ${renderInspectableRow('قيمة البضاعة المشتراة', invAmt, '1104', 'debit', 'إثبات إضافة المخزون السلعي بتكلفة الشراء قبل الضريبة كأصل متداول مدين وفق معيار المحاسبة المصري (2).', 'text-slate-800')}
-            ${renderInspectableRow('ضريبة القيمة المضافة مدخلات (14%)', vatAmt, '1106', 'debit', 'ضريبة مدخلات قابلة للخصم والمقاصة مع ضريبة المخرجات وفقاً للمادة (22) من قانون الضريبة على القيمة المضافة رقم 67 لسنة 2016.', 'text-emerald-700')}
+            <div class="flex justify-between py-1 border-b border-slate-200">
+              <span class="text-slate-500">طريقة السداد:</span>
+              <span class="font-bold text-slate-800">آجل (فاتورة ضريبية مستحقة السداد)</span>
+            </div>
+            ${renderDocRow('قيمة البضاعة المشتراة (قبل الضريبة)', subtotal, 'text-slate-800')}
+            ${renderDocRow('ضريبة القيمة المضافة مدخلات (14%)', vatAmt, 'text-emerald-700')}
             <div class="border-t border-slate-200 pt-1">
-              ${renderInspectableRow('الإجمالي المستحق للمورد', total, '2101', 'credit', 'إثبات الالتزام المالي المستحق للموردين بالجانب الدائن حتى يتم السداد الفعلي.', 'text-blue-900 font-extrabold')}
+              ${renderDocRow('الإجمالي المستحق للمورد', total, 'text-blue-900 font-extrabold')}
             </div>
             <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
-          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">أصل الفاتورة مستلم ومقيد بالسجلات المخزنية</p>
           ${buildHintHtml(trx)}
         </div>
         `;
     } else if (trx.type === 'Sale' || trx.type === 'Cash Sale') {
-        const arLine = trx.lines.find(l => l.accountCode === '1103');
-        const cashLine = trx.lines.find(l => l.accountCode === '1101' || l.accountCode === '1102');
-        const revLine = trx.lines.find(l => l.accountCode === '4101');
-        const vatLine = trx.lines.find(l => l.accountCode === '2102');
-        
-        const revAmt = revLine ? revLine.credit : 0;
-        const vatAmt = vatLine ? vatLine.credit : 0;
-        const total = (arLine ? arLine.debit : 0) || (cashLine ? cashLine.debit : 0) || (revAmt + vatAmt);
-        const words = tafqeetArabic(total);
         const isCash = trx.type === 'Cash Sale';
-
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
@@ -608,41 +504,39 @@ function renderDocument(trx) {
               <p class="text-[10px] text-slate-500">${isCash ? 'فاتورة مبيعات نقدية (Cash Sales Invoice)' : 'فاتورة مبيعات ضريبية آجلة (Tax Sales Invoice)'}</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
             <div class="flex justify-between py-1 border-b border-slate-200">
+              <span class="text-slate-500">العميل:</span>
+              <span class="font-bold text-slate-800">${partyName || (isCash ? 'عميل نقدي / مبيعات معرض' : 'حساب العملاء AR')}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">طريقة البيع:</span>
               <span class="font-bold ${isCash ? 'text-emerald-700' : 'text-blue-800'}">${isCash ? 'نقداً / تحويل بنكي فوري' : 'آجل (حساب العملاء AR)'}</span>
             </div>
-            ${renderInspectableRow('قيمة المبيعات الخاضعة للضريبة', revAmt, '4101', 'credit', 'إثبات تحقق إيراد المبيعات بالجانب الدائن وفق معيار المحاسبة المصري (48) - الإيراد من العقود مع العملاء.', 'text-slate-800')}
-            ${renderInspectableRow('ضريبة القيمة المضافة مخرجات (14%)', vatAmt, '2102', 'credit', 'ضريبة مبيعات محصلة لحساب مصلحة الضرائب المصرية تلتزم المنشأة بتوريدها بنموذج 10 شهرياً (التزام دائن).', 'text-purple-700')}
+            ${renderDocRow('قيمة المبيعات الخاضعة للضريبة', subtotal, 'text-slate-800')}
+            ${renderDocRow('ضريبة القيمة المضافة مخرجات (14%)', vatAmt, 'text-purple-700')}
             <div class="border-t border-slate-200 pt-1">
-              ${renderInspectableRow(isCash ? 'المحصل بالخزينة/البنك' : 'المستحق على العميل (مدين)', total, isCash ? (cashLine ? cashLine.accountCode : '1101') : '1103', 'debit', isCash ? 'زيادة في النقدية كأصل متداول مدين.' : 'إثبات مديونية العميل بالجانب المدين حتى التحصيل.', 'text-blue-900 font-extrabold')}
+              ${renderDocRow(isCash ? 'المحصل بالخزينة/البنك' : 'المستحق على العميل (مدين)', total, 'text-blue-900 font-extrabold')}
             </div>
             <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
-          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">أصل الفاتورة للعميل - صالحة للإقرار الضريبي</p>
           ${buildHintHtml(trx)}
         </div>
         `;
     } else if (trx.type === 'Payroll') {
-        const grossLine = trx.lines.find(l => l.accountCode === '5201');
-        const taxLine = trx.lines.find(l => l.accountCode === '2105');
-        const socLine = trx.lines.find(l => l.accountCode === '2106');
-        const netLine = trx.lines.find(l => l.accountCode === '1102' || l.accountCode === '1101');
-        
-        const grossAmt = grossLine ? grossLine.debit : 0;
-        const taxAmt = taxLine ? taxLine.credit : 0;
-        const socAmt = socLine ? socLine.credit : 0;
-        const netAmt = netLine ? netLine.credit : (grossAmt - taxAmt - socAmt);
-        const words = tafqeetArabic(netAmt);
+        const grossAmt = doc.grossAmount || total;
+        const taxAmt = doc.taxAmount || 0;
+        const socAmt = doc.socAmount || 0;
+        const netAmt = doc.netAmount || (grossAmt - taxAmt - socAmt);
+        const netWords = tafqeetArabic(netAmt);
 
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
@@ -652,33 +546,27 @@ function renderDocument(trx) {
               <p class="text-[10px] text-slate-500">كشف مسير رواتب الشهر (Payroll Sheet)</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
-            ${renderInspectableRow('إجمالي الرواتب والأجور المستحقة', grossAmt, '5201', 'debit', 'تحميل الفترة المالية بتكلفة الرواتب التشغيلية والإدارية وفق مبدأ الاستحقاق (مصروف مدين).', 'text-slate-900')}
-            ${renderInspectableRow('استقطاع ضريبة كسب العمل (5%)', taxAmt, '2105', 'credit', 'ضريبة مستقطعة من منبع المرتبات واجبة التوريد لمأمورية الضرائب المختصة نموذج 4 كسب عمل (التزام دائن).', 'text-amber-700')}
-            ${renderInspectableRow('استقطاع التأمينات الاجتماعية (11%)', socAmt, '2106', 'credit', 'حصة العامل والمنشأة المستقطعة لصالح الهيئة القومية للتأمين الاجتماعي (التزام دائن).', 'text-amber-700')}
+            ${renderDocRow('إجمالي الرواتب والأجور المستحقة', grossAmt, 'text-slate-900')}
+            ${renderDocRow('استقطاع ضريبة كسب العمل (5%)', taxAmt, 'text-amber-700')}
+            ${renderDocRow('استقطاع التأمينات الاجتماعية (11%)', socAmt, 'text-amber-700')}
             <div class="border-t border-slate-200 pt-1">
-              ${renderInspectableRow('صافي الرواتب المحولة للبنوك', netAmt, '1102', 'credit', 'نقص في الرصيد البنكي بالجانب الدائن نتيجة التحويل المصرفي لبطاقات الموظفين.', 'text-emerald-800 font-extrabold')}
+              ${renderDocRow('صافي الرواتب المحولة للبنوك', netAmt, 'text-emerald-800 font-extrabold')}
             </div>
             <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
+              صافي المسير: <strong>${netWords}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
-          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">معتمد من إدارة الموارد البشرية والشؤون المالية</p>
           ${buildHintHtml(trx)}
         </div>
         `;
     } else if (trx.type === 'Bank Loan') {
-        const loanLine = trx.lines.find(l => l.accountCode === '2201');
-        const bankLine = trx.lines.find(l => l.accountCode === '1102');
-        const amt = bankLine ? bankLine.debit : (loanLine ? loanLine.credit : 0);
-        const words = tafqeetArabic(amt);
-
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
@@ -687,8 +575,8 @@ function renderDocument(trx) {
               <p class="text-[10px] text-slate-500">عقد قرض وتمويل طويل الأجل (Bank Loan Facility)</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
@@ -703,7 +591,7 @@ function renderDocument(trx) {
             </div>
             <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
               <span>مبلغ التمويل المودع بالحساب الجاري:</span>
-              <span class="font-mono text-emerald-800 text-base">${amt.toLocaleString()} ج.م</span>
+              <span class="font-mono text-emerald-800 text-base">${total.toLocaleString()} ج.م</span>
             </div>
             <div class="text-[11px] text-slate-500 text-center font-serif">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
@@ -714,15 +602,6 @@ function renderDocument(trx) {
         </div>
         `;
     } else if (trx.type === 'Sales Return') {
-        const retLine = trx.lines.find(l => l.accountCode === '4105');
-        const vatLine = trx.lines.find(l => l.accountCode === '2102');
-        const arLine = trx.lines.find(l => l.accountCode === '1103');
-        
-        const retAmt = retLine ? retLine.debit : 0;
-        const vatAmt = vatLine ? vatLine.debit : 0;
-        const total = arLine ? arLine.credit : (retAmt + vatAmt);
-        const words = tafqeetArabic(total);
-
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
@@ -731,19 +610,19 @@ function renderDocument(trx) {
               <p class="text-[10px] text-slate-500">إشعار دائن - مردودات مبيعات (Credit Note)</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
             <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">بيان المعاملة:</span>
-              <span class="font-bold text-slate-800">إرجاع بضاعة مبيعات من العميل وتخفيض رصيده</span>
+              <span class="text-slate-500">العميل:</span>
+              <strong class="text-slate-900">${partyName || 'حساب العملاء'}</strong>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">قيمة المردودات (مبيعات):</span>
-              <span class="font-mono font-bold text-slate-800">${retAmt.toLocaleString()} ج.م</span>
+              <span class="font-mono font-bold text-slate-800">${subtotal.toLocaleString()} ج.م</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">عكس ضريبة القيمة المضافة مخرجات (14%):</span>
@@ -762,15 +641,6 @@ function renderDocument(trx) {
         </div>
         `;
     } else if (trx.type === 'Purchase Return') {
-        const apLine = trx.lines.find(l => l.accountCode === '2101');
-        const vatLine = trx.lines.find(l => l.accountCode === '1106');
-        const invLine = trx.lines.find(l => l.accountCode === '1104');
-        
-        const total = apLine ? apLine.debit : 0;
-        const vatAmt = vatLine ? vatLine.credit : 0;
-        const invAmt = invLine ? invLine.credit : (total - vatAmt);
-        const words = tafqeetArabic(total);
-
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
@@ -779,19 +649,19 @@ function renderDocument(trx) {
               <p class="text-[10px] text-slate-500">إشعار مدين - مردودات مشتريات (Debit Note)</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-blue-100 text-blue-900 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-blue-100 text-blue-900 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
             <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">بيان المعاملة:</span>
-              <span class="font-bold text-slate-800">إرجاع بضاعة تالفة للمورد وتخفيض رصيده</span>
+              <span class="text-slate-500">المورد:</span>
+              <strong class="text-slate-900">${partyName || 'حساب الموردين'}</strong>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">تكلفة البضاعة المرتجعة:</span>
-              <span class="font-mono font-bold text-slate-800">${invAmt.toLocaleString()} ج.م</span>
+              <span class="font-mono font-bold text-slate-800">${subtotal.toLocaleString()} ج.م</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">عكس ضريبة القيمة المضافة مدخلات (14%):</span>
@@ -809,52 +679,7 @@ function renderDocument(trx) {
           ${buildHintHtml(trx)}
         </div>
         `;
-    } else if (trx.type === 'Prepayment') {
-        const prepLine = trx.lines.find(l => l.accountCode === '1105');
-        const bankLine = trx.lines.find(l => l.accountCode === '1102' || l.accountCode === '1101');
-        const amt = prepLine ? prepLine.debit : (bankLine ? bankLine.credit : 0);
-        const words = tafqeetArabic(amt);
-
-        docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">إيصال سداد مصروفات مقدمة (Prepaid Expenses Voucher)</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
-            </div>
-          </div>
-
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">نوع المصروف المقدم:</span>
-              <span class="font-bold text-slate-800">${prepLine ? prepLine.description : 'إيجار / تأمين مدفوع مقدماً'}</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">التصنيف المحاسبي:</span>
-              <span class="font-medium text-slate-600">أصل متداول (يستهلك على الفترات المستفيدة)</span>
-            </div>
-            <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
-              <span>المبلغ المدفوع بالبنك:</span>
-              <span class="font-mono text-slate-900 text-base">${amt.toLocaleString()} ج.م</span>
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 text-center">أصل العقد وسند السداد مرفقان بملف العقود الدورية</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
     } else if (trx.type === 'Collection') {
-        const cashLine = trx.lines.find(l => l.accountCode === '1102' || l.accountCode === '1101');
-        const arLine = trx.lines.find(l => l.accountCode === '1103');
-        const amt = cashLine ? cashLine.debit : 0;
-        const words = tafqeetArabic(amt);
-
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
@@ -863,35 +688,26 @@ function renderDocument(trx) {
               <p class="text-[10px] text-slate-500">إيصال استلام نقدي / شيك بنكي (Receipt Voucher)</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
             <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">استلمنا من السادة:</span>
-              <span class="font-medium text-slate-800">حساب العملاء المعتمد</span>
+              <span class="font-bold text-slate-800">${partyName || 'حساب العملاء المعتمد'}</span>
             </div>
-            ${renderInspectableRow('المتحصل بالخزينة/البنك', amt, cashLine ? cashLine.accountCode : '1102', 'debit', 'إثبات التدفق النقدي الوارد بالصندوق أو البنك كأصل متداول مدين.', 'text-emerald-800 font-bold')}
-            <div class="border-t border-slate-200 pt-1">
-              ${renderInspectableRow('تخفيض مديونية العميل', amt, '1103', 'credit', 'إنقاص رصيد العملاء بالجانب الدائن نتيجة التحصيل والسداد.', 'text-slate-900 font-bold')}
-            </div>
+            ${renderDocRow('المبلغ المحصل بالخزينة/البنك', total, 'text-emerald-800 font-bold')}
             <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
-          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">إشعار إيداع بنكي صادر ومعتمد من البنك</p>
           ${buildHintHtml(trx)}
         </div>
         `;
     } else if (trx.type === 'Payment') {
-        const bankLine = trx.lines.find(l => l.accountCode === '1102' || l.accountCode === '1101');
-        const apLine = trx.lines.find(l => l.accountCode === '2101');
-        const amt = bankLine ? bankLine.credit : 0;
-        const words = tafqeetArabic(amt);
-
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
@@ -900,33 +716,26 @@ function renderDocument(trx) {
               <p class="text-[10px] text-slate-500">إذن صرف شيك / تحويل بنكي (Payment Voucher)</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
             <div class="flex justify-between py-1 border-b border-slate-200">
               <span class="text-slate-500">يصرف لأمر السادة:</span>
-              <span class="font-medium text-slate-800">حساب الموردين المعتمد</span>
+              <span class="font-bold text-slate-800">${partyName || 'حساب الموردين المعتمد'}</span>
             </div>
-            ${renderInspectableRow('تخفيض مستحقات الموردين', amt, '2101', 'debit', 'إنقاص الالتزام المالي للمورد بالجانب المدين نتيجة السداد.', 'text-blue-900 font-bold')}
-            <div class="border-t border-slate-200 pt-1">
-              ${renderInspectableRow('المدفوع من البنك/الخزينة', amt, bankLine ? bankLine.accountCode : '1102', 'credit', 'نقص في الأصل النقدي بالجانب الدائن نتيجة إصدار شيك أو تحويل بنكي.', 'text-rose-800 font-bold')}
-            </div>
+            ${renderDocRow('المبلغ المدفوع من البنك/الخزينة', total, 'text-rose-800 font-bold')}
             <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
-          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
           <p class="text-[10px] text-slate-400 text-center">أصل الشيك / إشعار الخصم الإلكتروني مرفق</p>
           ${buildHintHtml(trx)}
         </div>
         `;
     } else if (trx.type === 'COGS' || trx.type === 'Cash Sale COGS') {
-        const amt = trx.lines.find(l => l.accountCode === '5101')?.debit || 0;
-        const words = tafqeetArabic(amt);
-
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
@@ -935,8 +744,8 @@ function renderDocument(trx) {
               <p class="text-[10px] text-slate-500">إذن صرف بضاعة من المخازن (Store Issue Order)</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
@@ -945,13 +754,9 @@ function renderDocument(trx) {
               <span class="text-slate-500">الغرض من الصرف:</span>
               <span class="font-medium text-slate-800">تسليم مبيعات بضاعة للعملاء بموجب الفاتورة</span>
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">حالة المخزون:</span>
-              <span class="font-medium text-slate-800">صرف بضاعة وخروجها من المستودع</span>
-            </div>
             <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
               <span>التكلفة الدفترية للبضاعة المنصرفة:</span>
-              <span class="font-mono text-slate-900 text-base">${amt.toLocaleString()} ج.م</span>
+              <span class="font-mono text-slate-900 text-base">${total.toLocaleString()} ج.م</span>
             </div>
             <div class="text-[11px] text-slate-500 text-center font-serif">
               فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
@@ -962,11 +767,12 @@ function renderDocument(trx) {
         </div>
         `;
     } else if (trx.type === 'Opening Balance') {
-        const debits = trx.lines.filter(l => l.debit > 0);
-        const credits = trx.lines.filter(l => l.credit > 0);
-        const totalDebit = debits.reduce((s,l)=>s+l.debit, 0);
-        const totalCredit = credits.reduce((s,l)=>s+l.credit, 0);
-        const words = tafqeetArabic(totalDebit);
+        const opBalances = trx.openingBalances || trx.lines || [];
+        const debits = opBalances.filter(l => l.debit > 0);
+        const credits = opBalances.filter(l => l.credit > 0);
+        const totalDebit = debits.reduce((s,l)=>s+l.debit, 0) || total;
+        const totalCredit = credits.reduce((s,l)=>s+l.credit, 0) || total;
+        const opWords = tafqeetArabic(totalDebit);
 
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
@@ -976,8 +782,8 @@ function renderDocument(trx) {
               <p class="text-[10px] text-slate-500">محضر جرد وإثبات الأرصدة الافتتاحية (Opening Balances)</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-blue-900 text-white font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-blue-900 text-white font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
@@ -1026,97 +832,24 @@ function renderDocument(trx) {
           </div>
 
           <div class="p-2.5 bg-slate-50 rounded-xl text-center text-xs text-slate-600 font-serif border border-slate-200 mb-2">
-            إجمالي المركز المالي الافتتاحي: <strong>${words}</strong> جنيهاً مصرياً لا غير.
+            إجمالي المركز المالي الافتتاحي: <strong>${opWords}</strong> جنيهاً مصرياً لا غير.
           </div>
           <p class="text-[10px] text-emerald-700 font-bold text-center">✓ معتمد ومرحل آلياً في دفتر اليومية ودفتر الأستاذ العام</p>
           ${buildHintHtml(trx)}
         </div>
         `;
-    } else if (trx.type === 'Expense' || trx.type === 'Misc Expense') {
-        const debits = trx.lines.filter(l => Number(l.debit) > 0);
-        const credits = trx.lines.filter(l => Number(l.credit) > 0);
-        const totalAmt = debits.reduce((s, l) => s + (Number(l.debit) || 0), 0);
-        const words = tafqeetArabic(totalAmt);
-        const desc = trx.desc || trx.title || 'سداد مصروفات تشغيلية وإدارية';
-
-        const creditAccountNames = credits.map(c => {
-            const accName = ACCOUNTS[c.accountCode] || c.accountName || c.accountCode;
-            const amt = Number(c.credit).toLocaleString();
-            return `${accName} بمبلغ (${amt} ج.م)`;
-        }).join(' و ');
-
-        docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">إذن صرف واعتماد مصروفات (Expense Payment Voucher)</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-blue-100 text-blue-900 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
-            </div>
-          </div>
-
-          <!-- بيان السند المحاسبي المعتمد -->
-          <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-200 mb-3 text-xs leading-relaxed text-blue-950 font-medium">
-            <strong class="block font-bold text-blue-900 mb-1">بيان السند المحاسبي:</strong>
-            ${desc}
-          </div>
-
-          <!-- تفاصيل بنود المصروفات المعتمدة -->
-          <div class="space-y-2.5 mb-3">
-            <div class="border border-slate-200 rounded-xl overflow-hidden text-xs shadow-2xs">
-              <div class="bg-slate-100 p-2 font-bold text-slate-800 border-b border-slate-200 flex justify-between items-center">
-                <span>بنود المصروفات المعتمدة للصرف (الطرف المدين)</span>
-                <span class="font-mono text-blue-900 font-extrabold">${totalAmt.toLocaleString()} ج.م</span>
-              </div>
-              <div class="divide-y divide-slate-100 bg-white">
-                ${debits.map(d => `
-                  ${renderInspectableRow(ACCOUNTS[d.accountCode] || d.accountName || `حساب ${d.accountCode}`, d.debit, d.accountCode, 'debit', `إثبات تحميل الفترة المالية بمصروف (${ACCOUNTS[d.accountCode] || d.accountName}) كطرف مدين وفق مبدأ الاستحقاق.`, 'text-blue-900')}
-                `).join('')}
-              </div>
-            </div>
-
-            <!-- وسيلة وطريقة السداد -->
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5">
-              <div class="flex justify-between py-1 border-b border-slate-200">
-                <span class="text-slate-500">طريقة السداد المعتمدة:</span>
-                <strong class="text-slate-900">${creditAccountNames}</strong>
-              </div>
-              <div class="border-t border-slate-200 pt-1">
-                ${credits.map(c => `
-                  ${renderInspectableRow(ACCOUNTS[c.accountCode] || c.accountName || `حساب ${c.accountCode}`, c.credit, c.accountCode, 'credit', `إثبات سداد المصروف خصماً من (${ACCOUNTS[c.accountCode] || c.accountName}) كطرف دائن.`, 'text-rose-800')}
-                `).join('')}
-              </div>
-              <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
-                فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-              </div>
-            </div>
-          </div>
-
-          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
-          <p class="text-[10px] text-slate-400 text-center">أصل الفواتير وإيصالات السداد الحكومية مرفقة ومعتمدة</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
     } else {
-        const debits = trx.lines.filter(l => Number(l.debit) > 0);
-        const credits = trx.lines.filter(l => Number(l.credit) > 0);
-        const totalAmt = debits.reduce((s,l)=>s+(Number(l.debit)||0), 0);
-        const words = tafqeetArabic(totalAmt);
-        const desc = trx.desc || trx.title || 'مذكرة تسوية إدارية معتمدة';
-
+        const desc = trx.desc || trx.title || 'مستند إداري / تسوية محاسبية معتمدة';
         docHtml = `
         <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
           <div class="flex justify-between items-center border-b-2 border-slate-800 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">مذكرة داخلية / إشعار قيد تسوية (Internal Memo)</p>
+              <p class="text-[10px] text-slate-500">${trx.title || 'إشعار قيد تسوية / مستند محاسبي'}</p>
             </div>
             <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${trx.ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${trx.date}</p>
+              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
+              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
             </div>
           </div>
 
@@ -1125,29 +858,14 @@ function renderDocument(trx) {
             ${desc}
           </div>
 
-          <div class="border border-slate-200 rounded-xl overflow-hidden text-xs mb-3 shadow-2xs">
-            <div class="bg-slate-100 p-2 font-bold text-slate-800 border-b border-slate-200 flex justify-between items-center">
-              <span>بنود وأطراف العملية (الطرف المدين)</span>
-              <span class="font-mono text-blue-900 font-extrabold">${totalAmt.toLocaleString()} ج.م</span>
-            </div>
-            <div class="divide-y divide-slate-100 bg-white">
-              ${debits.map(d => `
-                ${renderInspectableRow(ACCOUNTS[d.accountCode] || d.accountName || `حساب ${d.accountCode}`, d.debit, d.accountCode, 'debit', `توجيه محاسبي مدين للعملية وفق معايير المحاسبة المصرية.`, 'text-blue-900')}
-              `).join('')}
-            </div>
-            <div class="p-2.5 bg-slate-50 border-t border-slate-200 text-xs space-y-1">
-              <span class="text-slate-500 block mb-1">الطرف المقابل / طريقة السداد (الطرف الدائن): </span>
-              ${credits.map(c => `
-                ${renderInspectableRow(ACCOUNTS[c.accountCode] || c.accountName || `حساب ${c.accountCode}`, c.credit, c.accountCode, 'credit', `توجيه محاسبي دائن للعملية.`, 'text-rose-800')}
-              `).join('')}
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5 mb-3">
+            ${renderDocRow('المبلغ الإجمالي المعتمد بالعملية', total, 'text-blue-900 font-extrabold')}
+            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
+              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
             </div>
           </div>
 
-          <div class="p-2.5 bg-slate-50 rounded-xl text-center text-xs text-slate-600 font-serif border border-slate-200 mb-2">
-            المبلغ المعتمد بالمذكرة: <strong>${words}</strong> جنيهاً مصرياً لا غير.
-          </div>
-          <div id="doc-inspector-drawer" class="hidden mt-3 p-3.5 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 border-2 border-blue-300 rounded-xl text-right animate-in fade-in duration-200"></div>
-          <p class="text-[10px] text-slate-400 text-center">مذكرة إدارية معتمدة للتسجيل باليومية العامة</p>
+          <p class="text-[10px] text-slate-400 text-center">مستند معتمد للتسجيل باليومية العامة وفقاً لمعايير المحاسبة</p>
           ${buildHintHtml(trx)}
         </div>
         `;
@@ -1437,25 +1155,46 @@ window.postEntry = function() {
         return;
     }
 
-    const requiredLines = currentTrx.lines.filter(l => l.debit > 0 || l.credit > 0);
     let isCorrect = true;
     let errorDesc = "";
     
-    if (usedAccounts.length !== requiredLines.length) {
-        isCorrect = false;
-        const debitsCount = requiredLines.filter(l => Number(l.debit) > 0).length;
-        const creditsCount = requiredLines.filter(l => Number(l.credit) > 0).length;
-        const entryStyle = requiredLines.length > 2 
-            ? `قيد مركب يتطلب (${requiredLines.length}) أسطر (${debitsCount} مدين و ${creditsCount} دائن)` 
-            : `قيد بسيط يتطلب سطرين فقط`;
-        errorDesc = `عدد أسطر القيد غير صحيحة (${usedAccounts.length} مدخلة مقابل ${requiredLines.length} مطلوبة). هذه المعاملة تمثل ${entryStyle}. تفقد بنود المستند وطريقة السداد.`;
-    } else {
-        for(let req of requiredLines) {
-            const match = usedAccounts.find(l => l.account === req.accountCode && Math.abs(l.debit - req.debit) < 0.1 && Math.abs(l.credit - req.credit) < 0.1);
-            if(!match) {
+    // 1. Validation for Hashed transactions (Secure Mode)
+    if (currentTrx.validationHash && currentTrx.salt) {
+        const reqCount = currentTrx.requiredLinesCount || 2;
+        if (usedAccounts.length !== reqCount) {
+            isCorrect = false;
+            const entryStyle = reqCount > 2 ? `قيد مركب يتطلب (${reqCount}) أسطر` : `قيد بسيط يتطلب سطرين فقط`;
+            errorDesc = `عدد أسطر القيد غير صحيحة (${usedAccounts.length} مدخلة مقابل ${reqCount} مطلوبة). هذه المعاملة تمثل ${entryStyle}. تفقد بنود المستند وطريقة السداد.`;
+        } else {
+            const canonicalizer = (typeof canonicalizeLines === 'function') ? canonicalizeLines : window.canonicalizeLines;
+            const hasher = (typeof sha256Sync === 'function') ? sha256Sync : window.sha256Sync;
+            const candidateCanonical = canonicalizer(usedAccounts);
+            const candidateHash = hasher(candidateCanonical + ':' + currentTrx.salt);
+
+            if (candidateHash !== currentTrx.validationHash) {
                 isCorrect = false;
                 errorDesc = "تأكد من مطابقة الحساب والمبلغ الصحيحين لكل سطر وفقاً للمستند المرفق وطريقة السداد أو التحصيل.";
-                break;
+            }
+        }
+    } else if (Array.isArray(currentTrx.lines)) {
+        // Fallback for legacy custom upload with lines
+        const requiredLines = currentTrx.lines.filter(l => l.debit > 0 || l.credit > 0);
+        if (usedAccounts.length !== requiredLines.length) {
+            isCorrect = false;
+            const debitsCount = requiredLines.filter(l => Number(l.debit) > 0).length;
+            const creditsCount = requiredLines.filter(l => Number(l.credit) > 0).length;
+            const entryStyle = requiredLines.length > 2 
+                ? `قيد مركب يتطلب (${requiredLines.length}) أسطر (${debitsCount} مدين و ${creditsCount} دائن)` 
+                : `قيد بسيط يتطلب سطرين فقط`;
+            errorDesc = `عدد أسطر القيد غير صحيحة (${usedAccounts.length} مدخلة مقابل ${requiredLines.length} مطلوبة). هذه المعاملة تمثل ${entryStyle}. تفقد بنود المستند وطريقة السداد.`;
+        } else {
+            for(let req of requiredLines) {
+                const match = usedAccounts.find(l => l.account === req.accountCode && Math.abs(l.debit - req.debit) < 0.1 && Math.abs(l.credit - req.credit) < 0.1);
+                if(!match) {
+                    isCorrect = false;
+                    errorDesc = "تأكد من مطابقة الحساب والمبلغ الصحيحين لكل سطر وفقاً للمستند المرفق وطريقة السداد أو التحصيل.";
+                    break;
+                }
             }
         }
     }
@@ -1507,10 +1246,10 @@ window.postEntry = function() {
         lines: usedAccounts.map((l, idx) => ({
             lineId: currentTrx.id + '_' + idx,
             accountCode: l.account,
-            accountName: ACCOUNTS[l.account],
+            accountName: ACCOUNTS[l.account] || `حساب (${l.account})`,
             debit: Number(l.debit) || 0,
             credit: Number(l.credit) || 0,
-            description: currentTrx.lines[0]?.description || 'قيد يومية',
+            description: currentTrx.desc || currentTrx.title || (currentTrx.lines && currentTrx.lines[0]?.description) || 'قيد يومية',
             posted: false
         }))
     };
