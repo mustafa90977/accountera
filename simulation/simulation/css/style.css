@@ -162,3 +162,117 @@ input[type="submit"] {
 table {
   max-width: 100%;
 }
+
+/* ================= ACCOUNTERA DESIGN SYSTEM TOKENS & UTILITIES ================= */
+:root {
+  --acc-canvas: #f8fafc;
+  --acc-surface: #ffffff;
+  --acc-surface-subtle: #f1f5f9;
+  --acc-surface-hover: #e2e8f0;
+
+  --acc-ink-primary: #0f172a;
+  --acc-ink-secondary: #475569;
+  --acc-ink-muted: #94a3b8;
+  --acc-ink-inverted: #ffffff;
+
+  --acc-brand: #059669;
+  --acc-brand-dark: #065f46;
+  --acc-brand-mint: #d1fae5;
+  --acc-voltage: #4f46e5;
+  --acc-voltage-light: #eef2ff;
+
+  --acc-balanced: #10b981;
+  --acc-imbalanced: #ef4444;
+  --acc-pending: #f59e0b;
+  --acc-locked: #64748b;
+
+  --acc-border-fine: #e2e8f0;
+  --acc-border-strong: #cbd5e1;
+
+  --acc-font-sans: 'IBM Plex Sans Arabic', 'Cairo', system-ui, sans-serif;
+  --acc-font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+}
+
+/* Tabular numbers for financial precision */
+.font-tabular, [data-tabular="true"], td input[type="number"], .font-mono {
+  font-family: var(--acc-font-mono) !important;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Institutional Document Cards (Increase / Modern Treasury style) */
+.acc-doc-sheet {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.acc-doc-sheet:hover {
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* Clean Financial Data Row */
+.acc-data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.15s ease;
+}
+
+.acc-data-row:last-child {
+  border-bottom: none;
+}
+
+.acc-data-row:hover {
+  background-color: #f8fafc;
+}
+
+/* Linear-style Hairline Matrix */
+.acc-matrix-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 8px 12px;
+}
+
+.acc-matrix-table td {
+  border-bottom: 1px solid #f1f5f9;
+  padding: 6px 8px;
+}
+
+/* Live Balance Feedback Pill */
+.acc-balance-pill-balanced {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.acc-balance-pill-imbalanced {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+

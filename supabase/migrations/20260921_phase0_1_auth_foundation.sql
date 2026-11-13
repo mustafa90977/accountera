@@ -158,6 +158,6 @@ CREATE POLICY "subscriptions_admin_manage" ON public.subscriptions
 
 -- 6. منح الصلاحيات الصريحة (Grants)
 GRANT SELECT ON public.companies TO anon, authenticated;
-GRANT SELECT, UPDATE(display_name, full_name, updated_at) ON public.profiles TO authenticated;
+GRANT SELECT, UPDATE(full_name, updated_at) ON public.profiles TO authenticated;
 GRANT SELECT, INSERT ON public.student_submissions TO authenticated;
 GRANT SELECT ON public.subscriptions TO authenticated;

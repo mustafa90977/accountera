@@ -26,6 +26,20 @@ const ExcelCompanyWorkspaceView = {
   registrySearch: '',
   companyData: {},
 
+  escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  },
+
+  sanitizeId(id) {
+    return String(id || '').replace(/[^a-zA-Z0-9_-]/g, '');
+  },
+
   init() {
     try {
       const saved = localStorage.getItem('acc_company_sim_entries');
@@ -50,6 +64,10 @@ const ExcelCompanyWorkspaceView = {
       const saved = localStorage.getItem('acc_admin_companies');
       if (saved) companies = JSON.parse(saved);
     } catch (e) {}
+
+    if (Array.isArray(companies)) {
+      companies = companies.filter(c => c && c.id && !c.id.startsWith('audit-') && !c.id.startsWith('test-') && !c.id.includes('intruder'));
+    }
 
     if (!companies || companies.length === 0) {
       if (typeof DEFAULT_PLATFORM_COMPANY !== 'undefined') {
@@ -102,20 +120,20 @@ const ExcelCompanyWorkspaceView = {
         ` : `
           <div class="companies-grid">
             ${companies.map(comp => `
-              <div class="company-card" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="ExcelCompanyWorkspaceView.enterCompanySimulator('${comp.id}')">
+              <div class="company-card" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="ExcelCompanyWorkspaceView.enterCompanySimulator('${this.sanitizeId(comp.id)}')">
                 <div>
                   <div class="company-card-header">
                     <div class="company-icon-box" style="display:flex; align-items:center; justify-content:center; color:var(--primary);">
                       ${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 24, strokeWidth: 1.75 }) : ''}
                     </div>
                     <div>
-                      <h3 class="company-name">${comp.name}</h3>
-                      <span class="company-sector-badge">${comp.sector || comp.badge || 'قطاع تجاري'}</span>
+                      <h3 class="company-name">${this.escapeHtml(comp.name)}</h3>
+                      <span class="company-sector-badge">${this.escapeHtml(comp.sector || comp.badge || 'قطاع تجاري')}</span>
                     </div>
                   </div>
-                  <p class="company-desc">${comp.description || 'محاكاة عملية متكاملة لقيود اليومية ودفتر الأستاذ والقوائم المالية.'}</p>
+                  <p class="company-desc">${this.escapeHtml(comp.description || 'محاكاة عملية متكاملة لقيود اليومية ودفتر الأستاذ والقوائم المالية.')}</p>
                   <div class="company-stats-strip">
-                    <span>الدور: <strong>${comp.role || 'محاسب مالي'}</strong></span>
+                    <span>الدور: <strong>${this.escapeHtml(comp.role || 'محاسب مالي')}</strong></span>
                     <span>العمليات: <strong>${(comp.transactions || []).length} مستند</strong></span>
                   </div>
                 </div>
@@ -149,14 +167,18 @@ const ExcelCompanyWorkspaceView = {
         comp = DEFAULT_PLATFORM_COMPANY;
       }
     }
-    if (!comp) {
-      comp = (typeof DEFAULT_PLATFORM_COMPANY !== 'undefined') ? DEFAULT_PLATFORM_COMPANY : {
-        id: companyId || 'comp-al-noor',
-        name: 'شركة النور للأجهزة والخدمات',
-        sector: 'تجارة الاجهزه (خدمي وتوزيع)',
-        role: 'محاسب عام',
-        transactions: []
-      };
+    if (!comp || !comp.transactions || comp.transactions.length === 0) {
+      if (typeof DEFAULT_PLATFORM_COMPANY !== 'undefined') {
+        comp = DEFAULT_PLATFORM_COMPANY;
+      } else {
+        comp = {
+          id: companyId || 'comp-al-noor',
+          name: 'شركة النور للأجهزة والخدمات',
+          sector: 'تجارة الاجهزه (خدمي وتوزيع)',
+          role: 'محاسب عام',
+          transactions: []
+        };
+      }
     }
 
     if (typeof SimulationBridge !== 'undefined') {

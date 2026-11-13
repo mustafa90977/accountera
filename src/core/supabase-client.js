@@ -47,8 +47,39 @@ const SupabaseService = {
       if (error) throw error;
 
       if (data && data.length > 0) {
-        localStorage.setItem('acc_admin_companies', JSON.stringify(data));
-        return data;
+        // تنقية وتصحيح قائمة الشركات المسترجعة من السحابة لضمان دقة العمليات ومنع تلوث العرض
+        let cleanData = data.filter(c => {
+          if (!c || !c.id) return false;
+          // استبعاد شركات الاختبار والتدقيق الوهمية ذات الصفر مستند
+          if (c.id.startsWith('audit-') || c.id.startsWith('test-') || c.id.includes('intruder')) return false;
+          return true;
+        });
+
+        // تصحيح شركة النور الرئيسية وضمان اسمها ومعرفها وسنداتها الكاملة (111 سند)
+        cleanData = cleanData.map(c => {
+          if (c.id === 'comp-النور' || c.name === 'Hacked Company' || c.id === 'comp-al-noor') {
+            const defTransactions = (typeof DEFAULT_PLATFORM_COMPANY !== 'undefined') ? DEFAULT_PLATFORM_COMPANY.transactions : [];
+            return {
+              ...c,
+              id: 'comp-al-noor',
+              name: 'شركة النور',
+              sector: c.sector || 'تجارة الاجهزه (خدمي وتوزيع)',
+              badge: c.badge || 'بيئة أعمال متكاملة',
+              role: c.role || 'محاسب عام',
+              description: 'بيئة تدريبية ومحاكاة محاسبية متكاملة لـ شركة النور مع دورة تدريبية واقعية بـ 111 سند مالي وقيد افتتاحي معتمد.',
+              transactions: (c.transactions && c.transactions.length >= 100) ? c.transactions : defTransactions
+            };
+          }
+          return c;
+        });
+
+        // التأكد من إدراج شركة النور في الصدارة إذا لم تكن موجودة
+        if (typeof DEFAULT_PLATFORM_COMPANY !== 'undefined' && !cleanData.some(c => c.id === 'comp-al-noor')) {
+          cleanData.unshift(DEFAULT_PLATFORM_COMPANY);
+        }
+
+        localStorage.setItem('acc_admin_companies', JSON.stringify(cleanData));
+        return cleanData;
       }
       return null;
     } catch (err) {

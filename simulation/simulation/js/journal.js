@@ -198,31 +198,36 @@ function renderPendingList() {
         const div = document.createElement('div');
         
         if (isCurrent) {
-            div.className = 'p-3.5 border-b-2 border-blue-600 bg-blue-50/90 cursor-pointer flex items-center justify-between border-r-4 border-r-blue-800 shadow-2xs transition';
+            div.className = 'p-3.5 bg-emerald-50/70 border-b border-emerald-100 border-r-4 border-r-emerald-600 cursor-pointer flex items-center justify-between transition-all duration-150 hover:bg-emerald-50';
             div.innerHTML = `
-                <div>
-                    <div class="flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
-                        <span class="font-bold text-sm text-blue-950">${trx.ref}</span>
-                        <span class="text-[10px] bg-blue-200 text-blue-900 font-bold px-1.5 py-0.5 rounded">المستحقة حالياً ⏳</span>
+                <div class="min-w-0 flex-1 pl-2">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                        <span class="font-bold text-sm text-slate-900 font-mono tracking-tight">${trx.ref}</span>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold px-2 py-0.5 rounded-full">المستحقة حالياً ⏳</span>
                     </div>
-                    <div class="text-xs text-blue-800 font-medium mt-0.5">${getDocumentName(trx.type)}</div>
+                    <div class="text-xs text-slate-700 font-medium mt-1 truncate">${getDocumentName(trx.type)}</div>
                 </div>
-                <div class="text-xs font-mono font-bold text-blue-900">${trx.date}</div>
+                <div class="text-left flex-shrink-0">
+                    <div class="text-xs font-mono font-bold text-slate-600 bg-white px-2 py-0.5 rounded-md border border-slate-200">${trx.date}</div>
+                    <div class="text-[11px] font-mono font-extrabold text-emerald-800 mt-0.5">${Number(trx.amount || 0).toLocaleString()} ج.م</div>
+                </div>
             `;
             div.onclick = () => selectTask(trx);
         } else {
-            div.className = 'p-3 border-b border-slate-100 bg-slate-50/60 opacity-60 cursor-not-allowed flex items-center justify-between transition hover:opacity-85';
+            div.className = 'p-3 border-b border-slate-100 bg-white opacity-60 cursor-not-allowed flex items-center justify-between transition hover:opacity-80';
             div.innerHTML = `
-                <div>
+                <div class="min-w-0 flex-1 pl-2">
                     <div class="flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-slate-400 text-[16px]">lock</span>
-                        <span class="font-bold text-sm text-slate-500">${trx.ref}</span>
-                        <span class="text-[10px] bg-slate-200 text-slate-600 font-bold px-1.5 py-0.5 rounded">مقفلة 🔒</span>
+                        <span class="material-symbols-outlined text-slate-400 text-[15px]">lock</span>
+                        <span class="font-bold text-sm text-slate-500 font-mono">${trx.ref}</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-1.5 py-0.5 rounded-full">مقفلة 🔒</span>
                     </div>
-                    <div class="text-xs text-slate-400 font-medium mt-0.5">${getDocumentName(trx.type)}</div>
+                    <div class="text-xs text-slate-400 font-medium mt-0.5 truncate">${getDocumentName(trx.type)}</div>
                 </div>
-                <div class="text-xs font-mono text-slate-400">${trx.date}</div>
+                <div class="text-left flex-shrink-0">
+                    <div class="text-xs font-mono text-slate-400">${trx.date}</div>
+                </div>
             `;
             div.onclick = () => {
                 showChronologicalLockNotice(trx, pending[0]);
@@ -427,11 +432,12 @@ window.toggleAccountingHint = window.requestAccountingHint;
 // Realistic Business Document Viewer (Sanitized - Zero Answer Leaks)
 // =========================================================================
 
-function renderDocRow(label, amount, colorClass = 'text-slate-800') {
+function renderDocRow(label, amount, colorClass = 'text-slate-800', isTotal = false) {
+    const bg = isTotal ? 'bg-slate-100/70 border-t border-slate-200 py-2.5 px-3 rounded-lg font-bold' : 'py-2 px-3 hover:bg-slate-50/80 transition-colors border-b border-slate-100 last:border-b-0';
     return `
-      <div class="flex justify-between items-center py-1.5 px-2.5 rounded-lg border-b border-slate-100 last:border-b-0">
+      <div class="flex justify-between items-center ${bg}">
         <span class="text-slate-600 font-medium text-xs">${label}:</span>
-        <span class="font-mono font-bold text-xs ${colorClass}">${Number(amount || 0).toLocaleString()} ج.م</span>
+        <span class="font-mono font-bold text-xs ${colorClass} tracking-tight">${Number(amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span class="text-[10px] text-slate-500 font-sans">ج.م</span></span>
       </div>
     `;
 }
@@ -460,7 +466,7 @@ function renderDocument(trx) {
 
     if (trx.type === 'Purchase') {
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
@@ -497,7 +503,7 @@ function renderDocument(trx) {
     } else if (trx.type === 'Sale' || trx.type === 'Cash Sale') {
         const isCash = trx.type === 'Cash Sale';
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
@@ -539,7 +545,7 @@ function renderDocument(trx) {
         const netWords = tafqeetArabic(netAmt);
 
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
@@ -568,7 +574,7 @@ function renderDocument(trx) {
         `;
     } else if (trx.type === 'Bank Loan') {
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">إشعار إضافة وتسهيل ائتماني بنكي</h2>
@@ -603,7 +609,7 @@ function renderDocument(trx) {
         `;
     } else if (trx.type === 'Sales Return') {
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
@@ -642,7 +648,7 @@ function renderDocument(trx) {
         `;
     } else if (trx.type === 'Purchase Return') {
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
@@ -681,7 +687,7 @@ function renderDocument(trx) {
         `;
     } else if (trx.type === 'Collection') {
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
@@ -709,7 +715,7 @@ function renderDocument(trx) {
         `;
     } else if (trx.type === 'Payment') {
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
@@ -737,7 +743,7 @@ function renderDocument(trx) {
         `;
     } else if (trx.type === 'COGS' || trx.type === 'Cash Sale COGS') {
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
@@ -775,7 +781,7 @@ function renderDocument(trx) {
         const opWords = tafqeetArabic(totalDebit);
 
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b-2 border-slate-800 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
@@ -841,7 +847,7 @@ function renderDocument(trx) {
     } else {
         const desc = trx.desc || trx.title || 'مستند إداري / تسوية محاسبية معتمدة';
         docHtml = `
-        <div class="w-full max-w-md bg-white p-5 rounded-2xl shadow-md border border-slate-200 text-right font-sans text-slate-800 relative">
+        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b-2 border-slate-800 pb-3 mb-3">
             <div>
               <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
@@ -901,17 +907,35 @@ function recalculateTotals() {
 
     const debEl = document.getElementById('total-debit');
     const credEl = document.getElementById('total-credit');
-    if (debEl) debEl.innerText = totalDebit.toLocaleString();
-    if (credEl) credEl.innerText = totalCredit.toLocaleString();
+    if (debEl) debEl.innerText = totalDebit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (credEl) credEl.innerText = totalCredit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+    const badgeEl = document.getElementById('balance-status-badge');
     const totalsRow = document.getElementById('totals-row');
-    if (totalsRow) {
-        if (totalDebit > 0 && Math.abs(totalDebit - totalCredit) < 0.01) {
-            totalsRow.classList.remove('text-red-600');
-            totalsRow.classList.add('text-emerald-700');
-        } else {
-            totalsRow.classList.remove('text-emerald-700');
-            totalsRow.classList.add('text-red-600');
+
+    if (totalDebit > 0 && Math.abs(totalDebit - totalCredit) < 0.01) {
+        if (totalsRow) {
+            totalsRow.classList.remove('border-rose-200', 'bg-rose-50/40');
+            totalsRow.classList.add('border-emerald-200', 'bg-emerald-50/50');
+        }
+        if (badgeEl) {
+            badgeEl.innerHTML = '<span class="acc-balance-pill-balanced"><span class="material-symbols-outlined text-[16px]">check_circle</span>متزن محاسبياً</span>';
+        }
+    } else if (totalDebit > 0 || totalCredit > 0) {
+        const diff = Math.abs(totalDebit - totalCredit);
+        if (totalsRow) {
+            totalsRow.classList.remove('border-emerald-200', 'bg-emerald-50/50');
+            totalsRow.classList.add('border-rose-200', 'bg-rose-50/40');
+        }
+        if (badgeEl) {
+            badgeEl.innerHTML = `<span class="acc-balance-pill-imbalanced"><span class="material-symbols-outlined text-[16px]">error</span>غير متزن (فارق: ${diff.toLocaleString('en-US', { minimumFractionDigits: 2 })} ج.م)</span>`;
+        }
+    } else {
+        if (totalsRow) {
+            totalsRow.classList.remove('border-rose-200', 'bg-rose-50/40', 'border-emerald-200', 'bg-emerald-50/50');
+        }
+        if (badgeEl) {
+            badgeEl.innerHTML = '<span class="text-[11px] text-slate-400 font-medium">بانتظار إدخال المبالغ</span>';
         }
     }
 }
@@ -933,18 +957,18 @@ function renderForm() {
 
         tr.innerHTML = `
             <td class="p-2">
-                <select onchange="handleAccountChange(${index}, this.value)" class="w-full text-xs sm:text-sm border rounded-lg p-2 min-h-[44px] bg-white border-slate-300 focus:outline-none focus:border-slate-800">
+                <select onchange="handleAccountChange(${index}, this.value)" class="w-full text-xs sm:text-sm border rounded-lg p-2 min-h-[44px] bg-white border-slate-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500 font-medium">
                     ${optionsHtml}
                 </select>
             </td>
             <td class="p-2">
-                <input type="number" step="any" inputmode="decimal" oninput="handleDebitInput(${index}, this.value)" value="${line.debit || ''}" placeholder="0.00" class="w-full text-xs sm:text-sm text-center border rounded-lg p-2 min-h-[44px] border-slate-300 font-mono font-bold focus:outline-none focus:border-slate-800" />
+                <input type="number" step="any" inputmode="decimal" oninput="handleDebitInput(${index}, this.value)" value="${line.debit || ''}" placeholder="0.00" class="w-full text-xs sm:text-sm text-center border rounded-lg p-2 min-h-[44px] border-slate-200 font-mono font-bold font-tabular text-emerald-800 bg-white focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500" />
             </td>
             <td class="p-2">
-                <input type="number" step="any" inputmode="decimal" oninput="handleCreditInput(${index}, this.value)" value="${line.credit || ''}" placeholder="0.00" class="w-full text-xs sm:text-sm text-center border rounded-lg p-2 min-h-[44px] border-slate-300 font-mono font-bold focus:outline-none focus:border-slate-800" />
+                <input type="number" step="any" inputmode="decimal" oninput="handleCreditInput(${index}, this.value)" value="${line.credit || ''}" placeholder="0.00" class="w-full text-xs sm:text-sm text-center border rounded-lg p-2 min-h-[44px] border-slate-200 font-mono font-bold font-tabular text-blue-900 bg-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-500" />
             </td>
             <td class="p-2 text-center">
-                ${formLines.length > 2 ? `<button onclick="removeLine(${index})" class="text-rose-500 hover:text-rose-700 w-11 h-11 inline-flex items-center justify-center rounded-lg hover:bg-rose-50 transition cursor-pointer" title="حذف السطر"><span class="material-symbols-outlined text-[20px]">delete</span></button>` : ''}
+                ${formLines.length > 2 ? `<button onclick="removeLine(${index})" class="text-rose-500 hover:text-rose-700 w-10 h-10 inline-flex items-center justify-center rounded-lg hover:bg-rose-50 transition cursor-pointer" title="حذف السطر"><span class="material-symbols-outlined text-[20px]">delete</span></button>` : ''}
             </td>
         `;
         tbody.appendChild(tr);

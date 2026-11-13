@@ -4,11 +4,13 @@
 
 const SimulationBridge = {
   // خريطة تحويل حسابات المنصة السريعة إلى أكواد الدليل المحاسبي الموحد للبيئة (COA)
+  // خريطة تحويل حسابات المنصة السريعة إلى أكواد الدليل المحاسبي الموحد للبيئة (COA)
+  // مع توفير ترجمة صريحة بين بيئة المحاكي والدليل المركزي
   accountCodeMap: {
     'cash': { code: '1101', name: 'Cash (نقدية بالصندوق)', type: 'Asset' },
     'bank': { code: '1102', name: 'Bank (بنك)', type: 'Asset' },
     'ar': { code: '1103', name: 'Accounts Receivable (عملاء)', type: 'Asset' },
-    'inventory': { code: '1104', name: 'Inventory (مخزون)', type: 'Asset' },
+    'inventory': { code: '1104', name: 'Inventory (مخزون)', type: 'Asset', centralCode: '1105' },
     'equipment': { code: '1201', name: 'Fixed Assets (أصول ثابتة)', type: 'Asset' },
     'ap': { code: '2101', name: 'Accounts Payable (موردون)', type: 'Liability' },
     'vat_in': { code: '1106', name: 'Input VAT (ضريبة مدخلات)', type: 'Asset' },
@@ -19,6 +21,23 @@ const SimulationBridge = {
     'salary_exp': { code: '5201', name: 'Salaries Expense (مصروف رواتب)', type: 'Expense' },
     'rent_exp': { code: '5202', name: 'Rent Expense (مصروف إيجار)', type: 'Expense' },
     'util_exp': { code: '5203', name: 'Utilities Expense (مصروف مرافق)', type: 'Expense' }
+  },
+
+  // طبقة تحويل صريحة بين أكواد المحاكي والدليل المركزي
+  toCentralCode(simCode) {
+    const map = {
+      '1104': '1105', // مخزون المحاكي -> مخزون الدليل المركزي
+      '1105': '1108'  // مدفوع مقدماً المحاكي -> مدفوع مقدماً الدليل المركزي
+    };
+    return map[String(simCode)] || String(simCode);
+  },
+
+  toSimCode(centralCode) {
+    const map = {
+      '1105': '1104', // مخزون الدليل المركزي -> مخزون المحاكي
+      '1108': '1105'  // مدفوع مقدماً المركزي -> مدفوع مقدماً المحاكي
+    };
+    return map[String(centralCode)] || String(centralCode);
   },
 
   // خريطة كود الحساب المباشر من COA المولد

@@ -65,25 +65,31 @@ class AccounteraAccountingCore {
       if (!code) {
         errors.push(`السطر ${lineNum}: لم يتم تحديد كود الحساب.`);
       } else if (!this.coa[code]) {
-        // تسجيل الحساب تلقائياً إن لم يكن موجوداً
-        this.registerAccount(code, { name: line.accountName, type: line.acctType });
+        errors.push(`السطر ${lineNum}: الحساب (${code}) غير مسجل في شجرة الحسابات المعتمدة.`);
       }
 
-      const dr = Number(line.debit) || 0;
-      const cr = Number(line.credit) || 0;
+      const drRaw = line.debit;
+      const crRaw = line.credit;
 
-      if (dr < 0 || cr < 0) {
-        errors.push(`السطر ${lineNum}: لا يمكن تسجيل مبالغ سالبة في القيد.`);
-      }
-      if (dr === 0 && cr === 0) {
-        errors.push(`السطر ${lineNum}: يجب إدخال قيمة للمدين أو الدائن.`);
-      }
-      if (dr > 0 && cr > 0) {
-        errors.push(`السطر ${lineNum}: لا يمكن أن يكون السطر الواحد مديناً ودائناً في نفس الوقت.`);
+      const dr = Number(drRaw) || 0;
+      const cr = Number(crRaw) || 0;
+
+      if (!Number.isFinite(dr) || !Number.isFinite(cr) || isNaN(dr) || isNaN(cr)) {
+        errors.push(`السطر ${lineNum}: يحتوي على مبلغ غير صالح أو قيمة لا نهائية.`);
+      } else {
+        if (dr < 0 || cr < 0) {
+          errors.push(`السطر ${lineNum}: لا يمكن تسجيل مبالغ سالبة في القيد.`);
+        }
+        if (dr === 0 && cr === 0) {
+          errors.push(`السطر ${lineNum}: يجب إدخال قيمة للمدين أو الدائن.`);
+        }
+        if (dr > 0 && cr > 0) {
+          errors.push(`السطر ${lineNum}: لا يمكن أن يكون السطر الواحد مديناً ودائناً في نفس الوقت.`);
+        }
       }
 
-      totalDebit += dr;
-      totalCredit += cr;
+      totalDebit += (Number.isFinite(dr) ? dr : 0);
+      totalCredit += (Number.isFinite(cr) ? cr : 0);
     });
 
     // التحقق من توازن القيد (المدين = الدائن تماماً)
@@ -132,6 +138,18 @@ class AccounteraAccountingCore {
       postedBy: options.postedBy || "student",
       isOpening: !!entry.isOpening
     };
+
+    // 0. التحقق من منع تكرار القيد لنفس المعرف (Idempotency - DI-03)
+    const existingEntry = this.journal.find(j => 
+      (entry.id && j.id === entry.id) || 
+      (entry.txId && j.txId === entry.txId)
+    );
+    if (existingEntry) {
+      if (options.ignoreDuplicate) {
+        return existingEntry;
+      }
+      throw new Error(`القيد مرحل مسبقاً بنفس المعرف (${entry.id || entry.txId}) لتجنب تكرار ومضاعفة الأرصدة.`);
+    }
 
     // 1. إضافة القيد إلى دفتر اليومية
     this.journal.push(postedEntry);
@@ -365,41 +383,89 @@ class AccounteraAccountingCore {
     const sLines = studentEntry.lines || [];
     const expLines = expectedEntry.lines || [];
 
-    // Level 1: صحة الحسابات
-    const expCodes = expLines.map(l => String(l.accountCode));
-    const sCodes = sLines.map(l => String(l.accountCode));
-    const matchedCodes = sCodes.filter(c => expCodes.includes(c));
-    const isAccountsMatch = (matchedCodes.length === expCodes.length) && (sCodes.length === expCodes.length);
+    // Level 1: صحة الحسابات (Multiset 1-to-1 exact matching)
+    const expCodeCounts = {};
+    expLines.forEach(l => {
+      const c = String(l.accountCode || '').trim();
+      expCodeCounts[c] = (expCodeCounts[c] || 0) + 1;
+    });
+
+    const sCodeCounts = {};
+    sLines.forEach(l => {
+      const c = String(l.accountCode || '').trim();
+      sCodeCounts[c] = (sCodeCounts[c] || 0) + 1;
+    });
+
+    let isAccountsMatch = sLines.length === expLines.length && sLines.length > 0;
+    if (isAccountsMatch) {
+      for (const c of Object.keys(expCodeCounts)) {
+        if (sCodeCounts[c] !== expCodeCounts[c]) {
+          isAccountsMatch = false;
+          break;
+        }
+      }
+    }
     report.levels.level1_accounts.passed = isAccountsMatch;
     report.levels.level1_accounts.feedback = isAccountsMatch ? "الحسابات المستخدمة صحيحة ومطابقة." : "يوجد خطأ في اختيار أطراف الحسابات المعنية بالمعاملة.";
 
-    // Level 2: صحة المدين والدائن (Sides)
+    // Level 2: صحة المدين والدائن (Sides) & Level 3: صحة المبالغ (Amounts)
+    // استخدام مطابقة ثنائية أحادية المقابلة (1-to-1 Multiset Line Matching)
     let sidesMatch = isAccountsMatch;
+    let amountsMatch = isAccountsMatch;
+
     if (isAccountsMatch) {
-      expLines.forEach(el => {
-        const sl = sLines.find(s => String(s.accountCode) === String(el.accountCode));
-        if (sl) {
-          const expIsDr = el.debit > 0;
-          const sIsDr = sl.debit > 0;
-          if (expIsDr !== sIsDr) sidesMatch = false;
+      const remainingSLines = sLines.map((l, idx) => ({
+        index: idx,
+        accountCode: String(l.accountCode || '').trim(),
+        debit: Number(l.debit) || 0,
+        credit: Number(l.credit) || 0
+      }));
+
+      // محاولة مطابقة كل سطر متوقع مع سطر مطابق تماماً بالحساب والجانب والمبلغ
+      for (const el of expLines) {
+        const elCode = String(el.accountCode || '').trim();
+        const elDr = Number(el.debit) || 0;
+        const elCr = Number(el.credit) || 0;
+        const elIsDr = elDr > 0;
+
+        // ابحث عن سطر مطابق تماماً (كود + اتجاه + مبلغ)
+        const exactIdx = remainingSLines.findIndex(sl =>
+          sl.accountCode === elCode &&
+          (sl.debit > 0) === elIsDr &&
+          Math.abs(sl.debit - elDr) < 0.01 &&
+          Math.abs(sl.credit - elCr) < 0.01
+        );
+
+        if (exactIdx !== -1) {
+          remainingSLines.splice(exactIdx, 1);
+        } else {
+          // لم نجد تطابقاً كاملاً
+          amountsMatch = false;
+          // هل يوجد على الأقل سطر بنفس الحساب ونفس الاتجاه؟
+          const sideMatchIdx = remainingSLines.findIndex(sl =>
+            sl.accountCode === elCode && (sl.debit > 0) === elIsDr
+          );
+          if (sideMatchIdx !== -1) {
+            remainingSLines.splice(sideMatchIdx, 1);
+          } else {
+            sidesMatch = false;
+            // إزالة أي سطر متبقٍ بنفس الحساب إن وجد
+            const acctMatchIdx = remainingSLines.findIndex(sl => sl.accountCode === elCode);
+            if (acctMatchIdx !== -1) {
+              remainingSLines.splice(acctMatchIdx, 1);
+            }
+          }
         }
-      });
+      }
+
+      if (remainingSLines.length > 0) {
+        amountsMatch = false;
+      }
     }
+
     report.levels.level2_sides.passed = sidesMatch;
     report.levels.level2_sides.feedback = sidesMatch ? "التوجيه المحاسبي (المدين والدائن) سليم 100%." : "تم عكس طرف القيد (المدين مكان الدائن).";
 
-    // Level 3: صحة المبالغ (Amounts)
-    let amountsMatch = sidesMatch;
-    if (sidesMatch) {
-      expLines.forEach(el => {
-        const sl = sLines.find(s => String(s.accountCode) === String(el.accountCode));
-        if (sl) {
-          if (Math.abs(Number(sl.debit) - Number(el.debit)) > 0.01 || Math.abs(Number(sl.credit) - Number(el.credit)) > 0.01) {
-            amountsMatch = false;
-          }
-        }
-      });
-    }
     report.levels.level3_amounts.passed = amountsMatch;
     report.levels.level3_amounts.feedback = amountsMatch ? "المبالغ المالية مطابقة تماماً للمستند." : "يوجد خطأ في الأرقام والمبالغ المسجلة.";
 

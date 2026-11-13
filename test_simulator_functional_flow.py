@@ -4,7 +4,7 @@ import json
 from browser_use_sdk import AsyncBrowserUse
 from playwright.async_api import async_playwright
 
-API_KEY = os.environ.get("BROWSER_USE_API_KEY", "bu_Z6afUdLRDkrYMnIyRqQiQaQfpabEEmg6Kj8qGAXxZQo")
+API_KEY = os.environ.get("BROWSER_USE_API_KEY", "")
 
 async def test_deep_functional_flows():
     print("🚀 بدء الفحص الوظيفي العميق (Functional Logic Audit) لمحاكي المحاسبة...")

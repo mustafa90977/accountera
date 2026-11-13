@@ -143,7 +143,9 @@ class DocumentTransactionEngine {
       };
     } else if (doc.type === 'sales') {
       // فاتورة بيع بضاعة بالآجل:
-      // من حـ/ العملاء (Total Due)
+      // من مذكورين:
+      // حـ/ العملاء (Total Due المستحق الصافي)
+      // حـ/ مصلحة الضرائب - خصم وتحصيل تحت حساب الضريبة (WHT إن وجد)
       // إلى مذكورين:
       // حـ/ إيرادات المبيعات (Subtotal)
       // حـ/ مصلحة الضرائب - ضريبة ق.م مخرجات (14% Output VAT)
@@ -155,7 +157,21 @@ class DocumentTransactionEngine {
           debit: doc.totalDue,
           credit: 0,
           description: `استحقاق على العميل بموجب فاتورة مبيعات ${doc.id}`
-        },
+        }
+      ];
+
+      if (Number(doc.whtAmount) > 0) {
+        lines.push({
+          accountCode: "1107",
+          accountName: "مصلحة الضرائب - خصم وتحصيل تحت حساب الضريبة",
+          acctType: "Asset",
+          debit: Number(doc.whtAmount),
+          credit: 0,
+          description: `خصم وتحصيل تحت حساب الضريبة مستقطع من العميل فاتورة ${doc.id}`
+        });
+      }
+
+      lines.push(
         {
           accountCode: "4101",
           accountName: "إيرادات المبيعات (بضاعة)",
@@ -172,7 +188,7 @@ class DocumentTransactionEngine {
           credit: doc.vatAmount,
           description: `ضريبة مخرجات مستحقة 14% على الفاتورة ${doc.id}`
         }
-      ];
+      );
 
       return {
         ref: doc.id,

@@ -43,14 +43,13 @@ function getTaxDataFromLedger() {
     let inputVat = Math.abs(balances['1106'] || 0);
     let purchaseBase = Math.abs(balances['1104'] || 0);
 
-    // 3. Fallback to realistic pre-calculated values if balances are empty/0
-    if (outputVat === 0 && inputVat === 0) {
-        salesBase = 450000;
-        outputVat = Math.round(salesBase * 0.14); // 63,000 EGP
-        purchaseBase = 280000;
-        inputVat = Math.round(purchaseBase * 0.14); // 39,200 EGP
-    } else if (salesBase === 0 && outputVat > 0) {
-        salesBase = Math.round(outputVat / 0.14);
+    // إذا كانت المبيعات الدفترية غير مسجلة لكن توجد ضريبة مخرجات مسجلة، يتم اشتقاق أساس البيع
+    if (salesBase === 0 && outputVat > 0) {
+        salesBase = Math.round((outputVat / 0.14) * 100) / 100;
+    }
+    // وإذا كانت المشتريات غير مسجلة لكن توجد ضريبة مدخلات، يتم اشتقاق أساس المشتريات
+    if (purchaseBase === 0 && inputVat > 0) {
+        purchaseBase = Math.round((inputVat / 0.14) * 100) / 100;
     }
 
     const netVatPayable = outputVat - inputVat;
@@ -246,28 +245,61 @@ function renderWhtTable(data) {
 window.prepareVatClearingDraft = function() {
     const data = getTaxDataFromLedger();
     const today = new Date().toISOString().split('T')[0];
-    const amount = Math.abs(data.netVatPayable);
+    const net = Number(data.netVatPayable) || 0;
+    const absDiff = Math.abs(net);
 
     // Accounting Entry:
-    // Dr. Output VAT (2102) -> closes credit balance
-    // Cr. Input VAT (1106) -> closes debit balance
-    // Cr. Bank / VAT Clearing Payable -> difference
+    // حالة 1: ضريبة المخرجات أكبر (net > 0) -> سداد صافي المستحق للمصلحة
+    //   من حـ/ ضريبة القيمة المضافة مخرجات (2102) [Output VAT]
+    //   إلى مذكورين:
+    //     حـ/ ضريبة القيمة المضافة مدخلات (1106) [Input VAT]
+    //     حـ/ البنك (1102) [سداد الفارق للمصلحة]
+    //
+    // حالة 2: ضريبة المدخلات أكبر (net < 0) -> رصيد ضريبة دائن مسترد لصالح الشركة
+    //   من مذكورين:
+    //     حـ/ ضريبة القيمة المضافة مخرجات (2102) [إقفال المخرجات]
+    //     حـ/ مصلحة الضرائب - رصيد ضريبة مسترد / جاري مدين (1107) [الرصيد الدائن المسترد]
+    //   إلى حـ/ ضريبة القيمة المضافة مدخلات (1106) [إقفال كامل المدخلات]
+    //
+    // حالة 3: تطابق تام (net === 0) -> مقاصة متساوية دون سداد أو استرداد
+    let lines = [];
+    let title = 'قيد تسوية وإقفال ضريبة القيمة المضافة (نموذج 10)';
+    let desc = '';
+
+    if (net > 0) {
+        desc = `مقاصة ضريبة المدخلات (1106) مع ضريبة المخرجات (2102) وسداد صافي المستحق لمصلحة الضرائب (${absDiff.toLocaleString()} ج.م) عن الفترة ${currentTaxPeriod}`;
+        lines = [
+            { account: '2102', debit: data.outputVat, credit: 0 },
+            { account: '1106', debit: 0, credit: data.inputVat },
+            { account: '1102', debit: 0, credit: absDiff }
+        ];
+    } else if (net < 0) {
+        desc = `مقاصة ضريبة المدخلات مع المخرجات وإثبات رصيد ضريبي دائن مسترد لصالح المنشأة (${absDiff.toLocaleString()} ج.م) عن الفترة ${currentTaxPeriod}`;
+        lines = [
+            { account: '2102', debit: data.outputVat, credit: 0 },
+            { account: '1107', debit: absDiff, credit: 0 },
+            { account: '1106', debit: 0, credit: data.inputVat }
+        ];
+    } else {
+        desc = `مقاصة متطابقة لضريبة المدخلات مع المخرجات دون فارق سداد عن الفترة ${currentTaxPeriod}`;
+        lines = [
+            { account: '2102', debit: data.outputVat, credit: 0 },
+            { account: '1106', debit: 0, credit: data.inputVat }
+        ];
+    }
+
     const draft = {
         sourceModule: 'VAT_CLEARING',
         ref: 'TAX-VAT-' + Math.floor(1000 + Math.random() * 9000),
         date: today,
-        title: 'قيد تسوية وإقفال ضريبة القيمة المضافة (نموذج 10)',
-        desc: `مقاصة ضريبة المدخلات (1106) مع ضريبة المخرجات (2102) وسداد صافي المستحق لمصلحة الضرائب المصرية عن الفترة ${currentTaxPeriod}`,
-        amount: amount,
-        lines: [
-            { account: '2102', debit: data.outputVat, credit: 0 },
-            { account: '1106', debit: 0, credit: data.inputVat },
-            { account: '1102', debit: 0, credit: amount }
-        ]
+        title: title,
+        desc: desc,
+        amount: absDiff,
+        lines: lines
     };
 
     localStorage.setItem('acc_draft_journal_entry', JSON.stringify(draft));
-    window.location.href = '../journal/index.html?mode=draft_vat&amt=' + encodeURIComponent(amount);
+    window.location.href = '../journal/index.html?mode=draft_vat&amt=' + encodeURIComponent(absDiff);
 };
 
 window.openPrintVatForm10 = function() {

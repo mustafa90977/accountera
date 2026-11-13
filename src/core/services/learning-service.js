@@ -230,15 +230,18 @@ const SimulationService = {
   async saveProgress(companyId, { journal = [], ledger = {}, profile = {}, score = 0, status = 'in_progress' } = {}) {
     if (!companyId) companyId = 'company-nile';
 
-    // 1. تحديث الذاكرة المحلية لضمان التوافق التام مع بيئة المحاكي القائمة
+    // 1. تحديث الذاكرة المحلية مع عزل كاش الشركات (DI-01) ودعم حفظ الحالة الفارغة عند التصفير (DI-02)
     try {
-      if (Array.isArray(journal) && journal.length > 0) {
+      if (Array.isArray(journal)) {
+        localStorage.setItem(`student_journal_${companyId}`, JSON.stringify(journal));
         localStorage.setItem('student_journal', JSON.stringify(journal));
       }
-      if (ledger && Object.keys(ledger).length > 0) {
+      if (ledger && typeof ledger === 'object') {
+        localStorage.setItem(`student_ledger_${companyId}`, JSON.stringify(ledger));
         localStorage.setItem('student_ledger', JSON.stringify(ledger));
       }
-      if (profile && Object.keys(profile).length > 0) {
+      if (profile && typeof profile === 'object') {
+        localStorage.setItem(`sim_company_profile_${companyId}`, JSON.stringify(profile));
         localStorage.setItem('sim_company_profile', JSON.stringify(profile));
       }
     } catch (e) {}
@@ -304,11 +307,30 @@ const SimulationService = {
       }
     }
 
-    // استرجاع الكاش المحلي
+    // استرجاع الكاش المحلي المعزول بالشركة (DI-01)
     try {
-      const journal = JSON.parse(localStorage.getItem('student_journal') || '[]');
-      const ledger = JSON.parse(localStorage.getItem('student_ledger') || '{}');
-      const profile = JSON.parse(localStorage.getItem('sim_company_profile') || '{}');
+      const scopedJournal = localStorage.getItem(`student_journal_${companyId}`);
+      const scopedLedger = localStorage.getItem(`student_ledger_${companyId}`);
+      const scopedProfile = localStorage.getItem(`sim_company_profile_${companyId}`);
+
+      let journal = scopedJournal ? JSON.parse(scopedJournal) : null;
+      let ledger = scopedLedger ? JSON.parse(scopedLedger) : null;
+      let profile = scopedProfile ? JSON.parse(scopedProfile) : null;
+
+      // Fallback للكاش العام فقط إذا كان البروفايل يخص نفس الشركة
+      if (!journal || !ledger) {
+        const legacyProfile = JSON.parse(localStorage.getItem('sim_company_profile') || '{}');
+        if (legacyProfile.id === companyId) {
+          journal = journal || JSON.parse(localStorage.getItem('student_journal') || '[]');
+          ledger = ledger || JSON.parse(localStorage.getItem('student_ledger') || '{}');
+          profile = profile || legacyProfile;
+        } else {
+          journal = journal || [];
+          ledger = ledger || {};
+          profile = profile || { id: companyId };
+        }
+      }
+
       return {
         company_id: companyId,
         state_data: { journal, ledger, profile }

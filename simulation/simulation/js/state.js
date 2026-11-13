@@ -268,9 +268,12 @@ function loadTasks() {
     try {
         const rawCompanies = localStorage.getItem('acc_admin_companies');
         if (rawCompanies) {
-            const list = JSON.parse(rawCompanies);
+            let list = JSON.parse(rawCompanies);
             if (Array.isArray(list) && list.length > 0) {
-                // البحث عن الشركة المحددة أو آخر شركة تم إضافتها وفيها سندات
+                // تصفية شركات الاختبار والتدقيق
+                list = list.filter(c => c && c.id && !c.id.startsWith('audit-') && !c.id.startsWith('test-'));
+
+                // البحث عن الشركة المحددة أو شركة فيها سندات فعلية
                 let activeComp = null;
                 const rawProf = localStorage.getItem('sim_company_profile');
                 if (rawProf) {
@@ -279,8 +282,8 @@ function loadTasks() {
                         activeComp = list.find(c => c.id === prof.id);
                     }
                 }
-                if (!activeComp) {
-                    activeComp = list.slice().reverse().find(c => c.transactions && c.transactions.length > 0) || list[0];
+                if (!activeComp || !activeComp.transactions || activeComp.transactions.length === 0) {
+                    activeComp = list.find(c => c.transactions && c.transactions.length > 0) || list[0];
                 }
 
                 if (activeComp && activeComp.transactions && activeComp.transactions.length > 0) {
@@ -551,6 +554,16 @@ function saveStudentState() {
     localStorage.setItem('student_journal', JSON.stringify(studentJournal));
     localStorage.setItem('student_ledger', JSON.stringify(studentLedger));
     updateAllHeaderBadges();
+
+    // مزامنة تلقائية مع السحابة (DI-05) مع تأخير ذكي (Debounce) لعدم إجهاد الشبكة
+    try {
+        if (typeof window !== 'undefined' && window.SimulationBridge && typeof window.SimulationBridge.saveCurrentSimulation === 'function') {
+            if (window._simSaveTimeout) clearTimeout(window._simSaveTimeout);
+            window._simSaveTimeout = setTimeout(() => {
+                window.SimulationBridge.saveCurrentSimulation();
+            }, 800);
+        }
+    } catch (e) {}
 }
 
 // Calculate balances strictly from studentLedger movements!

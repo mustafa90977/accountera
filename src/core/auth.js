@@ -292,11 +292,34 @@ const AuthService = {
       localStorage.removeItem('accountera_user');
       // مسح كافة مفاتيح توكنات Supabase وجلسات المستخدم محلياً فوراً
       const keysToRemove = [];
+      // المفاتيح المحاسبية ومفاتيح جلسات المحاكاة التي يجب عزلها وتطهيرها تماماً لمنع تسرب البيانات بين الطلاب
+      const simKeys = [
+        'student_journal',
+        'student_ledger',
+        'sim_company_profile',
+        'bank_statement_items',
+        'acc_draft_journal_entry',
+        'acc_company_sim_entries',
+        'career_student_profile',
+        'sim_student_career_tasks'
+      ];
+      simKeys.forEach(k => keysToRemove.push(k));
+
+      // المفاتيح النظامية العامة التي يجب الحفاظ عليها دائماً ولا تخص مستخدماً بعينه
+      const preserveKeys = [
+        'acc_admin_companies',
+        'acc_admin_plans',
+        'acc_admin_coupons',
+        'acc_admin_config',
+        'acc_admin_audit',
+        'sim_admin_tasks',
+        'accountera_theme'
+      ];
+
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        if (k && (k.startsWith('sb-') || k.includes('auth-token') || k.includes('supabase') || k.startsWith('acc_'))) {
-          // نحتفظ فقط بإعدادات المظهر إن وجدت
-          if (!k.includes('theme') && !k.includes('mode')) {
+        if (k && (k.startsWith('sb-') || k.includes('auth-token') || k.includes('supabase') || k.startsWith('acc_') || k.startsWith('sim_'))) {
+          if (!k.includes('theme') && !k.includes('mode') && !preserveKeys.includes(k)) {
             keysToRemove.push(k);
           }
         }

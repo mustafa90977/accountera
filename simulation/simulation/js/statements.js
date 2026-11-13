@@ -325,7 +325,9 @@ function updateStatements() {
                         startingCash += cashImpact;
                         return;
                     }
-                    const isInvesting = je.lines.some(l => ['1201', '1202', '4201', '5210'].includes(l.accountCode));
+                    // التدفقات الاستثمارية: الأصول الثابتة (1201) ومجمع الإهلاك (1202) وأرباح/خسائر استبعاد الأصول (4201, 5210 في دليل المحاكي) أو نوع الحركة الاستثمارية الصريح
+                    const isInvesting = je.lines.some(l => ['1201', '1202', '4201', '5210'].includes(l.accountCode)) ||
+                                        (je.type && (je.type.includes('Asset') || je.type.includes('أصول') || je.type.includes('استثمار')));
                     const isFinancing = je.lines.some(l => ['3101', '3102', '2201'].includes(l.accountCode));
 
                     const desc = je.type || 'حركة نقدية';
