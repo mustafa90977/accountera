@@ -701,7 +701,7 @@ body.landing-mode .main-content {
   background: linear-gradient(135deg, #059669, #10b981, #06b6d4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-decoration: underline wavy rgba(16, 185, 129, 0.35) 2px;
+  text-decoration: none;
 }
 
 .hero-subtitle-lead {
