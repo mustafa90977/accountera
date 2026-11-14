@@ -475,7 +475,7 @@ const ExcelStudentDashboard = {
                       <span style="color:var(--primary); display:inline-flex;">${AccounteraIcons.render('lightbulb', { size: 16, strokeWidth: 1.75 })}</span>
                       الأمثلة المحلولة النموذجية
                     </strong>
-                    <span style="font-size:0.75rem; color:var(--text-muted);">10 حالات عملية مشروحة خطوة بخطوة</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">أمثلة عملية نموذجية مشروحة خطوة بخطوة</span>
                   </div>
                   <span style="font-size:0.9rem; color:var(--primary); font-weight:800;">➔</span>
                 </div>
