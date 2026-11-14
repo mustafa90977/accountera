@@ -886,8 +886,6 @@ if (typeof window.parseTrainingPlatformJson === 'undefined') {
                     desc = q.problemText.trim();
                 } else {
                     const formattedTotal = (totalDebit || totalCredit || 0).toLocaleString() + ' ج.م';
-                    const drNames = debits.map(d => (d.accountName ? d.accountName.split('(')[0].trim() : 'حساب') + ' (' + Number(d.debit).toLocaleString() + ' ج.م)').join(' و ');
-                    const crNames = credits.map(c => (c.accountName ? c.accountName.split('(')[0].trim() : 'حساب') + ' (' + Number(c.credit).toLocaleString() + ' ج.م)').join(' و ');
 
                     switch (q.type) {
                         case 'Opening Balance':
@@ -909,7 +907,7 @@ if (typeof window.parseTrainingPlatformJson === 'undefined') {
                             desc = `سداد مستحقات وفواتير موردين خصماً من الحساب البنكي بمبلغ ${formattedTotal}.`;
                             break;
                         case 'Expense':
-                            desc = `سداد مصروفات تشغيلية وإدارية: ${drNames} خصماً من ${crNames}.`;
+                            desc = `سداد مصروفات تشغيلية وإدارية بموجب مستند صرف معتمد بمبلغ ${formattedTotal}.`;
                             break;
                         case 'Prepayment':
                             desc = `سداد دفعات ومصروفات مدفوعة مقدماً عن فترات قادمة بمبلغ ${formattedTotal}.`;
@@ -928,10 +926,12 @@ if (typeof window.parseTrainingPlatformJson === 'undefined') {
                             desc = `إثبات كشف واستحقاق رواتب العاملين عن الشهر بقيمة إجمالية ${formattedTotal}.`;
                             break;
                         default:
-                            if (q.solutionSteps && q.solutionSteps.length > 1) {
-                                desc = q.solutionSteps.slice(0, 2).join(' ');
+                            if (q.prompt && q.prompt.trim()) {
+                                desc = q.prompt.trim();
+                            } else if (q.description && q.description.trim() && !q.description.includes('الجانب المدين') && !q.description.includes('إلى حـ/')) {
+                                desc = q.description.trim();
                             } else {
-                                desc = `${titleAr} بمبلغ ${formattedTotal}: من ${drNames || 'المدين'} إلى ${crNames || 'الدائن'}.`;
+                                desc = `معاملة مالية معتمدة (${titleAr}) بموجب المستند المرفق بقيمة إجمالية ${formattedTotal}.`;
                             }
                             break;
                     }

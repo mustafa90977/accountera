@@ -251,9 +251,10 @@ function renderReconTables() {
         if(bookReconItems.length === 0) {
             bookTbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-slate-400 font-medium">لا توجد حركات مرحلة لحساب البنك (1102) في دفتر الأستاذ بعد.</td></tr>';
         } else {
+            let bookRowsHtml = '';
             bookReconItems.forEach((item, idx) => {
                 if(item.matched) matchedCount++;
-                bookTbody.innerHTML += `
+                bookRowsHtml += `
                   <tr class="${item.matched ? 'bg-emerald-50/40' : 'bg-white'} hover:bg-slate-50 transition border-b border-slate-100">
                     <td class="p-1 text-center align-middle" onclick="toggleBookMatch(${idx})" style="cursor: pointer;">
                       <label class="w-full h-full min-w-[44px] min-h-[44px] inline-flex items-center justify-center cursor-pointer" onclick="event.stopPropagation()">
@@ -270,6 +271,7 @@ function renderReconTables() {
                   </tr>
                 `;
             });
+            bookTbody.innerHTML = bookRowsHtml;
         }
         if(bookMatchedBadge) bookMatchedBadge.innerText = matchedCount + ' من ' + bookReconItems.length + ' مطابقة';
     }

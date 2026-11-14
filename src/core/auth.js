@@ -80,6 +80,10 @@ const AuthService = {
               this.currentUser = parsed;
               hasValidSavedSession = true;
             } else if (parsed && parsed.id && parsed.email && !parsed.isDevTest) {
+              // الحماية من التلاعب المحلي: لا يتم منح صلاحية الإدارة بدون جلسة سحابية موثقة
+              if (parsed.role === 'admin') {
+                parsed.role = 'student';
+              }
               this.currentUser = parsed;
               hasValidSavedSession = true;
             }
