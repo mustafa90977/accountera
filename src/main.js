@@ -471,7 +471,7 @@ window.navigateToScreen = function(screenId) {
 
   // تأثير انتقال ناعم وخفيف عبر GSAP للشاشات الداخلية
   if (!isAuthScreen && typeof gsap !== 'undefined') {
-    gsap.fromTo(appContainer, { opacity: 0.88, y: 5 }, { opacity: 1, y: 0, duration: 0.22, ease: 'power1.out' });
+    gsap.fromTo(appContainer, { opacity: 0.88, y: 5 }, { opacity: 1, y: 0, duration: 0.22, ease: 'power1.out', clearProps: 'transform' });
   }
 
   // تحديث الحركات التفاعلية الخاصة بالشاشة
