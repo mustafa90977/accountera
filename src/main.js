@@ -263,7 +263,7 @@ window.navigateToScreen = function(screenId) {
     topbar.style.display = isAuthScreen ? 'none' : '';
   }
   if (bottomNav) {
-    bottomNav.style.display = isAuthScreen ? 'none' : '';
+    bottomNav.style.display = (isAuthScreen || isLandingScreen) ? 'none' : '';
   }
 
   const sidebar = document.getElementById('appSidebar');
