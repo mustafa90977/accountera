@@ -104,15 +104,18 @@ const EGYPTIAN_COA = {
 
   // المصروفات العمومية والإدارية والبيعية
   "5201": { code: "5201", name: "مصروف الأجور والرواتب الأساسية", enName: "Salaries & Wages Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
-  "5202": { code: "5202", name: "حصة الشركة في التأمينات الاجتماعية (18.75%)", enName: "Employer Social Insurance Share", type: "Expense", category: "Operating Expense", normal: "Debit" },
-  "5203": { code: "5203", name: "مصروف إيجار المقرات والمعارض", enName: "Rent Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
-  "5204": { code: "5204", name: "مصروف الكهرباء والمياه والإنترنت (المرافق)", enName: "Utilities Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
-  "5205": { code: "5205", name: "مصروف إهلاك الأصول الثابتة", enName: "Depreciation Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
-  "5206": { code: "5206", name: "مصروف الدعاية والإعلان والتسويق", enName: "Advertising & Marketing Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
-  "5207": { code: "5207", name: "مصروفات بنكية وعمولات تحصيل", enName: "Bank Charges & Commissions", type: "Expense", category: "Operating Expense", normal: "Debit" },
-  "5208": { code: "5208", name: "مصروف الصيانة وقطع الغيار", enName: "Maintenance Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
-  "5209": { code: "5209", name: "مصروف الضيافة والانتقالات والسيارات", enName: "Transportation & Hospitality Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5202": { code: "5202", name: "مصروف إيجار المقرات والمعارض", enName: "Rent Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5203": { code: "5203", name: "مصروف الكهرباء والمياه والإنترنت (المرافق)", enName: "Utilities Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5204": { code: "5204", name: "مصروف إهلاك الأصول الثابتة", enName: "Depreciation Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5205": { code: "5205", name: "مصروف ديون معدومة", enName: "Bad Debt Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5206": { code: "5206", name: "مصروف هبوط أسعار المخزون", enName: "Inventory Obsolescence Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5207": { code: "5207", name: "مصروف الصيانة وقطع الغيار", enName: "Maintenance Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5208": { code: "5208", name: "مصروفات بنكية وعمولات تحصيل", enName: "Bank Charges & Commissions", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5209": { code: "5209", name: "مصروف الدعاية والإعلان والتسويق", enName: "Advertising & Marketing Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
   "5210": { code: "5210", name: "أدوات كتابية ومطبوعات ومهمات", enName: "Stationery & Office Supplies", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5211": { code: "5211", name: "مصروف عجز الخزينة والنقدية", enName: "Cash Shortage Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5212": { code: "5212", name: "حصة الشركة في التأمينات الاجتماعية (18.75%)", enName: "Employer Social Insurance Share", type: "Expense", category: "Operating Expense", normal: "Debit" },
+  "5213": { code: "5213", name: "مصروف الضيافة والانتقالات والسيارات", enName: "Transportation & Hospitality Expense", type: "Expense", category: "Operating Expense", normal: "Debit" },
   "5301": { code: "5301", name: "مصروف فوائد تمويلية وقروض", enName: "Interest & Finance Expense", type: "Expense", category: "Non-Operating Expense", normal: "Debit" },
   "5302": { code: "5302", name: "خسائر بيع أصول ثابتة ومصروفات استثنائية", enName: "Loss on Asset Disposal / Exceptional", type: "Expense", category: "Non-Operating Expense", normal: "Debit" }
 };

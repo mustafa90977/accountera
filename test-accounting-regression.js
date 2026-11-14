@@ -153,7 +153,7 @@ runTest('توليد قائمة الدخل والمركز المالي والتح
   engine.postEntry({
     desc: 'سداد إيجار الشهر نقداً',
     lines: [
-      { accountCode: '5203', debit: 15000, credit: 0 },
+      { accountCode: '5202', debit: 15000, credit: 0 },
       { accountCode: '1101.001', debit: 0, credit: 15000 }
     ]
   });

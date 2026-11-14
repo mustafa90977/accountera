@@ -56,7 +56,9 @@ const COA = {
     '5207': { name: 'Maintenance Expense (مصروف صيانة)', type: 'Expense' },
     '5208': { name: 'Bank Charges (مصروفات بنكية)', type: 'Expense' },
     '5209': { name: 'Interest Expense (مصروف فوائد)', type: 'Expense' },
-    '5210': { name: 'Loss on Asset Disposal (خسائر استبعاد أصول)', type: 'Expense' }
+    '5210': { name: 'Loss on Asset Disposal (خسائر استبعاد أصول)', type: 'Expense' },
+    '5211': { name: 'Cash Shortage Expense (مصروف عجز الخزينة)', type: 'Expense' },
+    '5212': { name: 'Employer Social Insurance Share (حصة الشركة في التأمينات)', type: 'Expense' }
 };
 
 const ACCOUNTS = {};
