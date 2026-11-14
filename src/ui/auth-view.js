@@ -70,7 +70,7 @@ const ExcelAuthView = {
           <form id="authForm" onsubmit="AuthService.handleAuthSubmit(event, '${this.currentMode}')">
             ${!isLogin ? `
               <div style="margin-bottom: 1.15rem;">
-                <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">الاسم الكامل:</label>
+                <label for="authName" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">الاسم الكامل:</label>
                 <div style="position: relative;">
                   <input type="text" id="authName" class="form-input" placeholder="مثال: مصطفى محمد" required style="width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary); font-size: 0.9rem;">
                 </div>
@@ -78,7 +78,7 @@ const ExcelAuthView = {
             ` : ''}
 
             <div style="margin-bottom: 1.15rem;">
-              <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">البريد الإلكتروني:</label>
+              <label for="authEmail" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">البريد الإلكتروني:</label>
               <div style="position: relative;">
                 <input type="email" id="authEmail" class="form-input" placeholder="name@domain.com" required autocomplete="email" style="width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary); font-size: 0.9rem; text-align: left; direction: ltr;">
               </div>
@@ -86,7 +86,7 @@ const ExcelAuthView = {
 
             <div style="margin-bottom: 1.5rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <label class="form-label" style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin: 0;">كلمة المرور:</label>
+                <label for="authPassword" class="form-label" style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin: 0;">كلمة المرور:</label>
                 ${!isLogin ? '<span style="font-size: 0.75rem; color: var(--text-muted);">6 أحرف على الأقل</span>' : ''}
               </div>
               <div style="position: relative;">

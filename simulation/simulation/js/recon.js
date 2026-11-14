@@ -32,6 +32,7 @@ window.showAccountStatement = function(code) {
     if(moves.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-slate-400 font-medium">لا توجد حركات مرحلة لهذا الحساب حتى الآن.</td></tr>';
     } else {
+        let movesHtml = '';
         moves.forEach(m => {
             const deb = Number(m.debit) || 0;
             const cred = Number(m.credit) || 0;
@@ -41,7 +42,7 @@ window.showAccountStatement = function(code) {
 
             const isDebBal = runningBalance >= 0;
 
-            tbody.innerHTML += `
+            movesHtml += `
               <tr class="hover:bg-slate-50 transition border-b border-slate-100">
                 <td class="p-2.5 font-mono text-slate-500">${m.date}</td>
                 <td class="p-2.5 font-bold text-slate-800 font-mono">${m.trxId || ''} <span class="text-slate-400 font-normal">(${m.ref || ''})</span></td>
@@ -54,6 +55,7 @@ window.showAccountStatement = function(code) {
               </tr>
             `;
         });
+        tbody.innerHTML = movesHtml;
     }
 
     const net = totDebit - totCredit;
@@ -218,9 +220,10 @@ function renderReconTables() {
         if(bankStatementItems.length === 0) {
             bankTbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-slate-400 font-medium">لا توجد بيانات كشف حساب بنكي واردة حالياً (الرصيد 0.00 ج.م).</td></tr>';
         } else {
+            let bankRowsHtml = '';
             bankStatementItems.forEach((item, idx) => {
                 if(item.matched) matchedCount++;
-                bankTbody.innerHTML += `
+                bankRowsHtml += `
                   <tr class="${item.matched ? 'bg-emerald-50/40' : 'bg-white'} hover:bg-slate-50 transition border-b border-slate-100">
                     <td class="p-1 text-center align-middle" onclick="toggleBankMatch(${idx})" style="cursor: pointer;">
                       <label class="w-full h-full min-w-[44px] min-h-[44px] inline-flex items-center justify-center cursor-pointer" onclick="event.stopPropagation()">
@@ -237,6 +240,7 @@ function renderReconTables() {
                   </tr>
                 `;
             });
+            bankTbody.innerHTML = bankRowsHtml;
         }
         if(bankMatchedBadge) bankMatchedBadge.innerText = matchedCount + ' من ' + bankStatementItems.length + ' مطابقة';
     }

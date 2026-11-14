@@ -120,7 +120,7 @@ const ExcelCompanyWorkspaceView = {
         ` : `
           <div class="companies-grid">
             ${companies.map(comp => `
-              <div class="company-card" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="ExcelCompanyWorkspaceView.enterCompanySimulator('${this.sanitizeId(comp.id)}')">
+              <div class="company-card" role="button" tabindex="0" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="ExcelCompanyWorkspaceView.enterCompanySimulator('${this.sanitizeId(comp.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); ExcelCompanyWorkspaceView.enterCompanySimulator('${this.sanitizeId(comp.id)}');}">
                 <div>
                   <div class="company-card-header">
                     <div class="company-icon-box" style="display:flex; align-items:center; justify-content:center; color:var(--primary);">

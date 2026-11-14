@@ -3,6 +3,15 @@
  */
 
 const AuthService = {
+  escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  },
   currentUser: null,
   isInitializing: false,
 
@@ -788,7 +797,7 @@ const AuthService = {
           </div>
 
           <div class="accountely-user-dock" onclick="navigateToScreen(isAdmin ? 'admin-settings' : 'student-settings')" title="إعدادات الحساب والملف الشخصي" aria-label="الملف الشخصي">
-            <span class="accountely-user-name" style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-left:4px;">${this.currentUser.name || 'مستخدم'}</span>
+            <span class="accountely-user-name" style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-left:4px;">${this.escapeHtml(this.currentUser.name || 'مستخدم')}</span>
             <div class="accountely-user-avatar" style="width:28px; height:28px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.82rem;">${initial}</div>
           </div>
           
@@ -824,6 +833,8 @@ const AccModal = {
 
     const toast = document.createElement('div');
     toast.className = `acc-toast toast-${type}`;
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
     const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
     toast.innerHTML = `
       <span class="acc-toast-icon">${icon}</span>
@@ -858,11 +869,22 @@ const AccModal = {
       overlay = document.createElement('div');
       overlay.id = 'accConfirmModalOverlay';
       overlay.className = 'modal-overlay';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-labelledby', 'accConfirmModalTitle');
       overlay.onclick = (e) => {
         if (e.target === overlay) {
           close(false);
         }
       };
+
+      const escHandler = (e) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          close(false);
+        }
+      };
+      document.addEventListener('keydown', escHandler);
 
       overlay.innerHTML = `
         <div class="modal-sheet" style="max-width: 440px; text-align: center; padding: 32px 24px;">
@@ -882,6 +904,7 @@ const AccModal = {
       setTimeout(() => overlay.classList.add('active'), 10);
 
       function close(result) {
+        document.removeEventListener('keydown', escHandler);
         overlay.classList.remove('active');
         setTimeout(() => overlay.remove(), 250);
         resolve(result);
@@ -906,11 +929,22 @@ const AccModal = {
       overlay = document.createElement('div');
       overlay.id = 'accAlertModalOverlay';
       overlay.className = 'modal-overlay';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-labelledby', 'accAlertModalTitle');
       overlay.onclick = (e) => {
         if (e.target === overlay) {
           close();
         }
       };
+
+      const escHandler = (e) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          close();
+        }
+      };
+      document.addEventListener('keydown', escHandler);
 
       overlay.innerHTML = `
         <div class="modal-sheet" style="max-width: 440px; text-align: center; padding: 32px 24px;">
@@ -927,6 +961,7 @@ const AccModal = {
       setTimeout(() => overlay.classList.add('active'), 10);
 
       function close() {
+        document.removeEventListener('keydown', escHandler);
         overlay.classList.remove('active');
         setTimeout(() => overlay.remove(), 250);
         resolve();
