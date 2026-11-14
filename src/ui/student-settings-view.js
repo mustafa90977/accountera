@@ -172,22 +172,22 @@ const ExcelStudentSettingsView = {
         <form onsubmit="ExcelStudentSettingsView.savePersonalInfo(event)">
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
             <div>
-              <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">الاسم الكامل:</label>
+              <label for="set_name" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">الاسم الكامل:</label>
               <input type="text" id="set_name" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary);" value="${user.name || ''}" required>
             </div>
 
             <div>
-              <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">البريد الإلكتروني:</label>
+              <label for="set_email" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">البريد الإلكتروني:</label>
               <input type="email" id="set_email" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary);" value="${user.email || ''}" required>
             </div>
 
             <div>
-              <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">رقم الهاتف / واتساب:</label>
+              <label for="set_phone" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">رقم الهاتف / واتساب:</label>
               <input type="tel" id="set_phone" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary); text-align: left; direction: ltr;" value="${user.phone || ''}" placeholder="01xxxxxxxxx">
             </div>
 
             <div>
-              <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">المسمى الوظيفي المستهدف:</label>
+              <label for="set_job_title" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">المسمى الوظيفي المستهدف:</label>
               <select id="set_job_title" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary);">
                 <option value="محاسب مالي عام" ${user.jobTitle === 'محاسب مالي عام' ? 'selected' : ''}>محاسب مالي عام (General Accountant)</option>
                 <option value="أخصائي حسابات موردين ومخازن" ${user.jobTitle === 'أخصائي حسابات موردين ومخازن' ? 'selected' : ''}>أخصائي حسابات موردين ومخازن (AP Specialist)</option>
@@ -199,18 +199,18 @@ const ExcelStudentSettingsView = {
             </div>
 
             <div>
-              <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">الجامعة / الكلية:</label>
+              <label for="set_university" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">الجامعة / الكلية:</label>
               <input type="text" id="set_university" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary);" value="${user.university || ''}" placeholder="مثال: جامعة القاهرة - كلية التجارة">
             </div>
 
             <div>
-              <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">سنة التخرج أو الفرقة:</label>
+              <label for="set_grad_year" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">سنة التخرج أو الفرقة:</label>
               <input type="text" id="set_grad_year" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary);" value="${user.gradYear || ''}" placeholder="مثال: 2025 أو الفرقة الرابعة">
             </div>
           </div>
 
           <div style="margin-bottom: 1.5rem;">
-            <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">النبذة المهنية المختصرة (Bio):</label>
+            <label for="set_bio" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">النبذة المهنية المختصرة (Bio):</label>
             <textarea id="set_bio" rows="3" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary); resize: vertical;" placeholder="اكتب سطرين عن خبرتك واهتماماتك المحاسبية ليراها أصحاب العمل في محفظتك الموثقة...">${user.bio || ''}</textarea>
           </div>
 
@@ -239,13 +239,13 @@ const ExcelStudentSettingsView = {
 
         <form onsubmit="ExcelStudentSettingsView.changePassword(event)" style="max-width: 540px;">
           <div style="margin-bottom: 1.25rem;">
-            <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">كلمة المرور الحالية:</label>
+            <label for="pwd_current" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">كلمة المرور الحالية:</label>
             <input type="password" id="pwd_current" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary);" placeholder="••••••••" required>
             <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">أدخل كلمة المرور الحالية لتأكيد هويتك.</span>
           </div>
 
           <div style="margin-bottom: 1.25rem;">
-            <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">كلمة المرور الجديدة:</label>
+            <label for="pwd_new" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">كلمة المرور الجديدة:</label>
             <input type="password" id="pwd_new" oninput="ExcelStudentSettingsView.checkPasswordStrength(this.value)" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary);" placeholder="لا تقل عن 6 أحرف أو أرقام" required>
             
             <!-- مؤشر قوة كلمة المرور -->
@@ -258,7 +258,7 @@ const ExcelStudentSettingsView = {
           </div>
 
           <div style="margin-bottom: 1.5rem;">
-            <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">تأكيد كلمة المرور الجديدة:</label>
+            <label for="pwd_confirm" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">تأكيد كلمة المرور الجديدة:</label>
             <input type="password" id="pwd_confirm" class="form-input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary);" placeholder="أعد إدخال كلمة المرور الجديدة" required>
           </div>
 
