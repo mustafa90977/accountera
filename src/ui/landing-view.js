@@ -99,7 +99,7 @@ const ExcelLandingView = {
               </a>
 
               <!-- مسار الإتقان -->
-              <a class="landing-nav-item" href="javascript:void(0)" onclick="navigateToScreen('lesson-1')" title="مسار الإتقان والدروس التأسيسية">
+              <a class="landing-nav-item" href="javascript:void(0)" onclick="navigateToScreen('documentary-cycle')" title="أكاديمية المحاسبة والمنهج الكامل (38 درساً)">
                 <div style="display:flex; align-items:center; gap:0.65rem;">
                   <span class="landing-nav-icon">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 3 3 5 6 5s6-2 6-5v-5"/></svg>
@@ -837,7 +837,7 @@ const ExcelLandingView = {
                 <h4 class="footer-heading">روابط المنصة</h4>
                 <ul class="footer-links-list">
                   <li><a href="javascript:void(0)" onclick="window.scrollTo({top:0, behavior:'smooth'})">الرئيسية</a></li>
-                  <li><a href="javascript:void(0)" onclick="navigateToScreen('lesson-1')">خريطة التعلم</a></li>
+                  <li><a href="javascript:void(0)" onclick="navigateToScreen('documentary-cycle')">المنهج الكامل والدروس</a></li>
                   <li><a href="javascript:void(0)" onclick="navigateToScreen('companies-hub')">محاكاة الشركات الحقيقية</a></li>
                   <li><a href="javascript:void(0)" onclick="navigateToScreen('student-plans')">باقات الاشتراك</a></li>
                   <li><a href="javascript:void(0)" onclick="navigateToScreen('ex-1')">بنك القيود والأسئلة</a></li>

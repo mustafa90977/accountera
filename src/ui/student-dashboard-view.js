@@ -328,9 +328,14 @@ const ExcelStudentDashboard = {
                   <span style="display:inline-flex; align-items:center; color:var(--primary);">${AccounteraIcons.render('graduation-cap', { size: 22, strokeWidth: 1.75 })}</span>
                   <span>المسار التعليمي التأسيسي للمحاسب المبتدئ</span>
                 </h3>
-                <button class="btn-cta-secondary" onclick="navigateToScreen('lesson-1')" style="padding:6px 12px; font-size:0.8rem;">
-                  بدء من أول درس
-                </button>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn-cta-primary" onclick="navigateToScreen('documentary-cycle')" style="padding:6px 14px; font-size:0.8rem; font-weight:800;">
+                    المنهج الشامل (38 درساً) ⚡
+                  </button>
+                  <button class="btn-cta-secondary" onclick="navigateToScreen('lesson-1')" style="padding:6px 12px; font-size:0.8rem;">
+                    بدء من أول درس
+                  </button>
+                </div>
               </div>
 
               <div class="lessons-list">

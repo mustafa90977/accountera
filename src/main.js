@@ -221,7 +221,7 @@ window.navigateToScreen = function(screenId) {
   }
 
   // حارس المسارات الصارم (Strict Route Guard): حظر الوصول لكافة أقسام المنصة بدون تسجيل دخول موثق
-  const publicScreens = ['landing', 'welcome'];
+  const publicScreens = ['landing', 'welcome', 'documentary-cycle', 'theory'];
   const currentUser = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
 
   if (!publicScreens.includes(screenId) && screenId !== 'login' && screenId !== 'register' && !currentUser) {
@@ -325,7 +325,7 @@ window.navigateToScreen = function(screenId) {
       appContainer.innerHTML = ExcelLearningView.renderLesson(screenId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  } else if (screenId.startsWith('ex-')) {
+  } else if (screenId.startsWith('ex-') || screenId === 'practice' || screenId === 'exercises') {
     if (typeof ExcelPracticeView !== 'undefined') {
       appContainer.innerHTML = ExcelPracticeView.renderExample(screenId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -349,7 +349,7 @@ window.navigateToScreen = function(screenId) {
       appContainer.innerHTML = ExcelCompanyWorkspaceView.renderCompanyWorkspace();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  } else if (screenId === 'documentary-cycle' || screenId.startsWith('doc-cycle-') || screenId === 'theory' || screenId.startsWith('theory')) {
+  } else if (screenId === 'documentary-cycle' || screenId.startsWith('doc-cycle-') || screenId === 'theory' || screenId.startsWith('theory') || screenId === 'learning' || screenId === 'lessons') {
     const activeBtn = document.getElementById('sb-documentary-cycle');
     if (activeBtn) activeBtn.classList.add('active');
     if (typeof DocumentaryCycleView !== 'undefined') {

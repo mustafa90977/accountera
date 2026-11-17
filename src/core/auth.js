@@ -101,7 +101,7 @@ const AuthService = {
             const urlParams = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : null;
             const hash = (typeof window !== 'undefined' && window.location.hash) ? window.location.hash.replace(/^#\/?/, '').trim() : '';
             const requestedScreen = (urlParams ? urlParams.get('screen') : null) || hash;
-            const publicScreens = ['landing', 'welcome'];
+            const publicScreens = ['landing', 'welcome', 'documentary-cycle', 'theory', 'learning', 'login', 'register'];
             if (!requestedScreen || (!publicScreens.includes(requestedScreen) && requestedScreen !== 'login' && requestedScreen !== 'register')) {
               window.navigateToScreen('landing');
             }

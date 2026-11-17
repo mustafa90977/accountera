@@ -83,7 +83,7 @@
 /* Main Layout */
 .theory-layout {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 340px 1fr;
   gap: 1.5rem;
   align-items: start;
 }
@@ -411,9 +411,9 @@
   width: 100%;
   border: 1px solid transparent;
   border-radius: 8px;
-  padding: 0.5rem 0.65rem;
+  padding: 0.55rem 0.65rem;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   background: transparent;
   color: var(--text-primary);
@@ -439,7 +439,7 @@
 
 .theory-nav-item-left {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.55rem;
   min-width: 0;
   flex: 1;
@@ -457,6 +457,7 @@
   background: var(--surface-hover);
   color: var(--text-muted);
   flex-shrink: 0;
+  margin-top: 1px;
   font-family: "IBM Plex Mono", monospace;
 }
 
@@ -466,12 +467,12 @@
 }
 
 .theory-nav-title {
-  font-size: 0.81rem;
+  font-size: 0.82rem;
   font-weight: 600;
   line-height: 1.35;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
   color: var(--text-primary);
 }
 
@@ -485,6 +486,7 @@
   align-items: center;
   gap: 0.35rem;
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .theory-nav-completed-badge {

@@ -333,6 +333,37 @@ const DocumentaryCycleView = {
   },
 
   /**
+   * ربط القيد النظري بمحاكي اليومية العامة لتسجيله وتأكيد اتزانه
+   */
+  launchJournalPractice(blockIdx) {
+    const lesson = this.cachedLessons[this.currentLessonId];
+    if (!lesson || !lesson.blocks || !lesson.blocks[blockIdx]) return;
+    const block = lesson.blocks[blockIdx];
+
+    const draft = {
+      title: 'تطبيق عملي: درس ' + (this.currentLessonId.replace('theory-lesson-', '')) + ' - ' + lesson.title,
+      desc: block.explanation || ('قيد محاسبي تدريبي من ' + lesson.title),
+      date: block.date || new Date().toISOString().split('T')[0],
+      lines: (block.lines || []).map(l => ({
+        account: l.account || '',
+        debit: Number(l.debit) || 0,
+        credit: Number(l.credit) || 0
+      }))
+    };
+
+    try {
+      localStorage.setItem('acc_draft_journal_entry', JSON.stringify(draft));
+    } catch(e) {}
+
+    if (typeof AccModal !== 'undefined' && AccModal.toast) {
+      AccModal.toast('جاري نقلك لدفتر اليومية العامة بالمحاكي لتسجيل القيد...', 'info', 1800);
+    }
+    setTimeout(() => {
+      window.location.href = 'simulation/simulation/journal/index.html';
+    }, 350);
+  },
+
+  /**
    * التحقق من إتمام الدرس (من السحابة أو الكاش المحلي)
    */
   isCompleted(lessonId) {
@@ -479,6 +510,13 @@ const DocumentaryCycleView = {
                   <span class="badge-expl">شرح القيد:</span> ${block.explanation}
                 </div>
               ` : ''}
+              <div class="theory-journal-actions">
+                <span class="theory-journal-hint">⚡ تطبيق عملي: افتح هذا القيد في دفاتر اليومية وتأكد من توازنه وترحيله للأستاذ</span>
+                <button type="button" class="theory-journal-practice-btn" onclick="DocumentaryCycleView.launchJournalPractice(${idx})">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  <span>تطبيق القيد في المحاكي ⚡</span>
+                </button>
+              </div>
             </div>
           `;
         }
@@ -1120,9 +1158,9 @@ const DocumentaryCycleView = {
             </div>
 
             <!-- زر العودة للوحة الدراسة -->
-            <button onclick="navigateToScreen('student-dashboard')" class="btn-cta-secondary" style="padding:8px 16px; font-size:0.85rem; border-radius:10px; display:inline-flex; align-items:center; gap:0.4rem;">
+            <button onclick="navigateToScreen('student-dashboard')" class="btn-cta-secondary" style="padding:8px 16px; font-size:0.85rem; border-radius:10px; display:inline-flex; align-items:center; gap:0.5rem;" title="العودة إلى لوحة تحكم الطالب">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
               <span>لوحة دراستي</span>
-              <span style="font-size:0.8rem;">&larr;</span>
             </button>
           </div>
         </header>
