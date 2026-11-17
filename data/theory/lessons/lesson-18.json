@@ -1,0 +1,359 @@
+{
+  "id": "lesson-18",
+  "number": 18,
+  "title": "المحاسبة عن أوراق القبض والدفع",
+  "sub": "Notes Receivable and Payable — الأوراق التجارية / دروس المحاسبة المالية",
+  "moduleIndex": 3,
+  "moduleTitle": "الوحدة الثالثة: العمليات التمويلية والنقدية والبنكية",
+  "displayOrder": 18,
+  "readTimeMinutes": 21,
+  "blocksCount": 26,
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "1. مفهوم الأوراق التجارية وأنواعها"
+    },
+    {
+      "type": "paragraph",
+      "text": "الأوراق التجارية: صكوك قابلة للتداول تمثل التزاماً بدفع مبلغ معين في تاريخ استحقاق محدد، وتُستخدم كبديل للنقود لتسهيل المعاملات الآجلة والائتمان التجاري:"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "الكمبيالة (Bill of Exchange): أمر كتابي صادر من الدائن (الساحب) إلى المدين (المسحوب عليه) بأن يدفع لأمر شخص ثالث أو لنفس الساحب (المستفيد) مبلغاً معيناً في تاريخ محدد.",
+        "السند الإذني (Promissory Note): تعهد كتابي من المدين (المحرر) بدفع مبلغ معين للدائن (المستفيد) في تاريخ استحقاق محدد."
+      ]
+    },
+    {
+      "type": "equation",
+      "formula": "الورقة بالنسبة للطرف البائع / الدائن = ورقة قبض (أصل متداول - مدين) الورقة بالنسبة للطرف المشتري / المدين = ورقة دفع (التزام متداول - دائن)",
+      "text": "الورقة بالنسبة للطرف البائع / الدائن = ورقة قبض (أصل متداول - مدين) الورقة بالنسبة للطرف المشتري / المدين = ورقة دفع (التزام متداول - دائن)"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "2. المعالجة المحاسبية لأوراق القبض (Notes Receivable)"
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "text": "أولاً: نشأة ورقة القبض واستلامها"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من ح/ أوراق القبض",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ المبيعات  (استلام كمبيالة أو سند إذني كضمان لمستحقات المبيعات)",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "أو ح/ المدينين"
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "text": "ثانياً: أوجه التصرف في ورقة القبض بعد استلامها"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من ح/ الصندوق",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ أوراق القبض",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "أو ح/ البنك"
+    },
+    {
+      "type": "paragraph",
+      "text": "يُفتح حساب وسيط يُسمى «أوراق قبض برسم التحصيل» لحين قيام البنك بتحصيلها وإيداع الصافي بحساب المنشأة:"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من ح/ أوراق قبض برسم التحصيل",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ أوراق القبض",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "من مذكورين:",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ البنك [صافي المبلغ المضاف للحساب]",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ مصاريف تحصيل كمبيالات [عمولة البنك]",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ أوراق قبض برسم التحصيل",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": ""
+    },
+    {
+      "type": "paragraph",
+      "text": "تحتاج المنشأة لسيولة فورية قبل ميعاد الورقة، فيشتريها البنك مقابل اقتطاع فائدة وعمولة تسمى (مصاريف خصم / الأجيو):"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من مذكورين:",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ البنك  [صافي القيمة الحالية المقبوضة]",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ مصاريف خصم الأوراق",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ أوراق القبض",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "أو الصندوق"
+    },
+    {
+      "type": "paragraph",
+      "text": "نقل ملكية الكمبيالة لمورد مقابل شراء بضاعة أو سداد دين مستحق على المنشأة:"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من ح/ المشتريات",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ أوراق القبض",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "أو ح/ الدائنين"
+    },
+    {
+      "type": "paragraph",
+      "text": "يُلغى حساب ورقة القبض ويُعاد إثبات المديونية على العميل مع تحميله مصاريف الاحتجاج (البروتستو):"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من ح/ المدينين  [القيمة + مصاريف الاحتجاج]",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى مذكورين:",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ أوراق القبض  [قيمة الورقة]",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ الصندوق  [مصاريف البروتستو المسددة]",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "العميل"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "3. المعالجة المحاسبية لأوراق الدفع (Notes Payable)"
+    },
+    {
+      "type": "paragraph",
+      "text": "تمثل ورقة الدفع التزاماً مالياً على المشتري يُسجل في الطرف الدائن:"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "عند تحرير وقبول ورقة الدفع:"
+      ]
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من ح/ المشتريات",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ أوراق الدفع",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "أو ح/ الدائنين"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "عند سداد ورقة الدفع في موعد الاستحقاق:"
+      ]
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من ح/ أوراق الدفع",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ الصندوق  (سداد قيمة الكمبيالة بميعاد الاستحقاق)",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "أو ح/ البنك"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "4. ملخص سريع للمذاكرة"
+    },
+    {
+      "type": "table",
+      "headers": [
+        "نوع الورقة",
+        "التصنيف بالميزانية",
+        "أهم العمليات والقيود"
+      ],
+      "rows": [
+        [
+          "أوراق القبض (أ.ق)",
+          "أصول متداولة (مدينة)",
+          "تحصيل نقدي، إرسال للتحصيل، خصم لدى البنك، تظهير، أو رفض من المدين."
+        ],
+        [
+          "أوراق الدفع (أ.د)",
+          "التزامات متداولة (دائنة)",
+          "تنشأ دائنة مقابل شراء أو تسوية ذمة، وتقفل مدينة عند السداد بالبنك."
+        ]
+      ]
+    },
+    {
+      "type": "note",
+      "variant": "tip",
+      "text": "نقاط جوهرية للحفظ والتركيز: مصاريف الخصم (الأجيو): مصروف يحمله البنك على المنشأة عند تعجيل صرف الورقة قبل ميعادها، ويُدرج في قائمة الدخل كمصروف تمويلي. التظهير: نقل ملكية الورقة التجارية بالتوقيع على ظهرها للوفاء بالتزام تجاري قائم. الحسابات الوسيطة: حساب «أوراق قبض برسم التحصيل» أصل وسيط لا يُقفل إلا بورود إشعار إضافة البنك أو إشعار الرفض."
+    }
+  ]
+}

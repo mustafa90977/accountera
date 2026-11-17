@@ -349,7 +349,7 @@ window.navigateToScreen = function(screenId) {
       appContainer.innerHTML = ExcelCompanyWorkspaceView.renderCompanyWorkspace();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  } else if (screenId === 'documentary-cycle' || screenId.startsWith('doc-cycle-')) {
+  } else if (screenId === 'documentary-cycle' || screenId.startsWith('doc-cycle-') || screenId === 'theory' || screenId.startsWith('theory')) {
     const activeBtn = document.getElementById('sb-documentary-cycle');
     if (activeBtn) activeBtn.classList.add('active');
     if (typeof DocumentaryCycleView !== 'undefined') {

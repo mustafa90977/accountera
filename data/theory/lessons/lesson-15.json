@@ -1,0 +1,288 @@
+{
+  "id": "lesson-15",
+  "number": 15,
+  "title": "المحاسبة عن رأس المال",
+  "sub": "Accounting for Capital — العمليات التمويلية / دروس المحاسبة المالية",
+  "moduleIndex": 3,
+  "moduleTitle": "الوحدة الثالثة: العمليات التمويلية والنقدية والبنكية",
+  "displayOrder": 15,
+  "readTimeMinutes": 17,
+  "blocksCount": 21,
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "1. مفهوم رأس المال وطرق تقديمه"
+    },
+    {
+      "type": "paragraph",
+      "text": "لكي تبدأ المنشأة في مزاولة نشاطها فهي بحاجة إلى تمويل يُمكنها من شراء الأصول وتسيير الأعمال. وهذا التمويل إما أن يكون من مصادر داخلية من الملاك ويتمثل في رأس المال، أو من مصادر خارجية ويتمثل في القروض والديون."
+    },
+    {
+      "type": "paragraph",
+      "text": "رأس المال: هو مجموع الموارد النقدية والعينية التي يقدمها صاحب المنشأة أو الشركاء عند التأسيس أو لاحقاً لممارسة النشاط، ويعد التزاماً على المنشأة لصالح الملاك (طبيعته دائنة)."
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "text": "أشكال وطرق المساهمة في رأس المال:"
+    },
+    {
+      "type": "paragraph",
+      "text": "إيداع حصة رأس المال نقداً بالصندوق أو في الحساب البنكي للمنشأة:"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من ح/ الصندوق",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ رأس المال",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "أو ح/ البنك"
+    },
+    {
+      "type": "paragraph",
+      "text": "تقديم أصول ثابتة أو متداولة كحصة في رأس المال (مثل عقار، سيارات، أراضي، بضاعة):"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من ح/ الأراضي",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ رأس المال",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "أو السيارات / البضاعة"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من مذكورين:",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ الصندوق",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ الأراضي",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ البضاعة",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ رأس المال",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "النقدية"
+    },
+    {
+      "type": "paragraph",
+      "text": "تقديم ميزانية منشأة قائمة بحقوقها والتزاماتها؛ فيكون صافي الأصول (الأصول - الالتزامات) هو رأس المال المساهم به:"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من مذكورين:",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ الذمم المدينة",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ البضاعة والأراضي",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى مذكورين:",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ الذمم الدائنة",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "ح/ رأس المال",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "كافة الأصول المنقولة"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "2. التعديلات اللاحقة على رأس المال (الزيادة والتخفيض)"
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "text": "أولاً: زيادة رأس المال (Capital Increase)"
+    },
+    {
+      "type": "paragraph",
+      "text": "تتم الزيادة بهدف التوسع أو ضم شركاء جدد، ويُسجل قيد الزيادة بجعل حساب رأس المال دائناً بقيمة الزيادة:"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من مذكورين: ح/ الصندوق، ح/ البنك، ح/ الأراضي",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى ح/ رأس المال",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": "إثبات زيادة رأس المال بمبالغ نقدية وعينية"
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "text": "ثانياً: تخفيض رأس المال (Capital Reduction)"
+    },
+    {
+      "type": "paragraph",
+      "text": "يتم التخفيض في حالة وجود أموال فائضة عن حاجة النشاط أو إعادة هيكلة، ويُسجل بجعل حساب رأس المال مديناً:"
+    },
+    {
+      "type": "journal_entry",
+      "entryNumber": "1",
+      "docNumber": "",
+      "date": "",
+      "lines": [
+        {
+          "type": "info",
+          "account": "من ح/ رأس المال",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        },
+        {
+          "type": "info",
+          "account": "إلى مذكورين: ح/ البنك، ح/ السيارات",
+          "debit": 0,
+          "credit": 0,
+          "ledgerPage": ""
+        }
+      ],
+      "explanation": ""
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "3. ملخص سريع للمذاكرة"
+    },
+    {
+      "type": "table",
+      "headers": [
+        "العملية",
+        "طرف رأس المال بالقيد",
+        "القاعدة والتطبيق"
+      ],
+      "rows": [
+        [
+          "تأسيس المنشأة",
+          "دائن (إلى ح/)",
+          "رأس المال التزام على الشركة لصالح الملاك."
+        ],
+        [
+          "زيادة رأس المال",
+          "دائن (إلى ح/)",
+          "حسابات حقوق الملكية تزيد في الطرف الدائن."
+        ],
+        [
+          "تخفيض رأس المال",
+          "مدين (من ح/)",
+          "حسابات حقوق الملكية تنقص في الطرف المدين."
+        ]
+      ]
+    },
+    {
+      "type": "note",
+      "variant": "tip",
+      "text": "نقاط جوهرية للحفظ والتركيز: طبيعة حساب رأس المال: طبيعته دائماً دائنة (حقوق ملكية)؛ يظهر دائماً في جانب الخصوم وحقوق الملكية بالميزانية العمومية. تقديم مشروع قائم: رأس المال يمثل صافي حقوق المنشأة القديمة: رأس المال = مجموع الأصول المنقولة - مجموع الالتزامات المنقولة."
+    }
+  ]
+}

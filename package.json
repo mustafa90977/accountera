@@ -4,7 +4,7 @@
   "description": "",
   "main": "build_view.js",
   "scripts": {
-    "test": "node test-accounting-regression.js && node test-scenario-builder-and-inspector.js && node test-mvp-e2e.js",
+    "test": "node test-accounting-regression.js && node test-scenario-builder-and-inspector.js && node test-mvp-e2e.js && node test-theory-suite.js",
     "seo:audit": "seo-audit"
   },
   "keywords": [],
