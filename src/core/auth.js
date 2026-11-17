@@ -126,19 +126,25 @@ const AuthService = {
   async syncUserSession(authUser, redirect = false) {
     let role = 'student';
     let fullName = authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'طالب';
+    let phone = authUser.user_metadata?.phone || '';
+    let university = authUser.user_metadata?.university || '';
+    let academicYear = authUser.user_metadata?.academic_year || '';
 
     const client = window.SupabaseService?.client;
     if (client) {
       try {
         const { data: profile, error } = await client
           .from('profiles')
-          .select('role, full_name')
+          .select('*')
           .eq('id', authUser.id)
           .maybeSingle();
 
         if (!error && profile) {
           role = profile.role || 'student';
           fullName = profile.full_name || fullName;
+          if (profile.phone) phone = profile.phone;
+          if (profile.university) university = profile.university;
+          if (profile.academic_year) academicYear = profile.academic_year;
         }
       } catch (e) {
         console.warn('[AuthService] Profile fetch error, using default role:', e);
@@ -187,6 +193,10 @@ const AuthService = {
       name: fullName,
       role: role,
       plan: plan,
+      phone: phone,
+      university: university,
+      academic_year: academicYear,
+      gradYear: academicYear,
       expiresAt: expiresAt,
       subscriptionStatus: subscriptionStatus,
       pendingPlan: pendingPlan,
@@ -449,11 +459,21 @@ const AuthService = {
     const email = document.getElementById('authEmail')?.value.trim();
     const password = document.getElementById('authPassword')?.value;
     const name = document.getElementById('authName')?.value.trim() || email.split('@')[0];
+    const phone = document.getElementById('authPhone')?.value.trim() || '';
+    const university = document.getElementById('authUniversity')?.value.trim() || '';
+    const academicYear = document.getElementById('authAcademicYear')?.value.trim() || '';
     const submitBtn = document.getElementById('authSubmitBtn');
 
     if (!email || !password) {
       this.showAuthError('يرجى ملء جميع الحقول المطلوبة.');
       return;
+    }
+
+    if (mode === 'register') {
+      if (!name || !phone || !university || !academicYear) {
+        this.showAuthError('يرجى استكمال جميع بيانات التسجيل: الاسم، رقم الهاتف، الجامعة، والسنة الدراسية.');
+        return;
+      }
     }
 
     const client = window.SupabaseService?.client;
@@ -485,7 +505,10 @@ const AuthService = {
           password: password,
           options: {
             data: {
-              full_name: name
+              full_name: name,
+              phone: phone,
+              university: university,
+              academic_year: academicYear
             }
           }
         });

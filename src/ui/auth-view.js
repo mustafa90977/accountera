@@ -220,18 +220,78 @@ const ExcelAuthView = {
                 <!-- Form -->
                 <form id="authForm" class="stitch-auth-form" onsubmit="AuthService.handleAuthSubmit(event, '${this.currentMode}')">
                   ${!isLogin ? `
-                    <div class="stitch-field-group">
-                      <label for="authName" class="stitch-field-label">
-                        الاسم الكامل <span class="required">*</span>
-                      </label>
-                      <div class="stitch-input-wrap">
-                        <div class="stitch-input-icon">
-                          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                            <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle>
-                          </svg>
+                    <div class="stitch-field-row">
+                      <!-- Full Name -->
+                      <div class="stitch-field-group">
+                        <label for="authName" class="stitch-field-label">
+                          الاسم الكامل <span class="required">*</span>
+                        </label>
+                        <div class="stitch-input-wrap">
+                          <div class="stitch-input-icon">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                              <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle>
+                            </svg>
+                          </div>
+                          <input type="text" id="authName" class="stitch-input-glass" placeholder="مثال: مصطفى محمد" required autocomplete="name">
                         </div>
-                        <input type="text" id="authName" class="stitch-input-glass" placeholder="مثال: مصطفى محمد" required autocomplete="name">
+                      </div>
+
+                      <!-- Phone Number -->
+                      <div class="stitch-field-group">
+                        <label for="authPhone" class="stitch-field-label">
+                          رقم الهاتف / واتساب <span class="required">*</span>
+                        </label>
+                        <div class="stitch-input-wrap">
+                          <div class="stitch-input-icon">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                          </div>
+                          <input type="tel" id="authPhone" class="stitch-input-glass" placeholder="مثال: 01012345678" required autocomplete="tel" dir="ltr">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="stitch-field-row">
+                      <!-- University -->
+                      <div class="stitch-field-group">
+                        <label for="authUniversity" class="stitch-field-label">
+                          الجامعة / الكلية <span class="required">*</span>
+                        </label>
+                        <div class="stitch-input-wrap">
+                          <div class="stitch-input-icon">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 14l9-5-9-5-9 5 9 5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                              <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                              <path d="M12 14v7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                          </div>
+                          <input type="text" id="authUniversity" class="stitch-input-glass" placeholder="مثال: تجارة القاهرة" required>
+                        </div>
+                      </div>
+
+                      <!-- Academic Year -->
+                      <div class="stitch-field-group">
+                        <label for="authAcademicYear" class="stitch-field-label">
+                          السنة الدراسية <span class="required">*</span>
+                        </label>
+                        <div class="stitch-input-wrap">
+                          <div class="stitch-input-icon">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                          </div>
+                          <select id="authAcademicYear" class="stitch-input-glass" required>
+                            <option value="" disabled selected>اختر السنة الدراسية...</option>
+                            <option value="الفرقة الأولى">الفرقة الأولى</option>
+                            <option value="الفرقة الثانية">الفرقة الثانية</option>
+                            <option value="الفرقة الثالثة">الفرقة الثالثة</option>
+                            <option value="الفرقة الرابعة">الفرقة الرابعة</option>
+                            <option value="خريج حديث">خريج حديث</option>
+                            <option value="دراسات عليا / ممارس">دراسات عليا / ممارس</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   ` : ''}
