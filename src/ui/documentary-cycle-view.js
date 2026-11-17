@@ -1,6 +1,6 @@
 /**
- * documentary-cycle-view.js — قسم الدورة المستندية (Documentary Cycle Section)
- * مخصص لاستيعاب وعرض الدروس النصية للدورة المستندية.
+ * documentary-cycle-view.js — قسم الجزء النظري (Theory Section)
+ * مخصص لاستيعاب وعرض الدروس والمفاهيم النظرية للدورة المحاسبية.
  * لا يحتوي على أي محتوى افتراضي أو مؤلف — الهيكل مجهز لاستقبال الدروس عند تقديمها.
  */
 
@@ -16,7 +16,7 @@ const DocumentaryCycleView = {
   },
 
   /**
-   * عرض واجهة قسم الدورة المستندية
+   * عرض واجهة قسم الجزء النظري
    * @param {string} lessonId - معرف الدرس المحدد (اختياري)
    */
   render(lessonId) {
@@ -38,8 +38,8 @@ const DocumentaryCycleView = {
               </svg>
               <span>قسم تعليمي متخصص</span>
             </div>
-            <h1 style="margin:0; font-size:1.75rem; font-weight:900; color:var(--text-primary); letter-spacing:-0.02em;">الدورة المستندية</h1>
-            <p style="margin:0.35rem 0 0; font-size:0.92rem; color:var(--text-secondary);">الدروس النصية والمفاهيم الشاملة للدورة المستندية المحاسبية</p>
+            <h1 style="margin:0; font-size:1.75rem; font-weight:900; color:var(--text-primary); letter-spacing:-0.02em;">الجزء النظري</h1>
+            <p style="margin:0.35rem 0 0; font-size:0.92rem; color:var(--text-secondary);">الدروس النصية والمفاهيم الشاملة للدورة المحاسبية</p>
           </div>
 
           <div style="display:flex; align-items:center; gap:0.75rem;">
@@ -62,9 +62,9 @@ const DocumentaryCycleView = {
               </svg>
             </div>
 
-            <h3 style="margin:0 0 0.5rem; font-size:1.25rem; font-weight:800; color:var(--text-primary);">تم تجهيز قسم "الدورة المستندية" بنجاح</h3>
+            <h3 style="margin:0 0 0.5rem; font-size:1.25rem; font-weight:800; color:var(--text-primary);">تم تجهيز قسم "الجزء النظري" بنجاح</h3>
             <p style="margin:0 0 1.5rem; font-size:0.92rem; color:var(--text-secondary); line-height:1.7;">
-              هذا القسم مهيأ برمجياً وهيكلياً لاستقبال الدروس النصية الخاصة بالدورة المستندية.<br>
+              هذا القسم مهيأ برمجياً وهيكلياً لاستقبال الدروس والمفاهيم النظرية للدورة المحاسبية.<br>
               لم تتم إضافة أي محتوى نصي، ونحن بانتظار تزويدنا بالدروس لإدراجها كما هي.
             </p>
 

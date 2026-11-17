@@ -51,3 +51,8 @@
 .bn-icon {
   font-size: 1.25rem;
 }
+
+/* إخفاء شريط التنقل السفلي في صفحة الهبوط لتوفير كامل مساحة الشاشة للزائر */
+body.landing-mode .bottom-nav {
+  display: none !important;
+}
