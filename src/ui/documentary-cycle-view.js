@@ -19,6 +19,7 @@ const DocumentaryCycleView = {
     activeTab: 'content', // 'content' | 'quiz'
     selectedModule: 'all', // 'all' | 1 | 2 | 3 | 4 | 5 | 6
     searchQuery: '',
+    expandedModules: new Set([1]), // أرقام الوحدات المفتوحة في شجرة المنهج (1 إلى 6)
     fontSize: 16, // px
     isLoading: false,
     errorMessage: null,
@@ -133,6 +134,12 @@ const DocumentaryCycleView = {
     this.state.quizPassed = false;
     this.state.practicalNotes = '';
 
+    // فتح وحدة الدرس تلقائياً في شجرة الفهرس
+    const targetLesson = this.state.indexData?.find(l => l.id === lessonId);
+    if (targetLesson && targetLesson.moduleIndex) {
+      this.state.expandedModules.add(targetLesson.moduleIndex);
+    }
+
     await Promise.all([
       this.loadLesson(lessonId),
       this.loadQuiz(lessonId)
@@ -159,29 +166,73 @@ const DocumentaryCycleView = {
   },
 
   /**
-   * تغيير فلتر الوحدة
+   * طي أو توسيع وحدة محددة في الشجرة
    */
-  setModuleFilter(mod) {
-    this.state.selectedModule = mod;
-    const selectEl = document.getElementById('theory-module-select');
-    if (selectEl && selectEl.value !== String(mod)) {
-      selectEl.value = String(mod);
+  toggleModule(modIndex) {
+    const idx = parseInt(modIndex, 10);
+    if (this.state.expandedModules.has(idx)) {
+      this.state.expandedModules.delete(idx);
+    } else {
+      this.state.expandedModules.add(idx);
     }
     this.updateSidebarLessonsList();
   },
 
   /**
-   * التنقل السريع بين الوحدات خطوة للأمام أو للخلف
+   * توسيع أو طي جميع الوحدات الست بنقرة واحدة
+   */
+  toggleAllModules() {
+    const allIndices = [1, 2, 3, 4, 5, 6];
+    const allOpen = allIndices.every(i => this.state.expandedModules.has(i));
+    if (allOpen) {
+      this.state.expandedModules.clear();
+      // نبقي وحدة الدرس النشط فقط مفتوحة لعدم تشتيت الطالب
+      const curr = this.state.indexData?.find(l => l.id === this.state.currentLessonId);
+      if (curr) this.state.expandedModules.add(curr.moduleIndex);
+    } else {
+      this.state.expandedModules = new Set(allIndices);
+    }
+    this.updateSidebarLessonsList();
+  },
+
+  /**
+   * مسح نص البحث واستعادة الفهرس كاملاً
+   */
+  clearSearch() {
+    this.state.searchQuery = '';
+    const inputEl = document.getElementById('theory-search-input');
+    if (inputEl) {
+      inputEl.value = '';
+      inputEl.focus();
+    }
+    this.updateSidebarLessonsList();
+  },
+
+  /**
+   * تغيير فلتر الوحدة (للتوافق الرجعي)
+   */
+  setModuleFilter(mod) {
+    if (mod === 'all') {
+      this.state.expandedModules = new Set([1, 2, 3, 4, 5, 6]);
+    } else {
+      const idx = parseInt(mod, 10);
+      this.state.expandedModules.clear();
+      this.state.expandedModules.add(idx);
+    }
+    this.updateSidebarLessonsList();
+  },
+
+  /**
+   * التنقل السريع بين الوحدات (للتوافق الرجعي)
    */
   cycleModule(dir) {
-    const modules = ['all', 1, 2, 3, 4, 5, 6];
-    const currVal = this.state.selectedModule === 'all' ? 'all' : parseInt(this.state.selectedModule, 10);
-    let currIdx = modules.indexOf(currVal);
-    if (currIdx === -1) currIdx = 0;
-    let nextIdx = currIdx + dir;
-    if (nextIdx < 0) nextIdx = modules.length - 1;
-    if (nextIdx >= modules.length) nextIdx = 0;
-    this.setModuleFilter(modules[nextIdx]);
+    const all = [1, 2, 3, 4, 5, 6];
+    let curr = Math.min(...Array.from(this.state.expandedModules));
+    if (!curr || curr < 1) curr = 1;
+    let next = curr + dir;
+    if (next < 1) next = 6;
+    if (next > 6) next = 1;
+    this.setModuleFilter(next);
   },
 
   /**
@@ -798,90 +849,187 @@ const DocumentaryCycleView = {
   },
 
   /**
-   * إعادة رسم قائمة الدروس في الشريط الجانبي بعد البحث أو الفلترة
+   * إعادة رسم قائمة الدروس ووحدات المنهج في الشريط الجانبي بنظام شجرة الأكورديون (Stitch Syllabus)
    */
   updateSidebarLessonsList() {
-    const listEl = document.getElementById('theory-sidebar-list');
-    if (!listEl || !this.state.indexData) return;
+    const containerEl = document.getElementById('theory-sidebar-list');
+    if (!containerEl || !this.state.indexData) return;
 
     const normQuery = this.normalizeArabic(this.state.searchQuery);
-    const mod = this.state.selectedModule;
+    const isSearching = Boolean(normQuery);
 
-    const filtered = this.state.indexData.filter(item => {
-      // فلتر الوحدة
-      if (mod !== 'all' && item.moduleIndex !== parseInt(mod, 10)) {
-        return false;
-      }
-      // فلتر البحث بالنص العربي المعالج
-      if (normQuery) {
+    // تحديث زر مسح البحث
+    const clearBtn = document.getElementById('theory-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = isSearching ? 'inline-flex' : 'none';
+    }
+
+    // تجميع الدروس حسب الوحدات الست المعيارية
+    const moduleDefs = [
+      { index: 1, title: 'أساسيات المحاسبة والدورة المحاسبية' },
+      { index: 2, title: 'القوائم المالية وإقفال الحسابات' },
+      { index: 3, title: 'العمليات التمويلية والنقدية والبنكية' },
+      { index: 4, title: 'الأصول الثابتة وإهلاكها' },
+      { index: 5, title: 'المخزون والعمليات التجارية والديون' },
+      { index: 6, title: 'الأخطاء المحاسبية والضرائب والاستثمارات' }
+    ];
+
+    const modules = moduleDefs.map(def => {
+      const lessons = this.state.indexData.filter(item => {
+        if (item.moduleIndex !== def.index) return false;
+        if (!isSearching) return true;
         const normTitle = this.normalizeArabic(item.title);
         const normSub = this.normalizeArabic(item.sub);
         const numStr = String(item.number);
-        if (!normTitle.includes(normQuery) && !normSub.includes(normQuery) && !numStr.includes(normQuery)) {
-          return false;
-        }
-      }
-      return true;
+        return normTitle.includes(normQuery) || normSub.includes(normQuery) || numStr.includes(normQuery);
+      });
+      return {
+        ...def,
+        lessons
+      };
     });
 
-    if (filtered.length === 0) {
-      listEl.innerHTML = `
-        <li style="padding:1.5rem 1rem; text-align:center; color:var(--text-muted); font-size:0.85rem;">
-          لا توجد دروس مطابقة لبحثك.
-        </li>
+    const totalMatches = modules.reduce((sum, m) => sum + m.lessons.length, 0);
+
+    // تحديث نص العداد
+    const counterText = document.getElementById('theory-sidebar-counter-text');
+    if (counterText) {
+      if (isSearching) {
+        counterText.textContent = `${totalMatches} درساً مطابقاً للبحث`;
+      } else {
+        counterText.textContent = '38 درساً • 6 وحدات';
+      }
+    }
+
+    if (totalMatches === 0) {
+      containerEl.innerHTML = `
+        <div class="theory-empty-search-state">
+          <div class="theory-empty-search-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="theory-empty-search-title">لا توجد دروس مطابقة لبحثك</div>
+          <div class="theory-empty-search-sub">جرب البحث بكلمات أخرى مثل: أصول، إهلاك، ميزانية، قيود...</div>
+          <button type="button" onclick="DocumentaryCycleView.clearSearch()" class="theory-clear-search-btn">
+            مسح كلمة البحث
+          </button>
+        </div>
       `;
+      this.updateOverallProgressBar();
       return;
     }
 
+    // بناء كروت الأكورديون للوحدات
     let html = '';
-    let lastModuleIndex = null;
 
-    filtered.forEach(item => {
-      // إدراج عنوان فاصل للوحدة في وضع الكل وبدون بحث نشط
-      if (mod === 'all' && !normQuery && item.moduleIndex !== lastModuleIndex) {
-        lastModuleIndex = item.moduleIndex;
-        html += `
-          <li class="theory-module-group-header">
-            <span class="theory-group-dot"></span>
-            <span class="theory-group-title">${item.moduleTitle}</span>
-          </li>
-        `;
-      }
+    modules.forEach(mod => {
+      // في حالة البحث، نخفي الوحدات التي ليس بها أي درس مطابق
+      if (isSearching && mod.lessons.length === 0) return;
 
-      const isActive = item.id === this.state.currentLessonId;
-      const completed = this.isCompleted(item.id);
+      // في حالة البحث، يتم فتح كل الوحدات المحتوية على نتائج تلقائياً
+      // وفي الحالة العادية، يتم مراجعة expandedModules
+      const isExpanded = isSearching || this.state.expandedModules.has(mod.index);
+
+      // حساب الدروس المكتملة في هذه الوحدة
+      const completedCount = mod.lessons.filter(l => this.isCompleted(l.id)).length;
+      const isAllCompleted = mod.lessons.length > 0 && completedCount === mod.lessons.length;
+
+      // هل الدرس النشط حالياً يقع داخل هذه الوحدة؟
+      const hasActiveLesson = mod.lessons.some(l => l.id === this.state.currentLessonId);
+
       html += `
-        <li>
+        <div class="theory-module-card ${isExpanded ? 'is-expanded' : 'is-collapsed'} ${hasActiveLesson ? 'has-active' : ''}" id="theory-mod-${mod.index}">
           <button 
-            onclick="DocumentaryCycleView.selectLesson('${item.id}')" 
-            class="theory-nav-item ${isActive ? 'active' : ''}" 
-            title="${item.title}">
-            <div class="theory-nav-item-left">
-              <span class="theory-nav-num">${item.number}</span>
-              <span class="theory-nav-title">${item.title}</span>
+            type="button" 
+            class="theory-module-header" 
+            onclick="DocumentaryCycleView.toggleModule(${mod.index})"
+            aria-expanded="${isExpanded}">
+            <div class="theory-mod-head-right">
+              <span class="theory-mod-index-badge">${mod.index}</span>
+              <div class="theory-mod-text">
+                <span class="theory-mod-overline">الوحدة ${mod.index}</span>
+                <span class="theory-mod-title">${mod.title}</span>
+              </div>
             </div>
-            ${completed ? `
-              <span class="theory-nav-completed-badge" title="مكتمل بنجاح">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <div class="theory-mod-head-left">
+              <span class="theory-mod-sub">${mod.lessons.length} دروس</span>
+              ${completedCount > 0 ? `
+                <span class="theory-mod-progress-tag ${isAllCompleted ? 'all-done' : ''}" title="${completedCount} من أصل ${mod.lessons.length} مكتمل">
+                  ${isAllCompleted ? '✓' : `${completedCount}/${mod.lessons.length}`}
+                </span>
+              ` : ''}
+              <span class="theory-mod-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
               </span>
-            ` : ''}
+            </div>
           </button>
-        </li>
+
+          <div class="theory-module-lessons">
+            <ul class="theory-nav-sublist">
+              ${mod.lessons.map(item => {
+                const isActive = item.id === this.state.currentLessonId;
+                const completed = this.isCompleted(item.id);
+                return `
+                  <li>
+                    <button 
+                      type="button"
+                      onclick="DocumentaryCycleView.selectLesson('${item.id}')" 
+                      class="theory-nav-item ${isActive ? 'active' : ''}" 
+                      title="${item.title}">
+                      <div class="theory-nav-item-left">
+                        <span class="theory-nav-num">${item.number}</span>
+                        <span class="theory-nav-title">${item.title}</span>
+                      </div>
+                      <div class="theory-nav-item-right">
+                        ${completed ? `
+                          <span class="theory-nav-completed-badge" title="مكتمل بنجاح">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                          </span>
+                        ` : ''}
+                        <span class="theory-nav-time-tag">${item.readTimeMinutes || 15} د</span>
+                      </div>
+                    </button>
+                  </li>
+                `;
+              }).join('')}
+            </ul>
+          </div>
+        </div>
       `;
     });
 
-    listEl.innerHTML = html;
+    containerEl.innerHTML = html;
+
+    // تحديث زر "توسيع الكل / طي الكل"
+    const toggleAllBtn = document.getElementById('theory-toggle-all-btn');
+    const toggleAllText = document.getElementById('theory-toggle-all-text');
+    const toggleAllIcon = document.getElementById('theory-toggle-all-icon');
+    if (toggleAllBtn && toggleAllText) {
+      const allOpen = [1, 2, 3, 4, 5, 6].every(i => this.state.expandedModules.has(i));
+      toggleAllText.textContent = allOpen ? 'طي الكل' : 'توسيع الكل';
+      if (toggleAllIcon) {
+        toggleAllIcon.innerHTML = allOpen ? '<polyline points="18 15 12 9 6 15"/>' : '<polyline points="6 9 12 15 18 9"/>';
+      }
+    }
 
     this.updateOverallProgressBar();
   },
 
   /**
-   * تمييز العنصر النشط في الشريط الجانبي
+   * تمييز العنصر النشط في الشريط الجانبي والتأكد من فتح وحدته
    */
   updateSidebarActiveState() {
-    const listEl = document.getElementById('theory-sidebar-list');
-    if (!listEl) return;
-    const items = listEl.querySelectorAll('.theory-nav-item');
+    const containerEl = document.getElementById('theory-sidebar-list');
+    if (!containerEl) return;
+
+    // التأكد من أن وحدة الدرس الحالي مفتوحة
+    const activeLesson = this.state.indexData?.find(l => l.id === this.state.currentLessonId);
+    if (activeLesson && !this.state.expandedModules.has(activeLesson.moduleIndex)) {
+      this.state.expandedModules.add(activeLesson.moduleIndex);
+      this.updateSidebarLessonsList();
+      return;
+    }
+
+    const items = containerEl.querySelectorAll('.theory-nav-item');
     items.forEach(btn => {
       const isTarget = btn.getAttribute('onclick')?.includes(`'${this.state.currentLessonId}'`);
       if (isTarget) {
@@ -890,6 +1038,17 @@ const DocumentaryCycleView = {
         btn.classList.remove('active');
       }
     });
+
+    const cards = containerEl.querySelectorAll('.theory-module-card');
+    cards.forEach(card => {
+      const hasActive = card.querySelector('.theory-nav-item.active');
+      if (hasActive) {
+        card.classList.add('has-active');
+      } else {
+        card.classList.remove('has-active');
+      }
+    });
+
     this.updateOverallProgressBar();
   },
 
@@ -970,71 +1129,56 @@ const DocumentaryCycleView = {
 
         <!-- التخطيط الرئيسي: الفهرس الجانبي + منطقة القراءة والاختبار -->
         <div class="theory-layout">
-          <!-- 1. الفهرس الجانبي -->
+          <!-- 1. الفهرس الجانبي بنظام شجرة الوحدات والأكورديون (Stitch Syllabus) -->
           <aside class="theory-sidebar">
-            <!-- شريط البحث الفوري المعرب -->
+            <!-- شريط البحث الفوري المعرب مع زر المسح السريع -->
             <div class="theory-search-box">
               <input 
                 type="text" 
                 class="theory-search-input" 
                 id="theory-search-input"
                 placeholder="ابحث في عناوين ومفاهيم الدروس..."
+                value="${this.state.searchQuery || ''}"
                 oninput="DocumentaryCycleView.handleSearchInput(this.value)"
               >
               <span class="theory-search-icon">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </span>
+              <button 
+                type="button" 
+                id="theory-search-clear" 
+                class="theory-search-clear" 
+                onclick="DocumentaryCycleView.clearSearch()" 
+                style="${this.state.searchQuery ? 'display:inline-flex;' : 'display:none;'}"
+                title="مسح البحث">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
             </div>
 
-            <!-- شريط تصفية الوحدات (قائمة منسدلة مع أزرار تنقل سريعة دون شريط متحرك) -->
-            <div class="theory-module-filter-bar">
-              <button 
-                onclick="DocumentaryCycleView.cycleModule(1)" 
-                class="theory-module-step-btn" 
-                title="الوحدة التالية" 
-                aria-label="الوحدة التالية">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-              </button>
-              
-              <div class="theory-module-select-wrap">
-                <span class="theory-module-select-icon">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                </span>
-                <select 
-                  class="theory-module-select" 
-                  id="theory-module-select" 
-                  onchange="DocumentaryCycleView.setModuleFilter(this.value)"
-                  title="تصفية حسب الوحدة"
-                >
-                  <option value="all" selected>جميع الوحدات (38 درساً)</option>
-                  <option value="1">الوحدة 1: أساسيات المحاسبة (9 دروس)</option>
-                  <option value="2">الوحدة 2: القوائم المالية وإقفال الحسابات (5)</option>
-                  <option value="3">الوحدة 3: المحاسبة عن العمليات التجارية (7)</option>
-                  <option value="4">الوحدة 4: النقدية والمصرف والرقابة (4)</option>
-                  <option value="5">الوحدة 5: الأصول والالتزامات وحقوق الملكية (7)</option>
-                  <option value="6">الوحدة 6: التحليل المالي والموضوعات المتقدمة (6)</option>
-                </select>
-                <span class="theory-module-select-arrow">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                </span>
+            <!-- شريط معلومات وتحكم الفهرس: عداد الدروس وزر توسيع/طي الكل -->
+            <div class="theory-sidebar-toolbar">
+              <div class="theory-sidebar-info" id="theory-sidebar-info">
+                <span class="theory-dot-indicator"></span>
+                <span id="theory-sidebar-counter-text">38 درساً • 6 وحدات</span>
               </div>
-
               <button 
-                onclick="DocumentaryCycleView.cycleModule(-1)" 
-                class="theory-module-step-btn" 
-                title="الوحدة السابقة" 
-                aria-label="الوحدة السابقة">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                type="button" 
+                class="theory-accordion-toggle-all-btn" 
+                id="theory-toggle-all-btn"
+                onclick="DocumentaryCycleView.toggleAllModules()"
+                title="توسيع أو طي جميع الوحدات">
+                <span id="theory-toggle-all-text">توسيع الكل</span>
+                <svg id="theory-toggle-all-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </div>
 
-            <!-- قائمة الدروس -->
-            <ul class="theory-nav-list" id="theory-sidebar-list">
-              <li style="padding:1rem; text-align:center;">
-                <div class="theory-skeleton" style="height:20px; width:80%; margin:0 auto 0.5rem;"></div>
+            <!-- شجرة المنهج: بطاقات الوحدات القابلة للطي والتوسيع (Accordion Cards) -->
+            <div class="theory-accordion-container" id="theory-sidebar-list">
+              <div style="padding:1.5rem; text-align:center;">
+                <div class="theory-skeleton" style="height:24px; width:80%; margin:0 auto 0.75rem;"></div>
                 <div class="theory-skeleton" style="height:20px; width:60%; margin:0 auto;"></div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </aside>
 
           <!-- 2. منطقة القارئ والاختبار -->
@@ -1057,9 +1201,16 @@ const DocumentaryCycleView = {
    */
   async initAsync() {
     await this.fetchIndex();
+    
+    // فتح وحدة الدرس المستهدف تلقائياً
+    const targetLessonId = this.state.currentLessonId || 'lesson-01';
+    const targetLesson = this.state.indexData?.find(l => l.id === targetLessonId);
+    if (targetLesson && targetLesson.moduleIndex) {
+      this.state.expandedModules.add(targetLesson.moduleIndex);
+    }
+
     this.updateSidebarLessonsList();
 
-    const targetLessonId = this.state.currentLessonId || 'lesson-01';
     await Promise.all([
       this.loadLesson(targetLessonId),
       this.loadQuiz(targetLessonId)

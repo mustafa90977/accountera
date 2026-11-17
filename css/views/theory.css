@@ -160,154 +160,269 @@
   pointer-events: none;
 }
 
-/* Module Filter Bar with Dropdown & Stepper Buttons */
-.theory-module-filter-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.85rem;
-  flex-shrink: 0;
-}
-
-.theory-module-step-btn {
-  width: 32px;
-  height: 38px;
-  border-radius: 9px;
-  border: 1px solid var(--border-subtle);
+.theory-search-clear {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   background: var(--surface-hover);
-  color: var(--text-secondary);
+  border: none;
+  color: var(--text-muted);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  padding: 0;
   transition: all 0.15s;
+}
+
+.theory-search-clear:hover {
+  background: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+/* Sidebar Toolbar & Quick Controls (Stitch Syllabus Architecture) */
+.theory-sidebar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0.25rem 0.65rem;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 0.65rem;
   flex-shrink: 0;
 }
 
-.theory-module-step-btn:hover {
-  background: var(--surface-card);
-  color: var(--primary);
-  border-color: var(--primary);
-}
-
-.theory-module-select-wrap {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-}
-
-.theory-module-select {
-  width: 100%;
-  height: 38px;
-  padding: 0 34px 0 28px;
-  border-radius: 9px;
-  border: 1px solid var(--border-subtle);
-  background: var(--surface-hover);
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  transition: all 0.2s;
-  box-sizing: border-box;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.theory-module-select:hover {
-  background: var(--surface-card);
-  border-color: var(--border-strong);
-}
-
-.theory-module-select:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: var(--surface-card);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-}
-
-.theory-module-select-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--primary);
-  pointer-events: none;
-}
-
-.theory-module-select-arrow {
-  position: absolute;
-  left: 9px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  pointer-events: none;
-}
-
-/* Module Group Divider in Sidebar */
-.theory-module-group-header {
-  padding: 0.75rem 0.5rem 0.35rem;
-  margin-top: 0.6rem;
-  font-size: 0.76rem;
-  font-weight: 800;
-  color: var(--primary);
+.theory-sidebar-info {
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  border-bottom: 1px solid var(--border-subtle);
-  list-style: none;
-  user-select: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
 }
 
-.theory-module-group-header:first-child {
-  margin-top: 0;
-  padding-top: 0.2rem;
-}
-
-.theory-group-dot {
-  width: 6px;
-  height: 6px;
+.theory-dot-indicator {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--primary);
   flex-shrink: 0;
 }
 
-.theory-group-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.theory-accordion-toggle-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 4px 9px;
+  border-radius: 7px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-/* Lessons List Nav */
-.theory-nav-list {
+.theory-accordion-toggle-all-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--surface-card);
+}
+
+/* Accordion Course Container */
+.theory-accordion-container {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.55rem;
   overflow-y: auto;
-  padding-right: 2px;
-  margin: 0;
-  list-style: none;
+  overflow-x: hidden;
   flex: 1 1 auto;
-  min-height: 200px;
+  padding-right: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
 }
 
-.theory-nav-item {
+/* Module Card (Accordion Item) */
+.theory-module-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--surface-card);
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+}
+
+.theory-module-card:hover {
+  border-color: var(--border-strong);
+}
+
+.theory-module-card.has-active {
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+.theory-module-header {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0.7rem 0.85rem;
+  background: var(--surface-hover);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.65rem 0.85rem;
-  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: right;
+  transition: background 0.15s ease;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.theory-module-header:hover {
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.theory-mod-head-right {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.theory-mod-index-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.74rem;
+  font-weight: 800;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--primary);
+  flex-shrink: 0;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.theory-module-card.has-active .theory-mod-index-badge {
+  background: var(--primary);
+  color: #fff;
+}
+
+.theory-mod-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  text-align: right;
+  flex: 1;
+}
+
+.theory-mod-overline {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.theory-mod-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.theory-mod-sub {
+  font-size: 0.69rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  background: var(--surface-card);
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.theory-mod-head-left {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  margin-right: 0.35rem;
+}
+
+.theory-mod-progress-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--surface-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.theory-mod-progress-tag.all-done {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.theory-mod-chevron {
+  color: var(--text-muted);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theory-module-card.is-expanded .theory-mod-chevron {
+  transform: rotate(180deg);
+  color: var(--primary);
+}
+
+/* Module Lessons List */
+.theory-module-lessons {
+  display: none;
+}
+
+.theory-module-card.is-expanded .theory-module-lessons {
+  display: block;
+  border-top: 1px solid var(--border-subtle);
+  padding: 0.35rem;
+  background: var(--surface-card);
+}
+
+.theory-nav-sublist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Lesson Row Item (Stitch Syllabus Item) */
+.theory-nav-item {
+  width: 100%;
   border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: transparent;
   color: var(--text-primary);
+  font-family: inherit;
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: right;
-  width: 100%;
   box-sizing: border-box;
+  gap: 0.5rem;
 }
 
 .theory-nav-item:hover {
@@ -318,27 +433,31 @@
 .theory-nav-item.active {
   background: rgba(16, 185, 129, 0.08);
   border-color: rgba(16, 185, 129, 0.3);
+  border-inline-start: 4px solid var(--primary);
   color: var(--primary);
 }
 
 .theory-nav-item-left {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.55rem;
   min-width: 0;
+  flex: 1;
 }
 
 .theory-nav-num {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 800;
-  min-width: 24px;
-  height: 24px;
+  min-width: 22px;
+  height: 22px;
   border-radius: 6px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--surface-hover);
   color: var(--text-muted);
+  flex-shrink: 0;
+  font-family: "IBM Plex Mono", monospace;
 }
 
 .theory-nav-item.active .theory-nav-num {
@@ -347,21 +466,103 @@
 }
 
 .theory-nav-title {
-  font-size: 0.86rem;
+  font-size: 0.81rem;
   font-weight: 600;
+  line-height: 1.35;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--text-primary);
+}
+
+.theory-nav-item.active .theory-nav-title {
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.theory-nav-item-right {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
 }
 
 .theory-nav-completed-badge {
   color: #10B981;
-  font-size: 0.8rem;
-  font-weight: 800;
-  margin-right: 0.3rem;
   display: inline-flex;
   align-items: center;
 }
+
+.theory-nav-time-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--surface-hover);
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.theory-nav-item.active .theory-nav-time-tag {
+  color: var(--primary);
+  background: rgba(16, 185, 129, 0.12);
+}
+
+/* Empty Search State */
+.theory-empty-search-state {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theory-empty-search-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface-hover);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+}
+
+.theory-empty-search-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.theory-empty-search-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 240px;
+}
+
+.theory-clear-search-btn {
+  margin-top: 0.5rem;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-hover);
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.theory-clear-search-btn:hover {
+  background: var(--surface-card);
+  border-color: var(--primary);
+}
+
+/* Lessons List Nav */
+
 
 /* Reader Container */
 .theory-reader-card {
