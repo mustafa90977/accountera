@@ -176,6 +176,9 @@ const DocumentaryCycleView = {
   /**
    * طي أو توسيع وحدة محددة في الشجرة
    */
+  /**
+   * طي أو توسيع وحدة محددة في الشجرة
+   */
   toggleModule(modIndex) {
     const idx = parseInt(modIndex, 10);
     if (this.state.expandedModules.has(idx)) {
@@ -187,20 +190,33 @@ const DocumentaryCycleView = {
   },
 
   /**
-   * توسيع أو طي جميع الوحدات الست بنقرة واحدة
+   * توسيع أو طي جميع الوحدات بنقرة واحدة
    */
   toggleAllModules() {
     const allIndices = [1, 2, 3, 4, 5, 6];
-    const allOpen = allIndices.every(i => this.state.expandedModules.has(i));
-    if (allOpen) {
+    // إذا كانت هناك أي وحدة مفتوحة، فإن الزر يطوي الكل تماماً بلا استثناء
+    const anyOpen = allIndices.some(i => this.state.expandedModules.has(i));
+    if (anyOpen) {
       this.state.expandedModules.clear();
-      // نبقي وحدة الدرس النشط فقط مفتوحة لعدم تشتيت الطالب
-      const curr = this.state.indexData?.find(l => l.id === this.state.currentLessonId);
-      if (curr) this.state.expandedModules.add(curr.moduleIndex);
     } else {
       this.state.expandedModules = new Set(allIndices);
     }
     this.updateSidebarLessonsList();
+  },
+
+  /**
+   * طي أو توسيع فهرس الدروس لتوسيع مساحة القراءة والعرض (Full Width Toggle)
+   */
+  toggleSyllabus() {
+    const layout = document.querySelector('.theory-layout');
+    if (layout) {
+      layout.classList.toggle('syllabus-collapsed');
+      const isCollapsed = layout.classList.contains('syllabus-collapsed');
+      const btnText = document.getElementById('theory-syllabus-toggle-text');
+      if (btnText) {
+        btnText.textContent = isCollapsed ? 'إظهار الفهرس' : 'طي الفهرس';
+      }
+    }
   },
 
   /**
@@ -815,6 +831,10 @@ const DocumentaryCycleView = {
             ` : ''}
             <button onclick="DocumentaryCycleView.adjustFontSize(-1)" class="theory-text-size-btn" title="تصغير الخط">A-</button>
             <button onclick="DocumentaryCycleView.adjustFontSize(1)" class="theory-text-size-btn" title="تكبير الخط">A+</button>
+            <button type="button" onclick="DocumentaryCycleView.toggleSyllabus()" class="theory-syllabus-toggle-btn" title="طي أو إظهار فهرس الدروس لتوسيع مساحة القراءة">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+              <span id="theory-syllabus-toggle-text">${document.querySelector('.theory-layout')?.classList.contains('syllabus-collapsed') ? 'إظهار الفهرس' : 'طي الفهرس'}</span>
+            </button>
           </div>
         </div>
 
@@ -991,10 +1011,7 @@ const DocumentaryCycleView = {
             aria-expanded="${isExpanded}">
             <div class="theory-mod-head-right">
               <span class="theory-mod-index-badge">${mod.index}</span>
-              <div class="theory-mod-text">
-                <span class="theory-mod-overline">الوحدة ${mod.index}</span>
-                <span class="theory-mod-title">${mod.title}</span>
-              </div>
+              <span class="theory-mod-title">الوحدة ${mod.index}: ${mod.title}</span>
             </div>
             <div class="theory-mod-head-left">
               <span class="theory-mod-sub">${mod.lessons.length} دروس</span>
@@ -1050,10 +1067,10 @@ const DocumentaryCycleView = {
     const toggleAllText = document.getElementById('theory-toggle-all-text');
     const toggleAllIcon = document.getElementById('theory-toggle-all-icon');
     if (toggleAllBtn && toggleAllText) {
-      const allOpen = [1, 2, 3, 4, 5, 6].every(i => this.state.expandedModules.has(i));
-      toggleAllText.textContent = allOpen ? 'طي الكل' : 'توسيع الكل';
+      const anyOpen = [1, 2, 3, 4, 5, 6].some(i => this.state.expandedModules.has(i));
+      toggleAllText.textContent = anyOpen ? 'طي الكل' : 'توسيع الكل';
       if (toggleAllIcon) {
-        toggleAllIcon.innerHTML = allOpen ? '<polyline points="18 15 12 9 6 15"/>' : '<polyline points="6 9 12 15 18 9"/>';
+        toggleAllIcon.innerHTML = anyOpen ? '<polyline points="18 15 12 9 6 15"/>' : '<polyline points="6 9 12 15 18 9"/>';
       }
     }
 

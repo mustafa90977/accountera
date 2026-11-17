@@ -116,8 +116,15 @@
   flex-shrink: 0;
 }
 
-.accountely-sidebar.collapsed .sidebar-text {
-  display: none;
+.accountely-sidebar.collapsed .sidebar-text,
+.accountely-sidebar.collapsed .sidebar-badge,
+.accountely-sidebar.collapsed .sidebar-group-label,
+.accountely-sidebar.collapsed .sidebar-nav-title {
+  display: none !important;
+}
+.accountely-sidebar.collapsed .sidebar-item {
+  justify-content: center;
+  padding: 10px 0;
 }
 
 .sidebar-dot-badge {
