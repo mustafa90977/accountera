@@ -575,13 +575,22 @@ const ExcelStudentSettingsView = {
       localStorage.removeItem('jr_users');
     } catch (err) {}
 
-    // تحديث الاسم في Supabase إذا كانت الجلسة نشطة
+    // تحديث البيانات في Supabase إذا كانت الجلسة نشطة
     const client = (typeof window !== 'undefined' && window.SupabaseService) ? window.SupabaseService.client : null;
     if (client && client.auth) {
       try {
         const { data: { session } } = await client.auth.getSession();
         if (session && session.user) {
           await client.from('profiles').update({ full_name: user.name }).eq('id', session.user.id);
+          // مزامنة الميتاداتا السحابية الكاملة (الهاتف والجامعة والسنة الدراسية)
+          await client.auth.updateUser({
+            data: {
+              full_name: user.name,
+              phone: user.phone,
+              university: user.university,
+              academic_year: user.gradYear
+            }
+          });
         }
       } catch (e) {
         console.warn('[Settings] Failed to sync profile to Supabase:', e);
