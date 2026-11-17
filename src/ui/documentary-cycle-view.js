@@ -163,15 +163,25 @@ const DocumentaryCycleView = {
    */
   setModuleFilter(mod) {
     this.state.selectedModule = mod;
-    const pillContainer = document.getElementById('theory-module-pills');
-    if (pillContainer) {
-      pillContainer.querySelectorAll('.theory-pill-btn').forEach(btn => {
-        const isTarget = (mod === 'all' && btn.id === 'mod-btn-all') ||
-                         (btn.id === `mod-btn-${mod}`);
-        btn.classList.toggle('active', isTarget);
-      });
+    const selectEl = document.getElementById('theory-module-select');
+    if (selectEl && selectEl.value !== String(mod)) {
+      selectEl.value = String(mod);
     }
     this.updateSidebarLessonsList();
+  },
+
+  /**
+   * التنقل السريع بين الوحدات خطوة للأمام أو للخلف
+   */
+  cycleModule(dir) {
+    const modules = ['all', 1, 2, 3, 4, 5, 6];
+    const currVal = this.state.selectedModule === 'all' ? 'all' : parseInt(this.state.selectedModule, 10);
+    let currIdx = modules.indexOf(currVal);
+    if (currIdx === -1) currIdx = 0;
+    let nextIdx = currIdx + dir;
+    if (nextIdx < 0) nextIdx = modules.length - 1;
+    if (nextIdx >= modules.length) nextIdx = 0;
+    this.setModuleFilter(modules[nextIdx]);
   },
 
   /**
@@ -823,10 +833,24 @@ const DocumentaryCycleView = {
       return;
     }
 
-    listEl.innerHTML = filtered.map(item => {
+    let html = '';
+    let lastModuleIndex = null;
+
+    filtered.forEach(item => {
+      // إدراج عنوان فاصل للوحدة في وضع الكل وبدون بحث نشط
+      if (mod === 'all' && !normQuery && item.moduleIndex !== lastModuleIndex) {
+        lastModuleIndex = item.moduleIndex;
+        html += `
+          <li class="theory-module-group-header">
+            <span class="theory-group-dot"></span>
+            <span class="theory-group-title">${item.moduleTitle}</span>
+          </li>
+        `;
+      }
+
       const isActive = item.id === this.state.currentLessonId;
       const completed = this.isCompleted(item.id);
-      return `
+      html += `
         <li>
           <button 
             onclick="DocumentaryCycleView.selectLesson('${item.id}')" 
@@ -844,7 +868,9 @@ const DocumentaryCycleView = {
           </button>
         </li>
       `;
-    }).join('');
+    });
+
+    listEl.innerHTML = html;
 
     this.updateOverallProgressBar();
   },
@@ -960,15 +986,46 @@ const DocumentaryCycleView = {
               </span>
             </div>
 
-            <!-- أزرار تصفية الوحدات الـ 6 -->
-            <div class="theory-module-pills" id="theory-module-pills">
-              <button onclick="DocumentaryCycleView.setModuleFilter('all')" class="theory-pill-btn active" id="mod-btn-all">الكل (38)</button>
-              <button onclick="DocumentaryCycleView.setModuleFilter(1)" class="theory-pill-btn" id="mod-btn-1">الوحدة 1 (9)</button>
-              <button onclick="DocumentaryCycleView.setModuleFilter(2)" class="theory-pill-btn" id="mod-btn-2">الوحدة 2 (5)</button>
-              <button onclick="DocumentaryCycleView.setModuleFilter(3)" class="theory-pill-btn" id="mod-btn-3">الوحدة 3 (7)</button>
-              <button onclick="DocumentaryCycleView.setModuleFilter(4)" class="theory-pill-btn" id="mod-btn-4">الوحدة 4 (4)</button>
-              <button onclick="DocumentaryCycleView.setModuleFilter(5)" class="theory-pill-btn" id="mod-btn-5">الوحدة 5 (7)</button>
-              <button onclick="DocumentaryCycleView.setModuleFilter(6)" class="theory-pill-btn" id="mod-btn-6">الوحدة 6 (6)</button>
+            <!-- شريط تصفية الوحدات (قائمة منسدلة مع أزرار تنقل سريعة دون شريط متحرك) -->
+            <div class="theory-module-filter-bar">
+              <button 
+                onclick="DocumentaryCycleView.cycleModule(1)" 
+                class="theory-module-step-btn" 
+                title="الوحدة التالية" 
+                aria-label="الوحدة التالية">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              
+              <div class="theory-module-select-wrap">
+                <span class="theory-module-select-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                </span>
+                <select 
+                  class="theory-module-select" 
+                  id="theory-module-select" 
+                  onchange="DocumentaryCycleView.setModuleFilter(this.value)"
+                  title="تصفية حسب الوحدة"
+                >
+                  <option value="all" selected>جميع الوحدات (38 درساً)</option>
+                  <option value="1">الوحدة 1: أساسيات المحاسبة (9 دروس)</option>
+                  <option value="2">الوحدة 2: القوائم المالية وإقفال الحسابات (5)</option>
+                  <option value="3">الوحدة 3: المحاسبة عن العمليات التجارية (7)</option>
+                  <option value="4">الوحدة 4: النقدية والمصرف والرقابة (4)</option>
+                  <option value="5">الوحدة 5: الأصول والالتزامات وحقوق الملكية (7)</option>
+                  <option value="6">الوحدة 6: التحليل المالي والموضوعات المتقدمة (6)</option>
+                </select>
+                <span class="theory-module-select-arrow">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+              </div>
+
+              <button 
+                onclick="DocumentaryCycleView.cycleModule(-1)" 
+                class="theory-module-step-btn" 
+                title="الوحدة السابقة" 
+                aria-label="الوحدة السابقة">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
             </div>
 
             <!-- قائمة الدروس -->
