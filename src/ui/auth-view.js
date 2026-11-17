@@ -1,10 +1,11 @@
 /**
- * auth-view.js — شاشة تسجيل الدخول وإنشاء الحساب المنفصلة (Standalone Auth Screen)
- * توفر واجهة دخول وتسجيل كاملة مستقلة كصفحة مستقلة بدلاً من النوافذ المنبثقة
+ * auth-view.js — شاشة تسجيل الدخول وإنشاء الحساب المنفصلة (Stitch Design System)
+ * واجهة دخول وتسجيل عصرية متكاملة مطابقة لتصميم Google Stitch
  */
 
 const ExcelAuthView = {
   currentMode: 'login', // 'login' | 'register'
+  passwordVisible: false,
 
   render(mode = 'login') {
     this.currentMode = mode === 'register' ? 'register' : 'login';
@@ -14,142 +15,362 @@ const ExcelAuthView = {
       (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:');
 
     return `
-      <div class="auth-page-wrapper" style="min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; background: var(--bg-main); position: relative;">
-        <!-- زر تبديل الثيم المستقل العائم في الركن -->
-        <button type="button" onclick="toggleTheme()" class="btn-cta-secondary" style="position: absolute; top: 1.25rem; left: 1.25rem; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--surface-card); border: 1px solid var(--border-subtle); box-shadow: var(--elevation-1); cursor: pointer;" title="تبديل الوضع الليلي / النهاري">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </button>
+      <div class="stitch-auth-wrapper" dir="rtl" lang="ar">
+        <!-- Ambient Grid & Glowing Accents -->
+        <div aria-hidden="true" class="stitch-subtle-grid"></div>
+        <div aria-hidden="true" class="stitch-ambient-glow-1"></div>
+        <div aria-hidden="true" class="stitch-ambient-glow-2"></div>
+        <div aria-hidden="true" class="stitch-ambient-glow-3"></div>
 
-        <div class="auth-card" style="width: 100%; max-width: 460px; background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl, 20px); box-shadow: var(--elevation-3, 0 12px 32px rgba(0,0,0,0.06)); padding: 2.5rem 2.25rem; position: relative;">
-          
-          <!-- الشعار والترويسة الرسمية لـ Accountera -->
-          <div style="text-align: center; margin-bottom: 2rem;">
-            <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; cursor: pointer;" onclick="navigateToScreen('landing')">
-              <svg width="48" height="48" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="accountera-brandmark">
-                <defs>
-                  <linearGradient id="accAuthGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#047857" />
-                    <stop offset="50%" stop-color="#10B981" />
-                    <stop offset="100%" stop-color="#06B6D4" />
-                  </linearGradient>
-                </defs>
-                <rect width="40" height="40" rx="11" fill="url(#accAuthGrad)"/>
-                <path d="M12 28V15C12 13.8954 12.8954 13 14 13C15.1046 13 16 13.8954 16 15V28" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-                <path d="M24 28V15C24 13.8954 24.8954 13 26 13C27.1046 13 28 13.8954 28 15V28" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-                <path d="M14 20H26" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="20" cy="11" r="2.5" fill="#FFFFFF"/>
-                <path d="M17 28H23" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+        <!-- Top Navigation Header -->
+        <header class="stitch-auth-header" data-purpose="top-navigation">
+          <!-- Brand Identity -->
+          <a class="stitch-brand-logo" onclick="navigateToScreen('landing')" role="button" tabindex="0" title="منصة Accountera">
+            <div class="stitch-brand-icon">
+              <!-- Modern Ledger SVG -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#060911" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
+                <path d="M8 7h6"></path>
+                <path d="M8 11h8"></path>
+                <path d="M8 15h4"></path>
               </svg>
             </div>
-            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px;">
-              <span style="font-weight: 900; font-size: 1.15rem; letter-spacing: 0.5px; color: var(--text-primary);">ACCOUNTERA</span>
-              <span style="font-size: 0.65rem; font-weight: 800; color: var(--primary); background: var(--primary-light, rgba(16, 185, 129, 0.1)); padding: 2px 7px; border-radius: 6px; border: 1px solid var(--primary-border, rgba(16, 185, 129, 0.25));">SUITE</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="stitch-brand-title">ACCOUNTERA</span>
+              <span class="stitch-suite-pill">SUITE</span>
             </div>
-            <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px;">
-              ${isLogin ? 'تسجيل الدخول إلى حسابك' : 'إنشاء حساب جديد'}
-            </h1>
-            <p style="font-size: 0.86rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">
-              المنصة التطبيقية الأولى لإعداد المحاسبين الماليين لسوق العمل
-            </p>
+          </a>
+
+          <!-- Utility Actions -->
+          <div class="stitch-header-actions">
+            <a class="stitch-header-help" href="javascript:void(0)" onclick="if(typeof AccModal !== 'undefined' && AccModal.alert) { AccModal.alert({ title: 'مركز المساعدة', message: 'لأي استفسار تواصل مع الدعم الفني: support@accountera.com', icon: '💡' }); } else { alert('مركز المساعدة: support@accountera.com'); }">
+              <span>مركز المساعدة والتوجيه</span>
+              <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="opacity: 0.7;">
+                <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </a>
+            <a class="stitch-header-back-btn" onclick="navigateToScreen('landing')" role="button" tabindex="0">
+              <span>الرئيسية</span>
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transform: rotate(180deg);">
+                <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </a>
           </div>
+        </header>
 
-          <!-- أزرار التبديل بين الدخول وإنشاء الحساب -->
-          <div style="display: flex; background: var(--surface-ground, #f1f5f9); padding: 5px; border-radius: 12px; border: 1px solid var(--border-subtle); margin-bottom: 1.75rem;">
-            <button type="button" onclick="ExcelAuthView.switchMode('login')" style="flex: 1; padding: 9px 0; border: none; border-radius: 9px; font-weight: 800; font-size: 0.88rem; cursor: pointer; transition: all 0.2s ease; ${isLogin ? 'background: var(--surface-card, #ffffff); color: var(--primary, #10b981); box-shadow: 0 2px 6px rgba(0,0,0,0.05);' : 'background: transparent; color: var(--text-secondary);'}">
-              تسجيل الدخول
-            </button>
-            <button type="button" onclick="ExcelAuthView.switchMode('register')" style="flex: 1; padding: 9px 0; border: none; border-radius: 9px; font-weight: 800; font-size: 0.88rem; cursor: pointer; transition: all 0.2s ease; ${!isLogin ? 'background: var(--surface-card, #ffffff); color: var(--primary, #10b981); box-shadow: 0 2px 6px rgba(0,0,0,0.05);' : 'background: transparent; color: var(--text-secondary);'}">
-              إنشاء حساب
-            </button>
-          </div>
+        <!-- Main Content Area -->
+        <main class="stitch-auth-main">
+          <div class="stitch-auth-grid">
+            
+            <!-- Left Column: Realistic Simulation Showcase (Desktop Only >= 1024px) -->
+            <div class="stitch-showcase-col" data-purpose="platform-showcase">
+              <div>
+                <div class="stitch-badge-pill">
+                  <span class="stitch-pulse-dot"></span>
+                  <span>بيئة المحاكاة المحاسبية السحابية #1</span>
+                </div>
+                <h1 class="stitch-showcase-heading">
+                  تدرب على قيود اليومية الواقعية، القوائم المالية، والأنظمة السحابية.
+                </h1>
+                <p class="stitch-showcase-desc">
+                  انضم إلى مجتمع أكثر من <strong style="color: #34d399; font-weight: 800;" class="stitch-font-num">+15,000</strong> محاسب ومالي يُعدّون أنفسهم فعلياً لمتطلبات مكاتب التدقيق والشركات الكبرى.
+                </p>
+              </div>
 
-          <!-- صندوق تنبيه الأخطاء -->
-          <div id="authErrorAlert" style="display: none; background: var(--danger-bg, #fef2f2); border: 1px solid var(--danger-border, #fecaca); color: var(--danger, #ef4444); padding: 12px 16px; border-radius: 10px; font-size: 0.86rem; margin-bottom: 1.25rem; line-height: 1.5;"></div>
+              <!-- Journal Entry Card Simulation Preview -->
+              <div class="stitch-journal-preview-card" data-purpose="journal-entry-preview">
+                <div class="stitch-jp-header">
+                  <div class="stitch-jp-title-group">
+                    <div class="stitch-jp-icon-box">
+                      <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.5L19 7.5V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="stitch-jp-name">قيد إثبات إيراد المبيعات الآجلة</div>
+                      <div class="stitch-jp-code">JV-2026-0841 • قيد يومية متزن</div>
+                    </div>
+                  </div>
+                  <span class="stitch-jp-status">
+                    <span class="stitch-jp-status-dot"></span>
+                    <span>قيد معتمد ومرحّل</span>
+                  </span>
+                </div>
 
-          <!-- نموذج إدخال البيانات -->
-          <form id="authForm" onsubmit="AuthService.handleAuthSubmit(event, '${this.currentMode}')">
-            ${!isLogin ? `
-              <div style="margin-bottom: 1.15rem;">
-                <label for="authName" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">الاسم الكامل:</label>
-                <div style="position: relative;">
-                  <input type="text" id="authName" class="form-input" placeholder="مثال: مصطفى محمد" required style="width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary); font-size: 0.9rem;">
+                <!-- Mini Ledger Table -->
+                <div class="stitch-ledger-table">
+                  <div class="stitch-ledger-row header">
+                    <span>اسم الحساب الدفتري</span>
+                    <span style="text-align: left;">مدين (SAR)</span>
+                    <span style="text-align: left;">دائن (SAR)</span>
+                  </div>
+
+                  <div class="stitch-ledger-row">
+                    <div class="stitch-ledger-account">
+                      <span class="stitch-acc-code">1102</span>
+                      <span>حـ/ العملاء - شركة النور الحديثة</span>
+                    </div>
+                    <span class="stitch-val-debit">23,000.00</span>
+                    <span class="stitch-val-empty">—</span>
+                  </div>
+
+                  <div class="stitch-ledger-row">
+                    <div class="stitch-ledger-account">
+                      <span class="stitch-acc-code">4101</span>
+                      <span>حـ/ إيرادات تقديم الخدمات الاستشارية</span>
+                    </div>
+                    <span class="stitch-val-empty">—</span>
+                    <span class="stitch-val-credit">20,000.00</span>
+                  </div>
+
+                  <div class="stitch-ledger-row">
+                    <div class="stitch-ledger-account">
+                      <span class="stitch-acc-code">2205</span>
+                      <span>حـ/ ضريبة القيمة المضافة المحصلة (15%)</span>
+                    </div>
+                    <span class="stitch-val-empty">—</span>
+                    <span class="stitch-val-credit">3,000.00</span>
+                  </div>
+                </div>
+
+                <!-- Totals -->
+                <div class="stitch-jp-footer">
+                  <span class="stitch-jp-footer-label">مجموع أطراف القيد (توازن تلقائي)</span>
+                  <div class="stitch-jp-totals">
+                    <span style="color: #34d399;">23,000.00 SAR</span>
+                    <span style="color: #94a3b8;">=</span>
+                    <span style="color: #6ee7b7;">23,000.00 SAR</span>
+                  </div>
+                </div>
+
+                <!-- Floating Verification Badge -->
+                <div class="stitch-floating-badge">
+                  <div class="stitch-fb-check">✓</div>
+                  <div>
+                    <p class="stitch-fb-title">مطابق للمعايير IFRS / SOCPA</p>
+                    <p class="stitch-fb-sub">تطبيق تفاعلي للمبتدئين والمحترفين</p>
+                  </div>
                 </div>
               </div>
-            ` : ''}
 
-            <div style="margin-bottom: 1.15rem;">
-              <label for="authEmail" class="form-label" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">البريد الإلكتروني:</label>
-              <div style="position: relative;">
-                <input type="email" id="authEmail" class="form-input" placeholder="name@domain.com" required autocomplete="email" style="width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary); font-size: 0.9rem; text-align: left; direction: ltr;">
+              <!-- Trust Stats Badges -->
+              <div class="stitch-trust-grid">
+                <div class="stitch-trust-card">
+                  <div class="stitch-trust-num">+15,400</div>
+                  <div class="stitch-trust-label">محاسب تخرج بنجاح</div>
+                </div>
+                <div class="stitch-trust-card">
+                  <div class="stitch-trust-num teal">98.4%</div>
+                  <div class="stitch-trust-label">نسبة قبول التوظيف</div>
+                </div>
+                <div class="stitch-trust-card">
+                  <div class="stitch-trust-num emerald">100%</div>
+                  <div class="stitch-trust-label">محاكاة عملية واقعية</div>
+                </div>
               </div>
             </div>
 
-            <div style="margin-bottom: 1.5rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <label for="authPassword" class="form-label" style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin: 0;">كلمة المرور:</label>
-                ${!isLogin ? '<span style="font-size: 0.75rem; color: var(--text-muted);">6 أحرف على الأقل</span>' : ''}
-              </div>
-              <div style="position: relative;">
-                <input type="password" id="authPassword" class="form-input" placeholder="••••••••" required autocomplete="${isLogin ? 'current-password' : 'new-password'}" style="width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--surface-ground); color: var(--text-primary); font-size: 0.9rem;">
+            <!-- Right Column: Glassmorphism Authentication Form Card -->
+            <div class="stitch-glass-card-col">
+              <div class="stitch-glass-card">
+                
+                <!-- Card Header -->
+                <div class="stitch-card-header">
+                  <div class="stitch-card-brand-icon-wrap">
+                    <div class="stitch-card-brand-icon-inner">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                        <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+                        <path d="M7 8h10"></path>
+                        <path d="M7 12h10"></path>
+                        <path d="M7 16h6"></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="stitch-card-suite-pill">
+                    <span class="stitch-pulse-dot" style="width: 5px; height: 5px;"></span>
+                    <span>SUITE • ACCOUNTERA</span>
+                  </div>
+                  <h2 class="stitch-card-title">
+                    ${isLogin ? 'تسجيل الدخول إلى حسابك' : 'إنشاء حساب جديد'}
+                  </h2>
+                  <p class="stitch-card-subtitle">
+                    المنصة التطبيقية الأولى لإعداد المحاسبين الماليين لسوق العمل
+                  </p>
+                </div>
+
+                <!-- Tabs: Sign In / Create Account -->
+                <div class="stitch-auth-tabs">
+                  <button type="button" class="stitch-tab-btn ${isLogin ? 'active' : ''}" onclick="ExcelAuthView.switchMode('login')">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    <span>تسجيل الدخول</span>
+                  </button>
+                  <button type="button" class="stitch-tab-btn ${!isLogin ? 'active' : ''}" onclick="ExcelAuthView.switchMode('register')">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    <span>إنشاء حساب</span>
+                  </button>
+                </div>
+
+                <!-- Error Alert Box -->
+                <div id="authErrorAlert" class="stitch-auth-alert"></div>
+
+                <!-- Form -->
+                <form id="authForm" class="stitch-auth-form" onsubmit="AuthService.handleAuthSubmit(event, '${this.currentMode}')">
+                  ${!isLogin ? `
+                    <div class="stitch-field-group">
+                      <label for="authName" class="stitch-field-label">
+                        الاسم الكامل <span class="required">*</span>
+                      </label>
+                      <div class="stitch-input-wrap">
+                        <div class="stitch-input-icon">
+                          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle>
+                          </svg>
+                        </div>
+                        <input type="text" id="authName" class="stitch-input-glass" placeholder="مثال: مصطفى محمد" required autocomplete="name">
+                      </div>
+                    </div>
+                  ` : ''}
+
+                  <!-- Email Input -->
+                  <div class="stitch-field-group">
+                    <label for="authEmail" class="stitch-field-label">
+                      البريد الإلكتروني <span class="required">*</span>
+                    </label>
+                    <div class="stitch-input-wrap">
+                      <div class="stitch-input-icon">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                      </div>
+                      <input type="email" id="authEmail" class="stitch-input-glass" placeholder="name@example.com" required autocomplete="email" dir="ltr">
+                    </div>
+                  </div>
+
+                  <!-- Password Input -->
+                  <div class="stitch-field-group">
+                    <div class="stitch-field-top">
+                      <label for="authPassword" class="stitch-field-label">
+                        كلمة المرور <span class="required">*</span>
+                      </label>
+                      ${isLogin ? `
+                        <a class="stitch-forgot-link" onclick="if(typeof AccModal !== 'undefined' && AccModal.alert) { AccModal.alert({ title: 'استعادة كلمة المرور', message: 'يرجى إدخال بريدك الإلكتروني والضغط على زر الدخول، أو التواصل مع إدارة المنصة.', icon: '🔑' }); } else { alert('استعادة كلمة المرور: تواصل مع الدعم الفني'); }">
+                          نسيت كلمة المرور؟
+                        </a>
+                      ` : `
+                        <span style="font-size: 0.72rem; color: #64748b;">6 أحرف على الأقل</span>
+                      `}
+                    </div>
+                    <div class="stitch-input-wrap">
+                      <div class="stitch-input-icon">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                      </div>
+                      <input type="password" id="authPassword" class="stitch-input-glass with-toggle" placeholder="••••••••" required autocomplete="${isLogin ? 'current-password' : 'new-password'}" dir="ltr">
+                      <button type="button" class="stitch-toggle-pwd-btn" onclick="ExcelAuthView.togglePasswordVisibility()" title="إظهار / إخفاء كلمة المرور">
+                        <svg id="stitchEyeIcon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                          <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Remember Me -->
+                  <div class="stitch-remember-wrap">
+                    <label class="stitch-checkbox-label">
+                      <input type="checkbox" checked class="stitch-checkbox">
+                      <span>تذكر تسجيل الدخول على هذا الجهاز</span>
+                    </label>
+                  </div>
+
+                  <!-- Submit CTA Button -->
+                  <button type="submit" id="authSubmitBtn" class="stitch-btn-primary">
+                    <span>${isLogin ? 'دخول المنصة' : 'إنشاء الحساب والتفعيل'}</span>
+                    <svg class="stitch-btn-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3"></path>
+                    </svg>
+                  </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="stitch-divider">
+                  <span>أو من خلال</span>
+                </div>
+
+                <!-- Google SSO Button -->
+                <button type="button" id="googleAuthBtn" class="stitch-btn-social" onclick="AuthService.signInWithGoogle()" aria-label="تسجيل الدخول بحساب Google">
+                  <svg width="17" height="17" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+                  </svg>
+                  <span>المتابعة بحساب Google</span>
+                </button>
+
+                <!-- Security Assurance -->
+                <div class="stitch-security-badge">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                  </svg>
+                  <span>اتصال مشفر وآمن بأعلى معايير الحماية 256-bit SSL</span>
+                </div>
+
+                <!-- Back Link -->
+                <div class="stitch-card-back-wrap">
+                  <a class="stitch-card-back-link" onclick="navigateToScreen('landing')" role="button" tabindex="0">
+                    <span>←</span>
+                    <span>العودة إلى الصفحة الرئيسية</span>
+                  </a>
+                </div>
+
+                ${isDev ? `
+                  <!-- Dev Only Quick Role Switching (Localhost) -->
+                  <div class="stitch-dev-roles-wrap">
+                    <div class="stitch-dev-roles-header">
+                      <span class="stitch-dev-title">معاينة محلية (Localhost):</span>
+                      <span class="stitch-dev-tag">Dev Only</span>
+                    </div>
+                    <div class="stitch-dev-grid">
+                      <button type="button" class="stitch-dev-btn" onclick="AuthService.quickLogin('student', 'طالب محاسبة (تجريبي)')">طالب</button>
+                      <button type="button" class="stitch-dev-btn" onclick="AuthService.quickLogin('teacher', 'أ. د. محمد شاكر (تجريبي)')">مدرس</button>
+                      <button type="button" class="stitch-dev-btn" onclick="AuthService.quickLogin('admin', 'مدير النظام (تجريبي)')">مدير</button>
+                    </div>
+                  </div>
+                ` : ''}
+
               </div>
             </div>
 
-            <button type="submit" id="authSubmitBtn" class="btn-cta-primary" style="width: 100%; padding: 12px; font-weight: 800; font-size: 0.95rem; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-              <span>${isLogin ? 'دخول المنصة ✓' : 'إنشاء الحساب والتفعيل ✓'}</span>
-            </button>
-          </form>
-
-          <!-- خيار الدخول عبر Google -->
-          <div style="display: flex; align-items: center; margin: 1.5rem 0 1.25rem; gap: 10px;">
-            <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
-            <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">أو من خلال</span>
-            <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
           </div>
+        </main>
 
-          <button type="button" id="googleAuthBtn" aria-label="تسجيل الدخول باستخدام حساب جوجل" onclick="AuthService.signInWithGoogle()" class="btn-cta-secondary" style="width: 100%; justify-content: center; padding: 11px 14px; font-weight: 700; display: flex; align-items: center; gap: 10px; border-radius: 10px; font-size: 0.88rem; background: var(--surface-card); border: 1px solid var(--border-subtle);">
-            <svg width="18" height="18" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-            </svg>
-            <span>المتابعة بحساب Google</span>
-          </button>
-
-          <!-- زر العودة للصفحة الرئيسية -->
-          <div style="text-align: center; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px dashed var(--border-subtle);">
-            <button type="button" onclick="navigateToScreen('landing')" style="background: none; border: none; color: var(--text-secondary); font-size: 0.86rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s ease;">
-              <span>← العودة إلى الصفحة الرئيسية</span>
-            </button>
+        <!-- Footer -->
+        <footer class="stitch-auth-footer">
+          <div class="stitch-footer-copy">
+            <span class="stitch-pulse-dot" style="width: 6px; height: 6px;"></span>
+            <p style="margin: 0;">© 2026 منصة Accountera. جميع الحقوق محفوظة لرواد المحاسبة المالية.</p>
           </div>
-
-          ${isDev ? `
-            <!-- أزرار المعاينة المحلية المخصصة لبيئة التطوير فقط -->
-            <div class="quick-roles-wrap" style="margin-top: 20px; border-top: 1px dashed var(--border-subtle); padding-top: 14px;">
-              <div class="quick-roles-title" style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">معاينة محلية (بيئة تطوير Localhost فقط):</span>
-                <span style="font-size: 0.7rem; background: var(--bg-secondary); padding: 2px 6px; border-radius: 4px; color: var(--text-muted);">Dev Only</span>
-              </div>
-              <div class="roles-grid" style="margin-top: 8px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                <button type="button" class="role-pill-btn" onclick="AuthService.quickLogin('student', 'طالب محاسبة (تجريبي)')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); font-size: 0.78rem; font-weight: 700; cursor: pointer;">
-                  طالب
-                </button>
-                <button type="button" class="role-pill-btn" onclick="AuthService.quickLogin('teacher', 'أ. د. محمد شاكر (تجريبي)')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); font-size: 0.78rem; font-weight: 700; cursor: pointer;">
-                  مدرس
-                </button>
-                <button type="button" class="role-pill-btn" onclick="AuthService.quickLogin('admin', 'مدير النظام (تجريبي)')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--surface-ground); font-size: 0.78rem; font-weight: 700; cursor: pointer;">
-                  مدير
-                </button>
-              </div>
-            </div>
-          ` : ''}
-
-        </div>
+          <div class="stitch-footer-links">
+            <a href="javascript:void(0)" class="stitch-footer-link" onclick="if(typeof AccModal !== 'undefined' && AccModal.alert) { AccModal.alert({ title: 'سياسة الخصوصية', message: 'نحن نلتزم بحماية بياناتك الشخصية ومعاملاتك المحاسبية بأعلى معايير التشفير.', icon: '🛡️' }); }">سياسة الخصوصية</a>
+            <span>•</span>
+            <a href="javascript:void(0)" class="stitch-footer-link" onclick="if(typeof AccModal !== 'undefined' && AccModal.alert) { AccModal.alert({ title: 'شروط الخدمة', message: 'المنصة مخصصة لتدريب وتأهيل المحاسبين الماليين وتطبيق المعايير المهنية.', icon: '📋' }); }">شروط الخدمة</a>
+            <span>•</span>
+            <a href="javascript:void(0)" class="stitch-footer-link" onclick="if(typeof AccModal !== 'undefined' && AccModal.alert) { AccModal.alert({ title: 'المساعدة التقنية', message: 'فريق الدعم الفني متواجد لمساعدتك 24/7 عبر البريد: support@accountera.com', icon: '🛠️' }); }">المساعدة التقنية</a>
+          </div>
+        </footer>
       </div>
     `;
   },
 
   switchMode(mode) {
+    this.currentMode = mode;
     if (typeof window.navigateToScreen === 'function') {
       window.navigateToScreen(mode);
     } else {
@@ -161,21 +382,49 @@ const ExcelAuthView = {
     }
   },
 
+  togglePasswordVisibility() {
+    const pwdInput = document.getElementById('authPassword');
+    const eyeIcon = document.getElementById('stitchEyeIcon');
+    if (!pwdInput) return;
+
+    this.passwordVisible = !this.passwordVisible;
+    pwdInput.type = this.passwordVisible ? 'text' : 'password';
+
+    if (eyeIcon) {
+      if (this.passwordVisible) {
+        // Eye off icon
+        eyeIcon.innerHTML = `
+          <path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        `;
+      } else {
+        // Eye on icon
+        eyeIcon.innerHTML = `
+          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        `;
+      }
+    }
+  },
+
   animateEntrance() {
     if (typeof gsap !== 'undefined') {
-      gsap.fromTo('.auth-card', 
-        { opacity: 0, y: 28, scale: 0.96 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'back.out(1.2)' }
+      gsap.fromTo('.stitch-glass-card', 
+        { opacity: 0, y: 30, scale: 0.96 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.2)' }
+      );
+      gsap.fromTo('.stitch-showcase-col',
+        { opacity: 0, x: 25 },
+        { opacity: 1, x: 0, duration: 0.55, ease: 'power2.out', delay: 0.1 }
       );
     }
   },
 
   shakeError() {
     if (typeof gsap !== 'undefined') {
-      gsap.fromTo('.auth-card',
+      gsap.fromTo('.stitch-glass-card',
         { x: -10 },
         { x: 10, duration: 0.07, repeat: 5, yoyo: true, ease: 'power1.inOut', onComplete: () => {
-          gsap.set('.auth-card', { x: 0 });
+          gsap.set('.stitch-glass-card', { x: 0 });
         }}
       );
     }
