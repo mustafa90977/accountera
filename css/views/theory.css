@@ -102,15 +102,33 @@
   padding: 1.25rem;
   position: sticky;
   top: 80px;
-  max-height: calc(100vh - 100px);
+  height: calc(100vh - 110px);
+  min-height: 520px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+  .theory-layout {
+    grid-template-columns: 1fr;
+  }
+  .theory-sidebar {
+    position: static;
+    height: auto;
+    min-height: auto;
+    max-height: none;
+  }
+  .theory-nav-list {
+    max-height: 380px;
+  }
 }
 
 .theory-search-box {
   position: relative;
   margin-bottom: 0.75rem;
+  flex-shrink: 0;
 }
 
 .theory-search-input {
@@ -145,36 +163,49 @@
 /* Module Filter Pills */
 .theory-module-pills {
   display: flex;
-  gap: 0.35rem;
+  align-items: center;
+  gap: 0.4rem;
   overflow-x: auto;
-  padding-bottom: 0.5rem;
+  padding: 4px 2px 8px;
   margin-bottom: 0.75rem;
   border-bottom: 1px solid var(--border-subtle);
   scrollbar-width: thin;
+  flex-shrink: 0;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .theory-pill-btn {
-  padding: 4px 10px;
+  height: 32px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 8px;
   border: 1px solid var(--border-subtle);
-  background: transparent;
+  background: var(--surface-hover);
   color: var(--text-secondary);
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.15s;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .theory-pill-btn:hover {
-  background: var(--surface-hover);
+  background: var(--surface-card);
   color: var(--text-primary);
+  border-color: var(--border-strong);
 }
 
 .theory-pill-btn.active {
   background: var(--primary);
   color: #ffffff;
   border-color: var(--primary);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
 }
 
 /* Lessons List Nav */
@@ -186,7 +217,8 @@
   padding-right: 2px;
   margin: 0;
   list-style: none;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 200px;
 }
 
 .theory-nav-item {

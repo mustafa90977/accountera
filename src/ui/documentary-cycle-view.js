@@ -163,6 +163,14 @@ const DocumentaryCycleView = {
    */
   setModuleFilter(mod) {
     this.state.selectedModule = mod;
+    const pillContainer = document.getElementById('theory-module-pills');
+    if (pillContainer) {
+      pillContainer.querySelectorAll('.theory-pill-btn').forEach(btn => {
+        const isTarget = (mod === 'all' && btn.id === 'mod-btn-all') ||
+                         (btn.id === `mod-btn-${mod}`);
+        btn.classList.toggle('active', isTarget);
+      });
+    }
     this.updateSidebarLessonsList();
   },
 
@@ -871,7 +879,7 @@ const DocumentaryCycleView = {
     const total = this.state.indexData.length || 38;
     const pct = Math.round((completed / total) * 100);
 
-    if (countEl) countEl.textContent = `${completed} / ${total}`;
+    if (countEl) countEl.textContent = `${completed} من أصل ${total}`;
     if (barEl) barEl.style.width = `${pct}%`;
   },
 
@@ -919,7 +927,7 @@ const DocumentaryCycleView = {
             <div class="theory-overall-progress">
               <div style="text-align:right;">
                 <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">إنجاز الدروس</div>
-                <div style="font-size:0.88rem; font-weight:900; color:var(--text-primary);" id="theory-completed-count">0 / 38</div>
+                <div style="font-size:0.88rem; font-weight:900; color:var(--text-primary);" id="theory-completed-count">0 من أصل 38</div>
               </div>
               <div class="theory-progress-bar-bg">
                 <div class="theory-progress-bar-fill" id="theory-progress-fill" style="width: 0%;"></div>
