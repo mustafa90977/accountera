@@ -101,7 +101,7 @@ const AuthService = {
             const urlParams = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : null;
             const hash = (typeof window !== 'undefined' && window.location.hash) ? window.location.hash.replace(/^#\/?/, '').trim() : '';
             const requestedScreen = (urlParams ? urlParams.get('screen') : null) || hash;
-            const publicScreens = ['landing', 'welcome', 'documentary-cycle', 'theory', 'learning', 'login', 'register'];
+            const publicScreens = ['landing', 'welcome'];
             if (!requestedScreen || (!publicScreens.includes(requestedScreen) && requestedScreen !== 'login' && requestedScreen !== 'register')) {
               window.navigateToScreen('landing');
             }
@@ -750,36 +750,32 @@ const AuthService = {
         `;
       }
     } else {
-      // شريط ملاحة الطالب المسجل
+      // شريط ملاحة الطالب المسجل (Student Navigation - 4 Core Pillars)
       if (desktopNav) {
         desktopNav.innerHTML = `
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('landing')">الرئيسية</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('student-dashboard')">لوحة الطالب</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('portfolio')">محفظة الكفاءة</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('student-settings')">إعدادات الحساب</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('lesson-1')">المسار التعليمي</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('ex-1')">الأمثلة المحلولة</a>
-          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('ip-1')">التمارين المستقلة</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('student-dashboard')">لوحة المتابعة</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('documentary-cycle')">المنهج والأكاديمية</a>
           <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('companies-hub')">بيئة الشركات</a>
+          <a href="javascript:void(0)" class="nav-link" onclick="navigateToScreen('portfolio')">تقدّمي ومحفظتي</a>
         `;
       }
       if (bottomNav) {
         bottomNav.innerHTML = `
-          <button class="bottom-nav-item active" id="bn-landing" onclick="navigateToScreen('landing')">
+          <button class="bottom-nav-item active" id="bn-student-dashboard" onclick="navigateToScreen('student-dashboard')">
             <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('house', { size: 20 }) : ''}</span>
             <span>الرئيسية</span>
           </button>
-          <button class="bottom-nav-item" id="bn-student-dashboard" onclick="navigateToScreen('student-dashboard')">
-            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('graduation-cap', { size: 20 }) : ''}</span>
-            <span>لوحتي</span>
-          </button>
-          <button class="bottom-nav-item" id="bn-lesson-1" onclick="navigateToScreen('lesson-1')">
+          <button class="bottom-nav-item" id="bn-documentary-cycle" onclick="navigateToScreen('documentary-cycle')">
             <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('book-open', { size: 20 }) : ''}</span>
-            <span>الدروس</span>
+            <span>الأكاديمية</span>
           </button>
           <button class="bottom-nav-item" id="bn-companies-hub" onclick="navigateToScreen('companies-hub')">
             <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('buildings', { size: 20 }) : ''}</span>
-            <span>الشركات</span>
+            <span>المحاكاة</span>
+          </button>
+          <button class="bottom-nav-item" id="bn-portfolio" onclick="navigateToScreen('portfolio')">
+            <span class="bn-icon">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('chart-bar', { size: 20 }) : ''}</span>
+            <span>تقدّمي</span>
           </button>
         `;
       }

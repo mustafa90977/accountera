@@ -148,6 +148,14 @@ const DocumentaryCycleView = {
     this.updateReaderDOM();
     this.updateSidebarActiveState();
 
+    // حفظ آخر درس نشط لبطاقة الاستئناف في لوحة الطالب
+    try {
+      localStorage.setItem('acc_last_active_lesson', lessonId);
+      if (this.state.currentLesson && this.state.currentLesson.title) {
+        localStorage.setItem('acc_last_active_lesson_title', this.state.currentLesson.title);
+      }
+    } catch(e) {}
+
     // تحديث رابط الصفحة لدعم التصفح والرجوع
     try {
       window.history.replaceState(null, '', `#theory?lesson=${lessonId}`);

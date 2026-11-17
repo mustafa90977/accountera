@@ -221,7 +221,7 @@ window.navigateToScreen = function(screenId) {
   }
 
   // حارس المسارات الصارم (Strict Route Guard): حظر الوصول لكافة أقسام المنصة بدون تسجيل دخول موثق
-  const publicScreens = ['landing', 'welcome', 'documentary-cycle', 'theory'];
+  const publicScreens = ['landing', 'welcome'];
   const currentUser = (typeof AuthService !== 'undefined') ? AuthService.getCurrentUser() : null;
 
   if (!publicScreens.includes(screenId) && screenId !== 'login' && screenId !== 'register' && !currentUser) {
@@ -352,11 +352,15 @@ window.navigateToScreen = function(screenId) {
   } else if (screenId === 'documentary-cycle' || screenId.startsWith('doc-cycle-') || screenId === 'theory' || screenId.startsWith('theory') || screenId === 'learning' || screenId === 'lessons') {
     const activeBtn = document.getElementById('sb-documentary-cycle');
     if (activeBtn) activeBtn.classList.add('active');
+    const activeBn = document.getElementById('bn-documentary-cycle') || document.getElementById('bn-lesson-1');
+    if (activeBn) activeBn.classList.add('active');
     if (typeof DocumentaryCycleView !== 'undefined') {
       appContainer.innerHTML = DocumentaryCycleView.render(screenId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   } else if (screenId === 'portfolio' || screenId === 'skills-passport') {
+    const activeBn = document.getElementById('bn-portfolio');
+    if (activeBn) activeBn.classList.add('active');
     if (typeof AccounteraPortfolioEngine !== 'undefined') {
       appContainer.innerHTML = AccounteraPortfolioEngine.renderPortfolioView();
       window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -17,6 +17,9 @@ const ExcelStudentDashboard = {
       const completedLessonsCount = (typeof ProgressService !== 'undefined') ? ProgressService.getCompletedCount() : 0;
       const practiceStats = (typeof PracticeService !== 'undefined') ? PracticeService.getStats() : { total: 0, passed: 0, accuracyRate: 0 };
 
+      const lastActiveLessonId = localStorage.getItem('acc_last_active_lesson') || 'lesson-01';
+      const lastActiveLessonTitle = localStorage.getItem('acc_last_active_lesson_title') || 'الدرس 1: مقدمة في المحاسبة المالية والدورة المحاسبية';
+
       return {
         simInfo,
         profile: {
@@ -30,7 +33,9 @@ const ExcelStudentDashboard = {
         totalTasks: simInfo.totalTasks || (window.ANSWER_KEY ? window.ANSWER_KEY.length : 0) || 100,
         percent: simInfo.percent || 0,
         completedLessonsCount,
-        practiceStats
+        practiceStats,
+        lastActiveLessonId,
+        lastActiveLessonTitle
       };
     } catch(e) {
       return {
@@ -41,7 +46,9 @@ const ExcelStudentDashboard = {
         totalTasks: 100,
         percent: 0,
         completedLessonsCount: 0,
-        practiceStats: { total: 0, passed: 0, accuracyRate: 0 }
+        practiceStats: { total: 0, passed: 0, accuracyRate: 0 },
+        lastActiveLessonId: 'lesson-01',
+        lastActiveLessonTitle: 'الدرس 1: مقدمة في المحاسبة المالية والدورة المحاسبية'
       };
     }
   },
@@ -51,50 +58,73 @@ const ExcelStudentDashboard = {
     const studentName = user && user.name ? user.name : 'محاسب مالي متدرب';
     const email = user && user.email ? user.email : 'student@accountera.edu';
     
-    const { simInfo, profile, journal, postedCount, totalTasks, percent, completedLessonsCount, practiceStats } = this.getSimData();
+    const { simInfo, profile, journal, postedCount, totalTasks, percent, completedLessonsCount, practiceStats, lastActiveLessonId, lastActiveLessonTitle } = this.getSimData();
 
     // آخر 4 عمليات مسجلة في دفتر اليومية
     const recentEntries = [...journal].reverse().slice(0, 4);
 
     return `
       <div class="student-dashboard-container">
-        <!-- 1. Accountely Header الترحيبي -->
+        <!-- 1. ترويسة الترحيب الموحدة -->
         <div class="dash-header-wrap">
           <div>
             <h1 class="dash-title">
-              Welcome back, <span style="color:var(--primary);">${studentName}</span>
+              أهلاً بك مجدداً، <span style="color:var(--primary); font-weight:800;">${studentName}</span> 👋
             </h1>
             <p class="dash-subtitle">
-              Here's your learning progress at a glance. • ملخص مسارك التدريبي وإنجازاتك الحالية.
+              لوحة متابعة مسارك التدريبي، إنجاز المهام العملية، ومحاكاة بيئة الشركات
             </p>
           </div>
           <button onclick="navigateToScreen('companies-hub')" class="btn-primary-action">
-            <span>Browse Challenges</span>
+            <span>استكشاف بيئة الشركات</span>
             <span>←</span>
           </button>
         </div>
 
-        <!-- 2. بطاقة الـ Streak والنشاط اليومي (Accountely Streak Card) -->
+        <!-- 2. بطاقة أكمل من حيث توقفت (UX-09) -->
+        <div class="resume-learning-card" style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 1.15rem 1.4rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
+          <div style="display:flex; align-items:center; gap:14px; min-width:240px;">
+            <div style="width:44px; height:44px; border-radius:12px; background:var(--primary-light, rgba(16,185,129,0.12)); color:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              ${AccounteraIcons.render('book-open', { size: 22, strokeWidth: 1.8 })}
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:800; text-transform:uppercase; letter-spacing:0.04em;">
+                أكمل من حيث توقفت • محطتك التدريبية التالية
+              </div>
+              <div style="font-size:0.96rem; font-weight:800; color:var(--text-primary); margin-top:2px;">
+                ${lastActiveLessonTitle}
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button onclick="navigateToScreen('documentary-cycle')" class="btn-cta-primary" style="padding:8px 16px; font-size:0.85rem; font-weight:800; display:inline-flex; align-items:center; gap:6px;">
+              <span>متابعة الدرس ⚡</span>
+              <span>←</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. بطاقة التتابع والنشاط اليومي (Streak Card) -->
         <div class="accountely-streak-card">
           <div style="display:flex; align-items:flex-start; gap:14px;">
             <div class="streak-circle-icon"></div>
             <div>
               <div style="font-size:1.15rem; font-weight:800; color:var(--text-primary); display:flex; align-items:center; gap:6px;">
-                <span class="tabular-nums">${postedCount > 0 ? '1 day' : '0 days'}</span>
+                <span class="tabular-nums">${postedCount > 0 ? `${postedCount} يوم نشاط` : 'لا يوجد تتابع بعد'}</span>
                 <span style="font-weight:700; color:var(--text-secondary); font-size:0.95rem; display:inline-flex; align-items:center; gap:4px;">
-                  • ${postedCount > 0 ? `Active streak! <span style="color:#F59E0B; display:inline-flex;">${AccounteraIcons.render('flame', { size: 16 })}</span>` : 'No streak yet'}
+                  • ${postedCount > 0 ? `نشاط تدريبي مستمر! <span style="color:#F59E0B; display:inline-flex;">${AccounteraIcons.render('flame', { size: 16 })}</span>` : 'ابدأ نشاطك اليوم'}
                 </span>
               </div>
               <div style="font-size:0.84rem; color:var(--text-muted); margin-top:3px;">
-                Solve one challenge to begin. A quick quiz counts. • سجل قيداً أو حل سؤالاً اليوم لبدء التتابع.
+                سجل قيداً محاسبياً أو اجتز اختباراً اليوم للحفاظ على تتابع تدريبك المستمر.
               </div>
             </div>
           </div>
 
           <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-            <!-- مؤشر الـ 14 يوماً مع الحروف S M T W T F S -->
+            <!-- مؤشر الـ 14 يوماً مع الحروف العربية لأيام الأسبوع -->
             <div class="streak-days-track">
-              ${['S','M','T','W','T','F','S','S','M','T','W','T','F','S'].map((day, idx) => `
+              ${['س','ح','ن','ث','ر','خ','ج','س','ح','ن','ث','ر','خ','ج'].map((day, idx) => `
                 <div class="streak-day-col">
                   <div class="streak-day-box ${idx === 13 && postedCount > 0 ? 'active' : ''}"></div>
                   <span class="streak-day-label">${day}</span>
@@ -103,22 +133,22 @@ const ExcelStudentDashboard = {
             </div>
 
             <button onclick="window.location.href='simulation/simulation/journal/index.html'" class="btn-primary-action" style="padding:9px 18px; font-size:0.85rem;">
-              <span>Start today</span>
+              <span>تدريب اليوم</span>
               <span>←</span>
             </button>
           </div>
         </div>
 
-        <!-- 3. كروت البداية السريعة Getting Started -->
+        <!-- 4. كروت البداية السريعة Getting Started (UX-03 & UX-06) -->
         <div class="accountely-getting-started-card">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
             <div>
-              <h3 style="font-size:1.15rem; font-weight:800; color:var(--text-primary); margin:0 0 4px 0;">Getting started • البداية السريعة</h3>
+              <h3 style="font-size:1.15rem; font-weight:800; color:var(--text-primary); margin:0 0 4px 0;">خريطة الانطلاق السريع • خطواتك الأولى للإتقان</h3>
               <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
-                1 of 4 done — a two-minute path to your first solve. • تم إنجاز خطوة من 4 نحو الحل الأول.
+                1 من أصل 4 مكتمل — مسار موجه يبدأ بالقواعد المحاسبية وينتهي بمحاكاة العمليات الحقيقية.
               </p>
             </div>
-            <button onclick="this.closest('.accountely-getting-started-card').style.display='none'" style="background:transparent; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; padding:2px 6px;">✕</button>
+            <button onclick="this.closest('.accountely-getting-started-card').style.display='none'" style="background:transparent; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; padding:2px 6px;" title="إغلاق">✕</button>
           </div>
 
           <!-- شريط تقدم الخطوات الأخضر النحيف -->
@@ -128,92 +158,88 @@ const ExcelStudentDashboard = {
 
           <!-- بطاقات الخطوات الأربع المتجاورة -->
           <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
-            <!-- Step 1 (Completed) -->
+            <!-- الخطوة 1: الحساب (مكتملة) -->
             <div class="accountely-step-card" style="background:var(--surface-muted); border-color:var(--border-subtle);">
               <div>
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
                   <div style="width:22px; height:22px; border-radius:50%; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center;">
                     ${AccounteraIcons.render('check', { size: 14, strokeWidth: 2.5 })}
                   </div>
-                  <strong style="font-size:0.86rem; color:var(--text-primary);">Create your account</strong>
+                  <strong style="font-size:0.86rem; color:var(--text-primary);">تفعيل الحساب</strong>
                 </div>
-                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">Done — welcome aboard! • تم تفعيل الحساب</div>
+                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">تم التفعيل بنجاح — مرحباً بك في Accountera ✓</div>
               </div>
             </div>
 
-            <!-- Step 2 -->
-            <div class="accountely-step-card" onclick="window.location.href='simulation/simulation/journal/index.html'" style="cursor:pointer;">
+            <!-- الخطوة 2: دراسة المنهج الأكاديمي -->
+            <div class="accountely-step-card" onclick="navigateToScreen('documentary-cycle')" style="cursor:pointer;">
               <div>
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                   <div style="display:flex; align-items:center; gap:8px;">
                     <div style="width:22px; height:22px; border-radius:6px; background:var(--surface-muted); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">2</div>
-                    <strong style="font-size:0.86rem; color:var(--text-primary);">Submit your first challenge</strong>
+                    <strong style="font-size:0.86rem; color:var(--text-primary);">دراسة المنهج الأكاديمي</strong>
                   </div>
                   <span style="color:var(--primary); font-size:0.9rem; font-weight:800;">←</span>
                 </div>
-                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">Pick an Easy journal entry and give it a try — you get scored feedback instantly.</div>
+                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">ابدأ بالوحدة الأولى: المفاهيم والقيد المزدوج والدورة المستندية.</div>
               </div>
             </div>
 
-            <!-- Step 3 -->
-            <div class="accountely-step-card" onclick="navigateToScreen('ex-1')" style="cursor:pointer;">
+            <!-- الخطوة 3: حل كويز تقييم الفهم -->
+            <div class="accountely-step-card" onclick="navigateToScreen('documentary-cycle')" style="cursor:pointer;">
               <div>
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                   <div style="display:flex; align-items:center; gap:8px;">
                     <div style="width:22px; height:22px; border-radius:6px; background:var(--surface-muted); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">3</div>
-                    <strong style="font-size:0.86rem; color:var(--text-primary);">Answer a quiz question</strong>
+                    <strong style="font-size:0.86rem; color:var(--text-primary);">اختبار تقييم الفهم</strong>
                   </div>
                   <span style="color:var(--primary); font-size:0.9rem; font-weight:800;">←</span>
                 </div>
-                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">Quick MCQs are a low-pressure way to test your theory. • أسئلة سريعة لاختبار الفهم.</div>
+                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">اختبر استيعابك بأسئلة الاختيار من متعدد والتمارين العملية الفورية.</div>
               </div>
             </div>
 
-            <!-- Step 4 -->
-            <div class="accountely-step-card" onclick="navigateToScreen('lesson-1')" style="cursor:pointer;">
+            <!-- الخطوة 4: تسجيل أول قيد في المحاكي -->
+            <div class="accountely-step-card" onclick="navigateToScreen('companies-hub')" style="cursor:pointer;">
               <div>
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
                   <div style="display:flex; align-items:center; gap:8px;">
                     <div style="width:22px; height:22px; border-radius:6px; background:var(--surface-muted); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">4</div>
-                    <strong style="font-size:0.86rem; color:var(--text-primary);">See how scoring works</strong>
+                    <strong style="font-size:0.86rem; color:var(--text-primary);">تسجيل قيد في المحاكي</strong>
                   </div>
                   <span style="color:var(--primary); font-size:0.9rem; font-weight:800;">←</span>
                 </div>
-                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">Understand how answers are checked against EAS/IFRS-compliant keys.</div>
+                <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.4;">اختر شركة تدريبية وابدأ بإثبات الفواتير في دفتر اليومية الحقيقي.</div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 4. شريط حبوب الفلترة والخيارات (Filter Chips) -->
+        <!-- 5. شريط حبوب الفلترة والخيارات (Filter Chips) -->
         <div style="display:flex; align-items:center; gap:8px; overflow-x:auto; padding-bottom:8px; margin-bottom:1.5rem;">
           <button class="filter-pill active">
             <span>${AccounteraIcons.render('star', { size: 14 })}</span>
-            <span>Score ≥ 80%</span>
+            <span>نسبة الإتقان ≥ 80%</span>
           </button>
-          <button class="filter-pill">
+          <button class="filter-pill" onclick="window.location.href='simulation/simulation/journal/index.html'">
             <span>${AccounteraIcons.render('book-open', { size: 14 })}</span>
-            <span>Excl. MCQ • قيود اليومية</span>
+            <span>قيود اليومية</span>
           </button>
-          <button class="filter-pill">
+          <button class="filter-pill" onclick="navigateToScreen('documentary-cycle')">
             <span>${AccounteraIcons.render('file-text', { size: 14 })}</span>
-            <span>Quizzes</span>
+            <span>اختبارات الدروس (38)</span>
           </button>
-          <button class="filter-pill">
+          <button class="filter-pill" onclick="navigateToScreen('companies-hub')">
             <span>${AccounteraIcons.render('target', { size: 14 })}</span>
-            <span>Unique</span>
+            <span>بيئة الشركات</span>
           </button>
-          <button class="filter-pill">
+          <button class="filter-pill" onclick="navigateToScreen('portfolio')">
             <span>${AccounteraIcons.render('chart-bar', { size: 14 })}</span>
-            <span>All time</span>
-          </button>
-          <button class="filter-pill">
-            <span>${AccounteraIcons.render('sparkle', { size: 14 })}</span>
-            <span>All types</span>
+            <span>سجل الإنجازات</span>
           </button>
         </div>
 
-        <!-- 2. شبكة المؤشرات الإحصائية الرئيسية (KPIs) -->
+        <!-- 6. شبكة المؤشرات الإحصائية الرئيسية (KPIs) -->
         <div class="student-stats-grid">
           <!-- كارت إنجاز المحاكاة -->
           <div class="student-stat-card">
@@ -264,7 +290,7 @@ const ExcelStudentDashboard = {
           </div>
         </div>
 
-        <!-- 3. المخطط الرئيسي (عمودين) -->
+        <!-- 7. المخطط الرئيسي (عمودين) -->
         <div class="student-layout-grid">
           <!-- العمود الأيمن (الرئيسي) -->
           <div>
@@ -518,7 +544,7 @@ const ExcelStudentDashboard = {
     if (typeof gsap === 'undefined') return;
 
     // 1. تحريك تدريجي للبطاقات ومجموعات الواجهة
-    gsap.from('.accountely-streak-card, .accountely-getting-started-card, .student-stat-card, .dash-panel-card', {
+    gsap.from('.accountely-streak-card, .accountely-getting-started-card, .resume-learning-card, .student-stat-card, .dash-panel-card', {
       opacity: 0,
       y: 18,
       duration: 0.45,
