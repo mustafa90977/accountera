@@ -785,17 +785,17 @@ const AuthService = {
           ${isStudent ? `
             <button onclick="navigateToScreen('student-plans')" class="accountely-promo-pill">
               <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('sparkle', { size: 14 }) : ''}</span>
-              <span>Refer & earn 20%</span>
+              <span data-i18n="topbar_refer">${typeof I18n !== 'undefined' ? I18n.t('topbar_refer') : 'شارك واكسب 20%'}</span>
             </button>
             
             <button onclick="navigateToScreen('student-plans')" class="accountely-upgrade-btn" title="ترقية الحساب إلى Pro" aria-label="ترقية الحساب">
               <span class="upgrade-icon" style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('star', { size: 16 }) : '★'}</span>
-              <span class="accountely-upgrade-text">Upgrade • ترقية</span>
+              <span class="accountely-upgrade-text" data-i18n="topbar_upgrade">${typeof I18n !== 'undefined' ? I18n.t('topbar_upgrade') : 'ترقية'}</span>
             </button>
           ` : (isAdmin ? `
             <button onclick="navigateToScreen('admin-overview')" class="accountely-promo-pill" style="background:var(--primary-light); border-color:var(--primary-border); color:var(--primary); font-weight:800;">
               <span style="display:inline-flex; align-items:center;">${typeof AccounteraIcons !== 'undefined' ? AccounteraIcons.render('gear', { size: 14 }) : ''}</span>
-              <span>Admin OS • مدير النظام</span>
+              <span data-i18n="topbar_admin_os">${typeof I18n !== 'undefined' ? I18n.t('topbar_admin_os') : 'مدير النظام'}</span>
             </button>
           ` : '')}
 

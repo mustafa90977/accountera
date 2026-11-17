@@ -140,41 +140,46 @@ window.createMobileNavDrawer = function() {
 
       <button class="drawer-item" onclick="window.navigateToScreen('companies-hub')">
         <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></svg></span>
-        <span>بيئة الشركات والمحاكاة</span>
+        <span data-i18n="drawer_companies">بيئة الشركات والمحاكاة</span>
       </button>
 
       <a class="drawer-item" href="/simulation/simulation/dashboard/index.html" style="color:var(--primary); font-weight:800; background:var(--primary-subtle, rgba(16,185,129,0.08));">
         <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-        <span>محاكي النظام المحاسبي (ERP Sim) ⚡</span>
+        <span data-i18n="drawer_erp">محاكي النظام المحاسبي (ERP Sim) ⚡</span>
       </a>
 
       <button class="drawer-item" onclick="window.navigateToScreen('documentary-cycle')">
         <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
-        <span>الجزء النظري</span>
+        <span data-i18n="drawer_theory">الجزء النظري</span>
       </button>
 
       <button class="drawer-item" onclick="window.navigateToScreen('learning')">
         <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
-        <span>مسار الدروس والمحتوى</span>
+        <span data-i18n="drawer_learning">مسار الدروس والمحتوى</span>
       </button>
 
       <button class="drawer-item" onclick="window.navigateToScreen('practice')">
         <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-        <span>بنك التدريبات العملية</span>
+        <span data-i18n="drawer_practice">بنك التدريبات العملية</span>
       </button>
 
       <button class="drawer-item" onclick="window.navigateToScreen('student-plans')">
         <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
-        <span>باقات وأسعار التدريب</span>
+        <span data-i18n="drawer_plans">باقات وأسعار التدريب</span>
       </button>
 
       <button class="drawer-item" onclick="window.navigateToScreen('student-settings')">
         <span class="drawer-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-        <span>الإعدادات والملف الشخصي</span>
+        <span data-i18n="drawer_settings">الإعدادات والملف الشخصي</span>
       </button>
     </div>
 
     <div style="padding:1rem; border-top:1px solid var(--border-subtle); display:flex; flex-direction:column; gap:0.5rem; background:var(--surface-hover);">
+      <button id="drawerLangToggleBtn" onclick="toggleLanguage()" class="drawer-item" style="border:1px solid var(--border-subtle); border-radius:10px; justify-content:center; min-height:44px;">
+        <span class="drawer-item-icon">🌐</span>
+        <span id="drawerLangLabel">${typeof I18n !== 'undefined' && I18n.currentLang === 'en' ? 'اللغة: العربية (AR)' : 'Language: English (EN)'}</span>
+      </button>
+
       <button id="drawerThemeToggleBtn" onclick="toggleTheme()" class="drawer-item" style="border:1px solid var(--border-subtle); border-radius:10px; justify-content:center; min-height:44px;">
         <span class="drawer-item-icon" id="drawerThemeIcon">${isDark ? sunSvg : moonSvg}</span>
         <span id="drawerThemeLabel">${isDark ? 'التحويل للوضع النهاري (Light Mode)' : 'التحويل للوضع الليلي (Dark Mode)'}</span>
@@ -196,6 +201,11 @@ window.createMobileNavDrawer = function() {
 
 // تهيئة الثيم المحفوظ عند التحميل
 (function initTheme() {
+  // تهيئة وتطبيق لغة الواجهة من النظام الموحد
+  if (typeof I18n !== 'undefined' && typeof I18n.init === 'function') {
+    I18n.init();
+  }
+
   const savedTheme = localStorage.getItem('accountera_theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
 })();

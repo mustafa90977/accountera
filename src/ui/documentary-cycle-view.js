@@ -36,15 +36,15 @@ const DocumentaryCycleView = {
                 <line x1="16" y1="17" x2="8" y2="17"></line>
                 <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
-              <span>قسم تعليمي متخصص</span>
+              <span data-i18n="theory_specialized_badge">${typeof I18n !== 'undefined' ? I18n.t('theory_specialized_badge') : 'قسم تعليمي متخصص'}</span>
             </div>
-            <h1 style="margin:0; font-size:1.75rem; font-weight:900; color:var(--text-primary); letter-spacing:-0.02em;">الجزء النظري</h1>
-            <p style="margin:0.35rem 0 0; font-size:0.92rem; color:var(--text-secondary);">الدروس النصية والمفاهيم الشاملة للدورة المحاسبية</p>
+            <h1 data-i18n="theory_page_title" style="margin:0; font-size:1.75rem; font-weight:900; color:var(--text-primary); letter-spacing:-0.02em;">${typeof I18n !== 'undefined' ? I18n.t('theory_page_title') : 'الجزء النظري'}</h1>
+            <p data-i18n="theory_page_desc" style="margin:0.35rem 0 0; font-size:0.92rem; color:var(--text-secondary);">${typeof I18n !== 'undefined' ? I18n.t('theory_page_desc') : 'الدروس النصية والمفاهيم الشاملة للدورة المحاسبية'}</p>
           </div>
 
           <div style="display:flex; align-items:center; gap:0.75rem;">
             <button onclick="navigateToScreen('student-dashboard')" class="btn-cta-secondary" style="padding:8px 16px; font-size:0.85rem; border-radius:10px; display:inline-flex; align-items:center; gap:0.4rem;">
-              <span>لوحة دراستي</span>
+              <span data-i18n="breadcrumb_dashboard">${typeof I18n !== 'undefined' ? I18n.t('breadcrumb_dashboard') : 'لوحة دراستي'}</span>
               <span style="font-size:0.8rem;">&larr;</span>
             </button>
           </div>

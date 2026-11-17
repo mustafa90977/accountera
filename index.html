@@ -44,7 +44,7 @@
   <link rel="stylesheet" href="css/base/reset.css?v=2.4">
   <link rel="stylesheet" href="css/base/typography.css?v=2.4">
   <link rel="stylesheet" href="css/layout/app-shell.css?v=2.4">
-  <link rel="stylesheet" href="css/layout/topbar.css?v=2.4">
+  <link rel="stylesheet" href="css/layout/topbar.css?v=2.5">
   <link rel="stylesheet" href="css/layout/bottom-nav.css?v=2.4">
   <link rel="stylesheet" href="css/components/buttons.css?v=2.4">
   <link rel="stylesheet" href="css/components/cards.css?v=2.4">
@@ -97,6 +97,16 @@
       </div>
 
         <div class="topbar-actions">
+          <!-- زر تبديل اللغة (عربي / English) -->
+          <button id="langToggleBtn" onclick="toggleLanguage()" class="btn-cta-secondary" style="padding: 0 10px; height: 38px; min-height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; border-radius: 999px; font-size: 0.82rem; font-weight: 700; cursor: pointer;" title="التحويل إلى اللغة الإنجليزية (Switch to English)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span id="langToggleLabel">English</span>
+          </button>
+
           <!-- زر تبديل الثيم السريع (ليلي / نهاري) -->
           <button id="themeToggleBtn" onclick="toggleTheme()" class="btn-cta-secondary" style="padding: 0; width: 42px; height: 42px; min-width: 42px; min-height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%;" title="تبديل الوضع الليلي / النهاري">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="theme-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -112,7 +122,7 @@
     <div class="app-body-container">
       <aside class="accountely-sidebar" id="appSidebar" style="display: none;">
         <div class="sidebar-header">
-          <span class="sidebar-nav-title">التنقل / NAVIGATION</span>
+          <span class="sidebar-nav-title" data-i18n="nav_title">التنقل</span>
           <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="طي/فتح القائمة">
             <span id="sidebarToggleIcon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -125,31 +135,31 @@
             <span class="sidebar-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4"/><path d="M12 16v-8"/><path d="M17 16v-6"/></svg>
             </span>
-            <span class="sidebar-text">Overview • لوحة المتابعة</span>
+            <span class="sidebar-text" data-i18n="nav_overview">لوحة المتابعة</span>
           </button>
           <button class="sidebar-item" id="sb-portfolio" onclick="navigateToScreen('portfolio')">
             <span class="sidebar-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
             </span>
-            <span class="sidebar-text">Progress • مستوى التقدم</span>
+            <span class="sidebar-text" data-i18n="nav_progress">مستوى التقدم</span>
           </button>
           <button class="sidebar-item" id="sb-journal" onclick="if(typeof AuthService !== 'undefined' && AuthService.getCurrentUser()){ window.location.href='simulation/simulation/journal/index.html'; } else { if(typeof AccModal !== 'undefined') AccModal.toast('يرجى تسجيل الدخول أولاً', 'info'); AuthService.openAuthModal('login'); }">
             <span class="sidebar-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             </span>
-            <span class="sidebar-text">Submissions • سجل القيود</span>
+            <span class="sidebar-text" data-i18n="nav_submissions">سجل القيود</span>
           </button>
           <button class="sidebar-item" id="sb-student-settings" onclick="navigateToScreen('student-settings')">
             <span class="sidebar-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </span>
-            <span class="sidebar-text">Profile • الملف الشخصي</span>
+            <span class="sidebar-text" data-i18n="nav_profile">الملف الشخصي</span>
           </button>
           <button class="sidebar-item" id="sb-student-plans" onclick="navigateToScreen('student-plans')">
             <span class="sidebar-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
             </span>
-            <span class="sidebar-text">Refer & Earn • الباقات</span>
+            <span class="sidebar-text" data-i18n="nav_plans">باقات التدريب</span>
           </button>
 
           <div class="sidebar-divider"></div>
@@ -158,26 +168,26 @@
             <span class="sidebar-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
             </span>
-            <span class="sidebar-text">Daily Tasks • المهام اليومية</span>
+            <span class="sidebar-text" data-i18n="nav_daily_tasks">المهام اليومية</span>
             <span class="sidebar-dot-badge"></span>
           </button>
           <button class="sidebar-item" id="sb-documentary-cycle" onclick="navigateToScreen('documentary-cycle')">
             <span class="sidebar-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             </span>
-            <span class="sidebar-text">Theory • الجزء النظري</span>
+            <span class="sidebar-text" data-i18n="nav_theory">الجزء النظري</span>
           </button>
           <button class="sidebar-item" id="sb-companies-hub" onclick="navigateToScreen('companies-hub')">
             <span class="sidebar-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><line x1="8" y1="6" x2="8.01" y2="6"/><line x1="16" y1="6" x2="16.01" y2="6"/><line x1="8" y1="10" x2="8.01" y2="10"/><line x1="16" y1="10" x2="16.01" y2="10"/></svg>
             </span>
-            <span class="sidebar-text">Challenges • بيئة الشركات</span>
+            <span class="sidebar-text" data-i18n="nav_companies">بيئة الشركات</span>
           </button>
           <button class="sidebar-item" id="sb-ex-1" onclick="navigateToScreen('ex-1')">
             <span class="sidebar-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             </span>
-            <span class="sidebar-text">MCQ Quiz • الاختبارات الفنية</span>
+            <span class="sidebar-text" data-i18n="nav_quiz">الاختبارات الفنية</span>
           </button>
         </nav>
       </aside>
@@ -237,7 +247,7 @@
   <!-- ملفات الواجهة والمصادقة والمنطق -->
   <script src="src/ui/icons.js?v=2.1"></script>
   <script src="src/core/default-company-data.js?v=2.1"></script>
-  <script src="src/core/auth.js?v=3.4"></script>
+  <script src="src/core/auth.js?v=3.5"></script>
   <script src="src/core/simulation-bridge.js?v=2.1"></script>
   <script src="src/ui/landing-view.js?v=2.2"></script>
   <script src="src/ui/auth-view.js?v=2.9"></script>
@@ -251,7 +261,8 @@
   <script src="src/ui/teacher-dashboard-view.js?v=2.1"></script>
   <script src="src/ui/admin-dashboard-view.js?v=2.5"></script>
   <script src="src/core/pwa-manager.js?v=2.1"></script>
-  <script src="src/ui/documentary-cycle-view.js?v=1.1"></script>
-  <script src="src/main.js?v=3.4"></script>
+  <script src="src/core/i18n.js?v=1.0"></script>
+  <script src="src/ui/documentary-cycle-view.js?v=1.2"></script>
+  <script src="src/main.js?v=3.5"></script>
 </body>
 </html>
