@@ -91,7 +91,7 @@ const DEFAULT_ADMIN_COUPONS = [
     discountValue: 30,
     targetPlan: "pro",
     maxUses: 200,
-    usedCount: 14,
+    usedCount: 0,
     isActive: true,
     expiry: "2026-12-31"
   },
@@ -101,7 +101,7 @@ const DEFAULT_ADMIN_COUPONS = [
     discountValue: 100,
     targetPlan: "vip",
     maxUses: 50,
-    usedCount: 7,
+    usedCount: 0,
     isActive: true,
     expiry: "2026-12-31"
   }
@@ -229,6 +229,18 @@ const ExcelAdminDashboard = {
       if (savedConfig) {
         this.systemConfig = Object.assign(this.systemConfig, JSON.parse(savedConfig));
       }
+
+      // تنظيف أي بيانات مستخدمين وهمية سابقة من التخزين المحلي
+      try {
+        const rawUsers = localStorage.getItem('jr_users');
+        if (rawUsers) {
+          const parsed = JSON.parse(rawUsers);
+          if (Array.isArray(parsed)) {
+            const cleanUsers = parsed.filter(u => u && u.id && !u.id.startsWith('usr-admin-') && !u.id.startsWith('usr-student-') && !u.id.startsWith('usr-teacher-'));
+            localStorage.setItem('jr_users', JSON.stringify(cleanUsers));
+          }
+        }
+      } catch(e) {}
     } catch (e) {
       console.warn('Failed to load admin data from storage', e);
     }
@@ -399,7 +411,7 @@ const ExcelAdminDashboard = {
         </div>
 
         <div class="admin-metric-card" style="border-top: 4px solid var(--tier-pro);">
-          <div class="metric-number tabular-nums font-mono" style="color: var(--tier-pro);">${users.length || 1}</div>
+          <div class="metric-number tabular-nums font-mono" style="color: var(--tier-pro);">${users.length}</div>
           <div class="metric-title">إجمالي الطلاب المسجلين</div>
         </div>
 
@@ -2533,16 +2545,8 @@ const ExcelAdminDashboard = {
     let users = [];
     try {
       users = JSON.parse(localStorage.getItem('jr_users') || '[]');
-      if (users.length === 0) {
-        // حساب افتراضي إذا لم يوجد
-        users = [
-          { id: 'usr-admin-1', name: 'أحمد محمود (المدير)', role: 'admin', plan: 'vip', joinDate: '01 يناير 2026' },
-          { id: 'usr-student-1', name: 'سارة إبراهيم', role: 'student', plan: 'pro', joinDate: '05 يناير 2026' },
-          { id: 'usr-student-2', name: 'محمد علي', role: 'student', plan: 'free', joinDate: '10 يناير 2026' },
-          { id: 'usr-teacher-1', name: 'أ. د. سامي عبد الله', role: 'teacher', plan: 'vip', joinDate: '12 يناير 2026' }
-        ];
-        localStorage.setItem('jr_users', JSON.stringify(users));
-      }
+      // تصفية أي سجلات وهمية سابقة
+      users = users.filter(u => u && u.id && !u.id.startsWith('usr-admin-') && !u.id.startsWith('usr-student-') && !u.id.startsWith('usr-teacher-'));
     } catch (e) {}
 
     let filtered = [...users];

@@ -762,28 +762,7 @@ const ExcelLandingView = {
           </section>
 
           <!-- =========================================================
-               8. شريط التوصيات والشهادات (Testimonial Banner)
-               ========================================================= -->
-          <section class="testimonial-banner-wrap">
-            <div class="testimonial-inner-box">
-              <div style="font-size:2.5rem; color:rgba(52,211,153,0.3); line-height:1; margin-bottom:1rem;">&ldquo;</div>
-              <p class="testimonial-quote-text">
-                "كنت أعاني في المقابلات الشخصية عندما يطلب مني مسؤول التوظيف تحليل قيد مركب أو إعداد ميزان مراجعة من واقع مستندات. منصة Accountera أعطتني الخبرة العملية الحقيقية التي لم أجدها طوال 4 سنوات في الجامعة."
-              </p>
-              <div style="display:flex; align-items:center; justify-content:center; gap:0.75rem;">
-                <div style="width:42px; height:42px; border-radius:50%; background:rgba(16,185,129,0.25); border:1px solid #34d399; display:flex; align-items:center; justify-content:center; font-weight:800; color:#34d399; font-size:0.9rem;" class="font-num">
-                  م.ع
-                </div>
-                <div style="text-align:right;">
-                  <div style="font-weight:800; font-size:0.95rem; color:#ffffff;">محمود عبد الرحمن</div>
-                  <div style="font-size:0.78rem; color:#94a3b8;">محاسب مالي بشركة الفا كيميكالز (خريج تجارة القاهرة)</div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- =========================================================
-               9. قسم الأسئلة الشائعة (FAQ Accordion)
+               8. قسم الأسئلة الشائعة (FAQ Accordion)
                ========================================================= -->
           <section class="learning-journey-section" id="faqSection" style="padding-top:4rem; padding-bottom:4rem;">
             <div class="section-title-wrap">
