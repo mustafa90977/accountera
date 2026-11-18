@@ -87,7 +87,15 @@ function showDraftBanner(draft) {
             <span class="text-base">📝</span>
             <strong class="text-sm font-extrabold text-blue-950">${bannerTitle}</strong>
           </div>
-          <button type="button" onclick="discardDraftEntry()" class="text-slate-400 hover:text-rose-700 text-xs font-bold px-2 py-0.5 rounded transition cursor-pointer" title="إلغاء مسودة القيد">✕ إلغاء المسودة</button>
+          <div class="flex items-center gap-2">
+            ${draft.returnTo ? `
+              <a href="${draft.returnTo}" class="text-xs font-bold text-blue-700 hover:text-blue-900 bg-white border border-blue-200 px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow-xs">
+                <span>العودة للدرس النظري</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </a>
+            ` : ''}
+            <button type="button" onclick="discardDraftEntry()" class="text-slate-400 hover:text-rose-700 text-xs font-bold px-2 py-0.5 rounded transition cursor-pointer" title="إلغاء مسودة القيد">✕ إلغاء المسودة</button>
+          </div>
         </div>
         <p class="text-slate-700 leading-relaxed font-medium">
           تم تحضير المسودة بناءً على ${sourceText}: <strong>${draft.desc}</strong> بمبلغ <strong>${(draft.amount || 0).toLocaleString()} ج.م</strong>.
@@ -1589,6 +1597,10 @@ window.removeLine = function(index) {
 }
 
 window.postEntry = function() {
+    if (window.__isPostingJournalEntry) return;
+    window.__isPostingJournalEntry = true;
+    setTimeout(() => { window.__isPostingJournalEntry = false; }, 1200);
+
     const feedback = document.getElementById('feedback-msg');
     if(!feedback) return;
 
@@ -1668,6 +1680,10 @@ window.postEntry = function() {
                 successTitle = 'تم اعتماد وتسجيل قيد مقاصة وسداد ضريبة القيمة المضافة بنجاح! 💾';
                 returnLink = '../tax-returns/index.html';
                 returnText = 'العودة لمنظومة الإقرارات الضريبية';
+            } else if (draft.returnTo) {
+                successTitle = 'تم اعتماد وتسجيل القيد بنجاح! 💾';
+                returnLink = draft.returnTo;
+                returnText = 'العودة للدرس النظري ومتابعة المنهج';
             }
 
             feedback.innerHTML = `

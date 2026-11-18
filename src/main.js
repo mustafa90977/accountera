@@ -321,7 +321,10 @@ window.navigateToScreen = function(screenId) {
   } else if (screenId.startsWith('lesson-')) {
     const activeBtn = document.getElementById('bn-lesson-1');
     if (activeBtn) activeBtn.classList.add('active');
-    if (typeof ExcelLearningView !== 'undefined') {
+    if (typeof DocumentaryCycleView !== 'undefined') {
+      appContainer.innerHTML = DocumentaryCycleView.render(screenId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (typeof ExcelLearningView !== 'undefined') {
       appContainer.innerHTML = ExcelLearningView.renderLesson(screenId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -528,6 +531,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
       console.warn('[main.js] AuthService init error:', e);
     }
+  }
+
+  // فحص رابط استعادة كلمة المرور
+  if (urlParams.get('auth') === 'reset-password' || window.location.hash.includes('type=recovery')) {
+    setTimeout(() => {
+      if (typeof ExcelAuthView !== 'undefined' && typeof ExcelAuthView.openResetPasswordModal === 'function') {
+        ExcelAuthView.openResetPasswordModal();
+      }
+    }, 400);
   }
 
   // إنشاء درج الموبايل الجانبي فورياً

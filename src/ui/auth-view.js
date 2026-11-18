@@ -147,7 +147,7 @@ const ExcelAuthView = {
                 <div class="stitch-floating-badge">
                   <div class="stitch-fb-check">✓</div>
                   <div>
-                    <p class="stitch-fb-title">مطابق للمعايير IFRS / SOCPA</p>
+                    <p class="stitch-fb-title">مطابق لمعايير المحاسبة المصرية (EAS) والدولية (IFRS)</p>
                     <p class="stitch-fb-sub">تطبيق تفاعلي للمبتدئين والمحترفين</p>
                   </div>
                 </div>
@@ -318,7 +318,7 @@ const ExcelAuthView = {
                         كلمة المرور <span class="required">*</span>
                       </label>
                       ${isLogin ? `
-                        <a class="stitch-forgot-link" onclick="if(typeof AccModal !== 'undefined' && AccModal.alert) { AccModal.alert({ title: 'استعادة كلمة المرور', message: 'يرجى إدخال بريدك الإلكتروني والضغط على زر الدخول، أو التواصل مع إدارة المنصة.', icon: '🔑' }); } else { alert('استعادة كلمة المرور: تواصل مع الدعم الفني'); }">
+                        <a class="stitch-forgot-link" href="javascript:void(0)" onclick="ExcelAuthView.openForgotPasswordModal()">
                           نسيت كلمة المرور؟
                         </a>
                       ` : `
@@ -487,6 +487,139 @@ const ExcelAuthView = {
           gsap.set('.stitch-glass-card', { x: 0 });
         }}
       );
+    }
+  },
+
+  openForgotPasswordModal() {
+    let currentEmail = '';
+    const emailInput = document.getElementById('authEmail');
+    if (emailInput && emailInput.value) {
+      currentEmail = emailInput.value.trim();
+    }
+
+    const modalId = 'acc-forgot-pwd-modal';
+    const oldModal = document.getElementById(modalId);
+    if (oldModal) oldModal.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = modalId;
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;direction:rtl;';
+    overlay.innerHTML = `
+      <div style="background:#ffffff;border-radius:18px;max-width:440px;width:100%;padding:28px;box-shadow:0 20px 40px rgba(0,0,0,0.2);position:relative;">
+        <button type="button" onclick="document.getElementById('${modalId}').remove()" style="position:absolute;top:16px;left:16px;border:none;background:none;font-size:20px;cursor:pointer;color:#64748b;">✕</button>
+        <div style="width:48px;height:48px;border-radius:12px;background:#ecfdf5;color:#10b981;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">🔑</div>
+        <h3 style="font-size:1.25rem;font-weight:800;color:#0f172a;margin-bottom:8px;">استعادة كلمة المرور</h3>
+        <p style="font-size:0.875rem;color:#64748b;line-height:1.6;margin-bottom:20px;">
+          أدخل بريدك الإلكتروني المسجل وسنرسل لك رابطاً آمناً لإعادة تعيين كلمة المرور فوراً.
+        </p>
+        <div id="forgot-modal-msg" style="margin-bottom:14px;"></div>
+        <div style="margin-bottom:18px;">
+          <label style="display:block;font-size:0.8rem;font-weight:700;color:#334155;margin-bottom:6px;">البريد الإلكتروني</label>
+          <input type="email" id="forgot-pwd-email" value="${currentEmail}" placeholder="name@example.com" dir="ltr" style="width:100%;height:44px;padding:0 14px;border-radius:10px;border:1px solid #cbd5e1;font-size:0.95rem;outline:none;" />
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button type="button" id="btn-submit-forgot-pwd" onclick="ExcelAuthView.submitForgotPassword()" style="flex:1;height:44px;background:#0f172a;color:#ffffff;border:none;border-radius:10px;font-weight:800;cursor:pointer;font-size:0.9rem;">
+            إرسال رابط الاستعادة ✉️
+          </button>
+          <button type="button" onclick="document.getElementById('${modalId}').remove()" style="padding:0 16px;height:44px;background:#f1f5f9;color:#475569;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;">
+            إلغاء
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  },
+
+  async submitForgotPassword() {
+    const input = document.getElementById('forgot-pwd-email');
+    const msg = document.getElementById('forgot-modal-msg');
+    const btn = document.getElementById('btn-submit-forgot-pwd');
+    if (!input || !msg) return;
+    const email = input.value.trim();
+    if (!email || !email.includes('@')) {
+      msg.innerHTML = '<div style="background:#fee2e2;color:#991b1b;padding:10px;border-radius:8px;font-size:0.82rem;font-weight:700;">يرجى كتابة بريد إلكتروني صحيح.</div>';
+      return;
+    }
+    btn.disabled = true;
+    btn.innerText = 'جاري الإرسال...';
+    msg.innerHTML = '';
+    const res = await AuthService.requestPasswordReset(email);
+    if (res.success) {
+      msg.innerHTML = `<div style="background:#dcfce7;color:#166534;padding:12px;border-radius:8px;font-size:0.85rem;font-weight:700;line-height:1.5;">${res.message}</div>`;
+      btn.style.display = 'none';
+      input.disabled = true;
+    } else {
+      btn.disabled = false;
+      btn.innerText = 'إرسال رابط الاستعادة ✉️';
+      msg.innerHTML = `<div style="background:#fee2e2;color:#991b1b;padding:10px;border-radius:8px;font-size:0.82rem;font-weight:700;">${res.error}</div>`;
+    }
+  },
+
+  openResetPasswordModal() {
+    const modalId = 'acc-new-pwd-modal';
+    const oldModal = document.getElementById(modalId);
+    if (oldModal) oldModal.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = modalId;
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;direction:rtl;';
+    overlay.innerHTML = `
+      <div style="background:#ffffff;border-radius:18px;max-width:440px;width:100%;padding:28px;box-shadow:0 20px 40px rgba(0,0,0,0.2);position:relative;">
+        <div style="width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">🔒</div>
+        <h3 style="font-size:1.25rem;font-weight:800;color:#0f172a;margin-bottom:8px;">تعيين كلمة مرور جديدة</h3>
+        <p style="font-size:0.875rem;color:#64748b;line-height:1.6;margin-bottom:20px;">
+          أدخل كلمة المرور الجديدة لحسابك (6 أحرف أو أرقام على الأقل).
+        </p>
+        <div id="new-pwd-msg" style="margin-bottom:14px;"></div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block;font-size:0.8rem;font-weight:700;color:#334155;margin-bottom:6px;">كلمة المرور الجديدة</label>
+          <input type="password" id="new-pwd-input" placeholder="••••••••" dir="ltr" style="width:100%;height:44px;padding:0 14px;border-radius:10px;border:1px solid #cbd5e1;font-size:0.95rem;outline:none;" />
+        </div>
+        <div style="margin-bottom:20px;">
+          <label style="display:block;font-size:0.8rem;font-weight:700;color:#334155;margin-bottom:6px;">تأكيد كلمة المرور</label>
+          <input type="password" id="new-pwd-confirm" placeholder="••••••••" dir="ltr" style="width:100%;height:44px;padding:0 14px;border-radius:10px;border:1px solid #cbd5e1;font-size:0.95rem;outline:none;" />
+        </div>
+        <button type="button" id="btn-save-new-pwd" onclick="ExcelAuthView.submitNewPassword()" style="width:100%;height:44px;background:#0f172a;color:#ffffff;border:none;border-radius:10px;font-weight:800;cursor:pointer;font-size:0.9rem;">
+          حفظ كلمة المرور الجديدة ✓
+        </button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  },
+
+  async submitNewPassword() {
+    const p1 = document.getElementById('new-pwd-input');
+    const p2 = document.getElementById('new-pwd-confirm');
+    const msg = document.getElementById('new-pwd-msg');
+    const btn = document.getElementById('btn-save-new-pwd');
+    if (!p1 || !p2 || !msg) return;
+    const pwd1 = p1.value;
+    const pwd2 = p2.value;
+    if (!pwd1 || pwd1.length < 6) {
+      msg.innerHTML = '<div style="background:#fee2e2;color:#991b1b;padding:10px;border-radius:8px;font-size:0.82rem;font-weight:700;">كلمة المرور يجب أن لا تقل عن 6 أحرف.</div>';
+      return;
+    }
+    if (pwd1 !== pwd2) {
+      msg.innerHTML = '<div style="background:#fee2e2;color:#991b1b;padding:10px;border-radius:8px;font-size:0.82rem;font-weight:700;">كلمتا المرور غير متطابقتين.</div>';
+      return;
+    }
+    btn.disabled = true;
+    btn.innerText = 'جاري الحفظ...';
+    msg.innerHTML = '';
+    const res = await AuthService.updateUserPassword(pwd1);
+    if (res.success) {
+      msg.innerHTML = `<div style="background:#dcfce7;color:#166534;padding:12px;border-radius:8px;font-size:0.85rem;font-weight:700;">${res.message}</div>`;
+      btn.style.display = 'none';
+      setTimeout(() => {
+        document.getElementById('acc-new-pwd-modal')?.remove();
+        if (typeof window.navigateToScreen === 'function') {
+          window.navigateToScreen('login');
+        }
+      }, 2000);
+    } else {
+      btn.disabled = false;
+      btn.innerText = 'حفظ كلمة المرور الجديدة ✓';
+      msg.innerHTML = `<div style="background:#fee2e2;color:#991b1b;padding:10px;border-radius:8px;font-size:0.82rem;font-weight:700;">${res.error}</div>`;
     }
   }
 };

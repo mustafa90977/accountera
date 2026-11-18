@@ -146,6 +146,10 @@ const DEFAULT_AUDIT_ENGAGEMENTS = [
 const DEFAULT_ADMIN_COMPANIES = (typeof DEFAULT_PLATFORM_COMPANY !== 'undefined') ? [DEFAULT_PLATFORM_COMPANY] : [];
 
 const ExcelAdminDashboard = {
+  escapeHtml(str) {
+    if (str == null) return "";
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  },
   activeTab: 'overview', // 'overview' | 'plans' | 'coupons' | 'users' | 'audit' | 'settings'
   editingPlanId: null,
   selectedAuditId: 'audit-1',
@@ -2162,12 +2166,14 @@ const ExcelAdminDashboard = {
           <tbody>
             ${list.map(sub => {
               const profile = sub.profiles || {};
-              const studentName = profile.full_name || 'طالب جديد';
-              const studentEmail = profile.email || sub.user_id;
+              const studentName = this.escapeHtml(profile.full_name || 'طالب جديد');
+              const studentEmail = this.escapeHtml(profile.email || sub.user_id || '');
+              const safeSubId = this.escapeHtml(sub.id || '');
+              const safePlanId = this.escapeHtml(sub.plan_id || 'pro');
               const planBadge = sub.plan_id === 'vip' 
                 ? '<span style="background: rgba(20, 184, 166, 0.15); color: var(--primary); padding: 3px 10px; border-radius: 999px; font-weight: 800; font-size: 0.78rem;">VIP Master</span>'
                 : '<span style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 3px 10px; border-radius: 999px; font-weight: 800; font-size: 0.78rem;">PRO</span>';
-              const dateStr = sub.requested_at ? new Date(sub.requested_at).toLocaleString('ar-EG') : 'الآن';
+              const dateStr = sub.requested_at ? this.escapeHtml(new Date(sub.requested_at).toLocaleString('ar-EG')) : 'الآن';
 
               return `
                 <tr style="border-bottom: 1px solid var(--border-subtle);">
@@ -2186,10 +2192,10 @@ const ExcelAdminDashboard = {
                   </td>
                   <td style="padding: 12px 14px; text-align: center;">
                     <div style="display: inline-flex; gap: 8px;">
-                      <button onclick="ExcelAdminDashboard.approveSubscription('${sub.id}', '${sub.plan_id}')" class="btn-workspace-action" style="background: #10b981; color: #ffffff; padding: 6px 14px; font-size: 0.8rem; font-weight: 800; border-radius: 6px;">
+                      <button onclick="ExcelAdminDashboard.approveSubscription('${safeSubId}', '${safePlanId}')" class="btn-workspace-action" style="background: #10b981; color: #ffffff; padding: 6px 14px; font-size: 0.8rem; font-weight: 800; border-radius: 6px;">
                         ✓ موافقة وتفعيل
                       </button>
-                      <button onclick="ExcelAdminDashboard.rejectSubscription('${sub.id}')" class="btn-workspace-action" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 14px; font-size: 0.8rem; font-weight: 800; border-radius: 6px;">
+                      <button onclick="ExcelAdminDashboard.rejectSubscription('${safeSubId}')" class="btn-workspace-action" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 14px; font-size: 0.8rem; font-weight: 800; border-radius: 6px;">
                         ✕ رفض
                       </button>
                     </div>
@@ -2608,8 +2614,8 @@ const ExcelAdminDashboard = {
             ` : filtered.map(u => `
               <tr>
                 <td>
-                  <strong style="font-size:0.95rem; display:block;">${u.name || 'مستخدم'}</strong>
-                  <span style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--text-muted);">${u.id}</span>
+                  <strong style="font-size:0.95rem; display:block;">${this.escapeHtml(u.name || 'مستخدم')}</strong>
+                  <span style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--text-muted);">${this.escapeHtml(u.id || '')}</span>
                 </td>
                 <td>
                   <select class="admin-form-select" style="padding:4px 8px; font-size:0.82rem; min-width:130px;" onchange="ExcelAdminDashboard.changeUserRole('${u.id}', this.value)">

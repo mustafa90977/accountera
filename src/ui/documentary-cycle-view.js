@@ -359,17 +359,47 @@ const DocumentaryCycleView = {
   /**
    * ربط القيد النظري بمحاكي اليومية العامة لتسجيله وتأكيد اتزانه
    */
+  resolveAccountCode(accStr) {
+    if (!accStr) return '1101';
+    const numMatch = String(accStr).match(/^\d{4}/);
+    if (numMatch) return numMatch[0];
+
+    const clean = String(accStr).replace(/^(من|إلى)\s+ح\s*[\/:]\s*/i, '').trim();
+    if (clean.includes('بنك') || clean.includes('جاري')) return '1102';
+    if (clean.includes('صندوق') || clean.includes('خزينة') || clean.includes('نقدية')) return '1101';
+    if (clean.includes('عميل') || clean.includes('عملاء') || clean.includes('مدين')) return '1103';
+    if (clean.includes('مخزون') || clean.includes('بضاعة') || clean.includes('مشتريات')) return '1104';
+    if (clean.includes('مورد') || clean.includes('موردين') || clean.includes('دائن')) return '2101';
+    if (clean.includes('مبيعات') || clean.includes('إيراد')) return '4101';
+    if (clean.includes('رأس المال')) return '3101';
+    if (clean.includes('إيجار')) return '5202';
+    if (clean.includes('مرتب') || clean.includes('رواتب') || clean.includes('أجور')) return '5201';
+    if (clean.includes('مدخلات') || (clean.includes('ضريبة') && clean.includes('مضافة') && !clean.includes('مخرجات'))) return '1106';
+    if (clean.includes('مخرجات')) return '2102';
+    if (clean.includes('أصل') || clean.includes('سيارات') || clean.includes('أثاث') || clean.includes('معدات') || clean.includes('أجهزة')) return '1201';
+    if (clean.includes('صيانة')) return '5207';
+    if (clean.includes('كهرباء') || clean.includes('مياه') || clean.includes('مرافق')) return '5203';
+    if (clean.includes('خصم مسموح')) return '4104';
+    if (clean.includes('خصم مكتسب')) return '5102';
+    if (clean.includes('مردودات مبيعات')) return '4105';
+    if (clean.includes('تكلفة بضاعة') || clean.includes('تكلفة المبيعات')) return '5101';
+    return '1101';
+  },
+
   launchJournalPractice(blockIdx) {
     const lesson = this.cachedLessons[this.currentLessonId];
     if (!lesson || !lesson.blocks || !lesson.blocks[blockIdx]) return;
     const block = lesson.blocks[blockIdx];
 
+    const returnUrl = (typeof window !== 'undefined') ? window.location.href : '';
     const draft = {
       title: 'تطبيق عملي: درس ' + (this.currentLessonId.replace('theory-lesson-', '')) + ' - ' + lesson.title,
       desc: block.explanation || ('قيد محاسبي تدريبي من ' + lesson.title),
       date: block.date || new Date().toISOString().split('T')[0],
+      returnTo: returnUrl,
       lines: (block.lines || []).map(l => ({
-        account: l.account || '',
+        account: this.resolveAccountCode(l.account),
+        accountRaw: l.account || '',
         debit: Number(l.debit) || 0,
         credit: Number(l.credit) || 0
       }))

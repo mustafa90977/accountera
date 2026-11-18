@@ -46,10 +46,14 @@ const AuthService = {
     }
 
     try {
-      // الاستماع لتغيرات الجلسة (Login, Logout, Token Refresh)
+      // الاستماع لتغيرات الجلسة (Login, Logout, Token Refresh, Password Recovery)
       client.auth.onAuthStateChange(async (event, session) => {
         console.log('[AuthService] Supabase Auth Event:', event);
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        if (event === 'PASSWORD_RECOVERY') {
+          if (typeof window !== 'undefined' && window.ExcelAuthView && typeof window.ExcelAuthView.openResetPasswordModal === 'function') {
+            window.ExcelAuthView.openResetPasswordModal();
+          }
+        } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
           if (session && session.user) {
             await this.syncUserSession(session.user, false);
           }
@@ -70,20 +74,13 @@ const AuthService = {
       if (!error && session && session.user) {
         await this.syncUserSession(session.user, false);
       } else {
-        // إذا لم توجد جلسة سحابية، نتحقق من وجود مستخدم صالح محفوظ محلياً
+        // إذا لم توجد جلسة سحابية، لا نثق في التخزين المحلي إلا لحسابات الاختبار في بيئة التطوير المحلية فقط
         let hasValidSavedSession = false;
         try {
           const saved = localStorage.getItem('accountera_user');
           if (saved) {
             const parsed = JSON.parse(saved);
             if (isDev && parsed && parsed.isDevTest) {
-              this.currentUser = parsed;
-              hasValidSavedSession = true;
-            } else if (parsed && parsed.id && parsed.email && !parsed.isDevTest) {
-              // الحماية من التلاعب المحلي: لا يتم منح صلاحية الإدارة بدون جلسة سحابية موثقة
-              if (parsed.role === 'admin') {
-                parsed.role = 'student';
-              }
               this.currentUser = parsed;
               hasValidSavedSession = true;
             }
@@ -294,11 +291,35 @@ const AuthService = {
   getCurrentUser() {
     if (!this.currentUser) {
       try {
+        const isDev = (typeof window !== 'undefined') && 
+          (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:');
         const saved = localStorage.getItem('accountera_user');
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (parsed && (parsed.id || parsed.email)) {
+          if (isDev && parsed && parsed.isDevTest) {
             this.currentUser = parsed;
+          } else if (parsed && parsed.id) {
+            // تحقق صارم: هل يوجد توكن جلسة Supabase نشط وصالح زمنياً؟
+            let hasValidSupaSession = false;
+            for (let i = 0; i < localStorage.length; i++) {
+              const k = localStorage.key(i);
+              if (k && k.startsWith('sb-') && k.endsWith('-auth-token')) {
+                try {
+                  const tokenData = JSON.parse(localStorage.getItem(k));
+                  const now = Math.floor(Date.now() / 1000);
+                  if (tokenData && tokenData.access_token && tokenData.expires_at > now && tokenData.user && tokenData.user.id === parsed.id) {
+                    hasValidSupaSession = true;
+                    break;
+                  }
+                } catch(e) {}
+              }
+            }
+            if (hasValidSupaSession) {
+              this.currentUser = parsed;
+            } else if (!isDev) {
+              this.currentUser = null;
+              localStorage.removeItem('accountera_user');
+            }
           }
         }
       } catch (e) {}
@@ -633,6 +654,61 @@ const AuthService = {
       }
     }
     this.setCurrentUser(null, true);
+  },
+
+  // استعادة كلمة المرور عبر رابط البريد الإلكتروني (Password Recovery Self-Service)
+  async requestPasswordReset(email) {
+    if (!email || !email.includes('@')) {
+      return { success: false, error: 'الرجاء إدخال عنوان بريد إلكتروني صالح.' };
+    }
+    const client = (typeof window !== 'undefined' && window.SupabaseService) ? window.SupabaseService.client : null;
+    if (!client || !client.auth) {
+      return { success: false, error: 'خدمة المصادقة غير متصلة حالياً.' };
+    }
+
+    try {
+      const redirectUrl = (typeof window !== 'undefined') ? (window.location.origin + '/?auth=reset-password') : '';
+      const { data, error } = await client.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: redirectUrl
+      });
+      if (error) {
+        console.error('[AuthService] resetPasswordForEmail error:', error);
+        return { success: false, error: this.translateAuthError(error.message) };
+      }
+      return { 
+        success: true, 
+        message: 'تم إرسال رابط استعادة كلمة المرور بنجاح إلى بريدك الإلكتروني! ✉️ يرجى تفقد صندوق الوارد وصندوق الرسائل غير المرغوبة (Spam).' 
+      };
+    } catch (err) {
+      return { success: false, error: err.message || 'حدث خطأ غير متوقع أثناء إرسال الرابط.' };
+    }
+  },
+
+  // تعيين كلمة المرور الجديدة بعد النقر على الرابط
+  async updateUserPassword(newPassword) {
+    if (!newPassword || newPassword.length < 6) {
+      return { success: false, error: 'كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل.' };
+    }
+    const client = (typeof window !== 'undefined' && window.SupabaseService) ? window.SupabaseService.client : null;
+    if (!client || !client.auth) {
+      return { success: false, error: 'خدمة المصادقة غير متاحة.' };
+    }
+
+    try {
+      const { data, error } = await client.auth.updateUser({
+        password: newPassword
+      });
+      if (error) {
+        console.error('[AuthService] updateUser error:', error);
+        return { success: false, error: this.translateAuthError(error.message) };
+      }
+      return { 
+        success: true, 
+        message: 'تم تغيير كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.' 
+      };
+    } catch (err) {
+      return { success: false, error: err.message || 'حدث خطأ أثناء تحديث كلمة المرور.' };
+    }
   },
 
   updateNavigationForRole() {

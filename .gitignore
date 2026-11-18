@@ -19,3 +19,9 @@ seo-report*.html
 
 .vercel
 .env*
+
+.vercel
+.env*
+
+.venv/
+scratch/

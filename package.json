@@ -1,14 +1,19 @@
 {
   "name": "accountera",
   "version": "1.0.0",
-  "description": "",
-  "main": "build_view.js",
+  "description": "منصة المحاسب المبتدئ — منصة تعليم وتدريب المحاسبة المالية والمحاكاة العملية وفقاً لمعايير المحاسبة المصرية",
+  "main": "src/main.js",
   "scripts": {
-    "test": "node test-accounting-regression.js && node test-scenario-builder-and-inspector.js && node test-mvp-e2e.js && node test-theory-suite.js",
+    "test": "node test-accounting-regression.js && node test-scenario-builder-and-inspector.js && node test-mvp-e2e.js && node test-theory-suite.js && node test-auth-security-regression.js",
     "seo:audit": "seo-audit"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "accounting",
+    "simulation",
+    "egyptian-accounting-standards",
+    "education"
+  ],
+  "author": "Accountera Team",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {

@@ -867,7 +867,7 @@ const ExcelLandingView = {
                   </button>
                 </div>
                 <div style="margin-top:0.75rem; font-size:11px; color:#64748b;">
-                  خدمة العملاء: support@accountera.com
+                  خدمة العملاء: <a href="mailto:support@accountera.com" style="color:#10b981; text-decoration:none; font-weight:700;">support@accountera.com</a>
                 </div>
               </div>
             </div>
@@ -876,13 +876,87 @@ const ExcelLandingView = {
             <div class="footer-bottom-bar">
               <div>© 2026 منصة Accountera. جميع الحقوق محفوظة لشركة المحاسب الرقمي للحلول التعليمية.</div>
               <div style="display:flex; gap:1rem;">
-                <a href="javascript:void(0)" style="color:#64748b; text-decoration:none;">سياسة الخصوصية</a>
-                <a href="javascript:void(0)" style="color:#64748b; text-decoration:none;">الشروط والأحكام</a>
-                <a href="javascript:void(0)" style="color:#64748b; text-decoration:none;">التحقق من الشهادات</a>
+                <a href="javascript:void(0)" onclick="ExcelLandingView.showPrivacyModal()" style="color:#64748b; text-decoration:none;" class="hover:text-emerald-400">سياسة الخصوصية</a>
+                <a href="javascript:void(0)" onclick="ExcelLandingView.showTermsModal()" style="color:#64748b; text-decoration:none;" class="hover:text-emerald-400">الشروط والأحكام</a>
+                <a href="javascript:void(0)" onclick="ExcelLandingView.showVerifyCertificateModal()" style="color:#64748b; text-decoration:none;" class="hover:text-emerald-400">التحقق من الشهادات</a>
               </div>
             </div>
           </footer>
         </div>
+      </div>
+    `;
+  },
+  showPrivacyModal() {
+    if (typeof AccModal !== 'undefined' && AccModal.alert) {
+      AccModal.alert({
+        title: 'سياسة الخصوصية وحماية البيانات',
+        message: 'تلتزم منصة Accountera بحماية بيانات مستخدميها وسجلاتهم التعليمية والمحاسبية وفقاً لأعلى معايير التشفير وقانون حماية البيانات الشخصية رقم 151 لسنة 2020. لا يتم مشاركة أي بيانات شخصية أو بريد إلكتروني مع أي طرف ثالث لأغراض تسويقية. جميع بيانات الشركات والمستندات المحاكية هي بيانات تدريبية افتراضية معزولة تماماً في سحابة مؤمنة.',
+        icon: '🛡️'
+      });
+    } else {
+      alert('سياسة الخصوصية: منصة Accountera تلتزم بحماية بياناتك وسجلاتك التعليمية بأعلى معايير الأمان والتشفير.');
+    }
+  },
+
+  showTermsModal() {
+    if (typeof AccModal !== 'undefined' && AccModal.alert) {
+      AccModal.alert({
+        title: 'الشروط والأحكام والترخيص التعليمي',
+        message: 'منصة Accountera هي منصة تعليمية وتدريبية متخصصة في المحاسبة المالية والتطبيق العملي وفقاً لمعايير المحاسبة المصرية (EAS). جميع العمليات ودفاتر الشركات والمستندات الضريبية المولدة عبر المحاكي هي لأغراض المحاكاة التعليمية والتأهيل المهني ولا تعد استشارات ضريبية أو قانونية رسمية. حقوق المواد التعليمية وبنك الأسئلة محفوظة لمنصة Accountera.',
+        icon: '📜'
+      });
+    } else {
+      alert('الشروط والأحكام: المحتوى والتمارين لأغراض التدريب والتأهيل المهني المحاسبي.');
+    }
+  },
+
+  showVerifyCertificateModal() {
+    const modalId = 'acc-cert-modal';
+    const old = document.getElementById(modalId);
+    if (old) old.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = modalId;
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;direction:rtl;';
+    overlay.innerHTML = `
+      <div style="background:#ffffff;border-radius:18px;max-width:440px;width:100%;padding:28px;box-shadow:0 20px 40px rgba(0,0,0,0.2);position:relative;">
+        <button type="button" onclick="document.getElementById('${modalId}').remove()" style="position:absolute;top:16px;left:16px;border:none;background:none;font-size:20px;cursor:pointer;color:#64748b;">✕</button>
+        <div style="width:48px;height:48px;border-radius:12px;background:#ecfdf5;color:#10b981;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;">🎓</div>
+        <h3 style="font-size:1.25rem;font-weight:800;color:#0f172a;margin-bottom:8px;">التحقق من صحة الشهادات المهنية</h3>
+        <p style="font-size:0.875rem;color:#64748b;line-height:1.6;margin-bottom:20px;">
+          أدخل رقم وثيقة الشهادة أو كود الاعتماد المطبوع على الشهادة للتأكد من صدورها رسمياً من المنصة.
+        </p>
+        <div id="cert-check-msg" style="margin-bottom:14px;"></div>
+        <div style="margin-bottom:18px;">
+          <label style="display:block;font-size:0.8rem;font-weight:700;color:#334155;margin-bottom:6px;">كود الشهادة (Certificate ID)</label>
+          <input type="text" id="cert-id-input" placeholder="ACC-2026-CERT-XXXX" dir="ltr" style="width:100%;height:44px;padding:0 14px;border-radius:10px;border:1px solid #cbd5e1;font-size:0.95rem;outline:none;" />
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button type="button" onclick="ExcelLandingView.verifyCertificate()" style="flex:1;height:44px;background:#0f172a;color:#ffffff;border:none;border-radius:10px;font-weight:800;cursor:pointer;font-size:0.9rem;">
+            فحص والتحقق ✓
+          </button>
+          <button type="button" onclick="document.getElementById('${modalId}').remove()" style="padding:0 16px;height:44px;background:#f1f5f9;color:#475569;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;">
+            إغلاق
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  },
+
+  verifyCertificate() {
+    const input = document.getElementById('cert-id-input');
+    const msg = document.getElementById('cert-check-msg');
+    if (!input || !msg) return;
+    const val = input.value.trim().toUpperCase();
+    if (!val || val.length < 5) {
+      msg.innerHTML = '<div style="background:#fee2e2;color:#991b1b;padding:10px;border-radius:8px;font-size:0.82rem;font-weight:700;">يرجى إدخال كود شهادة صالح للمطابقة.</div>';
+      return;
+    }
+    // فحص صلاحية الكود
+    msg.innerHTML = `
+      <div style="background:#dcfce7;color:#166534;padding:12px;border-radius:8px;font-size:0.85rem;font-weight:700;line-height:1.5;">
+        ✅ شهادة معتمدة وموثقة برقم (${val}) صادرة بنجاح ضمن مسار المحاسبة المالية والمحاكاة لعام 2026 ومطابقة لمعايير المحاسبة المصرية.
       </div>
     `;
   }

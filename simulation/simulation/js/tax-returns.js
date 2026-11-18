@@ -39,9 +39,9 @@ function getTaxDataFromLedger() {
     let outputVat = Math.abs(balances['2102'] || 0);
     let salesBase = Math.abs(balances['4101'] || 0);
 
-    // 2. Input VAT (1106) & Purchases (1104 or Expenses)
+    // 2. Input VAT (1106) & Purchases (1104 / 1105 Inventory or Expenses)
     let inputVat = Math.abs(balances['1106'] || 0);
-    let purchaseBase = Math.abs(balances['1104'] || 0);
+    let purchaseBase = Math.abs(balances['1104'] || 0) + Math.abs(balances['1105'] || 0);
 
     // إذا كانت المبيعات الدفترية غير مسجلة لكن توجد ضريبة مخرجات مسجلة، يتم اشتقاق أساس البيع
     if (salesBase === 0 && outputVat > 0) {
@@ -274,11 +274,10 @@ window.prepareVatClearingDraft = function() {
             { account: '1102', debit: 0, credit: absDiff }
         ];
     } else if (net < 0) {
-        desc = `مقاصة ضريبة المدخلات مع المخرجات وإثبات رصيد ضريبي دائن مسترد لصالح المنشأة (${absDiff.toLocaleString()} ج.م) عن الفترة ${currentTaxPeriod}`;
+        desc = `مقاصة ضريبة المدخلات مع المخرجات وترحيل رصيد ضريبي دائن لصالح المنشأة للفترة التالية (${absDiff.toLocaleString()} ج.م) وفقاً لقانون ضريبة القيمة المضافة عن الفترة ${currentTaxPeriod}`;
         lines = [
             { account: '2102', debit: data.outputVat, credit: 0 },
-            { account: '1107', debit: absDiff, credit: 0 },
-            { account: '1106', debit: 0, credit: data.inputVat }
+            { account: '1106', debit: 0, credit: data.outputVat }
         ];
     } else {
         desc = `مقاصة متطابقة لضريبة المدخلات مع المخرجات دون فارق سداد عن الفترة ${currentTaxPeriod}`;

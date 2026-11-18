@@ -436,8 +436,13 @@ function renderStep5(body) {
     const rev = Math.abs(balances['4101'] || 0) - Math.abs(balances['4104'] || 0);
     const cogs = Math.abs(balances['5101'] || 0);
     const grossProfit = rev - cogs;
-    const opex = Math.abs(balances['5203'] || 0) + Math.abs(balances['5204'] || 0) + 
-                 Math.abs(balances['5205'] || 0) + Math.abs(balances['5206'] || 0);
+    // احتساب كافة المصروفات التشغيلية والإدارية (Salaries, Rent, Utilities, Depr, Bad Debts, Maint, Bank Charges)
+    const opex = Math.abs(balances['5201'] || 0) + Math.abs(balances['5202'] || 0) +
+                 Math.abs(balances['5203'] || 0) + Math.abs(balances['5204'] || 0) + 
+                 Math.abs(balances['5205'] || 0) + Math.abs(balances['5206'] || 0) +
+                 Math.abs(balances['5207'] || 0) + Math.abs(balances['5208'] || 0) +
+                 Math.abs(balances['5209'] || 0) + Math.abs(balances['5210'] || 0) +
+                 Math.abs(balances['5211'] || 0) + Math.abs(balances['5212'] || 0);
     const netIncome = grossProfit - opex;
 
     const cashBank = (balances['1101'] || 0) + (balances['1102'] || 0);
@@ -494,7 +499,7 @@ function renderStep5(body) {
                 <span>شهر يناير 2026 مقفل ومعتمد دفترياً بنجاح 🔒</span>
               </div>
               <p class="text-xs font-normal text-emerald-900">
-                الفترة الدفترية مجمدة ومعتمدة وفقاً لمعايير SOCPA المحاسبية. القوائم المالية لشهر يناير جاهزة للاستعراض.
+                الفترة الدفترية مجمدة ومعتمدة وفقاً لمعايير المحاسبة المصرية (EAS). القوائم المالية لشهر يناير جاهزة للاستعراض.
               </p>
               <div class="pt-2">
                 <button type="button" onclick="unlockJanuaryPeriod()" class="text-[11px] text-slate-600 hover:text-slate-900 underline font-normal">
