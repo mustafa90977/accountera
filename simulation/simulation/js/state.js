@@ -869,10 +869,23 @@ if (document.readyState === 'loading') {
 
 window.clearAllSimulationData = function(confirmPrompt = true) {
     if (!confirmPrompt || confirm("هل تريد بالتأكيد تصفير إجاباتك وقيودك المسجلة والبدء من جديد لهذه الشركة؟")) {
-        // مسح قيود الطالب فقط دون حذف سندات الشركة أو ملفها التعريفي
-        ['student_journal', 'student_ledger', 'bank_statement_items'].forEach(k => {
-            localStorage.removeItem(k);
-        });
+        // مسح قيود ووحدات الطالب فقط دون حذف بيانات الدخول أو التوكن أو الثيم
+        const simKeys = [
+            'student_journal', 'student_ledger', 'bank_statement_items',
+            'sim_bank_recon_case', 'sim_inventory_items_state',
+            'sim_cash_book_balance', 'sim_cash_denom_counts',
+            'january_closed', 'acc_draft_journal_entry'
+        ];
+        simKeys.forEach(k => localStorage.removeItem(k));
+
+        const toRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && (k.startsWith('book_matched_') || k.startsWith('student_journal_') || k.startsWith('student_ledger_'))) {
+                toRemove.push(k);
+            }
+        }
+        toRemove.forEach(k => localStorage.removeItem(k));
         location.reload();
     }
 };

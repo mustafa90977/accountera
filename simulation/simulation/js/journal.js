@@ -2101,7 +2101,20 @@ window.resetSim = function() {
     if (typeof window.clearAllSimulationData === 'function') {
         window.clearAllSimulationData(true);
     } else {
-        localStorage.clear();
+        // تفريغ دقيق لبيانات المحاكاة دون مسح تخزين الموقع أو توكن المصادقة أو الثيم
+        const simKeys = [
+            'student_journal', 'student_ledger', 'bank_statement_items',
+            'sim_bank_recon_case', 'sim_inventory_items_state',
+            'sim_cash_book_balance', 'sim_cash_denom_counts',
+            'january_closed', 'acc_draft_journal_entry'
+        ];
+        simKeys.forEach(k => localStorage.removeItem(k));
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const k = localStorage.key(i);
+            if (k && (k.startsWith('book_matched_') || k.startsWith('student_journal_') || k.startsWith('student_ledger_'))) {
+                localStorage.removeItem(k);
+            }
+        }
         location.reload();
     }
 };

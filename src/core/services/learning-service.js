@@ -227,7 +227,7 @@ const SimulationService = {
     return (user && !user.isDevTest) ? user.id : null;
   },
 
-  async saveProgress(companyId, { journal = [], ledger = {}, profile = {}, score = 0, status = 'in_progress' } = {}) {
+  async saveProgress(companyId, { journal = [], ledger = {}, profile = {}, modules = {}, score = 0, status = 'in_progress' } = {}) {
     if (!companyId) companyId = 'company-nile';
 
     // 1. تحديث الذاكرة المحلية مع عزل كاش الشركات (DI-01) ودعم حفظ الحالة الفارغة عند التصفير (DI-02)
@@ -262,7 +262,7 @@ const SimulationService = {
             completed_operations: postedEntries.length,
             score: score || (postedEntries.length * 10),
             status: status,
-            state_data: { journal, ledger, profile },
+            state_data: { journal, ledger, profile, modules },
             updated_at: new Date().toISOString()
           }, { onConflict: 'user_id,company_id' });
 
@@ -289,17 +289,41 @@ const SimulationService = {
           .maybeSingle();
 
         if (!error && data && data.state_data) {
-          const { journal, ledger, profile } = data.state_data;
+          const { journal, ledger, profile, modules } = data.state_data;
           if (journal && Array.isArray(journal)) {
             localStorage.setItem('student_journal', JSON.stringify(journal));
+            localStorage.setItem(`student_journal_${companyId}`, JSON.stringify(journal));
           }
           if (ledger) {
             localStorage.setItem('student_ledger', JSON.stringify(ledger));
+            localStorage.setItem(`student_ledger_${companyId}`, JSON.stringify(ledger));
           }
           if (profile) {
             localStorage.setItem('sim_company_profile', JSON.stringify(profile));
+            localStorage.setItem(`sim_company_profile_${companyId}`, JSON.stringify(profile));
           }
-          console.log(`[SimulationService] ✅ Loaded remote simulation state for "${companyId}".`);
+          // استعادة الوحدات المحاسبية الإضافية (البنك، المخزون، الخزينة، الإقفال)
+          if (modules && typeof modules === 'object') {
+            if (modules.bankReconciliation) {
+              const br = modules.bankReconciliation;
+              if (br.items) localStorage.setItem('bank_statement_items', JSON.stringify(br.items));
+              if (br.caseData) localStorage.setItem('sim_bank_recon_case', JSON.stringify(br.caseData));
+              if (br.bookMatches) {
+                Object.keys(br.bookMatches).forEach(k => localStorage.setItem(k, br.bookMatches[k]));
+              }
+            }
+            if (modules.inventoryCount) {
+              localStorage.setItem('sim_inventory_items_state', JSON.stringify(modules.inventoryCount));
+            }
+            if (modules.cashCount) {
+              if (modules.cashCount.bookBalance != null) localStorage.setItem('sim_cash_book_balance', String(modules.cashCount.bookBalance));
+              if (modules.cashCount.denomCounts) localStorage.setItem('sim_cash_denom_counts', JSON.stringify(modules.cashCount.denomCounts));
+            }
+            if (modules.closing && modules.closing.januaryClosed) {
+              localStorage.setItem('january_closed', 'true');
+            }
+          }
+          console.log(`[SimulationService] ✅ Loaded comprehensive remote simulation state for "${companyId}".`);
           return data;
         }
       } catch (err) {

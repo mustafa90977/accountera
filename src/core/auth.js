@@ -334,42 +334,49 @@ const AuthService = {
     this.currentUser = null;
     try {
       localStorage.removeItem('accountera_user');
-      // مسح كافة مفاتيح توكنات Supabase وجلسات المستخدم محلياً فوراً
-      const keysToRemove = [];
-      // المفاتيح المحاسبية ومفاتيح جلسات المحاكاة التي يجب عزلها وتطهيرها تماماً لمنع تسرب البيانات بين الطلاب
-      const simKeys = [
-        'student_journal',
-        'student_ledger',
-        'sim_company_profile',
-        'bank_statement_items',
-        'acc_draft_journal_entry',
-        'acc_company_sim_entries',
-        'career_student_profile',
-        'sim_student_career_tasks'
-      ];
-      simKeys.forEach(k => keysToRemove.push(k));
-
-      // المفاتيح النظامية العامة التي يجب الحفاظ عليها دائماً ولا تخص مستخدماً بعينه
+      
+      // المفاتيح العامة التي تخص تفضيلات الجهاز أو إعدادات النظام العامة
       const preserveKeys = [
-        'acc_admin_companies',
-        'acc_admin_plans',
-        'acc_admin_coupons',
-        'acc_admin_config',
-        'acc_admin_audit',
-        'sim_admin_tasks',
-        'accountera_theme'
+        'accountera_theme',
+        'accountera_lang',
+        'acc_system_config',
+        'acc_admin_plans'
       ];
 
+      const keysToRemove = [];
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        if (k && (k.startsWith('sb-') || k.includes('auth-token') || k.includes('supabase') || k.startsWith('acc_') || k.startsWith('sim_'))) {
-          if (!k.includes('theme') && !k.includes('mode') && !preserveKeys.includes(k)) {
+        if (!k) continue;
+
+        // فحص شامل لكافة مفاتيح الجلسة والهوية والمحاكاة المحاسبية لمنع أي تسريب بين الطلاب
+        const isAuthOrSession = k.startsWith('sb-') || k.includes('auth-token') || k.includes('supabase');
+        const isSimulation = k.startsWith('student_journal') || 
+                             k.startsWith('student_ledger') || 
+                             k.startsWith('sim_') || 
+                             k.startsWith('book_matched_') || 
+                             k.startsWith('bank_statement_') ||
+                             k === 'january_closed' ||
+                             k === 'jr_users' ||
+                             k === 'acc_draft_journal_entry' ||
+                             k === 'acc_company_sim_entries' ||
+                             k === 'career_student_profile' ||
+                             k.startsWith('acc_completed_') ||
+                             k.startsWith('acc_practice_') ||
+                             k.startsWith('acc_student_') ||
+                             k.startsWith('acc_cash_') ||
+                             k.startsWith('acc_inv_') ||
+                             k.startsWith('acc_tax_');
+
+        if (isAuthOrSession || isSimulation) {
+          if (!preserveKeys.includes(k) && !k.includes('theme')) {
             keysToRemove.push(k);
           }
         }
       }
+
       keysToRemove.forEach(k => localStorage.removeItem(k));
       sessionStorage.removeItem('accountera_current_screen');
+      sessionStorage.removeItem('acc_temp_session');
     } catch (e) {
       console.warn('[AuthService] Error clearing auth storage:', e);
     }

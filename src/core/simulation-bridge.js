@@ -335,14 +335,39 @@ const SimulationBridge = {
     }
   },
 
-  // حفظ تقدم المحاكاة الحالي إلى السحابة
+  // حفظ تقدم المحاكاة الحالي الشامل إلى السحابة (اليومية، الأستاذ، البنك، المخزون، الخزينة، الإقفال)
   async saveCurrentSimulation(score = 0, status = 'in_progress') {
     if (typeof window !== 'undefined' && window.SimulationService) {
       try {
         const profile = JSON.parse(localStorage.getItem('sim_company_profile') || '{}');
         const journal = JSON.parse(localStorage.getItem('student_journal') || '[]');
         const ledger = JSON.parse(localStorage.getItem('student_ledger') || '{}');
-        await window.SimulationService.saveProgress(profile.id || 'company-nile', { journal, ledger, profile, score, status });
+
+        // جمع حالات الوحدات المحاسبية التكميلية لضمان استرجاعها من أي جهاز
+        const bankItems = JSON.parse(localStorage.getItem('bank_statement_items') || 'null');
+        const bankCase = JSON.parse(localStorage.getItem('sim_bank_recon_case') || 'null');
+        const inventoryState = JSON.parse(localStorage.getItem('sim_inventory_items_state') || 'null');
+        const cashBalance = localStorage.getItem('sim_cash_book_balance');
+        const cashDenoms = JSON.parse(localStorage.getItem('sim_cash_denom_counts') || 'null');
+        const januaryClosed = localStorage.getItem('january_closed') === 'true';
+
+        // جمع بطاقات المطابقة البنكية
+        const bookMatches = {};
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('book_matched_')) {
+            bookMatches[k] = localStorage.getItem(k);
+          }
+        }
+
+        const modules = {
+          bankReconciliation: { items: bankItems, caseData: bankCase, bookMatches },
+          inventoryCount: inventoryState,
+          cashCount: { bookBalance: cashBalance, denomCounts: cashDenoms },
+          closing: { januaryClosed }
+        };
+
+        await window.SimulationService.saveProgress(profile.id || 'company-nile', { journal, ledger, profile, modules, score, status });
       } catch (e) {
         console.warn('[SimulationBridge] saveCurrentSimulation error:', e);
       }
