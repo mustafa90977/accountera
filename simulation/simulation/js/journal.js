@@ -210,7 +210,7 @@ function renderPendingList() {
                 </div>
                 <div class="text-left flex-shrink-0">
                     <div class="text-xs font-mono font-bold text-slate-600 bg-white px-2 py-0.5 rounded-md border border-slate-200">${trx.date}</div>
-                    <div class="text-[11px] font-mono font-extrabold text-emerald-800 mt-0.5">${Number(trx.amount || 0).toLocaleString()} ج.م</div>
+                    <div class="text-[11px] font-mono font-extrabold text-emerald-800 mt-0.5">${Number(trx.amount || (trx.docData && trx.docData.totalAmount) || (Array.isArray(trx.lines) ? Math.max(...trx.lines.map(l => Number(l.debit) || 0)) : 0)).toLocaleString()} ج.م</div>
                 </div>
             `;
             div.onclick = () => selectTask(trx);
@@ -456,12 +456,24 @@ function renderDocument(trx) {
     let docHtml = '';
     const compName = getCompanyName();
     const doc = trx.docData || {};
-    const total = (doc.totalAmount != null) ? Number(doc.totalAmount) : (Number(trx.amount) || 0);
-    const subtotal = (doc.subtotal != null) ? Number(doc.subtotal) : total;
-    const vatAmt = Number(doc.vatAmount) || 0;
+    let total = (doc.totalAmount != null && Number(doc.totalAmount) > 0)
+        ? Number(doc.totalAmount)
+        : (Number(trx.amount) || 0);
+    if (total === 0 && Array.isArray(trx.lines) && trx.lines.length > 0) {
+        total = Math.max(...trx.lines.map(l => Number(l.debit) || 0));
+    }
+    let subtotal = (doc.subtotal != null && Number(doc.subtotal) > 0) ? Number(doc.subtotal) : total;
+    let vatAmt = Number(doc.vatAmount) || 0;
+    if (subtotal === 0 && total > 0) {
+        subtotal = vatAmt > 0 ? (total - vatAmt) : total;
+    }
     const date = doc.date || trx.date || '2026-01-15';
     const ref = doc.ref || trx.ref || `INV-${1000 + (trx.num || 1)}`;
-    const partyName = doc.partyName || '';
+    let partyName = doc.partyName || trx.partyName || '';
+    if (!partyName) {
+        if (trx.type === 'Purchase') partyName = 'شركة الدلتا للتوريدات والمستودعات';
+        else if (trx.type === 'Sale' || trx.type === 'Cash Sale') partyName = 'مؤسسة الشروق التجارية';
+    }
     const words = tafqeetArabic(total);
 
     if (trx.type === 'Purchase') {
@@ -487,8 +499,12 @@ function renderDocument(trx) {
               <span class="text-slate-500">طريقة السداد:</span>
               <span class="font-bold text-slate-800">آجل (فاتورة ضريبية مستحقة السداد)</span>
             </div>
-            ${renderDocRow('قيمة البضاعة المشتراة (قبل الضريبة)', subtotal, 'text-slate-800')}
-            ${renderDocRow('ضريبة القيمة المضافة مدخلات (14%)', vatAmt, 'text-emerald-700')}
+            ${vatAmt > 0 ? `
+              ${renderDocRow('قيمة البضاعة المشتراة (قبل الضريبة)', subtotal, 'text-slate-800')}
+              ${renderDocRow('ضريبة القيمة المضافة مدخلات (14%)', vatAmt, 'text-emerald-700')}
+            ` : `
+              ${renderDocRow('قيمة البضاعة المشتراة', total, 'text-slate-800')}
+            `}
             <div class="border-t border-slate-200 pt-1">
               ${renderDocRow('الإجمالي المستحق للمورد', total, 'text-blue-900 font-extrabold')}
             </div>
@@ -524,8 +540,12 @@ function renderDocument(trx) {
               <span class="text-slate-500">طريقة البيع:</span>
               <span class="font-bold ${isCash ? 'text-emerald-700' : 'text-blue-800'}">${isCash ? 'نقداً / تحويل بنكي فوري' : 'آجل (حساب العملاء AR)'}</span>
             </div>
-            ${renderDocRow('قيمة المبيعات الخاضعة للضريبة', subtotal, 'text-slate-800')}
-            ${renderDocRow('ضريبة القيمة المضافة مخرجات (14%)', vatAmt, 'text-purple-700')}
+            ${vatAmt > 0 ? `
+              ${renderDocRow('قيمة المبيعات الخاضعة للضريبة', subtotal, 'text-slate-800')}
+              ${renderDocRow('ضريبة القيمة المضافة مخرجات (14%)', vatAmt, 'text-purple-700')}
+            ` : `
+              ${renderDocRow('قيمة المبيعات الإجمالية', total, 'text-slate-800')}
+            `}
             <div class="border-t border-slate-200 pt-1">
               ${renderDocRow(isCash ? 'المحصل بالخزينة/البنك' : 'المستحق على العميل (مدين)', total, 'text-blue-900 font-extrabold')}
             </div>

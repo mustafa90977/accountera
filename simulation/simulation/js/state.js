@@ -163,6 +163,21 @@ window.canonicalizeLines = canonicalizeLines;
 window.sha256Sync = sha256Sync;
 
 // ================= DYNAMIC TASK LOADER & CONVERTER =================
+function detectTxType(tx) {
+    if (!tx) return 'General';
+    const dr = tx.dr || tx.correctDebit || (Array.isArray(tx.lines) && tx.lines.find(l => Number(l.debit) > 0)?.accountCode);
+    const cr = tx.cr || tx.correctCredit || (Array.isArray(tx.lines) && tx.lines.find(l => Number(l.credit) > 0)?.accountCode);
+    if (cr === 'sales_rev' || cr === '4101') return (dr === 'cash' || dr === '1101') ? 'Cash Sale' : 'Sale';
+    if (dr === 'inventory' || dr === '1104' || dr === '1105') return 'Purchase';
+    if ((dr === 'cash' || dr === '1101') && (cr === 'ar' || cr === '1103')) return 'Collection';
+    if ((dr === 'ap' || dr === '2101') && (cr === 'cash' || cr === '1101')) return 'Payment';
+    if (dr === 'salary_exp' || dr === '5201') return 'Payroll';
+    if (dr === 'rent_exp' || dr === 'util_exp' || dr === '5202' || dr === '5203') return 'Expense';
+    if (dr === 'equipment' || dr === '1201') return 'Asset Disposal';
+    return tx.type || 'General';
+}
+window.detectTxType = detectTxType;
+
 function transformHostTransactions(transactions = []) {
     return transactions.map((tx, idx) => {
         // Mode A: Hashed & Secured transaction (No plaintext answers/lines)
@@ -174,7 +189,7 @@ function transformHostTransactions(transactions = []) {
                 num: tx.num || idx + 1,
                 ref: tx.ref || (tx.docData && tx.docData.ref) || `INV-${1000 + (tx.num || idx + 1)}`,
                 date: tx.date || (tx.docData && tx.docData.date) || "2026-01-15",
-                type: tx.type || "General",
+                type: tx.type || detectTxType(tx),
                 title: tx.title || tx.desc || "معاملة تجارية",
                 difficulty: tx.difficulty || "Medium",
                 desc: tx.desc || tx.title || "معاملة تجارية",
@@ -191,16 +206,45 @@ function transformHostTransactions(transactions = []) {
 
         // Mode B: Legacy custom upload with lines (e.g. from local test uploads)
         if (tx.lines && Array.isArray(tx.lines) && tx.lines.length > 0) {
+            const totalDebit = tx.lines.reduce((s, l) => s + (Number(l.debit) || 0), 0);
+            const maxDebit = Math.max(...tx.lines.map(l => Number(l.debit) || 0));
+            const txAmount = Number(tx.amount) || maxDebit || totalDebit || 0;
+            const txType = tx.type || detectTxType(tx);
+            const date = tx.date || (tx.docData && tx.docData.date) || "2026-01-15";
+            const ref = tx.ref || (tx.docData && tx.docData.ref) || `INV-${1000 + (tx.num || idx + 1)}`;
+
+            const vatLine = tx.lines.find(l => String(l.accountCode) === '1106' || String(l.accountCode) === '2102');
+            const vatAmt = vatLine ? (Number(vatLine.debit) || Number(vatLine.credit) || 0) : (Number(tx.docData?.vatAmount) || Number(tx.vatAmount) || 0);
+            const subtotal = (tx.docData && tx.docData.subtotal != null)
+                ? Number(tx.docData.subtotal)
+                : ((txAmount > vatAmt && vatAmt > 0) ? (txAmount - vatAmt) : txAmount);
+
+            let partyName = tx.partyName || (tx.docData && tx.docData.partyName) || '';
+            if (!partyName) {
+                if (txType === 'Purchase') partyName = 'شركة الدلتا للتوريدات والمستودعات';
+                else if (txType === 'Sale') partyName = 'مؤسسة الشروق التجارية';
+            }
+
             return {
                 id: tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
                 txId: tx.txId || tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
                 jeId: tx.jeId || `JE-${String(idx + 1).padStart(6, '0')}`,
-                ref: tx.ref || `INV-${1000 + (tx.num || idx + 1)}`,
-                date: tx.date || "2026-01-15",
-                type: tx.type || "General",
+                ref: ref,
+                date: date,
+                type: txType,
                 title: tx.title || tx.desc || "معاملة تجارية",
                 difficulty: tx.difficulty || "Medium",
                 desc: tx.desc || tx.title || "معاملة تجارية",
+                amount: txAmount,
+                docData: tx.docData || {
+                    totalAmount: txAmount,
+                    subtotal: subtotal,
+                    vatAmount: vatAmt,
+                    vatRate: vatAmt > 0 ? "14%" : "0%",
+                    partyName: partyName,
+                    date: date,
+                    ref: ref
+                },
                 hints: tx.hints || [],
                 solutionSteps: tx.solutionSteps || [],
                 accountingRule: tx.accountingRule || '',
@@ -235,15 +279,36 @@ function transformHostTransactions(transactions = []) {
         const drCode = (COA[tx.dr] ? tx.dr : (COA[tx.correctDebit] ? tx.correctDebit : '1101'));
         const crCode = (COA[tx.cr] ? tx.cr : (COA[tx.correctCredit] ? tx.correctCredit : '4101'));
         const amt = Number(tx.amount) || 0;
+        const txType = tx.type || detectTxType(tx);
+        const date = tx.date || "2026-01-15";
+        const ref = tx.ref || `INV-${1000 + (tx.num || idx + 1)}`;
+
+        let partyName = tx.partyName || '';
+        if (!partyName) {
+            if (txType === 'Purchase' || crCode === '2101' || tx.cr === 'ap') partyName = 'شركة الدلتا للتوريدات والمستودعات';
+            else if (txType === 'Sale' || drCode === '1103' || tx.dr === 'ar') partyName = 'مؤسسة الشروق التجارية';
+        }
+
         return {
             id: tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
             txId: tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
             jeId: `JE-${String(idx + 1).padStart(6, '0')}`,
-            ref: `INV-${1000 + (tx.num || idx + 1)}`,
-            date: tx.date || "2026-01-15",
-            type: tx.type || "General",
+            ref: ref,
+            date: date,
+            type: txType,
             difficulty: "Medium",
             desc: tx.desc || tx.title || "معاملة تجارية",
+            title: tx.title || tx.desc || "معاملة تجارية",
+            amount: amt,
+            docData: tx.docData || {
+                totalAmount: amt,
+                subtotal: amt,
+                vatAmount: 0,
+                vatRate: "0%",
+                partyName: partyName,
+                date: date,
+                ref: ref
+            },
             lines: [
                 { lineNum: 1, accountCode: drCode, accountName: COA[drCode]?.name || 'حساب مدين', acctType: COA[drCode]?.type || 'Asset', debit: amt, credit: 0, description: tx.title || tx.desc || '' },
                 { lineNum: 2, accountCode: crCode, accountName: COA[crCode]?.name || 'حساب دائن', acctType: COA[crCode]?.type || 'Revenue', debit: 0, credit: amt, description: tx.title || tx.desc || '' }
@@ -261,8 +326,49 @@ function loadTasks() {
     try {
         const raw = localStorage.getItem('sim_admin_tasks');
         if (raw) {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            let parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                // تعقيم وتصحيح تلقائي لأي مهام مخزنة كانت تفتقد للمبالغ أو docData
+                let needsUpdate = false;
+                parsed = parsed.map((t, idx) => {
+                    const lineMax = Array.isArray(t.lines) ? Math.max(...t.lines.map(l => Number(l.debit) || 0)) : 0;
+                    const realAmt = Number(t.amount) || lineMax || 0;
+                    if ((!t.amount || t.amount === 0) && realAmt > 0) {
+                        t.amount = realAmt;
+                        needsUpdate = true;
+                    }
+                    if (!t.docData || (!t.docData.totalAmount && realAmt > 0)) {
+                        let party = t.partyName || '';
+                        const tType = t.type || detectTxType(t);
+                        if (!party) {
+                            if (tType === 'Purchase') party = 'شركة الدلتا للتوريدات والمستودعات';
+                            else if (tType === 'Sale') party = 'مؤسسة الشروق التجارية';
+                        }
+                        t.docData = {
+                            totalAmount: realAmt,
+                            subtotal: realAmt,
+                            vatAmount: 0,
+                            vatRate: "0%",
+                            partyName: party,
+                            date: t.date || "2026-01-15",
+                            ref: t.ref || `INV-${1000 + (t.num || idx + 1)}`
+                        };
+                        needsUpdate = true;
+                    }
+                    if (!t.type || t.type === 'General') {
+                        const detected = detectTxType(t);
+                        if (detected !== t.type) {
+                            t.type = detected;
+                            needsUpdate = true;
+                        }
+                    }
+                    return t;
+                });
+                if (needsUpdate) {
+                    localStorage.setItem('sim_admin_tasks', JSON.stringify(parsed));
+                }
+                return parsed;
+            }
         }
     } catch(e) {}
 

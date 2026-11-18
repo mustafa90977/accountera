@@ -134,16 +134,39 @@ const SimulationBridge = {
     return transactions.map((tx, idx) => {
       // إذا كانت العملية جاهزة مسبقاً وتتضمن lines مباشرة من المولد
       if (tx.lines && Array.isArray(tx.lines) && tx.lines.length > 0) {
+        const totalDebit = tx.lines.reduce((s, l) => s + (Number(l.debit) || 0), 0);
+        const maxDebit = Math.max(...tx.lines.map(l => Number(l.debit) || 0));
+        const amount = Number(tx.amount) || maxDebit || totalDebit || 0;
+        const txType = tx.type || this.detectTxType(tx);
+        const date = tx.date || (tx.docData && tx.docData.date) || "2026-01-15";
+        const ref = tx.ref || (tx.docData && tx.docData.ref) || `INV-${1000 + (tx.num || idx + 1)}`;
+
+        const vatLine = tx.lines.find(l => String(l.accountCode) === '1106' || String(l.accountCode) === '2102');
+        const vatAmt = vatLine ? (Number(vatLine.debit) || Number(vatLine.credit) || 0) : (Number(tx.docData?.vatAmount) || Number(tx.vatAmount) || 0);
+        const subtotal = (tx.docData && tx.docData.subtotal != null)
+          ? Number(tx.docData.subtotal)
+          : ((amount > vatAmt && vatAmt > 0) ? (amount - vatAmt) : amount);
+
         return {
           id: tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
           txId: tx.txId || tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
           jeId: tx.jeId || `JE-${String(idx + 1).padStart(6, '0')}`,
-          ref: tx.ref || `INV-${1000 + (tx.num || idx + 1)}`,
-          date: tx.date || "2026-01-15",
-          type: tx.type || this.detectTxType(tx),
+          ref: ref,
+          date: date,
+          type: txType,
           title: tx.title || tx.desc || "معاملة تجارية",
           difficulty: tx.difficulty || "Medium",
           desc: tx.desc || tx.title || "معاملة تجارية",
+          amount: amount,
+          docData: tx.docData || {
+            totalAmount: amount,
+            subtotal: subtotal,
+            vatAmount: vatAmt,
+            vatRate: vatAmt > 0 ? "14%" : "0%",
+            partyName: tx.partyName || "",
+            date: date,
+            ref: ref
+          },
           hints: tx.hints || [],
           solutionSteps: tx.solutionSteps || [],
           accountingRule: tx.accountingRule || '',
@@ -157,16 +180,36 @@ const SimulationBridge = {
       const drAccount = this.coaMap[drKey] || this.accountCodeMap[drKey] || { code: '1101', name: 'Cash (نقدية بالصندوق)', type: 'Asset' };
       const crAccount = this.coaMap[crKey] || this.accountCodeMap[crKey] || { code: '4101', name: 'Sales Revenue (إيرادات مبيعات)', type: 'Revenue' };
       const amount = Number(tx.amount) || 0;
+      const txType = tx.type || this.detectTxType(tx);
+      const date = tx.date || "2026-01-15";
+      const ref = tx.ref || `INV-${1000 + (tx.num || idx + 1)}`;
+
+      let partyName = tx.partyName || '';
+      if (!partyName) {
+        if (txType === 'Purchase' || crKey === 'ap' || crAccount.code === '2101') partyName = 'شركة الدلتا للتوريدات والمستودعات';
+        else if (txType === 'Sale' || drKey === 'ar' || drAccount.code === '1103') partyName = 'مؤسسة الشروق التجارية';
+      }
 
       return {
         id: tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
         txId: tx.id || `TRX-${String(idx + 1).padStart(5, '0')}`,
         jeId: `JE-${String(idx + 1).padStart(6, '0')}`,
-        ref: `INV-${1000 + (tx.num || idx + 1)}`,
-        date: tx.date || "2026-01-15",
-        type: this.detectTxType(tx),
-        difficulty: "Medium",
+        ref: ref,
+        date: date,
+        type: txType,
+        difficulty: tx.difficulty || "Medium",
         desc: tx.desc || tx.title || "معاملة تجارية",
+        title: tx.title || tx.desc || "معاملة تجارية",
+        amount: amount,
+        docData: tx.docData || {
+          totalAmount: amount,
+          subtotal: amount,
+          vatAmount: 0,
+          vatRate: "0%",
+          partyName: partyName,
+          date: date,
+          ref: ref
+        },
         lines: [
           {
             lineNum: 1,
@@ -192,16 +235,17 @@ const SimulationBridge = {
   },
 
   detectTxType(tx) {
-    const dr = tx.dr || tx.correctDebit;
-    const cr = tx.cr || tx.correctCredit;
-    if (cr === 'sales_rev') return dr === 'cash' ? 'Cash Sale' : 'Sale';
-    if (dr === 'inventory') return 'Purchase';
-    if (dr === 'cash' && cr === 'ar') return 'Collection';
-    if (dr === 'ap' && cr === 'cash') return 'Payment';
-    if (dr === 'salary_exp') return 'Payroll';
-    if (dr === 'rent_exp' || dr === 'util_exp') return 'Expense';
-    if (dr === 'equipment') return 'Asset Disposal';
-    return 'General';
+    if (!tx) return 'General';
+    const dr = tx.dr || tx.correctDebit || (Array.isArray(tx.lines) && tx.lines.find(l => Number(l.debit) > 0)?.accountCode);
+    const cr = tx.cr || tx.correctCredit || (Array.isArray(tx.lines) && tx.lines.find(l => Number(l.credit) > 0)?.accountCode);
+    if (cr === 'sales_rev' || cr === '4101') return (dr === 'cash' || dr === '1101') ? 'Cash Sale' : 'Sale';
+    if (dr === 'inventory' || dr === '1104' || dr === '1105') return 'Purchase';
+    if ((dr === 'cash' || dr === '1101') && (cr === 'ar' || cr === '1103')) return 'Collection';
+    if ((dr === 'ap' || dr === '2101') && (cr === 'cash' || cr === '1101')) return 'Payment';
+    if (dr === 'salary_exp' || dr === '5201') return 'Payroll';
+    if (dr === 'rent_exp' || dr === 'util_exp' || dr === '5202' || dr === '5203') return 'Expense';
+    if (dr === 'equipment' || dr === '1201') return 'Asset Disposal';
+    return tx.type || 'General';
   },
 
   setSimulatorActiveCompany(company) {
