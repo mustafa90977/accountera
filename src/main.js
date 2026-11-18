@@ -498,6 +498,8 @@ window.navigateToScreen = function(screenId) {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+
   // تنظيف فوري لمفتاح خطط الباقات القديمة من التخزين المحلي لضمان المزامنة السحابية الحية
   try {
     localStorage.removeItem('acc_admin_plans');
@@ -561,7 +563,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // فحص معلمات الرابط أو الهاش المباشر أو الجلسة المحفوظة
-  const urlParams = new URLSearchParams(window.location.search);
   const hashScreen = window.location.hash ? window.location.hash.replace(/^#\/?/, '').trim() : '';
   let savedScreen = null;
   try {
