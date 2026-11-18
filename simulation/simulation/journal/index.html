@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
   <title>محاكي النظام المحاسبي - NTL-2026</title>
-  <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="../css/style.css?v=2.2"/>
   <link rel="stylesheet" href="/css/accountera-design-system.css"/>
   <link rel="manifest" href="/manifest.webmanifest"/>
   <meta name="theme-color" content="#10B981"/>
@@ -81,10 +81,16 @@
           <span class="material-symbols-outlined text-emerald-400 text-base">description</span>
           <span class="truncate">معاينة المستند المالي</span>
         </div>
-        <button type="button" onclick="switchJournalMobilePane('form')" class="lg:hidden text-xs bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer">
-          <span>الانتقال للقيد</span>
-          <span class="material-symbols-outlined text-[14px]">arrow_back</span>
-        </button>
+        <div class="flex items-center gap-1.5">
+          <a href="../documents/index.html" target="_blank" class="hidden sm:inline-flex text-[11px] bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold px-2 py-1 rounded-lg items-center gap-1 transition" title="فتح دليل نماذج المستندات المحاسبية الكامل (19 نموذجاً)">
+            <span class="material-symbols-outlined text-[14px]">auto_stories</span>
+            <span>دليل النماذج (19)</span>
+          </a>
+          <button type="button" onclick="switchJournalMobilePane('form')" class="lg:hidden text-xs bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer">
+            <span>الانتقال للقيد</span>
+            <span class="material-symbols-outlined text-[14px]">arrow_back</span>
+          </button>
+        </div>
       </div>
       <div id="document-viewer" class="flex-1 overflow-y-auto p-3 sm:p-4 flex flex-col items-center justify-start pt-4 sm:pt-8">
         <!-- Rendered by JS -->
@@ -196,6 +202,31 @@
     </div>
   </div>
 </main>
+
+<!-- Fullscreen Document Inspection Modal (فحص المستندات بملء الشاشة والمطابقة) -->
+<div id="doc-inspection-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs hidden flex items-center justify-center p-2 sm:p-4 md:p-6" onclick="closeDocInspectionModal(event)">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-300" onclick="event.stopPropagation()">
+    <div class="p-3.5 sm:p-4 bg-slate-900 text-white flex justify-between items-center border-b border-slate-800 flex-shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-emerald-400">pageview</span>
+        <span class="font-bold text-sm sm:text-base" id="doc-modal-title">فحص المستند المؤيد والمطابقة التفصيلية</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="window.print()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg flex items-center gap-1 font-bold transition">
+          <span class="material-symbols-outlined text-[15px]">print</span>
+          <span>طباعة</span>
+        </button>
+        <button type="button" onclick="closeDocInspectionModal()" class="text-slate-400 hover:text-white p-1 rounded-lg transition" title="إغلاق">
+          <span class="material-symbols-outlined text-[22px]">close</span>
+        </button>
+      </div>
+    </div>
+    <div id="doc-modal-body" class="p-4 sm:p-6 overflow-y-auto bg-slate-100/90 flex flex-col items-center">
+      <!-- Full-width Paper Sheet rendered here -->
+    </div>
+  </div>
+</div>
+
 <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(11,28,48,0.06)] border-t border-surface-variant">
   <div class="flex items-center justify-around px-0.5 py-1 max-w-3xl mx-auto w-full">
     <a class="flex flex-col items-center justify-center flex-1 min-w-0 min-h-[46px] py-1 px-0.5 transition-all text-on-surface-variant hover:text-on-surface" href="../dashboard/index.html">
@@ -236,6 +267,6 @@
 <script src="../js/state.js?v=2.1"></script>
 <script src="../js/closing-wizard.js?v=2.1"></script>
 <script src="../js/career-engine.js?v=2.1"></script>
-<script src="../js/journal.js?v=2.1"></script>
+<script src="../js/journal.js?v=2.2"></script>
 </body>
 </html>

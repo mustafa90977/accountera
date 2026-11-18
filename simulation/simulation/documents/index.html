@@ -1,0 +1,515 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>نماذج المستندات المحاسبية</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: sidebar index of documents (right edge in RTL) + one paper sheet at a time, with the journal entry it produces underneath. */
+:root{
+  --bg:#edf0f4; --panel:#ffffff; --fg:#142030; --muted:#566678; --line:#d2d9e2;
+  --ink:#1b4f8f; --ink-soft:#e3ecf7; --on-ink:#ffffff; --stamp:#b3261e; --ok:#2e7d4f;
+  --paper:#fdfdfc; --paper-fg:#16222f; --paper-line:#c6d0dc; --paper-ink:#1b4f8f; --paper-stamp:#b3261e; --paper-muted:#5d6c7c; --paper-fill:#eef3f9;
+  --f-ui:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",Arial,sans-serif;
+  --f-display:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --panel:#171f29; --fg:#e5ebf2; --muted:#94a3b4; --line:#2a3644;
+  --ink:#86b4f0; --ink-soft:#1d2b3d; --on-ink:#0f141b; --stamp:#ff8f86; --ok:#6cc08f;
+  --paper:#e9edf2; --paper-fg:#16222f; --paper-line:#b4c0cd; --paper-ink:#1b4f8f; --paper-stamp:#b3261e; --paper-muted:#566678; --paper-fill:#dde6f0;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --panel:#171f29; --fg:#e5ebf2; --muted:#94a3b4; --line:#2a3644;
+  --ink:#86b4f0; --ink-soft:#1d2b3d; --on-ink:#0f141b; --stamp:#ff8f86; --ok:#6cc08f;
+  --paper:#e9edf2; --paper-fg:#16222f; --paper-line:#b4c0cd; --paper-ink:#1b4f8f; --paper-stamp:#b3261e; --paper-muted:#566678; --paper-fill:#dde6f0;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:15px;line-height:1.7;direction:rtl;
+  padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit;text-decoration:none}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+.wrap{max-width:1240px;margin-inline:auto}
+.top{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 24px;margin-bottom:20px}
+.top h1{font-family:var(--f-display);font-size:30px;line-height:1.25;margin:0;text-wrap:balance}
+.top p{margin:4px 0 0;color:var(--muted);max-width:60ch}
+
+.app{display:grid;grid-template-columns:268px minmax(0,1fr);gap:24px;align-items:start}
+.side{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 6px}
+.side h3{font-size:12px;letter-spacing:.04em;color:var(--muted);margin:12px 10px 4px;font-weight:600}
+.side h3:first-child{margin-top:4px}
+.side a{display:flex;justify-content:space-between;gap:8px;padding:5px 10px;border-radius:6px;font-size:14px}
+.side a:hover{background:var(--ink-soft)}
+.side a[aria-current="page"]{background:var(--ink);color:var(--on-ink);font-weight:600}
+.side a small{font-family:var(--f-num);opacity:.7;font-size:11px;align-self:center}
+.pick{display:none}
+.pick select{width:100%;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+
+.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;margin-bottom:12px}
+.crumb{color:var(--muted);font-size:13px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{background:none;border:0;padding:7px 16px;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--on-ink);font-weight:600}
+
+.what{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:14px}
+.what h2{font-family:var(--f-display);font-size:22px;margin:0 0 2px}
+.what p{margin:4px 0 0;color:var(--muted)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 24px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.facts div{min-width:0}
+.facts dt{font-size:12px;color:var(--muted)}
+.facts dd{margin:0;font-weight:500}
+
+.sheet-scroll{overflow-x:auto;padding:2px}
+.paper{min-width:660px;background:var(--paper);color:var(--paper-fg);border:1px solid var(--paper-line);border-top:5px solid var(--paper-ink);border-radius:3px;padding:26px 30px 20px;box-shadow:0 1px 0 var(--paper-line),0 10px 24px -14px rgba(10,20,40,.35)}
+.p-head{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start;padding-bottom:12px;border-bottom:2px solid var(--paper-ink)}
+.p-org b{display:block;font-size:15px;color:var(--paper-ink)}
+.p-org small{color:var(--paper-muted);font-size:11.5px;line-height:1.5;display:block}
+.p-title{text-align:center}
+.p-title h2{font-family:var(--f-display);font-size:25px;margin:0;color:var(--paper-ink);line-height:1.2}
+.p-title span{font-size:11px;letter-spacing:.12em;color:var(--paper-muted);text-transform:uppercase;direction:ltr;display:block}
+.p-serial{text-align:left;direction:ltr}
+.p-serial small{display:block;font-size:11px;color:var(--paper-muted);direction:rtl;text-align:left}
+.p-serial b{font-family:var(--f-num);font-size:20px;color:var(--paper-stamp);letter-spacing:.06em}
+.p-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px 18px;margin:12px 0}
+.fld{display:flex;gap:6px;align-items:baseline;min-width:0;border-bottom:1px dotted var(--paper-line);padding-bottom:2px}
+.fld span{font-size:12px;color:var(--paper-muted);white-space:nowrap}
+.fld b{font-weight:600;min-height:1.4em;flex:1;min-width:0;overflow-wrap:anywhere}
+.p-parties{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:10px 0}
+.party{border:1px solid var(--paper-line);border-radius:3px;padding:8px 12px;background:var(--paper-fill)}
+.party h4{margin:0 0 2px;font-size:12px;color:var(--paper-ink);letter-spacing:.03em}
+.party p{margin:0;font-size:13px;min-height:1.5em}
+.party p.nm{font-weight:600}
+table.pt{width:100%;border-collapse:collapse;margin:12px 0 6px;font-size:13px}
+.pt th{background:var(--paper-fill);border:1px solid var(--paper-line);padding:5px 8px;font-weight:600;color:var(--paper-ink);text-align:center}
+.pt td{border:1px solid var(--paper-line);padding:5px 8px;height:30px}
+.pt td.n{text-align:center;font-family:var(--f-num);font-size:12.5px;font-variant-numeric:tabular-nums}
+.pt td.c{text-align:center}
+.pt tr.tot td{background:var(--paper-fill);font-weight:600}
+.totals{margin-inline-start:auto;width:min(340px,100%);margin-top:6px}
+.totals div{display:flex;justify-content:space-between;gap:12px;padding:3px 8px;border-bottom:1px solid var(--paper-line);font-size:13px}
+.totals div.g{background:var(--paper-ink);color:#fff;font-weight:700;border:0;border-radius:2px;margin-top:3px}
+.totals b{font-family:var(--f-num);font-weight:600;font-variant-numeric:tabular-nums;min-width:4em;text-align:left}
+.words{margin:10px 0 2px;font-size:13px}
+.words span{color:var(--paper-muted)}
+.words b{border-bottom:1px dotted var(--paper-line);padding-inline:6px;display:inline-block;min-width:60%}
+.terms{margin:10px 0 0;padding:0;list-style:none;font-size:12px;color:var(--paper-muted)}
+.terms li{padding-inline-start:12px;position:relative}
+.terms li::before{content:"·";position:absolute;inset-inline-start:2px}
+.notes{margin:8px 0;font-size:13px}
+.notes b{color:var(--paper-ink)}
+.sigs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;margin-top:22px}
+.sig{text-align:center;font-size:12px;color:var(--paper-muted)}
+.sig i{display:block;height:34px;border-bottom:1px solid var(--paper-fg);margin-bottom:3px;font-style:normal;font-size:12px;color:var(--paper-fg);line-height:34px}
+.p-foot{margin-top:16px;padding-top:6px;border-top:1px dashed var(--paper-line);font-size:11px;color:var(--paper-muted);display:flex;justify-content:space-between;gap:8px}
+.cheque{border:2px solid var(--paper-ink);border-radius:4px;padding:16px 20px;background:linear-gradient(90deg,var(--paper-fill),var(--paper) 60%);position:relative}
+.ck-top{display:flex;justify-content:space-between;gap:12px;align-items:start}
+.ck-bank b{font-family:var(--f-display);font-size:20px;color:var(--paper-ink)}
+.ck-bank small{display:block;color:var(--paper-muted);font-size:11px}
+.ck-no{text-align:left;font-size:12px;color:var(--paper-muted)}
+.ck-no b{font-family:var(--f-num);color:var(--paper-stamp);font-size:17px;letter-spacing:.06em;margin-inline-start:6px}
+.ck-row{display:flex;gap:10px;align-items:baseline;margin-top:14px;border-bottom:1px dotted var(--paper-muted);padding-bottom:3px}
+.ck-row span{font-size:12px;color:var(--paper-muted);white-space:nowrap}
+.ck-row b{flex:1;min-width:0;min-height:1.4em}
+.ck-foot{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-top:18px}
+.ck-amount{border:2px solid var(--paper-ink);padding:6px 16px;font-family:var(--f-num);font-size:18px;font-weight:600;min-width:150px;min-height:44px;text-align:center}
+.ck-sign{width:200px;text-align:center;font-size:12px;color:var(--paper-muted);border-top:1px solid var(--paper-fg);padding-top:3px}
+
+.entry{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px}
+.entry h3{margin:0 0 2px;font-size:16px}
+.entry .when{margin:10px 0 4px;font-size:13px;color:var(--muted);font-weight:600}
+.entry .scroll{overflow-x:auto}
+.entry table{width:100%;border-collapse:collapse;font-size:14px}
+.paper.cq{min-width:0}
+@media (max-width:520px){.entry table{font-size:13px}.entry td{padding:5px 6px}.entry td.cr{padding-inline-start:16px}.entry td.n{width:23%}}
+.entry th{background:var(--ink-soft);border:1px solid var(--line);padding:5px 8px;text-align:center;font-weight:600}
+.entry td{border:1px solid var(--line);padding:5px 10px}
+.entry td.n{text-align:center;font-family:var(--f-num);font-variant-numeric:tabular-nums;width:18%}
+.entry td.cr{padding-inline-start:30px}
+.entry .rule{margin:8px 0 0;color:var(--muted);font-size:13px}
+.nav2{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+.nav2 a{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 14px;font-size:14px;min-width:0}
+.nav2 a:hover{border-color:var(--ink)}
+.nav2 a small{display:block;color:var(--muted);font-size:11px}
+.nav2 a.n{text-align:left}
+
+@media (max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{display:none}
+  .pick{display:block;margin-bottom:12px}
+  .top h1{font-size:25px}
+  .paper{padding:20px 18px 16px}
+  .p-head{grid-template-columns:1fr auto}
+  .p-title{grid-column:1/-1;order:3;text-align:right}
+}
+@media (prefers-reduced-motion:no-preference){.paper,.entry{animation:in .25s ease-out}@keyframes in{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>نماذج المستندات المحاسبية</h1>
+      <p id="lead"></p>
+    </div>
+  </header>
+  <div class="app">
+    <nav class="side" id="side" aria-label="قائمة المستندات"></nav>
+    <main>
+      <div class="pick"><label for="pickSel" class="crumb">اختر المستند</label><select id="pickSel"></select></div>
+      <div class="bar">
+        <span class="crumb" id="crumb"></span>
+        <div class="seg" role="group" aria-label="طريقة العرض">
+          <button type="button" id="mFilled" aria-pressed="true">مثال معبّأ</button>
+          <button type="button" id="mBlank" aria-pressed="false">نموذج فارغ</button>
+        </div>
+      </div>
+      <section class="what" id="what"></section>
+      <div class="sheet-scroll"><div id="sheet"></div></div>
+      <section class="entry" id="entry"></section>
+      <div class="nav2" id="nav2"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const fmt=n=>{const f=Math.round(n*100)/100;return Number.isInteger(f)?f.toLocaleString('en-US'):f.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})};
+const TAX=0.14, TAXL='ضريبة القيمة المضافة 14% (نسبة افتراضية)';
+const sum=(a,i)=>a.reduce((s,r)=>s+r[i],0);
+function inv(items){const rows=items.map(([n,u,q,p],i)=>[i+1,n,u,q,p,q*p]);const sub=sum(rows,5);const tax=Math.round(sub*TAX*100)/100;return{rows,sub,tax,total:sub+tax}}
+const ORG={name:'شركة الأمل التجارية',sub:'القاهرة — ب.ض 000-000-000 (بيانات افتراضية)'};
+const SUP={name:'شركة النور للتوريدات',sub:'الجيزة — ب.ض 000-000-001 (بيانات افتراضية)'};
+const CUS='شركة الفرح';
+const PAPER='ورق طباعة A4 (رزمة 500 ورقة)';
+const G={pur:'المشتريات',sal:'المبيعات',cash:'النقدية والبنوك',jrn:'القيود',exp:'فواتير المصروفات'};
+const itemCols=['م','الصنف / البيان','الوحدة','الكمية','سعر الوحدة','القيمة'];
+const itemNum=[3,4,5];
+const money=(rows,extra)=>[['الإجمالي قبل الضريبة',sum(rows,5)],[TAXL,Math.round(sum(rows,5)*TAX*100)/100]];
+const tot=(i,extra)=>[['الإجمالي قبل الضريبة',i.sub],[TAXL,i.tax],['الإجمالي المستحق',i.total,'g']];
+
+const I_PO=inv([[PAPER,'رزمة',100,50]]);
+const I_RET=inv([[PAPER+' — مرتجع','رزمة',10,50]]);
+const I_SAL=inv([[PAPER,'رزمة',40,80]]);
+const I_CN=inv([[PAPER+' — مرتجع','رزمة',5,80]]);
+const PAID=I_PO.total-I_RET.total;         /* 5,130 */
+const COLL=I_SAL.total-I_CN.total;         /* 3,192 */
+
+const DOCS=[];
+const add=o=>DOCS.push(o);
+
+/* ===== المشتريات ===== */
+add({id:'pr',g:'pur',t:'طلب شراء',en:'Purchase Requisition',serial:'0147',org:ORG,
+ what:'طلب داخلي من المخازن أو أي إدارة إلى إدارة المشتريات تطلب فيه أصنافاً وكميات محددة.',
+ who:'أمين المخزن أو الإدارة الطالبة، ويعتمده مدير المخازن',copies:'أصل لإدارة المشتريات + صورة للجهة الطالبة',rule:'لا يُسجل له قيد (طلب داخلي بلا أثر مالي).',lesson:'الدورة المستندية (03 مكرر)',
+ meta:[['التاريخ','01/03/2026'],['الجهة الطالبة','المخازن'],['الأولوية','عادي'],['تاريخ الحاجة','10/03/2026']],
+ table:{cols:['م','الصنف','الوحدة','الكمية المطلوبة','الرصيد الحالي','ملاحظات'],num:[3,4],rows:[[1,PAPER,'رزمة',100,12,'نفاد خلال أسبوعين']]},
+ sigs:['أمين المخزن (الطالب)','مدير المخازن (اعتماد)','مدير المشتريات (استلام الطلب)'],entries:[]});
+add({id:'rfq',g:'pur',t:'طلب عرض أسعار',en:'Request for Quotation',serial:'0059',org:ORG,
+ what:'خطاب ترسله إدارة المشتريات لأكثر من مورد لطلب سعرهم وشروطهم قبل اختيار الأنسب.',
+ who:'إدارة المشتريات',copies:'نسخة لكل مورد + نسخة في ملف الشراء',rule:'لا يُسجل له قيد.',lesson:'الدورة المستندية (03 مكرر)',
+ meta:[['التاريخ','02/03/2026'],['آخر موعد لتقديم العرض','05/03/2026'],['مدة التوريد المطلوبة','7 أيام']],
+ parties:[['إلى السادة',SUP.name,['الجيزة']],['من',ORG.name,['إدارة المشتريات']]],
+ table:{cols:['م','الصنف / المواصفات','الوحدة','الكمية المطلوبة','سعر الوحدة (يملأه المورد)'],num:[3,4],rows:[[1,PAPER+' — 80 جم','رزمة',100,'']]},
+ terms:['يُرجى ذكر مدة صلاحية العرض وشروط الدفع وتكلفة النقل.','تحتفظ الشركة بحق قبول أو رفض أي عرض دون إبداء أسباب.'],
+ sigs:['مدير المشتريات','ختم المورد وتوقيعه'],entries:[]});
+add({id:'po',g:'pur',t:'أمر شراء',en:'Purchase Order',serial:'0231',org:ORG,
+ what:'تكليف رسمي للمورد المختار بتوريد أصناف بكميات وأسعار وشروط متفق عليها.',
+ who:'إدارة المشتريات بعد اعتماد المدير',copies:'أصل للمورد + صورة للمخازن + صورة للحسابات',rule:'لا يُسجل له قيد، فهو التزام مستقبلي لم تنتقل به الملكية.',lesson:'الدورة المستندية (03 مكرر)',
+ meta:[['التاريخ','03/03/2026'],['مرجع عرض السعر','ع/2026/18'],['شروط الدفع','آجل 30 يوماً'],['موعد التسليم','10/03/2026']],
+ parties:[['المورد',SUP.name,[SUP.sub]],['جهة التسليم',ORG.name,['مخزن القاهرة الرئيسي']]],
+ table:{cols:itemCols,num:itemNum,rows:I_PO.rows},totals:tot(I_PO),
+ terms:['يُقبل التسليم بعد الفحص ومطابقة المواصفات المذكورة.','يُرفق إذن الاستلام برقم أمر الشراء مع الفاتورة.'],
+ sigs:['أعده: إدارة المشتريات','اعتمده: المدير المالي','استلمه المورد'],entries:[]});
+add({id:'grn',g:'pur',t:'إذن استلام مخزني',en:'Goods Received Note',serial:'0318',org:ORG,
+ what:'يثبت أن أمين المخزن استلم البضاعة فعلاً بعد فحصها ومطابقتها لأمر الشراء.',
+ who:'أمين المخزن ولجنة الفحص',copies:'أصل للمخازن + صورة للمشتريات + صورة للحسابات (للمطابقة الثلاثية)',rule:'لا يُسجل له قيد بذاته، لكنه أساس إثبات الشراء بعد مطابقته بالفاتورة.',lesson:'الدورة المستندية (03 مكرر)',
+ meta:[['تاريخ الاستلام','10/03/2026'],['رقم أمر الشراء','0231'],['رقم فاتورة المورد','ن/5521'],['المخزن','القاهرة الرئيسي']],
+ parties:[['المورد',SUP.name,['المندوب: سامي (اسم افتراضي)']]],
+ table:{cols:['م','الصنف','الوحدة','الكمية بأمر الشراء','الكمية المستلمة','المقبول','المرفوض'],num:[3,4,5,6],rows:[[1,PAPER,'رزمة',100,100,100,0]]},
+ notes:[['ملاحظات الفحص','مطابق ظاهرياً للمواصفات، والفحص التفصيلي يتم خلال 48 ساعة']],
+ sigs:['أمين المخزن','لجنة الفحص','مندوب المورد'],entries:[]});
+add({id:'pinv',g:'pur',t:'فاتورة مشتريات',en:'Supplier Invoice',serial:'5521',org:SUP,
+ what:'الفاتورة التي يصدرها المورد لنا بتفاصيل ما ورّده والمبلغ المستحق. هي مستند معزز لقيد الشراء، وتحمل عندنا اسم «فاتورة مشتريات».',
+ who:'المورد، وتصل إلى المحاسبة مع إذن الاستلام',copies:'أصل للمشتري + صورة للمورد',rule:'يُسجل القيد بعد المطابقة مع أمر الشراء وإذن الاستلام.',lesson:'الدورة المستندية (03 مكرر) + درس 29 المشتريات',
+ meta:[['تاريخ الفاتورة','10/03/2026'],['رقم أمر الشراء','0231'],['شروط الدفع','آجل 30 يوماً'],['تاريخ الاستحقاق','09/04/2026']],
+ parties:[['العميل (المشتري)',ORG.name,[ORG.sub]]],
+ table:{cols:itemCols,num:itemNum,rows:I_PO.rows},totals:tot(I_PO),
+ terms:['البضاعة المباعة لا ترد ولا تستبدل بعد 7 أيام من الاستلام.'],
+ sigs:['المحاسب','المدير المالي'],
+ entries:[{when:'عند المطابقة وتسجيل الشراء الآجل',lines:[['d','المشتريات',I_PO.sub],['d','ضريبة القيمة المضافة (مدخلات)',I_PO.tax],['c','شركة النور (الدائنون)',I_PO.total]]}]});
+add({id:'dn',g:'pur',t:'إشعار مدين',en:'Debit Note',serial:'D-014',org:ORG,
+ what:'تصدره المنشأة للمورد عند إرجاع بضاعة أو طلب خصم، لتخفيض ما عليها له.',
+ who:'إدارة المشتريات / المحاسبة',copies:'أصل للمورد + صورة للحسابات',rule:'يُسجل له قيد (مردودات مشتريات).',lesson:'الدورة المستندية (03 مكرر)',
+ meta:[['التاريخ','12/03/2026'],['مرجع الفاتورة','5521'],['السبب','عيوب تصنيع ظهرت بعد الفحص التفصيلي']],
+ parties:[['إلى السادة',SUP.name,[SUP.sub]]],
+ table:{cols:itemCols,num:itemNum,rows:I_RET.rows},totals:[['قيمة المرتجع',I_RET.sub],[TAXL,I_RET.tax],['إجمالي الإشعار',I_RET.total,'g']],
+ terms:['نرجو خصم قيمة هذا الإشعار من مستحقاتكم لدينا.'],
+ sigs:['أعده: المحاسب','اعتمده: المدير المالي'],
+ entries:[{when:'عند إصدار الإشعار وإرجاع البضاعة',lines:[['d','شركة النور (الدائنون)',I_RET.total],['c','مردودات المشتريات',I_RET.sub],['c','ضريبة القيمة المضافة (مدخلات)',I_RET.tax]]}]});
+
+/* ===== المبيعات ===== */
+add({id:'quote',g:'sal',t:'عرض سعر',en:'Quotation',serial:'Q-0420',org:ORG,
+ what:'عرض مكتوب نرسله للعميل بالأصناف والأسعار والشروط قبل الاتفاق على البيع.',
+ who:'قسم المبيعات',copies:'أصل للعميل + صورة للملف',rule:'لا يُسجل له قيد.',lesson:'الدورة المستندية (03 مكرر)',
+ meta:[['التاريخ','13/03/2026'],['صلاحية العرض','15 يوماً'],['شروط الدفع','آجل 30 يوماً'],['مدة التسليم','يومان']],
+ parties:[['إلى السادة',CUS,['القاهرة']],['من',ORG.name,['قسم المبيعات']]],
+ table:{cols:itemCols,num:itemNum,rows:inv([[PAPER,'رزمة',40,80]]).rows},totals:tot(I_SAL),
+ terms:['الأسعار سارية خلال مدة صلاحية العرض فقط.'],
+ sigs:['مندوب المبيعات','مدير المبيعات'],entries:[]});
+add({id:'so',g:'sal',t:'أمر بيع',en:'Sales Order',serial:'S-0877',org:ORG,
+ what:'مستند داخلي يثبت طلب العميل بعد قبوله، وعلى أساسه تُجهز البضاعة وتصدر الفاتورة.',
+ who:'قسم المبيعات',copies:'أصل للمبيعات + صورة للمخازن + صورة للحسابات',rule:'لا يُسجل له قيد (التزام لم ينفذ بعد).',lesson:'الدورة المستندية (03 مكرر)',
+ meta:[['التاريخ','14/03/2026'],['مرجع طلب العميل','PO-الفرح/311'],['شروط الدفع','آجل 30 يوماً'],['موعد التسليم','15/03/2026']],
+ parties:[['العميل',CUS,['القاهرة']]],
+ table:{cols:itemCols,num:itemNum,rows:inv([[PAPER,'رزمة',40,80]]).rows},totals:tot(I_SAL),
+ sigs:['مندوب المبيعات','مدير المبيعات','الائتمان'],entries:[]});
+add({id:'gin',g:'sal',t:'إذن صرف مخزني',en:'Goods Issue Note',serial:'0642',org:ORG,
+ what:'يثبت خروج البضاعة من المخزن وتسليمها للعميل أو مندوبه، فتخرج من عهدة أمين المخزن.',
+ who:'أمين المخزن',copies:'أصل للمخازن + صورة للعميل + صورة للحسابات',rule:'لا يُسجل له قيد بذاته، وهو أساس إثبات البيع مع الفاتورة.',lesson:'الدورة المستندية (03 مكرر)',
+ meta:[['التاريخ','15/03/2026'],['رقم أمر البيع','S-0877'],['المخزن','القاهرة الرئيسي']],
+ parties:[['المستلم',CUS,['المندوب: كريم (اسم افتراضي)']]],
+ table:{cols:['م','الصنف','الوحدة','الكمية المطلوبة','الكمية المصروفة'],num:[3,4],rows:[[1,PAPER,'رزمة',40,40]]},
+ sigs:['أمين المخزن','مدير المبيعات','المستلم'],entries:[]});
+add({id:'sinv',g:'sal',t:'فاتورة مبيعات',en:'Sales Invoice',serial:'0903',org:ORG,
+ what:'الفاتورة التي نصدرها للعميل بالأصناف والأسعار والمبلغ المستحق. هي مستند إثبات البيع.',
+ who:'قسم المبيعات / الحسابات',copies:'أصل للعميل + صورة للمحاسبة + صورة للمبيعات',rule:'يُسجل لها قيد البيع فور الإصدار والتسليم.',lesson:'الدورة المستندية (03 مكرر) + درس 30 المبيعات',
+ meta:[['تاريخ الفاتورة','15/03/2026'],['رقم إذن الصرف','0642'],['شروط الدفع','آجل 30 يوماً'],['تاريخ الاستحقاق','14/04/2026']],
+ parties:[['العميل',CUS,['القاهرة — ب.ض 000-000-002 (افتراضي)']]],
+ table:{cols:itemCols,num:itemNum,rows:I_SAL.rows},totals:tot(I_SAL),
+ terms:['يُسدد المبلغ بشيك أو تحويل بنكي باسم الشركة.'],
+ sigs:['المحاسب','المدير المالي','استلمه العميل'],
+ entries:[{when:'عند إصدار الفاتورة (بيع آجل)',lines:[['d','شركة الفرح (المدينون)',I_SAL.total],['c','المبيعات',I_SAL.sub],['c','ضريبة القيمة المضافة (مخرجات)',I_SAL.tax]]}]});
+add({id:'cn',g:'sal',t:'إشعار دائن',en:'Credit Note',serial:'C-009',org:ORG,
+ what:'نصدره للعميل عند إرجاعه بضاعة أو منحه خصماً، لتخفيض ما عليه لنا.',
+ who:'قسم المبيعات / المحاسبة',copies:'أصل للعميل + صورة للحسابات',rule:'يُسجل له قيد (مردودات مبيعات).',lesson:'الدورة المستندية (03 مكرر)',
+ meta:[['التاريخ','18/03/2026'],['مرجع الفاتورة','0903'],['السبب','مرتجع بضاعة غير مطابقة للطلب']],
+ parties:[['إلى السادة',CUS,['القاهرة']]],
+ table:{cols:itemCols,num:itemNum,rows:I_CN.rows},totals:[['قيمة المرتجع',I_CN.sub],[TAXL,I_CN.tax],['إجمالي الإشعار',I_CN.total,'g']],
+ terms:['تُخصم قيمة هذا الإشعار من رصيدكم لدينا.'],
+ sigs:['أعده: المحاسب','اعتمده: المدير المالي'],
+ entries:[{when:'عند استلام المرتجع وإصدار الإشعار',lines:[['d','مردودات المبيعات',I_CN.sub],['d','ضريبة القيمة المضافة (مخرجات)',I_CN.tax],['c','شركة الفرح (المدينون)',I_CN.total]]}]});
+
+/* ===== النقدية والبنوك ===== */
+add({id:'rv',g:'cash',t:'سند قبض',en:'Receipt Voucher',serial:'1104',org:ORG,
+ what:'يثبت استلام المنشأة مبلغاً نقدياً أو شيكاً من عميل أو غيره، ويأخذ الدافع نسخة كإيصال.',
+ who:'أمين الصندوق',copies:'أصل للمحاسبة + صورة للدافع',rule:'كل مبلغ داخل للصندوق أو البنك يستوجب سند قبض.',lesson:'درس 3 المستندات + درس 20 النقدية',
+ meta:[['التاريخ','28/03/2026'],['طريقة القبض','نقداً'],['مبلغ السند',fmt(COLL)+' جنيه']],
+ parties:[['استلمنا من السادة',CUS,['سداداً للفاتورة 0903 بعد خصم الإشعار الدائن C-009']]],
+ words:'ثلاثة آلاف ومائة واثنان وتسعون جنيهاً فقط لا غير',
+ sigs:['أمين الصندوق','المحاسب','الدافع'],
+ entries:[{when:'عند القبض',lines:[['d','الصندوق',COLL],['c','شركة الفرح (المدينون)',COLL]]}]});
+add({id:'pv',g:'cash',t:'سند صرف',en:'Payment Voucher',serial:'2067',org:ORG,
+ what:'يثبت صرف المنشأة مبلغاً نقدياً أو تحرير شيك لسداد التزام أو مصروف، ويوقع المستلم عليه.',
+ who:'أمين الصندوق بعد اعتماد المدير المالي',copies:'أصل للمحاسبة + صورة للمستلم',rule:'كل مبلغ خارج من الصندوق أو البنك يستوجب سند صرف.',lesson:'درس 3 المستندات + درس 20 النقدية',
+ meta:[['التاريخ','25/03/2026'],['طريقة الدفع','شيك بنكي رقم 000231'],['مبلغ السند',fmt(PAID)+' جنيه']],
+ parties:[['صرفنا إلى السادة',SUP.name,['سداداً للفاتورة 5521 بعد خصم الإشعار المدين D-014']]],
+ words:'خمسة آلاف ومائة وثلاثون جنيهاً فقط لا غير',
+ sigs:['أمين الصندوق','المدير المالي (اعتماد)','المستلم'],
+ entries:[{when:'عند تحرير الشيك وسداد المورد',lines:[['d','شركة النور (الدائنون)',PAID],['c','البنك',PAID]]}]});
+add({id:'chk',g:'cash',kind:'cheque',t:'شيك',en:'Cheque',serial:'000231',org:ORG,
+ what:'أمر مكتوب من صاحب الحساب إلى البنك بدفع مبلغ معين للمستفيد. يُرفق خلف سند الصرف.',
+ who:'المنشأة (الساحب)',copies:'أصل للمستفيد + الكعب يبقى في الدفتر',rule:'يُسجل عند تحريره: من حساب المورد إلى حساب البنك.',lesson:'درس 19 الشيكات',
+ f:{bank:'بنك المثال (نموذج تعليمي)',date:'25/03/2026',payee:SUP.name,words:'خمسة آلاف ومائة وثلاثون جنيهاً فقط لا غير',amt:fmt(PAID)+' جنيه',acc:'حساب جاري 0000-0000-00',memo:'سداد الفاتورة 5521'},
+ entries:[{when:'عند تحرير الشيك',lines:[['d','شركة النور (الدائنون)',PAID],['c','البنك',PAID]]}]});
+add({id:'bill',g:'cash',t:'كمبيالة',en:'Bill of Exchange',serial:'B-0075',org:ORG,
+ what:'ورقة تجارية يأمر فيها الساحب المسحوب عليه بدفع مبلغ محدد في تاريخ استحقاق معين للمستفيد.',
+ who:'الساحب (المنشأة الدائنة)، ويقبلها المسحوب عليه بتوقيعه',copies:'أصل للمستفيد + صورة للدفاتر',rule:'تُسجل عند استلامها ضمن أوراق القبض.',lesson:'درس 18 أوراق القبض والدفع',
+ meta:[['تاريخ التحرير','15/03/2026'],['تاريخ الاستحقاق','15/06/2026'],['مكان السداد','القاهرة'],['المبلغ',fmt(I_SAL.total)+' جنيه']],
+ parties:[['الساحب (المستفيد)',ORG.name,[ORG.sub]],['المسحوب عليه (المدين)',CUS,['القاهرة']]],
+ words:'ثلاثة آلاف وستمائة وثمانية وأربعون جنيهاً فقط لا غير',
+ terms:['ادفعوا بموجب هذه الكمبيالة في تاريخ الاستحقاق للمستفيد المذكور أو لأمره المبلغ أعلاه.'],
+ sigs:['توقيع الساحب','قبول المسحوب عليه (توقيع وختم)'],
+ entries:[{when:'عند استلام الكمبيالة من العميل بدل السداد النقدي',lines:[['d','أوراق القبض',I_SAL.total],['c','شركة الفرح (المدينون)',I_SAL.total]]}]});
+add({id:'dep',g:'cash',t:'إيصال إيداع بنكي',en:'Deposit Slip',serial:'7741',org:ORG,
+ what:'يثبت إيداع مبلغ نقدي أو شيكات في الحساب الجاري بالبنك، ويختمه البنك.',
+ who:'أمين الصندوق، ويختمه البنك',copies:'أصل للبنك + صورة مختومة للمنشأة',rule:'يُسجل له قيد: من حساب البنك إلى حساب الصندوق.',lesson:'درس 21 النقدية في البنك',
+ meta:[['التاريخ','29/03/2026'],['رقم الحساب','0000-0000-00'],['البنك','بنك المثال (نموذج تعليمي)']],
+ table:{cols:['البيان','العدد','القيمة'],num:[1,2],rows:[['أوراق نقدية','—',fmt(COLL)]]},
+ totals:[['إجمالي الإيداع',COLL,'g']],
+ words:'ثلاثة آلاف ومائة واثنان وتسعون جنيهاً فقط لا غير',
+ sigs:['المودع','ختم البنك وتوقيعه'],
+ entries:[{when:'عند الإيداع',lines:[['d','البنك',COLL],['c','الصندوق',COLL]]}]});
+const BS=[['01/03','رصيد افتتاحي',0,0,20000],['25/03','شيك رقم 000231',PAID,0,null],['29/03','إيداع نقدي',0,COLL,null],['31/03','عمولة وصيانة حساب',25,0,null]];
+let bal=20000;BS.forEach((r,i)=>{if(i){bal=bal-r[2]+r[3];r[4]=bal}});
+add({id:'bs',g:'cash',t:'كشف حساب بنكي',en:'Bank Statement',serial:'03/2026',org:{name:'بنك المثال (نموذج تعليمي)',sub:'كشف حساب جاري — بيانات افتراضية'},
+ what:'تقرير دوري يرسله البنك بكل الحركات والرصيد. يُقارن بدفاتر المنشأة في مذكرة التسوية البنكية.',
+ who:'البنك',copies:'نسخة شهرية للمنشأة',rule:'يُستخدم للمطابقة. وما لم يُسجل بدفاتر المنشأة (مثل العمولة) يُسجل بقيد.',lesson:'درس 21 البنك ومذكرة التسوية',
+ meta:[['صاحب الحساب',ORG.name],['رقم الحساب','0000-0000-00'],['الفترة','01/03/2026 إلى 31/03/2026']],
+ table:{cols:['التاريخ','البيان','مدين (سحب)','دائن (إيداع)','الرصيد'],num:[2,3,4],rows:BS.map(r=>[r[0],r[1],r[2]?fmt(r[2]):'',r[3]?fmt(r[3]):'',fmt(r[4])])},
+ notes:[['ملاحظة','الأعمدة من وجهة نظر البنك: الإيداع دائن لأنه التزام على البنك للمنشأة، وهو مدين في دفاتر المنشأة.']],
+ entries:[{when:'قيد العمولة البنكية التي لم تُسجل بدفاتر المنشأة',lines:[['d','مصروفات بنكية',25],['c','البنك',25]]}]});
+
+/* ===== القيود ===== */
+add({id:'jv',g:'jrn',kind:'journal',t:'سند قيد',en:'Journal Voucher',serial:'J-0312',org:ORG,
+ what:'يُعد لإثبات العمليات غير النقدية: البيع والشراء الآجل، وقيود التسوية، وقيود الإقفال.',
+ who:'المحاسب، ويعتمده المدير المالي',copies:'أصل للدفاتر + صورة للمراجعة',rule:'هو القيد نفسه، ويُرفق به المستند المؤيد.',lesson:'درس 3 المستندات + درس 9 التسويات',
+ meta:[['التاريخ','31/12/2026'],['نوع القيد','تسوية جردية'],['المستند المؤيد','كشف الرواتب لشهر ديسمبر']],
+ table:{cols:['رقم الحساب','اسم الحساب','مدين','دائن'],num:[2,3],rows:[['5101','مصروف الرواتب والأجور',fmt(2000),''],['2105','مصروف رواتب مستحقة','',fmt(2000)]]},
+ notes:[['البيان','إثبات رواتب شهر ديسمبر المستحقة ولم تُسدد حتى نهاية السنة (مبدأ الاستحقاق)']],
+ sigs:['أعده: المحاسب','راجعه: المراجع','اعتمده: المدير المالي'],
+ entries:[{when:'القيد كما في السند',lines:[['d','مصروف الرواتب والأجور',2000],['c','مصروف رواتب مستحقة',2000]]}]});
+
+/* ===== فواتير المصروفات ===== */
+const EL=[['الشريحة الأولى (حتى 200 ك.و.س)','ك.و.س',200,1],['الشريحة الثانية (من 201 إلى 480)','ك.و.س',280,1.5],['رسوم خدمة ثابتة','شهر',1,15]];
+const EL_T=EL.reduce((s,r)=>s+r[2]*r[3],0);
+add({id:'elec',g:'exp',t:'فاتورة كهرباء',en:'Electricity Bill',serial:'4400187',org:{name:'شركة كهرباء المثال (نموذج تعليمي)',sub:'جهة افتراضية لا تمثل أي شركة حقيقية'},
+ what:'فاتورة استهلاك الكهرباء الشهرية للمقر. تُحسب بالشرائح حسب عدد الكيلووات ساعة.',
+ who:'شركة الكهرباء',copies:'أصل للمشترك',rule:'مصروف إيرادي يخص الفترة، ويُسجل عند السداد أو يُستحق بنهاية الفترة.',lesson:'درس 9 التسويات (المصروفات المستحقة)',
+ meta:[['رقم الاشتراك','000-4471'],['الفترة','من 01/03 إلى 31/03/2026'],['القراءة السابقة','5,230'],['القراءة الحالية','5,710'],['الاستهلاك','480 ك.و.س'],['آخر موعد للسداد','15/04/2026']],
+ parties:[['المشترك',ORG.name,['مقر الشركة — القاهرة']]],
+ table:{cols:['م','البيان','الوحدة','الكمية','السعر','القيمة'],num:[3,4,5],rows:EL.map((r,i)=>[i+1,r[0],r[1],r[2],r[3],r[2]*r[3]])},
+ totals:[['إجمالي الفاتورة',EL_T,'g']],
+ sigs:['المحصّل'],
+ entries:[{when:'عند السداد نقداً',lines:[['d','مصروف الكهرباء',EL_T],['c','الصندوق',EL_T]]},{when:'إذا لم تُسدد حتى نهاية الفترة (قيد تسوية)',lines:[['d','مصروف الكهرباء',EL_T],['c','مصروفات مستحقة',EL_T]]}]});
+const WT=[['الشريحة الأولى (حتى 10 م³)','م³',10,2],['الشريحة الثانية (من 11 إلى 22)','م³',12,3]];
+const W_SUB=WT.reduce((s,r)=>s+r[2]*r[3],0), W_SW=W_SUB*0.5, W_T=W_SUB+W_SW;
+add({id:'water',g:'exp',t:'فاتورة مياه',en:'Water Bill',serial:'7120054',org:{name:'شركة مياه المثال (نموذج تعليمي)',sub:'جهة افتراضية لا تمثل أي شركة حقيقية'},
+ what:'فاتورة استهلاك المياه الشهرية، ويضاف إليها رسم صرف صحي كنسبة من قيمة الاستهلاك.',
+ who:'شركة المياه',copies:'أصل للمشترك',rule:'مصروف إيرادي، يُسجل عند السداد أو يُستحق بنهاية الفترة.',lesson:'درس 9 التسويات',
+ meta:[['رقم الاشتراك','W-2208'],['الفترة','من 01/03 إلى 31/03/2026'],['الاستهلاك','22 م³'],['آخر موعد للسداد','15/04/2026']],
+ parties:[['المشترك',ORG.name,['مقر الشركة — القاهرة']]],
+ table:{cols:['م','البيان','الوحدة','الكمية','السعر','القيمة'],num:[3,4,5],rows:[...WT.map((r,i)=>[i+1,r[0],r[1],r[2],r[3],r[2]*r[3]]),[3,'رسم صرف صحي (50% من قيمة الاستهلاك)','—','—','—',W_SW]]},
+ totals:[['إجمالي الفاتورة',W_T,'g']],sigs:['المحصّل'],
+ entries:[{when:'عند السداد نقداً',lines:[['d','مصروف المياه',W_T],['c','الصندوق',W_T]]}]});
+const TL=inv([['باقة إنترنت أعمال (شهر مارس)','شهر',1,400],['مكالمات ورسائل','شهر',1,85]]);
+add({id:'tel',g:'exp',t:'فاتورة اتصالات وإنترنت',en:'Telecom Invoice',serial:'T-558201',org:{name:'شركة اتصالات المثال (نموذج تعليمي)',sub:'جهة افتراضية — ب.ض 000-000-003'},
+ what:'فاتورة الهاتف والإنترنت الشهرية للمنشأة، وتتضمن ضريبة القيمة المضافة.',
+ who:'شركة الاتصالات',copies:'أصل للمشترك',rule:'مصروف إيرادي، وتُضاف الضريبة كمدخلات (درس 38).',lesson:'درس 38 ضريبة المبيعات',
+ meta:[['رقم الخط','000-0000-000'],['الفترة','مارس 2026'],['تاريخ الإصدار','01/04/2026']],
+ parties:[['العميل',ORG.name,['مقر الشركة — القاهرة']]],
+ table:{cols:itemCols,num:itemNum,rows:TL.rows},totals:tot(TL),sigs:['المحصّل'],
+ entries:[{when:'عند السداد نقداً',lines:[['d','مصروف الهاتف والإنترنت',TL.sub],['d','ضريبة القيمة المضافة (مدخلات)',TL.tax],['c','الصندوق',TL.total]]}]});
+add({id:'rent',g:'exp',t:'إيصال سداد إيجار',en:'Rent Payment Receipt',serial:'0092',org:{name:'المؤجر: أحمد محمود (اسم افتراضي)',sub:'مالك العقار — بيانات افتراضية'},
+ what:'يثبت سداد إيجار المقر عن شهر محدد بموجب عقد الإيجار. يوقعه المؤجر عند الاستلام.',
+ who:'المؤجر (المالك)',copies:'أصل للمستأجر + صورة للمؤجر',rule:'مصروف إيرادي عن الشهر. وإذا دُفع عن عدة أشهر مقدماً فالجزء المقدم أصل.',lesson:'درس 9 التسويات (المصروفات المدفوعة مقدماً)',
+ meta:[['التاريخ','01/03/2026'],['عقد الإيجار','رقم 45 لسنة 2025'],['عن شهر','مارس 2026'],['طريقة السداد','نقداً']],
+ parties:[['استلمت من السادة',ORG.name,['إيجار المقر: 12 شارع النصر، القاهرة']]],
+ table:{cols:['م','البيان','المدة','القيمة'],num:[3],rows:[[1,'إيجار شهري للمقر','من 01/03 إلى 31/03/2026',8000]]},
+ totals:[['إجمالي المستلم',8000,'g']],words:'ثمانية آلاف جنيه فقط لا غير',
+ sigs:['توقيع المؤجر','أمين الصندوق'],
+ entries:[{when:'عند سداد إيجار الشهر',lines:[['d','مصروف الإيجار',8000],['c','الصندوق',8000]]},{when:'إذا سُدد إيجار 3 أشهر مقدماً (24,000)',lines:[['d','مصروف الإيجار (شهر مارس)',8000],['d','إيجار مدفوع مقدماً',16000],['c','الصندوق',24000]]}]});
+const MT=inv([['قطع غيار — تكييف مركزي','قطعة',3,150],['أجرة عمالة وفحص','زيارة',1,300]]);
+add({id:'maint',g:'exp',t:'فاتورة صيانة وإصلاح',en:'Maintenance Invoice',serial:'M-3317',org:{name:'مركز الخدمة الفنية (نموذج تعليمي)',sub:'جهة افتراضية — ب.ض 000-000-004'},
+ what:'فاتورة ورشة أو شركة صيانة عن إصلاح معدات المنشأة. المصروف إيرادي لا يزيد عمر الأصل.',
+ who:'شركة الصيانة',copies:'أصل للعميل + صورة للشركة',rule:'مصروف صيانة. وإذا زاد عمر الأصل أو طاقته فقد يُرسمل ويضاف لتكلفته.',lesson:'درس 22 الأصول الثابتة',
+ meta:[['التاريخ','20/03/2026'],['الأصل','تكييف مركزي — الدور الأول'],['طريقة الدفع','نقداً']],
+ parties:[['العميل',ORG.name,['القاهرة']]],
+ table:{cols:itemCols,num:itemNum,rows:MT.rows},totals:tot(MT),sigs:['الفني','العميل'],
+ entries:[{when:'عند السداد نقداً',lines:[['d','مصروف الصيانة',MT.sub],['d','ضريبة القيمة المضافة (مدخلات)',MT.tax],['c','الصندوق',MT.total]]}]});
+const AD=inv([['إدارة حملة إعلانية على وسائل التواصل (شهر)','حملة',1,3000],['تصميم المواد الإعلانية','عمل',1,1200]]);
+add({id:'adv',g:'exp',t:'فاتورة دعاية وإعلان',en:'Advertising Invoice',serial:'A-1204',org:{name:'وكالة إعلانات المثال (نموذج تعليمي)',sub:'جهة افتراضية — ب.ض 000-000-005'},
+ what:'فاتورة حملة تسويقية أو إعلان. تُحمَّل على مصروفات الفترة التي تمت فيها الحملة.',
+ who:'الوكالة الإعلانية',copies:'أصل للعميل + صورة للوكالة',rule:'مصروف دعاية وإعلان. ويُسوّى بنهاية الفترة إذا شمل مدة تخص فترة تالية.',lesson:'درس 9 التسويات',
+ meta:[['التاريخ','05/03/2026'],['فترة الحملة','مارس 2026'],['طريقة الدفع','تحويل بنكي']],
+ parties:[['العميل',ORG.name,['القاهرة']]],
+ table:{cols:itemCols,num:itemNum,rows:AD.rows},totals:tot(AD),sigs:['مدير الحسابات بالوكالة','العميل'],
+ entries:[{when:'عند السداد بتحويل بنكي',lines:[['d','مصروف الدعاية والإعلان',AD.sub],['d','ضريبة القيمة المضافة (مدخلات)',AD.tax],['c','البنك',AD.total]]}]});
+const FE=inv([['أتعاب مراجعة حسابات عن الربع الأول','خدمة',1,2500]]);
+add({id:'fees',g:'exp',t:'فاتورة أتعاب مهنية',en:'Professional Fees Invoice',serial:'F-0066',org:{name:'مكتب المراجعة المثال (نموذج تعليمي)',sub:'جهة افتراضية — ب.ض 000-000-006'},
+ what:'فاتورة مكتب محاسبة أو محاماة أو استشارات عن خدمة مهنية قُدمت للمنشأة.',
+ who:'مقدم الخدمة المهنية',copies:'أصل للعميل + صورة لمقدم الخدمة',rule:'مصروف أتعاب مهنية.',lesson:'درس 9 التسويات',
+ meta:[['التاريخ','31/03/2026'],['عن الفترة','الربع الأول 2026'],['شروط الدفع','آجل 15 يوماً']],
+ parties:[['العميل',ORG.name,['القاهرة']]],
+ table:{cols:itemCols,num:itemNum,rows:FE.rows},totals:tot(FE),sigs:['الشريك المسؤول','العميل'],
+ entries:[{when:'عند استلام الفاتورة (غير مسددة)',lines:[['d','مصروف الأتعاب المهنية',FE.sub],['d','ضريبة القيمة المضافة (مدخلات)',FE.tax],['c','مصروفات مستحقة (الدائنون)',FE.total]]}]});
+const PC=[['ضيافة للاجتماع','—',1,120],['انتقالات مندوب','—',1,80],['أدوات مكتبية','—',1,150]];
+const PC_T=PC.reduce((s,r)=>s+r[2]*r[3],0);
+add({id:'petty',g:'exp',t:'سند مصروفات نثرية',en:'Petty Cash Voucher',serial:'0231',org:ORG,
+ what:'يثبت صرف مبالغ صغيرة من عهدة المصروفات النثرية (ضيافة، انتقالات، أدوات)، ويُرفق به إيصال المورد إن وجد.',
+ who:'أمين العهدة، ويعتمده المدير',copies:'أصل للمحاسبة',rule:'يُسجل عند صرف المبلغ من العهدة أو عند تسويتها.',lesson:'درس 20 النقدية في الصندوق',
+ meta:[['التاريخ','22/03/2026'],['اسم المستلم','موظف الإدارة (اسم افتراضي)'],['المستند المرفق','إيصالات صغيرة عدد 3']],
+ table:{cols:['م','بيان المصروف','—','الكمية','المبلغ','الإجمالي'],num:[3,4,5],rows:PC.map((r,i)=>[i+1,r[0],r[1],r[2],r[3],r[2]*r[3]])},
+ totals:[['إجمالي المنصرف',PC_T,'g']],words:'ثلاثمائة وخمسون جنيهاً فقط لا غير',
+ sigs:['المستلم','أمين العهدة','المدير (اعتماد)'],
+ entries:[{when:'عند الصرف من الصندوق',lines:[['d','مصروف الضيافة',120],['d','مصروف الانتقالات',80],['d','مصروف الأدوات المكتبية',150],['c','الصندوق',PC_T]]}]});
+const PR=[['أحمد س.',6000,500,660,300],['منى ع.',4500,0,495,150],['هاني ف.',3000,200,330,0]].map(r=>[...r,r[1]+r[2]-r[3]-r[4]]);
+const PR_B=sum(PR,1),PR_O=sum(PR,2),PR_I=sum(PR,3),PR_X=sum(PR,4),PR_N=sum(PR,5);
+add({id:'payroll',g:'exp',t:'كشف مرتبات',en:'Payroll Sheet',serial:'03/2026',org:ORG,
+ what:'كشف شهري بمرتبات العاملين وما يُستقطع منها (التأمينات والضريبة) وصافي المستحق لكل موظف.',
+ who:'شؤون العاملين والحسابات',copies:'أصل للمحاسبة + صورة للموارد البشرية',rule:'يُسجل شهرياً: مصروف الرواتب مقابل الاستقطاعات والصافي المستحق.',lesson:'درس 37 ضريبة كسب العمل',
+ meta:[['عن شهر','مارس 2026'],['تاريخ الاستحقاق','31/03/2026'],['عدد العاملين','3']],
+ table:{cols:['اسم الموظف','الأساسي','علاوات','التأمينات','ضريبة كسب العمل','صافي المستحق'],num:[1,2,3,4,5],rows:[...PR,['الإجمالي',PR_B,PR_O,PR_I,PR_X,PR_N]],totalRow:true},
+ notes:[['ملاحظة','أسماء وأرقام افتراضية للتدريب، والنسب الفعلية للتأمينات والضريبة تختلف حسب القانون المعمول به.']],
+ sigs:['أعده: شؤون العاملين','راجعه: المحاسب','اعتمده: المدير المالي'],
+ entries:[{when:'عند استحقاق مرتبات الشهر',lines:[['d','مصروف الرواتب والأجور',PR_B+PR_O],['c','ضريبة كسب العمل المستحقة',PR_X],['c','التأمينات الاجتماعية المستحقة',PR_I],['c','رواتب مستحقة الدفع',PR_N]]}]});
+
+/* ---------- rendering ---------- */
+const $=id=>document.getElementById(id);
+let mode='filled', cur=0;
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const cell=(v,isNum)=>typeof v==='number'?fmt(v):esc(v);
+
+function paperGeneric(d,blank){
+  const filled=!blank;
+  let h='<article class="paper"><header class="p-head"><div class="p-org"><b>'+esc(d.org.name)+'</b><small>'+esc(d.org.sub)+'</small></div>'+
+   '<div class="p-title"><h2>'+esc(d.t)+'</h2><span>'+esc(d.en)+'</span></div>'+
+   '<div class="p-serial"><small>الرقم المسلسل</small><b>'+(filled?esc(d.serial):'N° ______')+'</b></div></header>';
+  if(d.meta) h+='<div class="p-meta">'+d.meta.map(m=>'<div class="fld"><span>'+esc(m[0])+'</span><b>'+(filled?esc(m[1]):'')+'</b></div>').join('')+'</div>';
+  if(d.parties) h+='<div class="p-parties">'+d.parties.map(p=>'<div class="party"><h4>'+esc(p[0])+'</h4><p class="nm">'+(filled?esc(p[1]):'')+'</p>'+p[2].map(l=>'<p>'+(filled?esc(l):'')+'</p>').join('')+'</div>').join('')+'</div>';
+  if(d.table){const t=d.table,num=t.num||[];
+    h+='<table class="pt"><thead><tr>'+t.cols.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr></thead><tbody>';
+    if(filled){t.rows.forEach((r,ri)=>{const last=t.totalRow&&ri===t.rows.length-1;h+='<tr'+(last?' class="tot"':'')+'>'+r.map((v,i)=>'<td class="'+(num.includes(i)?'n':(i===0?'c':''))+'">'+cell(v)+'</td>').join('')+'</tr>'});}
+    else{for(let k=0;k<(t.blank||5);k++)h+='<tr>'+t.cols.map(()=>'<td></td>').join('')+'</tr>';}
+    h+='</tbody></table>';}
+  if(d.totals) h+='<div class="totals">'+d.totals.map(t=>'<div class="'+(t[2]||'')+'"><span>'+esc(t[0])+'</span><b>'+(filled?fmt(t[1]):'')+'</b></div>').join('')+'</div>';
+  if(d.words) h+='<p class="words"><span>المبلغ كتابةً:</span> <b>'+(filled?esc(d.words):'&nbsp;')+'</b></p>';
+  if(d.notes) h+='<div class="notes">'+d.notes.map(n=>'<p><b>'+esc(n[0])+':</b> '+(filled?esc(n[1]):'')+'</p>').join('')+'</div>';
+  if(d.terms) h+='<ul class="terms">'+d.terms.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>';
+  if(d.sigs) h+='<div class="sigs">'+d.sigs.map(s=>'<div class="sig"><i></i>'+esc(s)+'</div>').join('')+'</div>';
+  h+='<footer class="p-foot"><span>نموذج تعليمي — بيانات افتراضية</span><span>'+esc(d.en)+'</span></footer></article>';
+  return h;
+}
+function paperCheque(d,blank){
+  const f=d.f,F=!blank;
+  return '<article class="paper cq"><div class="cheque"><div class="ck-top"><div class="ck-bank"><b>'+esc(f.bank)+'</b><small>'+(F?esc(f.acc):'حساب جاري رقم ______')+'</small></div>'+
+  '<div class="ck-no">شيك رقم <b>'+(F?esc(d.serial):'______')+'</b></div></div>'+
+  '<div class="ck-row"><span>التاريخ</span><b>'+(F?esc(f.date):'')+'</b></div>'+
+  '<div class="ck-row"><span>ادفعوا لأمر</span><b>'+(F?esc(f.payee):'')+'</b></div>'+
+  '<div class="ck-row"><span>مبلغ وقدره</span><b>'+(F?esc(f.words):'')+'</b></div>'+
+  '<div class="ck-row"><span>البيان</span><b>'+(F?esc(f.memo):'')+'</b></div>'+
+  '<div class="ck-foot"><div class="ck-amount">'+(F?esc(f.amt):'')+'</div><div class="ck-sign">توقيع الساحب — '+esc(ORG.name)+'</div></div></div>'+
+  '<footer class="p-foot"><span>نموذج تعليمي — بيانات افتراضية</span><span>Cheque</span></footer></article>';
+}
+function entryHTML(d){
+  if(!d.entries.length) return '<h3>القيد المحاسبي</h3><p class="rule">'+esc(d.rule)+'</p>';
+  let h='<h3>القيد المحاسبي الناتج</h3>';
+  d.entries.forEach(e=>{
+    const D=e.lines.filter(l=>l[0]==='d').reduce((s,l)=>s+l[2],0),C=e.lines.filter(l=>l[0]==='c').reduce((s,l)=>s+l[2],0);
+    h+='<p class="when">'+esc(e.when)+'</p><div class="scroll"><table><thead><tr><th>مدين</th><th>دائن</th><th>البيان</th></tr></thead><tbody>'+
+    e.lines.map(l=>l[0]==='d'?'<tr><td class="n">'+fmt(l[2])+'</td><td class="n"></td><td>من ح/ '+esc(l[1])+'</td></tr>':'<tr><td class="n"></td><td class="n">'+fmt(l[2])+'</td><td class="cr">إلى ح/ '+esc(l[1])+'</td></tr>').join('')+
+    '<tr><td class="n"><b>'+fmt(D)+'</b></td><td class="n"><b>'+fmt(C)+'</b></td><td><b>'+(Math.abs(D-C)<0.005?'الجانبان متساويان':'غير متوازن')+'</b></td></tr></tbody></table></div>';
+  });
+  return h+'<p class="rule">'+esc(d.rule)+'</p>';
+}
+function render(){
+  const d=DOCS[cur],blank=mode==='blank';
+  $('crumb').textContent=G[d.g]+' / '+d.t;
+  $('what').innerHTML='<h2>'+esc(d.t)+'</h2><p>'+esc(d.what)+'</p><dl class="facts"><div><dt>من يعدّه</dt><dd>'+esc(d.who)+'</dd></div><div><dt>النسخ</dt><dd>'+esc(d.copies)+'</dd></div><div><dt>درس مرتبط</dt><dd>'+esc(d.lesson)+'</dd></div></dl>';
+  $('sheet').innerHTML=d.kind==='cheque'?paperCheque(d,blank):paperGeneric(d,blank);
+  $('entry').innerHTML=entryHTML(d);
+  const p=DOCS[cur-1],n=DOCS[cur+1];
+  $('nav2').innerHTML=(p?'<a href="#doc-'+p.id+'"><small>→ السابق</small>'+esc(p.t)+'</a>':'<span></span>')+(n?'<a class="n" href="#doc-'+n.id+'"><small>التالي ←</small>'+esc(n.t)+'</a>':'');
+  $('mFilled').setAttribute('aria-pressed',String(!blank));$('mBlank').setAttribute('aria-pressed',String(blank));
+  document.querySelectorAll('#side a').forEach(a=>a.setAttribute('aria-current',a.getAttribute('href')==='#doc-'+d.id?'page':'false'));
+  $('pickSel').value=d.id;
+}
+function build(){
+  $('lead').textContent=DOCS.length+' نموذجاً لكل مستند في دورات المشتريات والمبيعات والنقدية والمصروفات، كل واحد بمثال معبّأ ونموذج فارغ والقيد المحاسبي الذي يخرج منه. كل الأسماء والأرقام والجهات افتراضية للتدريب.';
+  let side='',sel='';
+  Object.keys(G).forEach(g=>{
+    const ds=DOCS.filter(d=>d.g===g);
+    side+='<h3>'+G[g]+'</h3>'+ds.map(d=>'<a href="#doc-'+d.id+'">'+esc(d.t)+'<small>'+esc(d.serial)+'</small></a>').join('');
+    sel+='<optgroup label="'+G[g]+'">'+ds.map(d=>'<option value="'+d.id+'">'+esc(d.t)+'</option>').join('')+'</optgroup>';
+  });
+  $('side').innerHTML=side;$('pickSel').innerHTML=sel;
+}
+function route(){const id=(location.hash.match(/^#doc-([a-z]+)$/)||[])[1];const i=DOCS.findIndex(d=>d.id===id);cur=i>=0?i:0;render();}
+$('mFilled').onclick=()=>{mode='filled';render()};
+$('mBlank').onclick=()=>{mode='blank';render()};
+$('pickSel').onchange=e=>{location.hash='doc-'+e.target.value};
+window.addEventListener('hashchange',route);
+build();route();
+</script>
+
+</body></html>

@@ -283,3 +283,490 @@ table {
   font-size: 12px;
 }
 
+/* =========================================================================
+   REALISTIC MULTI-DOCUMENT SUITE & 3-WAY MATCHING (منظومة المستندات الواقعية والمطابقة الثلاثية)
+   ========================================================================= */
+:root {
+  --doc-paper: #fdfdfc;
+  --doc-paper-fg: #16222f;
+  --doc-paper-line: #c6d0dc;
+  --doc-paper-ink: #1b4f8f;
+  --doc-paper-stamp: #b3261e;
+  --doc-paper-muted: #5d6c7c;
+  --doc-paper-fill: #eef3f9;
+}
+
+.acc-doc-bundle-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Tabs Switcher for Supporting Documents */
+.acc-doc-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  scrollbar-width: thin;
+}
+
+.acc-doc-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #475569;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.acc-doc-tab-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.acc-doc-tab-btn.active {
+  background: #1b4f8f;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* 3-Way Matching Checklist Banner */
+.acc-matching-box {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-right: 4px solid #1b4f8f;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+}
+
+.acc-matching-box .title {
+  font-weight: 800;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+}
+
+.acc-matching-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.acc-matching-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.acc-matching-pill.ok {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.acc-matching-pill.info {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+/* Paper Sheet Layout */
+.paper {
+  width: 100%;
+  background: var(--doc-paper);
+  color: var(--doc-paper-fg);
+  border: 1px solid var(--doc-paper-line);
+  border-top: 4px solid var(--doc-paper-ink);
+  border-radius: 6px;
+  padding: 16px 18px 14px;
+  box-shadow: 0 1px 0 var(--doc-paper-line), 0 8px 18px -10px rgba(10,20,40,.25);
+  font-size: 12.5px;
+  line-height: 1.5;
+  direction: rtl;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.p-head {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: start;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--doc-paper-ink);
+}
+
+.p-org b {
+  display: block;
+  font-size: 13px;
+  color: var(--doc-paper-ink);
+}
+
+.p-org small {
+  color: var(--doc-paper-muted);
+  font-size: 10.5px;
+  line-height: 1.4;
+  display: block;
+}
+
+.p-title {
+  text-align: center;
+}
+
+.p-title h2 {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--doc-paper-ink);
+  line-height: 1.2;
+}
+
+.p-title span {
+  font-size: 9.5px;
+  letter-spacing: .08em;
+  color: var(--doc-paper-muted);
+  text-transform: uppercase;
+  direction: ltr;
+  display: block;
+}
+
+.p-serial {
+  text-align: left;
+  direction: ltr;
+}
+
+.p-serial small {
+  display: block;
+  font-size: 10px;
+  color: var(--doc-paper-muted);
+  direction: rtl;
+  text-align: left;
+}
+
+.p-serial b {
+  font-family: var(--acc-font-mono, Consolas, monospace);
+  font-size: 16px;
+  color: var(--doc-paper-stamp);
+  letter-spacing: .05em;
+}
+
+.p-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 4px 12px;
+  margin: 10px 0;
+}
+
+.fld {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  min-width: 0;
+  border-bottom: 1px dotted var(--doc-paper-line);
+  padding-bottom: 2px;
+}
+
+.fld span {
+  font-size: 11px;
+  color: var(--doc-paper-muted);
+  white-space: nowrap;
+}
+
+.fld b {
+  font-weight: 600;
+  font-size: 11.5px;
+  min-height: 1.4em;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.p-parties {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.party {
+  border: 1px solid var(--doc-paper-line);
+  border-radius: 4px;
+  padding: 6px 10px;
+  background: var(--doc-paper-fill);
+}
+
+.party h4 {
+  margin: 0 0 2px;
+  font-size: 11px;
+  color: var(--doc-paper-ink);
+  letter-spacing: .03em;
+}
+
+.party p {
+  margin: 0;
+  font-size: 11.5px;
+}
+
+.party p.nm {
+  font-weight: 700;
+}
+
+table.pt {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0 6px;
+  font-size: 11.5px;
+}
+
+.pt th {
+  background: var(--doc-paper-fill);
+  border: 1px solid var(--doc-paper-line);
+  padding: 4px 6px;
+  font-weight: 700;
+  color: var(--doc-paper-ink);
+  text-align: center;
+}
+
+.pt td {
+  border: 1px solid var(--doc-paper-line);
+  padding: 4px 6px;
+  height: 24px;
+}
+
+.pt td.n {
+  text-align: center;
+  font-family: var(--acc-font-mono, monospace);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pt td.c {
+  text-align: center;
+}
+
+.pt tr.tot td {
+  background: var(--doc-paper-fill);
+  font-weight: 700;
+}
+
+.totals {
+  margin-inline-start: auto;
+  width: min(280px, 100%);
+  margin-top: 6px;
+}
+
+.totals div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 6px;
+  border-bottom: 1px solid var(--doc-paper-line);
+  font-size: 11.5px;
+}
+
+.totals div.g {
+  background: var(--doc-paper-ink);
+  color: #fff;
+  font-weight: 700;
+  border: 0;
+  border-radius: 3px;
+  margin-top: 3px;
+}
+
+.totals b {
+  font-family: var(--acc-font-mono, monospace);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 4em;
+  text-align: left;
+}
+
+.words {
+  margin: 8px 0 2px;
+  font-size: 11.5px;
+}
+
+.words span {
+  color: var(--doc-paper-muted);
+}
+
+.words b {
+  border-bottom: 1px dotted var(--doc-paper-line);
+  padding-inline: 4px;
+  display: inline-block;
+}
+
+.terms {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 10.5px;
+  color: var(--doc-paper-muted);
+}
+
+.terms li {
+  padding-inline-start: 10px;
+  position: relative;
+}
+
+.terms li::before {
+  content: "·";
+  position: absolute;
+  inset-inline-start: 2px;
+}
+
+.notes {
+  margin: 6px 0;
+  font-size: 11px;
+}
+
+.notes b {
+  color: var(--doc-paper-ink);
+}
+
+.sigs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.sig {
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--doc-paper-muted);
+}
+
+.sig i {
+  display: block;
+  height: 24px;
+  border-bottom: 1px solid var(--doc-paper-fg);
+  margin-bottom: 2px;
+  font-style: normal;
+  font-size: 10.5px;
+  color: var(--doc-paper-fg);
+  line-height: 24px;
+}
+
+.p-foot {
+  margin-top: 12px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--doc-paper-line);
+  font-size: 10px;
+  color: var(--doc-paper-muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+/* Realistic Bank Cheque */
+.cheque {
+  border: 2px solid var(--doc-paper-ink);
+  border-radius: 4px;
+  padding: 12px 14px;
+  background: linear-gradient(90deg, var(--doc-paper-fill), var(--doc-paper) 60%);
+  position: relative;
+  font-size: 11.5px;
+}
+
+.ck-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: start;
+}
+
+.ck-bank b {
+  font-size: 15px;
+  color: var(--doc-paper-ink);
+}
+
+.ck-bank small {
+  display: block;
+  color: var(--doc-paper-muted);
+  font-size: 10px;
+}
+
+.ck-no {
+  text-align: left;
+  font-size: 11px;
+  color: var(--doc-paper-muted);
+}
+
+.ck-no b {
+  font-family: var(--acc-font-mono, monospace);
+  color: var(--doc-paper-stamp);
+  font-size: 14px;
+  letter-spacing: .05em;
+  margin-inline-start: 4px;
+}
+
+.ck-row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-top: 10px;
+  border-bottom: 1px dotted var(--doc-paper-muted);
+  padding-bottom: 2px;
+}
+
+.ck-row span {
+  font-size: 10.5px;
+  color: var(--doc-paper-muted);
+  white-space: nowrap;
+}
+
+.ck-row b {
+  flex: 1;
+  min-width: 0;
+  min-height: 1.3em;
+  font-size: 11px;
+}
+
+.ck-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ck-amount {
+  border: 2px solid var(--doc-paper-ink);
+  padding: 4px 10px;
+  font-family: var(--acc-font-mono, monospace);
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 120px;
+  text-align: center;
+}
+
+.ck-sign {
+  width: 150px;
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--doc-paper-muted);
+  border-top: 1px solid var(--doc-paper-fg);
+  padding-top: 2px;
+}
+
+

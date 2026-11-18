@@ -449,11 +449,210 @@ function renderInspectableRow(label, amount, code, side, rationale, colorClass =
 window.inspectDocumentFigure = function() {};
 window.autofillJournalLine = function() {};
 
+// =========================================================================
+// Realistic Business Document & 3-Way Matching Engine (HTML Dossier Model)
+// =========================================================================
+
+function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+function generateDocItems(trx, subtotal) {
+    if (trx.docData && Array.isArray(trx.docData.items) && trx.docData.items.length > 0) {
+        return trx.docData.items;
+    }
+    const amt = Number(subtotal) || Number(trx.amount) || 10000;
+    if (amt >= 50000) {
+        const p1 = Math.round(amt * 0.6 * 100) / 100;
+        const p2 = Math.round((amt - p1) * 100) / 100;
+        return [
+            { num: 1, desc: 'أجهزة حاسوب مكتبية وشاشات رقمية احترافية', unit: 'جهاز', qty: 10, unitPrice: p1 / 10, total: p1 },
+            { num: 2, desc: 'خوادم ومعدات شبكات سحابية ملحقة', unit: 'وحدة', qty: 2, unitPrice: p2 / 2, total: p2 }
+        ];
+    } else if (amt >= 10000) {
+        const p1 = Math.round(amt * 0.7 * 100) / 100;
+        const p2 = Math.round((amt - p1) * 100) / 100;
+        return [
+            { num: 1, desc: 'بضاعة تجارية وأجهزة إلكترونية معتمدة', unit: 'وحدة', qty: 10, unitPrice: p1 / 10, total: p1 },
+            { num: 2, desc: 'طابعات ليزر مكتبية ومستلزمات تشغيل', unit: 'طابعة', qty: 2, unitPrice: p2 / 2, total: p2 }
+        ];
+    } else {
+        return [
+            { num: 1, desc: 'بضاعة ومستلزمات تجارية عامة', unit: 'وحدة', qty: 1, unitPrice: amt, total: amt }
+        ];
+    }
+}
+
+function renderRealisticPaper(d) {
+    let h = `<article class="paper">
+      <header class="p-head">
+        <div class="p-org">
+          <b>${escapeHtml(d.org?.name || 'شركة معتمدة')}</b>
+          <small>${escapeHtml(d.org?.sub || 'القاهرة — س.ت 104920 — ب.ض 542-891-304')}</small>
+        </div>
+        <div class="p-title">
+          <h2>${escapeHtml(d.title)}</h2>
+          <span>${escapeHtml(d.enTitle || '')}</span>
+        </div>
+        <div class="p-serial">
+          <small>الرقم المسلسل</small>
+          <b>${escapeHtml(d.serial)}</b>
+        </div>
+      </header>`;
+
+    if (d.meta && d.meta.length) {
+        h += `<div class="p-meta">` + d.meta.map(m => `
+          <div class="fld">
+            <span>${escapeHtml(m[0])}:</span>
+            <b>${escapeHtml(m[1])}</b>
+          </div>`).join('') + `</div>`;
+    }
+
+    if (d.parties && d.parties.length) {
+        h += `<div class="p-parties">` + d.parties.map(p => `
+          <div class="party">
+            <h4>${escapeHtml(p[0])}</h4>
+            <p class="nm">${escapeHtml(p[1])}</p>
+            ${(p[2] || []).map(l => `<p class="text-slate-500 text-[11px]">${escapeHtml(l)}</p>`).join('')}
+          </div>`).join('') + `</div>`;
+    }
+
+    if (d.table) {
+        const t = d.table;
+        const num = t.num || [];
+        h += `<div class="overflow-x-auto"><table class="pt"><thead><tr>` +
+            t.cols.map(c => `<th>${escapeHtml(c)}</th>`).join('') + `</tr></thead><tbody>`;
+        t.rows.forEach((r, ri) => {
+            const isLast = t.totalRow && ri === t.rows.length - 1;
+            h += `<tr${isLast ? ' class="tot"' : ''}>` +
+                r.map((v, i) => `<td class="${num.includes(i) ? 'n' : (i === 0 ? 'c' : '')}">${typeof v === 'number' ? v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : escapeHtml(v)}</td>`).join('') +
+                `</tr>`;
+        });
+        h += `</tbody></table></div>`;
+    }
+
+    if (d.totals && d.totals.length) {
+        h += `<div class="totals">` + d.totals.map(t => `
+          <div class="${t[2] || ''}">
+            <span>${escapeHtml(t[0])}:</span>
+            <b>${typeof t[1] === 'number' ? t[1].toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : escapeHtml(t[1])} ج.م</b>
+          </div>`).join('') + `</div>`;
+    }
+
+    if (d.words) {
+        h += `<p class="words"><span>المبلغ كتابةً:</span> <b>${escapeHtml(d.words)}</b></p>`;
+    }
+
+    if (d.extraSummaryHtml) {
+        h += `<div class="my-2.5 bg-slate-50 rounded-xl p-2 border border-slate-200 space-y-1">${d.extraSummaryHtml}</div>`;
+    }
+
+    if (d.notes && d.notes.length) {
+        h += `<div class="notes space-y-1 mt-2">` + d.notes.map(n => `
+          <p class="text-[11px] text-slate-700 bg-slate-50 p-2 rounded border border-slate-200">
+            <b class="text-slate-900">${escapeHtml(n[0])}: </b>${escapeHtml(n[1])}
+          </p>`).join('') + `</div>`;
+    }
+
+    if (d.terms && d.terms.length) {
+        h += `<ul class="terms">` + d.terms.map(t => `<li>${escapeHtml(t)}</li>`).join('') + `</ul>`;
+    }
+
+    if (d.sigs && d.sigs.length) {
+        h += `<div class="sigs">` + d.sigs.map(s => `
+          <div class="sig">
+            <i></i>
+            <span>${escapeHtml(s)}</span>
+          </div>`).join('') + `</div>`;
+    }
+
+    h += `<footer class="p-foot">
+      <span>مستند تدريبي معتمد — منظومة المحاكاة</span>
+      <span>${escapeHtml(d.enTitle || 'Accounting Document')}</span>
+    </footer></article>`;
+
+    return h;
+}
+
+function renderRealisticCheque(d) {
+    return `
+    <article class="paper cq">
+      <div class="cheque">
+        <div class="ck-top">
+          <div class="ck-bank">
+            <b>${escapeHtml(d.bank || 'البنك الأهلي المصري')}</b>
+            <small>${escapeHtml(d.account || 'حساب جاري رقم: 010-4492-8819')}</small>
+          </div>
+          <div class="ck-no">
+            شيك مصرفي رقم <b>${escapeHtml(d.serial || '000231')}</b>
+          </div>
+        </div>
+        <div class="ck-row">
+          <span>التاريخ:</span>
+          <b>${escapeHtml(d.date || '2026-01-15')}</b>
+        </div>
+        <div class="ck-row">
+          <span>ادفعوا لأمر:</span>
+          <b class="text-blue-900 font-extrabold">${escapeHtml(d.payee)}</b>
+        </div>
+        <div class="ck-row">
+          <span>مبلغ وقدره:</span>
+          <b class="font-serif">${escapeHtml(d.words)}</b>
+        </div>
+        <div class="ck-row">
+          <span>البيان والغرض:</span>
+          <b>${escapeHtml(d.memo || 'سداد مستحقات بموجب الفاتورة الرسمية')}</b>
+        </div>
+        <div class="ck-foot">
+          <div class="ck-amount">
+            ${Number(d.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ج.م
+          </div>
+          <div class="ck-sign">
+            توقيع الساحب المفوض — ${escapeHtml(d.drawer || 'إدارة الحسابات')}
+          </div>
+        </div>
+      </div>
+      <footer class="p-foot">
+        <span>شيك بنكي رسمي قابل للصرف</span>
+        <span>Commercial Bank Cheque</span>
+      </footer>
+    </article>`;
+}
+
+window.activeDocSubTab = window.activeDocSubTab || {};
+
+window.setDocSubTab = function(trxId, subTabId) {
+    window.activeDocSubTab[trxId] = subTabId;
+    const trx = (typeof selectedTaskObject === 'function') ? selectedTaskObject() : null;
+    if (trx) {
+        renderDocument(trx);
+    }
+};
+
+window.openDocInspectionModal = function(titleHtml, bodyHtml) {
+    const modal = document.getElementById('doc-inspection-modal');
+    const titleEl = document.getElementById('doc-modal-title');
+    const bodyEl = document.getElementById('doc-modal-body');
+    if (!modal) return;
+    if (titleEl) titleEl.innerHTML = titleHtml || 'فحص المستند المؤيد والمطابقة التفصيلية';
+    if (bodyEl) bodyEl.innerHTML = bodyHtml || '';
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+};
+
+window.closeDocInspectionModal = function(e) {
+    if (e && e.target && e.target.id !== 'doc-inspection-modal' && !e.target.closest('button[onclick*="closeDocInspectionModal"]')) {
+        return;
+    }
+    const modal = document.getElementById('doc-inspection-modal');
+    if (modal) modal.classList.add('hidden');
+    document.body.style.overflow = '';
+};
+
 function renderDocument(trx) {
     const viewer = document.getElementById('document-viewer');
-    if(!viewer || !trx) return;
+    if (!viewer || !trx) return;
 
-    let docHtml = '';
     const compName = getCompanyName();
     const doc = trx.docData || {};
     let total = (doc.totalAmount != null && Number(doc.totalAmount) > 0)
@@ -475,332 +674,603 @@ function renderDocument(trx) {
         else if (trx.type === 'Sale' || trx.type === 'Cash Sale') partyName = 'مؤسسة الشروق التجارية';
     }
     const words = tafqeetArabic(total);
+    const items = generateDocItems(trx, subtotal);
+    const activeTab = window.activeDocSubTab[trx.id] || 'primary';
+
+    let bundleDocs = [];
+    let matchingChecklist = [];
+    let dossierTitle = 'ملف المستندات المؤيدة للمطابقة';
 
     if (trx.type === 'Purchase') {
-        docHtml = `
-        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">فاتورة مشتريات بضاعة (Purchase Invoice)</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
-            </div>
-          </div>
+        dossierTitle = 'دورة المشتريات — المطابقة الثلاثية (3-Way Matching)';
+        matchingChecklist = [
+            { text: 'أمر الشراء PO مطابق للكميات والأسعار المعتمدة', status: 'ok' },
+            { text: 'إذن استلام المخزن GRN يثبت سلامة الفحص واستلام البضاعة 100%', status: 'ok' },
+            { text: 'فاتورة المورد الضريبية متوافقة مع الوعاء وضريبة المدخلات 14%', status: 'ok' }
+        ];
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">المورد:</span>
-              <span class="font-bold text-slate-800">${partyName || 'حساب الموردين AP'}</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">طريقة السداد:</span>
-              <span class="font-bold text-slate-800">آجل (فاتورة ضريبية مستحقة السداد)</span>
-            </div>
-            ${vatAmt > 0 ? `
-              ${renderDocRow('قيمة البضاعة المشتراة (قبل الضريبة)', subtotal, 'text-slate-800')}
-              ${renderDocRow('ضريبة القيمة المضافة مدخلات (14%)', vatAmt, 'text-emerald-700')}
-            ` : `
-              ${renderDocRow('قيمة البضاعة المشتراة', total, 'text-slate-800')}
-            `}
-            <div class="border-t border-slate-200 pt-1">
-              ${renderDocRow('الإجمالي المستحق للمورد', total, 'text-blue-900 font-extrabold')}
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 text-center">أصل الفاتورة مستلم ومقيد بالسجلات المخزنية</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
+        // 1. فاتورة المورد
+        const supInvHtml = renderRealisticPaper({
+            org: { name: partyName, sub: 'الجيزة — س.ت 22891 — ب.ض 448-910-332' },
+            title: 'فاتورة مشتريات ضريبية',
+            enTitle: 'Supplier Tax Invoice',
+            serial: ref,
+            meta: [
+                ['تاريخ الفاتورة', date],
+                ['أمر الشراء المرتبط', 'PO-' + ref.replace('INV-', '')],
+                ['شروط الدفع', 'آجل 30 يوماً (Credit 30 Days)'],
+                ['تاريخ الاستحقاق', '2026-02-15']
+            ],
+            parties: [
+                ['المورد (البائع)', partyName, ['الجيزة — سجل تجاري 22891']],
+                ['العميل (المشتري)', compName, ['القاهرة — ب.ض 104-920-881']]
+            ],
+            table: {
+                cols: ['م', 'الصنف / البيان', 'الوحدة', 'الكمية', 'سعر الوحدة', 'القيمة'],
+                num: [3, 4, 5],
+                rows: items.map(it => [it.num, it.desc, it.unit, it.qty, it.unitPrice, it.total])
+            },
+            totals: [
+                ['قيمة البضاعة (قبل الضريبة)', subtotal],
+                ['ضريبة القيمة المضافة مدخلات (14%)', vatAmt],
+                ['الإجمالي المستحق للمورد', total, 'g']
+            ],
+            extraSummaryHtml: `
+                ${vatAmt > 0 ? `
+                  ${renderDocRow('قيمة البضاعة المشتراة (قبل الضريبة)', subtotal, 'text-slate-800')}
+                  ${renderDocRow('ضريبة القيمة المضافة مدخلات (14%)', vatAmt, 'text-emerald-700')}
+                ` : `
+                  ${renderDocRow('قيمة البضاعة المشتراة', total, 'text-slate-800')}
+                `}
+                ${renderDocRow('الإجمالي المستحق للمورد', total, 'text-blue-900 font-extrabold', true)}
+            `,
+            words: words + ' جنيهاً مصرياً لا غير.',
+            terms: [
+                'البضاعة المباعة خاضعة للفحص والاستلام خلال 48 ساعة من التوريد.',
+                'تعتبر الفاتورة إقراراً بمديونية المشتري بالصافي المستحق للمورد.'
+            ],
+            sigs: ['إدارة المبيعات بالمورد', 'المحاسب المالي', 'استلمت البضاعة والفاتورة']
+        });
+
+        // 2. إذن استلام وفحص المخزن GRN
+        const grnHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'إدارة المخازن والمستودعات المركزية' },
+            title: 'إذن استلام وفحص مخزني',
+            enTitle: 'Goods Received Note (GRN)',
+            serial: 'GRN-' + ref.replace('INV-', ''),
+            meta: [
+                ['تاريخ الاستلام', date],
+                ['رقم أمر الشراء', 'PO-' + ref.replace('INV-', '')],
+                ['رقم فاتورة المورد', ref],
+                ['موقع المخزن', 'مخزن القاهرة الرئيسي (بضاعة تامة)']
+            ],
+            parties: [
+                ['المورد', partyName, ['مندوب التسليم: أحمد حسن']],
+                ['المستلم', compName, ['أمين المخزن: محمد عبد الرحمن']]
+            ],
+            table: {
+                cols: ['م', 'الصنف المستلم', 'الوحدة', 'الكمية بأمر الشراء', 'الكمية المستلمة', 'المقبول', 'المرفوض'],
+                num: [3, 4, 5, 6],
+                rows: items.map(it => [it.num, it.desc, it.unit, it.qty, it.qty, it.qty, 0])
+            },
+            notes: [
+                ['تقرير الفحص الفني', 'تم فحص جميع الوحدات ومطابقتها للمواصفات الفنية الواردة بأمر الشراء 100%، ولا توجد أي تلفيات.'],
+                ['حالة القيد بالمخزن', 'تم إدراج الأصناف في بطاقات الصنف (Bin Card) وكارت الصنف الآلي بالمستودع.']
+            ],
+            sigs: ['أمين المخزن (المستلم)', 'لجنة الفحص والقبول', 'مندوب المورد']
+        });
+
+        // 3. أمر الشراء PO
+        const poHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'إدارة المشتريات والعقود' },
+            title: 'أمر شراء بضاعة رسمي',
+            enTitle: 'Purchase Order (PO)',
+            serial: 'PO-' + ref.replace('INV-', ''),
+            meta: [
+                ['تاريخ الإصدار', date],
+                ['مرجع طلب الشراء', 'PR-2026-081'],
+                ['شروط التسليم', 'مخازن المشتري بالقاهرة'],
+                ['شروط السداد', 'آجل 30 يوماً بعد الفحص']
+            ],
+            parties: [
+                ['إلى السادة (المورد)', partyName, ['الجيزة — ب.ض 448-910-332']],
+                ['جهة التسليم والفحص', compName, ['مخزن البضاعة التامة الرئيسي']]
+            ],
+            table: {
+                cols: ['م', 'الصنف المطلوب', 'الوحدة', 'الكمية المعتمدة', 'سعر الوحدة المتفق عليه', 'القيمة التقديرية'],
+                num: [3, 4, 5],
+                rows: items.map(it => [it.num, it.desc, it.unit, it.qty, it.unitPrice, it.total])
+            },
+            totals: [
+                ['إجمالي أمر الشراء', subtotal],
+                ['ضريبة القيمة المضافة المتوقعة (14%)', vatAmt],
+                ['الإجمالي المعتمد للتعاقد', total, 'g']
+            ],
+            words: words + ' جنيهاً مصرياً لا غير.',
+            terms: [
+                'يُعتبر هذا الأمر تكليفاً رسمياً وملزماً بعد توقيع المورد بالقبول.',
+                'يُرفق أصل هذا الأمر مع إذن الاستلام والفاتورة عند طلب الصرف.'
+            ],
+            sigs: ['مدير المشتريات', 'المدير المالي (اعتماد)', 'قبول وتوقيع المورد']
+        });
+
+        bundleDocs = [
+            { id: 'primary', label: 'فاتورة المورد الضريبية', icon: 'receipt', html: supInvHtml },
+            { id: 'grn', label: 'إذن استلام المخزن (GRN)', icon: 'inventory_2', html: grnHtml },
+            { id: 'po', label: 'أمر الشراء المعتمد (PO)', icon: 'shopping_cart_checkout', html: poHtml }
+        ];
+
     } else if (trx.type === 'Sale' || trx.type === 'Cash Sale') {
         const isCash = trx.type === 'Cash Sale';
-        docHtml = `
-        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">${isCash ? 'فاتورة مبيعات نقدية (Cash Sales Invoice)' : 'فاتورة مبيعات ضريبية آجلة (Tax Sales Invoice)'}</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
-            </div>
-          </div>
+        dossierTitle = isCash ? 'دورة المبيعات النقدية — المستندات المؤيدة' : 'دورة المبيعات الآجلة — دورة التحقق والمطابقة';
+        matchingChecklist = [
+            { text: isCash ? 'البيع نقدي ومستلم بالخزينة/البنك فوراً' : 'أمر البيع معتمد ومطابق للحد الائتماني للعميل', status: 'ok' },
+            { text: 'إذن صرف المخزن GIN يثبت تسليم البضاعة وتوقيع العميل', status: 'ok' },
+            { text: 'فاتورة المبيعات الضريبية صادرة بضريبة القيمة المضافة 14%', status: 'ok' }
+        ];
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">العميل:</span>
-              <span class="font-bold text-slate-800">${partyName || (isCash ? 'عميل نقدي / مبيعات معرض' : 'حساب العملاء AR')}</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">طريقة البيع:</span>
-              <span class="font-bold ${isCash ? 'text-emerald-700' : 'text-blue-800'}">${isCash ? 'نقداً / تحويل بنكي فوري' : 'آجل (حساب العملاء AR)'}</span>
-            </div>
-            ${vatAmt > 0 ? `
-              ${renderDocRow('قيمة المبيعات الخاضعة للضريبة', subtotal, 'text-slate-800')}
-              ${renderDocRow('ضريبة القيمة المضافة مخرجات (14%)', vatAmt, 'text-purple-700')}
-            ` : `
-              ${renderDocRow('قيمة المبيعات الإجمالية', total, 'text-slate-800')}
-            `}
-            <div class="border-t border-slate-200 pt-1">
-              ${renderDocRow(isCash ? 'المحصل بالخزينة/البنك' : 'المستحق على العميل (مدين)', total, 'text-blue-900 font-extrabold')}
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 text-center">أصل الفاتورة للعميل - صالحة للإقرار الضريبي</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
+        // 1. فاتورة المبيعات
+        const salInvHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'القاهرة — س.ت 104920 — ب.ض 104-920-881' },
+            title: isCash ? 'فاتورة مبيعات نقدية' : 'فاتورة مبيعات ضريبية',
+            enTitle: isCash ? 'Cash Sales Invoice' : 'Tax Sales Invoice',
+            serial: ref,
+            meta: [
+                ['تاريخ الفاتورة', date],
+                ['إذن الصرف المخزني', 'GIN-' + ref.replace('INV-', '')],
+                ['طريقة البيع والسداد', isCash ? 'نقداً / تحويل فوري' : 'آجل 30 يوماً (حساب العملاء)'],
+                ['تاريخ الاستحقاق', isCash ? date : '2026-02-15']
+            ],
+            parties: [
+                ['البائع (المنشأة)', compName, ['مقر الإدارة والمبيعات — القاهرة']],
+                ['العميل (المشتري)', partyName || (isCash ? 'عميل نقدي / مبيعات معرض' : 'مؤسسة الشروق التجارية'), ['القاهرة — ب.ض 000-000-002']]
+            ],
+            table: {
+                cols: ['م', 'الصنف / البيان', 'الوحدة', 'الكمية', 'سعر البيع', 'القيمة'],
+                num: [3, 4, 5],
+                rows: items.map(it => [it.num, it.desc, it.unit, it.qty, it.unitPrice, it.total])
+            },
+            totals: [
+                ['قيمة المبيعات الخاضعة للضريبة', subtotal],
+                ['ضريبة القيمة المضافة مخرجات (14%)', vatAmt],
+                [isCash ? 'المحصل بالخزينة/البنك' : 'المستحق على العميل (مدين)', total, 'g']
+            ],
+            extraSummaryHtml: `
+                ${vatAmt > 0 ? `
+                  ${renderDocRow('قيمة المبيعات الخاضعة للضريبة', subtotal, 'text-slate-800')}
+                  ${renderDocRow('ضريبة القيمة المضافة مخرجات (14%)', vatAmt, 'text-purple-700')}
+                ` : `
+                  ${renderDocRow('قيمة المبيعات الإجمالية', total, 'text-slate-800')}
+                `}
+                ${renderDocRow(isCash ? 'المحصل بالخزينة/البنك' : 'المستحق على العميل (مدين)', total, 'text-blue-900 font-extrabold', true)}
+            `,
+            words: words + ' جنيهاً مصرياً لا غير.',
+            terms: [
+                'البضاعة المباعة مستلمة بحالة ممتازة وصالحة للإقرار الضريبي.',
+                'تعتبر الفاتورة سند مديونية ومطالبة رسمية واجبة السداد في موعدها.'
+            ],
+            sigs: ['مسؤول المبيعات', 'المدير المالي', 'استلمت البضاعة بالأصل (العميل)']
+        });
+
+        // 2. إذن صرف بضاعة من المخازن GIN
+        const ginHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'إدارة المستودعات المركزية' },
+            title: 'إذن صرف بضاعة من المخازن',
+            enTitle: 'Goods Issue Note (GIN)',
+            serial: 'GIN-' + ref.replace('INV-', ''),
+            meta: [
+                ['تاريخ الصرف', date],
+                ['رقم الفاتورة', ref],
+                ['الغرض من الصرف', 'تسليم مبيعات بضاعة للعميل'],
+                ['المخزن المنصرف منه', 'مخزن القاهرة الرئيسي']
+            ],
+            parties: [
+                ['الجهة الطالبة', 'قسم المبيعات والتوزيع', ['أمر بيع معتمد']],
+                ['المستلم (العميل)', partyName || 'العميل', ['مندوب الاستلام']]
+            ],
+            table: {
+                cols: ['م', 'الصنف المنصرف', 'الوحدة', 'الكمية المطلوبة', 'الكمية المنصرفة فعلية', 'حالة الصرف'],
+                num: [3, 4],
+                rows: items.map(it => [it.num, it.desc, it.unit, it.qty, it.qty, 'تم التسليم سليماً ✓'])
+            },
+            notes: [
+                ['تأكيد أمين المستودع', 'تم خصم الكميات المنصرفة من الرصيد الدفتري لبطاقة الصنف بالمخزن.']
+            ],
+            sigs: ['أمين المستودع (الصرف)', 'إدارة المبيعات', 'المستلم (العميل)']
+        });
+
+        // 3. أمر البيع المعتمد SO
+        const soHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'إدارة المبيعات وخدمة العملاء' },
+            title: 'أمر بيع بضاعة معتمد',
+            enTitle: 'Sales Order (SO)',
+            serial: 'SO-' + ref.replace('INV-', ''),
+            meta: [
+                ['تاريخ الطلب', date],
+                ['مرجع طلب العميل', 'PO-CUS-' + ref.replace('INV-', '')],
+                ['طريقة السداد', isCash ? 'نقداً فوري' : 'آجل 30 يوماً'],
+                ['موعد التسليم المتفق عليه', date]
+            ],
+            parties: [
+                ['العميل المشتري', partyName || 'حساب العملاء', ['معتمد بالدليل']],
+                ['مسؤول الحساب', compName, ['قسم المبيعات']]
+            ],
+            table: {
+                cols: ['م', 'الصنف المطلوب', 'الوحدة', 'الكمية', 'السعر المتفق عليه', 'القيمة'],
+                num: [3, 4, 5],
+                rows: items.map(it => [it.num, it.desc, it.unit, it.qty, it.unitPrice, it.total])
+            },
+            totals: [
+                ['إجمالي أمر البيع', subtotal],
+                ['ضريبة القيمة المضافة 14%', vatAmt],
+                ['الإجمالي المستحق', total, 'g']
+            ],
+            words: words + ' جنيهاً مصرياً لا غير.',
+            sigs: ['مندوب المبيعات', 'مدير الائتمان (موافقة)', 'مدير المبيعات']
+        });
+
+        bundleDocs = [
+            { id: 'primary', label: 'فاتورة المبيعات الضريبية', icon: 'point_of_sale', html: salInvHtml },
+            { id: 'gin', label: 'إذن صرف المخزن (GIN)', icon: 'outbox', html: ginHtml },
+            { id: 'so', label: 'أمر البيع المعتمد (SO)', icon: 'description', html: soHtml }
+        ];
+
+    } else if (trx.type === 'Payment') {
+        dossierTitle = 'دورة المدفوعات والشيكات — مستندات الصرف والاعتماد';
+        matchingChecklist = [
+            { text: 'سند الصرف معتمد من المدير المالي وموقع من أمين الصندوق', status: 'ok' },
+            { text: 'الشيك البنكي محرر ومطابق لمبلغ الفاتورة المسددة تماماً', status: 'ok' },
+            { text: 'تسوية حساب المورد وإرفاق أصل الفاتورة المسددة', status: 'ok' }
+        ];
+
+        // 1. سند الصرف
+        const pvHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'الإدارة المالية — قسم الخزينة والمدفوعات' },
+            title: 'إذن وسند صرف مالي',
+            enTitle: 'Payment Voucher (PV)',
+            serial: 'PV-' + ref.replace('INV-', ''),
+            meta: [
+                ['تاريخ الصرف', date],
+                ['طريقة الدفع', 'شيك بنكي رقم 000231 / تحويل بنكي'],
+                ['الحساب المسحوب منه', 'البنك الأهلي المصري (حساب جاري)']
+            ],
+            parties: [
+                ['يصرف لأمر السادة', partyName || 'حساب الموردين AP', ['سداد مستحقات الفاتورة ' + ref]],
+                ['الجهة الصارفة', compName, ['الخزينة المركزية']]
+            ],
+            totals: [
+                ['المبلغ المدفوع من البنك/الخزينة', total, 'g']
+            ],
+            extraSummaryHtml: `
+                ${renderDocRow('المبلغ المدفوع من البنك/الخزينة', total, 'text-rose-800 font-bold', true)}
+            `,
+            words: words + ' جنيهاً مصرياً لا غير.',
+            notes: [
+                ['الغرض والبيان', 'سداد كامل مستحقات المورد عن توريدات البضاعة المعتمدة بالسجلات.']
+            ],
+            sigs: ['أمين الصندوق / المنفذ', 'المدير المالي (اعتماد الصرف)', 'توقيع المستلم']
+        });
+
+        // 2. الشيك البنكي
+        const chkHtml = renderRealisticCheque({
+            bank: 'البنك الأهلي المصري (فرع القاهرة الرئيسي)',
+            account: 'حساب جاري رقم: 010-4492-8819',
+            serial: '000231',
+            date: date,
+            payee: partyName || 'المورد المعتمد',
+            words: words + ' جنيهاً مصرياً لا غير.',
+            memo: 'سداد كامل مستحقات الفاتورة رقم ' + ref,
+            amount: total,
+            drawer: compName
+        });
+
+        bundleDocs = [
+            { id: 'primary', label: 'سند الصرف المالي', icon: 'payments', html: pvHtml },
+            { id: 'chk', label: 'الشيك البنكي المرفق', icon: 'account_balance_wallet', html: chkHtml }
+        ];
+
+    } else if (trx.type === 'Collection') {
+        dossierTitle = 'دورة المقبوضات والتحصيل — مستندات الإيداع البنكي';
+        matchingChecklist = [
+            { text: 'سند القبض صادر من أمين الصندوق ومطابق للمبلغ المحصل', status: 'ok' },
+            { text: 'قسيمة الإيداع البنكي مختومة من البنك ومقيدة بالحساب الجاري', status: 'ok' },
+            { text: 'تخفيض حساب العميل المدين بالقيمة المحصلة', status: 'ok' }
+        ];
+
+        // 1. سند القبض
+        const rvHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'الإدارة المالية — قسم المقبوضات' },
+            title: 'سند وإيصال استلام نقدي / شيك',
+            enTitle: 'Receipt Voucher (RV)',
+            serial: 'RV-' + ref.replace('INV-', ''),
+            meta: [
+                ['تاريخ الاستلام', date],
+                ['طريقة القبض', 'نقداً / شيك مقبول الدفع'],
+                ['رقم الحساب المودع فيه', 'الحساب الجاري لدى البنك']
+            ],
+            parties: [
+                ['استلمنا من السادة', partyName || 'حساب العملاء المعتمد', ['تحصيل مستحقات الفاتورة ' + ref]],
+                ['الجهة المستلمة', compName, ['أمانة الصندوق']]
+            ],
+            totals: [
+                ['المبلغ المحصل بالخزينة/البنك', total, 'g']
+            ],
+            extraSummaryHtml: `
+                ${renderDocRow('المبلغ المحصل بالخزينة/البنك', total, 'text-emerald-800 font-bold', true)}
+            `,
+            words: words + ' جنيهاً مصرياً لا غير.',
+            sigs: ['أمين الصندوق (المستلم)', 'المحاسب المالي', 'الدافع (العميل)']
+        });
+
+        // 2. قسيمة الإيداع البنكي
+        const depHtml = renderRealisticPaper({
+            org: { name: 'بنك مصر — فرع الشركات', sub: 'إيصال إيداع نقدي رسمي بالحساب الجاري' },
+            title: 'قسيمة إيداع بنكي مختومة',
+            enTitle: 'Bank Deposit Slip',
+            serial: 'DEP-8841',
+            meta: [
+                ['تاريخ الإيداع', date],
+                ['رقم الحساب المودع به', '000-1192-8400'],
+                ['صاحب الحساب المودع لصالحه', compName]
+            ],
+            table: {
+                cols: ['فئة الإيداع', 'بيان الحركة', 'الرقم المرجعي', 'المبلغ المودع'],
+                num: [3],
+                rows: [
+                    ['إيداع نقدي / شيك محصل', 'تحصيل مستحقات مبيعات تجارية', ref, total]
+                ]
+            },
+            totals: [
+                ['إجمالي المبلغ المودع بالحساب الجاري', total, 'g']
+            ],
+            words: words + ' جنيهاً مصرياً لا غير.',
+            notes: [
+                ['تأكيد الصراف', 'تم قيد المبلغ المذكور أعلاه بحساب الشركة الجاري فوراً وحساب البنك مدين بالقيمة.']
+            ],
+            sigs: ['المودع', 'ختم وتوقيع الصراف المعتمد بالبنك']
+        });
+
+        bundleDocs = [
+            { id: 'primary', label: 'سند القبض المالي', icon: 'receipt_long', html: rvHtml },
+            { id: 'dep', label: 'قسيمة الإيداع البنكي', icon: 'assured_workload', html: depHtml }
+        ];
+
     } else if (trx.type === 'Payroll') {
         const grossAmt = doc.grossAmount || total;
-        const taxAmt = doc.taxAmount || 0;
-        const socAmt = doc.socAmount || 0;
+        const taxAmt = doc.taxAmount || Math.round(grossAmt * 0.05 * 100) / 100;
+        const socAmt = doc.socAmount || Math.round(grossAmt * 0.11 * 100) / 100;
         const netAmt = doc.netAmount || (grossAmt - taxAmt - socAmt);
         const netWords = tafqeetArabic(netAmt);
 
-        docHtml = `
-        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">كشف مسير رواتب الشهر (Payroll Sheet)</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
-            </div>
-          </div>
+        dossierTitle = 'مسير الرواتب والأجور — كشف الاستحقاقات والاستقطاعات';
+        matchingChecklist = [
+            { text: 'كشف مسير الرواتب معتمد من إدارة الموارد البشرية والشؤون المالية', status: 'ok' },
+            { text: 'استقطاع ضريبة كسب العمل (5%) والتأمينات الاجتماعية (11%) وفقاً للقانون', status: 'ok' },
+            { text: 'صافي الرواتب محول للبنوك ومطابق لسند الصرف', status: 'ok' }
+        ];
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
-            ${renderDocRow('إجمالي الرواتب والأجور المستحقة', grossAmt, 'text-slate-900')}
-            ${renderDocRow('استقطاع ضريبة كسب العمل (5%)', taxAmt, 'text-amber-700')}
-            ${renderDocRow('استقطاع التأمينات الاجتماعية (11%)', socAmt, 'text-amber-700')}
-            <div class="border-t border-slate-200 pt-1">
-              ${renderDocRow('صافي الرواتب المحولة للبنوك', netAmt, 'text-emerald-800 font-extrabold')}
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
-              صافي المسير: <strong>${netWords}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 text-center">معتمد من إدارة الموارد البشرية والشؤون المالية</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
+        const prHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'إدارة الموارد البشرية والشؤون الإدارية والمالية' },
+            title: 'كشف مسير رواتب وأجور العاملين',
+            enTitle: 'Payroll Sheet & Deductions',
+            serial: 'PR-2026-01',
+            meta: [
+                ['عن شهر', 'يناير 2026'],
+                ['تاريخ الاستحقاق', date],
+                ['طريقة الصرف', 'تحويل بنكي لبطاقات الرواتب الإلكترونية']
+            ],
+            table: {
+                cols: ['اسم الموظف / الوظيفة', 'الراتب الأساسي', 'البدلات والعلاوات', 'تأمينات اجتماعية', 'ضريبة كسب عمل', 'صافي المستحق'],
+                num: [1, 2, 3, 4, 5],
+                rows: [
+                    ['أحمد سمير — محاسب مالي', Math.round(grossAmt * 0.4), 0, Math.round(socAmt * 0.4), Math.round(taxAmt * 0.4), Math.round(netAmt * 0.4)],
+                    ['منى عبد العزيز — مبيعات وتوزيع', Math.round(grossAmt * 0.35), 0, Math.round(socAmt * 0.35), Math.round(taxAmt * 0.35), Math.round(netAmt * 0.35)],
+                    ['هاني فوزي — أمين المستودع', grossAmt - Math.round(grossAmt * 0.4) - Math.round(grossAmt * 0.35), 0, socAmt - Math.round(socAmt * 0.4) - Math.round(socAmt * 0.35), taxAmt - Math.round(taxAmt * 0.4) - Math.round(taxAmt * 0.35), netAmt - Math.round(netAmt * 0.4) - Math.round(netAmt * 0.35)],
+                    ['الإجمالي العام', grossAmt, 0, socAmt, taxAmt, netAmt]
+                ],
+                totalRow: true
+            },
+            totals: [
+                ['إجمالي الرواتب والأجور المستحقة', grossAmt],
+                ['استقطاع ضريبة كسب العمل (5%)', taxAmt],
+                ['استقطاع التأمينات الاجتماعية (11%)', socAmt],
+                ['صافي الرواتب المحولة للبنوك', netAmt, 'g']
+            ],
+            extraSummaryHtml: `
+                ${renderDocRow('إجمالي الرواتب والأجور المستحقة', grossAmt, 'text-slate-900')}
+                ${renderDocRow('استقطاع ضريبة كسب العمل (5%)', taxAmt, 'text-amber-700')}
+                ${renderDocRow('استقطاع التأمينات الاجتماعية (11%)', socAmt, 'text-amber-700')}
+                ${renderDocRow('صافي الرواتب المحولة للبنوك', netAmt, 'text-emerald-800 font-extrabold', true)}
+            `,
+            words: 'صافي المسير: ' + netWords + ' جنيهاً مصرياً لا غير.',
+            sigs: ['أعده: شؤون العاملين', 'راجعه: المراجع الداخلي', 'اعتمده: المدير المالي']
+        });
+
+        bundleDocs = [
+            { id: 'primary', label: 'كشف مسير الرواتب المعتمد', icon: 'groups', html: prHtml }
+        ];
+
     } else if (trx.type === 'Bank Loan') {
-        docHtml = `
-        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">إشعار إضافة وتسهيل ائتماني بنكي</h2>
-              <p class="text-[10px] text-slate-500">عقد قرض وتمويل طويل الأجل (Bank Loan Facility)</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
-            </div>
-          </div>
+        dossierTitle = 'التمويل المصرفي — عقد القرض وكشف الحساب البنكي';
+        matchingChecklist = [
+            { text: 'إيداع كامل قيمة القرض بالحساب الجاري لدى البنك', status: 'ok' },
+            { text: 'إثبات التزام طويل الأجل لصالح البنك الممول', status: 'ok' }
+        ];
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">الطرف المستفيد:</span>
-              <strong class="text-slate-900">${compName}</strong>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">نوع التمويل:</span>
-              <span class="font-bold text-blue-900">قرض بنكي لأجل (التزامات طويلة الأجل)</span>
-            </div>
-            <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
-              <span>مبلغ التمويل المودع بالحساب الجاري:</span>
-              <span class="font-mono text-emerald-800 text-base">${total.toLocaleString()} ج.م</span>
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 text-center">تم إيداع كامل القيمة في الحساب الجاري لدى البنك</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
-    } else if (trx.type === 'Sales Return') {
-        docHtml = `
-        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">إشعار دائن - مردودات مبيعات (Credit Note)</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
-            </div>
-          </div>
+        const loanHtml = renderRealisticPaper({
+            org: { name: 'بنك القاهرة — إدارة الائتمان وتمويل الشركات', sub: 'إشعار إضافة وتسهيل ائتماني رسمي' },
+            title: 'عقد قرض وتمويل مصرفي لأجل',
+            enTitle: 'Bank Loan Facility Agreement',
+            serial: 'LOAN-' + ref.replace('INV-', ''),
+            meta: [
+                ['تاريخ تنفيذ التمويل', date],
+                ['رقم الحساب الجاري المودع به', '000-8841-2026'],
+                ['نوع التسهيل الائتماني', 'قرض متوسط / طويل الأجل']
+            ],
+            parties: [
+                ['الجهة الممولة', 'بنك القاهرة (فرع الشركات)', ['إدارة تمويل المنشآت']],
+                ['الطرف المستفيد المقترض', compName, ['سجل تجاري 104920']]
+            ],
+            totals: [
+                ['مبلغ التمويل المودع بالحساب الجاري', total, 'g']
+            ],
+            words: words + ' جنيهاً مصرياً لا غير.',
+            notes: [
+                ['بيان العملية', 'تم إيداع كامل مبلغ القرض المعتمد بالحساب الجاري للمنشأة لدى البنك، وتعتبر المنشأة مدينة بكامل القيمة كالتزام لأجل.']
+            ],
+            sigs: ['مدير إدارة الائتمان بالبنك', 'المدير المالي للمنشأة (قبول واستلام)']
+        });
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">العميل:</span>
-              <strong class="text-slate-900">${partyName || 'حساب العملاء'}</strong>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">قيمة المردودات (مبيعات):</span>
-              <span class="font-mono font-bold text-slate-800">${subtotal.toLocaleString()} ج.م</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">عكس ضريبة القيمة المضافة مخرجات (14%):</span>
-              <span class="font-mono font-bold text-purple-700">${vatAmt.toLocaleString()} ج.م</span>
-            </div>
-            <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
-              <span>إجمالي قيمة الإشعار الدائن:</span>
-              <span class="font-mono text-amber-900 text-base">${total.toLocaleString()} ج.م</span>
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 text-center">إشعار دائن صادر لتسوية حساب العميل في السجلات</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
-    } else if (trx.type === 'Purchase Return') {
-        docHtml = `
-        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">إشعار مدين - مردودات مشتريات (Debit Note)</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-blue-100 text-blue-900 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
-            </div>
-          </div>
+        bundleDocs = [
+            { id: 'primary', label: 'إشعار التسهيل وقرض البنك', icon: 'account_balance', html: loanHtml }
+        ];
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">المورد:</span>
-              <strong class="text-slate-900">${partyName || 'حساب الموردين'}</strong>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">تكلفة البضاعة المرتجعة:</span>
-              <span class="font-mono font-bold text-slate-800">${subtotal.toLocaleString()} ج.م</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">عكس ضريبة القيمة المضافة مدخلات (14%):</span>
-              <span class="font-mono font-bold text-emerald-700">${vatAmt.toLocaleString()} ج.م</span>
-            </div>
-            <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
-              <span>إجمالي قيمة الخصم من المورد:</span>
-              <span class="font-mono text-blue-900 text-base">${total.toLocaleString()} ج.م</span>
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 text-center">إشعار مدين مرسل للمورد لمطابقة كشف الحساب</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
-    } else if (trx.type === 'Collection') {
-        docHtml = `
-        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">إيصال استلام نقدي / شيك بنكي (Receipt Voucher)</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
-            </div>
-          </div>
+    } else if (trx.type === 'Purchase Return' || trx.type === 'Sales Return') {
+        const isPurRet = trx.type === 'Purchase Return';
+        dossierTitle = isPurRet ? 'مردودات المشتريات — إشعار مدين ومطابقة الارتجاع' : 'مردودات المبيعات — إشعار دائن ومطابقة الاستلام';
+        matchingChecklist = [
+            { text: isPurRet ? 'إشعار مدين Debit Note لتخفيض رصيد المورد بالسجلات' : 'إشعار دائن Credit Note لتخفيض رصيد العميل', status: 'ok' },
+            { text: 'إذن فحص وارتجاع المخزن يثبت خروج/استلام البضاعة المعيبة', status: 'ok' },
+            { text: 'عكس ضريبة القيمة المضافة 14% ومطابقة أصل الفاتورة', status: 'ok' }
+        ];
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">استلمنا من السادة:</span>
-              <span class="font-bold text-slate-800">${partyName || 'حساب العملاء المعتمد'}</span>
-            </div>
-            ${renderDocRow('المبلغ المحصل بالخزينة/البنك', total, 'text-emerald-800 font-bold')}
-            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 text-center">إشعار إيداع بنكي صادر ومعتمد من البنك</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
-    } else if (trx.type === 'Payment') {
-        docHtml = `
-        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">إذن صرف شيك / تحويل بنكي (Payment Voucher)</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
-            </div>
-          </div>
+        // 1. الإشعار (مدين أو دائن)
+        const noteHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'القاهرة — س.ت 104920 — ب.ض 104-920-881' },
+            title: isPurRet ? 'إشعار مدين (مردودات مشتريات)' : 'إشعار دائن (مردودات مبيعات)',
+            enTitle: isPurRet ? 'Debit Note (Purchase Return)' : 'Credit Note (Sales Return)',
+            serial: (isPurRet ? 'DN-' : 'CN-') + ref.replace('INV-', ''),
+            meta: [
+                ['تاريخ الإشعار', date],
+                ['مرجع الفاتورة الأصلية', ref],
+                ['سبب الإشعار والارتجاع', 'عيوب فنية وعدم مطابقة البضاعة للمواصفات المعيارية']
+            ],
+            parties: [
+                [isPurRet ? 'المورد (الدائن)' : 'العميل (المدين)', partyName || 'الطرف التجاري', ['تسوية الرصيد بالسجلات الدفترية']],
+                ['الجهة المصدرة', compName, ['الإدارة المالية والمحاسبية']]
+            ],
+            table: {
+                cols: ['م', 'الصنف المرتجع', 'الوحدة', 'الكمية المرتجعة', 'سعر الوحدة', 'القيمة'],
+                num: [3, 4, 5],
+                rows: items.map(it => [it.num, it.desc + ' (مرتجع عيوب)', it.unit, it.qty, it.unitPrice, it.total])
+            },
+            totals: [
+                [isPurRet ? 'تكلفة البضاعة المرتجعة' : 'قيمة المردودات (مبيعات)', subtotal],
+                [isPurRet ? 'عكس ضريبة القيمة المضافة مدخلات (14%)' : 'عكس ضريبة القيمة المضافة مخرجات (14%)', vatAmt],
+                [isPurRet ? 'إجمالي قيمة الخصم من المورد' : 'إجمالي قيمة الإشعار الدائن', total, 'g']
+            ],
+            words: words + ' جنيهاً مصرياً لا غير.',
+            terms: [
+                isPurRet ? 'نرجو خصم قيمة هذا الإشعار من مستحقاتكم لدينا وتسوية كشف الحساب.' : 'تُخصم قيمة هذا الإشعار من رصيدكم المدين طرفنا.'
+            ],
+            sigs: ['أعده: المحاسب المالي', 'اعتمده: المدير المالي', 'استلمه الطرف الآخر']
+        });
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs mb-3">
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">يصرف لأمر السادة:</span>
-              <span class="font-bold text-slate-800">${partyName || 'حساب الموردين المعتمد'}</span>
-            </div>
-            ${renderDocRow('المبلغ المدفوع من البنك/الخزينة', total, 'text-rose-800 font-bold')}
-            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 text-center">أصل الشيك / إشعار الخصم الإلكتروني مرفق</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
+        // 2. إذن ارتجاع وفحص مخزني
+        const retWhHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'إدارة المستودعات والرقابة على المخزون' },
+            title: isPurRet ? 'إذن ارتجاع بضاعة لمورد (خروج مخزني)' : 'إذن استلام مردودات مبيعات بالمخزن',
+            enTitle: isPurRet ? 'Store Return Issue Note' : 'Sales Return Receipt Note',
+            serial: (isPurRet ? 'RIN-' : 'SRN-') + ref.replace('INV-', ''),
+            meta: [
+                ['تاريخ الارتجاع', date],
+                ['رقم الإشعار المالي', (isPurRet ? 'DN-' : 'CN-') + ref.replace('INV-', '')],
+                ['المخزن', 'مخزن القاهرة الرئيسي']
+            ],
+            parties: [
+                [isPurRet ? 'المورد المرتجع إليه' : 'العميل المرتجع منه', partyName || 'الطرف التجاري', ['إدارة المستودعات']],
+                ['أمين المستودع المسؤول', compName, ['محمد عبد الرحمن']]
+            ],
+            table: {
+                cols: ['م', 'الصنف المرتجع', 'الوحدة', 'الكمية بالأمر', 'الكمية المرتجعة فعلية', 'تقرير حالة الفحص'],
+                num: [3, 4],
+                rows: items.map(it => [it.num, it.desc, it.unit, it.qty, it.qty, 'تالف / عيوب صناعة ظهرت بالفحص التفصيلي'])
+            },
+            notes: [
+                ['ملاحظات أمين المخزن', isPurRet ? 'خرجت البضاعة المرتجعة من عهدة المخزن وتم إثباتها في كارت الصنف.' : 'تم استلام المرتجع وعزله في منطقة البضاعة المعيبة لإجراء التسوية.']
+            ],
+            sigs: ['أمين المستودع', 'لجنة الفحص الفني', 'المستلم / المندوب']
+        });
+
+        // 3. أصل الفاتورة المرجعية
+        const origInvHtml = renderRealisticPaper({
+            org: { name: isPurRet ? (partyName || 'المورد') : compName, sub: 'أصل الفاتورة المرجعية محل التسوية' },
+            title: isPurRet ? 'صورة فاتورة الشراء الأصلية' : 'صورة فاتورة المبيعات الأصلية',
+            enTitle: 'Original Reference Tax Invoice',
+            serial: ref,
+            meta: [
+                ['تاريخ الفاتورة الأصلية', date],
+                ['حالة الفاتورة', 'مسجلة بالدفاتر — جاري تسوية إشعار خصم عليها']
+            ],
+            table: {
+                cols: ['م', 'الصنف / البيان', 'الوحدة', 'الكمية الأصلية', 'سعر الوحدة', 'القيمة'],
+                num: [3, 4, 5],
+                rows: items.map(it => [it.num, it.desc, it.unit, it.qty, it.unitPrice, it.total])
+            },
+            totals: [
+                ['إجمالي الفاتورة الأصلية', subtotal],
+                ['ضريبة 14%', vatAmt],
+                ['إجمالي المستحق الأصلي', total, 'g']
+            ],
+            words: words + ' جنيهاً مصرياً لا غير.',
+            sigs: ['المحاسب المالي', 'المدير المالي']
+        });
+
+        bundleDocs = [
+            { id: 'primary', label: isPurRet ? 'إشعار مدين للمورد' : 'إشعار دائن للعميل', icon: 'assignment_return', html: noteHtml },
+            { id: 'ret_wh', label: isPurRet ? 'إذن ارتجاع المخزن' : 'إذن استلام المرتجع', icon: 'inventory', html: retWhHtml },
+            { id: 'orig_inv', label: 'الفاتورة الأصلية المرجعية', icon: 'receipt_long', html: origInvHtml }
+        ];
+
     } else if (trx.type === 'COGS' || trx.type === 'Cash Sale COGS') {
-        docHtml = `
-        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
-          <div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">إذن صرف بضاعة من المخازن (Store Issue Order)</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
-            </div>
-          </div>
+        dossierTitle = 'تكلفة البضاعة المباعة — أذونات الصرف وتقييم المخزون';
+        matchingChecklist = [
+            { text: 'إذن صرف البضاعة من المخازن يثبت خروج المخزون للعملاء', status: 'ok' },
+            { text: 'التكلفة الدفترية محسوبة بنظام الجرد المستمر بدقة', status: 'ok' }
+        ];
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs mb-3">
-            <div class="flex justify-between py-1 border-b border-slate-200">
-              <span class="text-slate-500">الغرض من الصرف:</span>
-              <span class="font-medium text-slate-800">تسليم مبيعات بضاعة للعملاء بموجب الفاتورة</span>
-            </div>
-            <div class="flex justify-between py-2 text-sm font-extrabold text-slate-900 bg-white p-2 rounded-lg border border-slate-200">
-              <span>التكلفة الدفترية للبضاعة المنصرفة:</span>
-              <span class="font-mono text-slate-900 text-base">${total.toLocaleString()} ج.م</span>
-            </div>
-            <div class="text-[11px] text-slate-500 text-center font-serif">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 text-center">تم فحص ومطابقة الصرف بمعرفة أمين المستودع</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
+        const cogsHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'إدارة مراقبة المخزون والتكاليف' },
+            title: 'إذن صرف بضاعة من المخازن (مبيعات)',
+            enTitle: 'Store Issue Order & COGS Allocation',
+            serial: 'SIO-' + ref.replace('INV-', ''),
+            meta: [
+                ['تاريخ الصرف', date],
+                ['رقم الفاتورة المرتبطة', ref],
+                ['الغرض من الصرف', 'تسليم بضاعة مبيعات للعملاء بموجب الفاتورة']
+            ],
+            table: {
+                cols: ['م', 'الصنف المنصرف', 'الوحدة', 'الكمية المنصرفة', 'التكلفة الدفترية للوحدة', 'إجمالي التكلفة الدفترية'],
+                num: [3, 4, 5],
+                rows: items.map(it => [it.num, it.desc, it.unit, it.qty, it.unitPrice, it.total])
+            },
+            totals: [
+                ['التكلفة الدفترية للبضاعة المنصرفة (تكلفة مبيعات)', total, 'g']
+            ],
+            words: words + ' جنيهاً مصرياً لا غير.',
+            sigs: ['أمين المستودع (صرف البضاعة)', 'محاسب التكاليف والمخزون', 'مدير الحسابات']
+        });
+
+        bundleDocs = [
+            { id: 'primary', label: 'إذن صرف وتكلفة المخزون', icon: 'assignment', html: cogsHtml }
+        ];
+
     } else if (trx.type === 'Opening Balance') {
         const opBalances = trx.openingBalances || trx.lines || [];
         const debits = opBalances.filter(l => l.debit > 0);
         const credits = opBalances.filter(l => l.credit > 0);
-        const totalDebit = debits.reduce((s,l)=>s+l.debit, 0) || total;
-        const totalCredit = credits.reduce((s,l)=>s+l.credit, 0) || total;
+        const totalDebit = debits.reduce((s, l) => s + l.debit, 0) || total;
+        const totalCredit = credits.reduce((s, l) => s + l.credit, 0) || total;
         const opWords = tafqeetArabic(totalDebit);
 
-        docHtml = `
+        dossierTitle = 'القيد الافتتاحي — محضر جرد وإثبات المركز المالي';
+        matchingChecklist = [
+            { text: 'محضر جرد الأصول والالتزامات معتمد من الإدارة ومراجع الحسابات', status: 'ok' },
+            { text: 'توازن المركز المالي الافتتاحي 100% (إجمالي المدين = إجمالي الدائن)', status: 'ok' },
+            { text: 'تم ترحيل القيد الافتتاحي آلياً لدفتر الأستاذ العام تيسيراً للتدريب', status: 'ok' }
+        ];
+
+        const opHtml = `
         <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
           <div class="flex justify-between items-center border-b-2 border-slate-800 pb-3 mb-3">
             <div>
@@ -861,44 +1331,122 @@ function renderDocument(trx) {
             إجمالي المركز المالي الافتتاحي: <strong>${opWords}</strong> جنيهاً مصرياً لا غير.
           </div>
           <p class="text-[10px] text-emerald-700 font-bold text-center">✓ معتمد ومرحل آلياً في دفتر اليومية ودفتر الأستاذ العام</p>
-          ${buildHintHtml(trx)}
         </div>
         `;
+
+        bundleDocs = [
+            { id: 'primary', label: 'محضر المركز المالي الافتتاحي', icon: 'account_balance', html: opHtml }
+        ];
+
     } else {
+        // Expenses and General transactions
         const desc = trx.desc || trx.title || 'مستند إداري / تسوية محاسبية معتمدة';
-        docHtml = `
-        <div class="acc-doc-sheet w-full max-w-md p-5 sm:p-6 text-right font-sans text-slate-900 relative">
-          <div class="flex justify-between items-center border-b-2 border-slate-800 pb-3 mb-3">
-            <div>
-              <h2 class="text-sm font-extrabold text-slate-900">${compName}</h2>
-              <p class="text-[10px] text-slate-500">${trx.title || 'إشعار قيد تسوية / مستند محاسبي'}</p>
-            </div>
-            <div class="text-left">
-              <span class="text-[10px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded font-mono">${ref}</span>
-              <p class="text-[10px] text-slate-400 mt-1">${date}</p>
-            </div>
-          </div>
+        dossierTitle = 'مستندات المصروفات والتسويات المعتمدة';
+        matchingChecklist = [
+            { text: 'الفاتورة ومذكرة الاعتماد المالي مستوفاة للشروط', status: 'ok' },
+            { text: 'تم فحص استحقاق الفترة المحاسبية بدقة', status: 'ok' }
+        ];
 
-          <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-200 mb-3 text-xs leading-relaxed text-blue-950 font-medium">
-            <strong class="block font-bold text-blue-900 mb-1">بيان وتفاصيل المعاملة:</strong>
-            ${desc}
-          </div>
+        const genHtml = renderRealisticPaper({
+            org: { name: compName, sub: 'الإدارة العامة والمحاسبية' },
+            title: trx.title || 'إشعار قيد تسوية / مستند محاسبي',
+            enTitle: 'Accounting Voucher & Proof',
+            serial: ref,
+            meta: [
+                ['تاريخ العملية', date],
+                ['نوع المستند', 'تسوية / مصروف إداري معتمد'],
+                ['حالة الصرف', 'معتمد للترحيل بالدفاتر']
+            ],
+            parties: [
+                ['الطرف المعني / المستفيد', partyName || 'الحساب المختص', ['بيانات معتمدة']],
+                ['الجهة المعتمدة', compName, ['الشؤون المالية']]
+            ],
+            notes: [
+                ['بيان وتفاصيل المعاملة', desc]
+            ],
+            totals: [
+                ['المبلغ الإجمالي المعتمد بالعملية', total, 'g']
+            ],
+            words: words + ' جنيهاً مصرياً لا غير.',
+            sigs: ['أعده: المحاسب المختص', 'راجعه: المراجع الداخلي', 'اعتمده: المدير المالي']
+        });
 
-          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5 mb-3">
-            ${renderDocRow('المبلغ الإجمالي المعتمد بالعملية', total, 'text-blue-900 font-extrabold')}
-            <div class="text-[11px] text-slate-500 text-center font-serif pt-1">
-              فقط وقدره <strong>${words}</strong> جنيهاً مصرياً لا غير.
-            </div>
-          </div>
-
-          <p class="text-[10px] text-slate-400 text-center">مستند معتمد للتسجيل باليومية العامة وفقاً لمعايير المحاسبة</p>
-          ${buildHintHtml(trx)}
-        </div>
-        `;
+        bundleDocs = [
+            { id: 'primary', label: 'المستند المالي المعتمد', icon: 'receipt', html: genHtml }
+        ];
     }
 
-    viewer.innerHTML = docHtml;
+    // Determine which document in the bundle to show
+    let selectedDoc = bundleDocs.find(d => d.id === activeTab) || bundleDocs[0];
+
+    // Build the Multi-Document Bundle Wrapper
+    let bundleHtml = `
+    <div class="acc-doc-bundle-wrapper">
+      
+      <!-- Top Action Toolbar & Tabs -->
+      <div class="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="material-symbols-outlined text-emerald-600 text-lg flex-shrink-0">verified</span>
+            <span class="font-bold text-xs text-slate-800 truncate">${dossierTitle}</span>
+          </div>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <button type="button" onclick="openDocInspectionModal('${escapeHtml(selectedDoc.label)} - ${ref}', document.getElementById('rendered-active-doc').innerHTML)" class="px-2 py-1 bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 rounded-lg text-[11px] font-bold flex items-center gap-1 transition" title="تكبير المستند بملء الشاشة">
+              <span class="material-symbols-outlined text-[14px]">fullscreen</span>
+              <span class="hidden xs:inline">ملء الشاشة</span>
+            </button>
+            <button type="button" onclick="window.requestAccountingHint()" class="px-2 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded-lg text-[11px] font-bold flex items-center gap-1 transition" title="طلب تلميح وإرشادات">
+              <span class="material-symbols-outlined text-[14px]">lightbulb</span>
+              <span class="hidden xs:inline">تلميح</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Document Switcher Tabs -->
+        ${bundleDocs.length > 1 ? `
+        <div class="acc-doc-tabs">
+          ${bundleDocs.map(d => `
+            <button type="button" onclick="setDocSubTab('${trx.id}', '${d.id}')" class="acc-doc-tab-btn ${d.id === selectedDoc.id ? 'active' : ''}">
+              <span class="material-symbols-outlined text-[15px]">${d.icon}</span>
+              <span>${d.label}</span>
+            </button>
+          `).join('')}
+        </div>
+        ` : ''}
+
+        <!-- 3-Way Matching Checklist Banner -->
+        ${matchingChecklist.length > 0 ? `
+        <div class="acc-matching-box">
+          <div class="title">
+            <span class="material-symbols-outlined text-emerald-600 text-[15px]">fact_check</span>
+            <span>نتائج المطابقة المحاسبية المستندية:</span>
+          </div>
+          <div class="acc-matching-pills">
+            ${matchingChecklist.map(c => `
+              <span class="acc-matching-pill ok">
+                <span class="material-symbols-outlined text-[12px]">check_circle</span>
+                <span>${c.text}</span>
+              </span>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
+      </div>
+
+      <!-- Active Rendered Document Sheet Container -->
+      <div id="rendered-active-doc" class="w-full flex justify-center">
+        ${selectedDoc.html}
+      </div>
+
+      <!-- Accounting Hint & Solution Assistance -->
+      ${buildHintHtml(trx)}
+
+    </div>
+    `;
+
+    viewer.innerHTML = bundleHtml;
 }
+
 
 let formLines = [];
 window.resetForm = function() {
